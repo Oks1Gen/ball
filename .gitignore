@@ -1,0 +1,26 @@
+# Logs
+*.log
+
+# Old duplicate copy of the project
+/Asets/
+
+# Local snapshots and place-file checks
+/RojoTest/backups/
+*.rbxlx
+*.rbxlx.lock
+*.rbxl.lock
+
+# Blender auto-saves
+*.blend1
+*.blend2
+
+# OS / editor
+Thumbs.db
+desktop.ini
+.DS_Store
+.vscode/
+.idea/
+
+# Temp
+*.tmp
+*.bak
