@@ -1,8 +1,9 @@
+--!strict
 -- Applies imported Blender visuals to existing gameplay lane footprints.
 local Fields = {}
 local V = Vector3.new
 local turn = CFrame.Angles(0, math.pi / 2, 0)
-local names = {"Backyard", "Club", "Royal", "Diamond", "Mythic", "Cosmic", "Divine"}
+local names = { "Backyard", "Club", "Royal", "Diamond", "Mythic", "Cosmic", "Divine" }
 
 local function hide(part, keepCollision)
 	part.Transparency = 1
@@ -11,13 +12,19 @@ local function hide(part, keepCollision)
 	part.CanQuery = keepCollision
 	part.CastShadow = false
 	for _, child in part:GetDescendants() do
-		if child:IsA("Texture") or child:IsA("Decal") then child.Transparency = 1 end
-		if child:IsA("SurfaceGui") or child:IsA("BillboardGui") then child.Enabled = false end
+		if child:IsA("Texture") or child:IsA("Decal") then
+			child.Transparency = 1
+		end
+		if child:IsA("SurfaceGui") or child:IsA("BillboardGui") then
+			child.Enabled = false
+		end
 	end
 end
 
 local function scaledFrame(source, scale, origin)
-	local function stretch(v) return V(v.X * scale.X, v.Y * scale.Y, v.Z * scale.Z) end
+	local function stretch(v)
+		return V(v.X * scale.X, v.Y * scale.Y, v.Z * scale.Z)
+	end
 	local sx = stretch(source.CFrame.RightVector)
 	local sy = stretch(source.CFrame.UpVector)
 	local sz = stretch(-source.CFrame.LookVector)
@@ -37,18 +44,27 @@ local function scaledFrame(source, scale, origin)
 		z = x:Cross(y).Unit
 	end
 	local localPosition = source.Position - V(0, 0.62, 0)
-	return CFrame.fromMatrix(origin + turn:VectorToWorldSpace(stretch(localPosition)),
-		turn:VectorToWorldSpace(x), turn:VectorToWorldSpace(y), turn:VectorToWorldSpace(z)), size
+	return CFrame.fromMatrix(
+		origin + turn:VectorToWorldSpace(stretch(localPosition)),
+		turn:VectorToWorldSpace(x),
+		turn:VectorToWorldSpace(y),
+		turn:VectorToWorldSpace(z)
+	),
+		size
 end
 
 function Fields.apply(map)
 	local repairs = map:FindFirstChild("SurfaceRepairs")
 	if repairs then
 		for _, overlay in repairs:GetChildren() do
-			if overlay:IsA("BasePart") and overlay.Name == "Arrow_Surface" then hide(overlay, false) end
+			if overlay:IsA("BasePart") and overlay.Name == "Arrow_Surface" then
+				hide(overlay, false)
+			end
 		end
 	end
-	if map:GetAttribute("ImportedFieldsVersion") == 1 then return end
+	if map:GetAttribute("ImportedFieldsVersion") == 1 then
+		return
+	end
 	local templates = game:GetService("ServerStorage"):FindFirstChild("ImportedTrainingFields")
 	assert(templates, "ImportedTrainingFields templates are missing")
 	local zone = map:WaitForChild("TrainingZone")
@@ -94,16 +110,24 @@ function Fields.apply(map)
 		end
 		if skipping then
 			local stone = skipping:FindFirstChild("TrainingStone" .. i)
-			if stone then hide(stone, false) end
+			if stone then
+				hide(stone, false)
+			end
 			local board = skipping:FindFirstChild("LaneBoard" .. i)
-			if board then hide(board, false) end
+			if board then
+				hide(board, false)
+			end
 			local _, bounds = visual:GetBoundingBox()
 			local cf = visual:GetBoundingBox()
 			local labelY = cf.Position.Y + bounds.Y / 2 + 3.8
 			for _, anchor in skipping:GetChildren() do
-				if anchor:IsA("BasePart") and anchor.Name == "LabelAnchor"
+				if
+					anchor:IsA("BasePart")
+					and anchor.Name == "LabelAnchor"
 					and math.abs(anchor.Position.Z - strip.Position.Z) < 0.1
-					and board and math.abs(anchor.Position.X - board.Position.X) < 0.1 then
+					and board
+					and math.abs(anchor.Position.X - board.Position.X) < 0.1
+				then
 					anchor.Position = V(anchor.Position.X, labelY, anchor.Position.Z)
 				end
 			end

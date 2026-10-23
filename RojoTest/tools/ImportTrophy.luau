@@ -1,7 +1,10 @@
+-- Studio Edit only: this script mutates the scene.
+local RunService = game:GetService("RunService")
+assert(RunService:IsStudio(), "This script must run in Studio, not on a live server")
+assert(not RunService:IsRunning(), "This script must run in Edit mode, not during Play")
 -- Transfer assets/trophy/trophy-geometry.json into _G.TrophyImportData first.
 -- Local Edit preview only. Persistent Roblox mesh uploads require approval.
 local data = assert(_G.TrophyImportData)
-assert(not game:GetService("RunService"):IsRunning(), "Edit mode required")
 assert(not workspace:FindFirstChild("ImportedTrophy"), "Trophy already exists")
 local asset = game:GetService("AssetService")
 local model = Instance.new("Model")
@@ -24,7 +27,9 @@ for _, group in data.groups do
 			table.insert(normalIds, mesh:AddNormal(Vector3.new(n[1], n[2], n[3])))
 		end
 		mesh:SetFaceNormals(face, normalIds)
-		if i % 300 == 0 then task.wait() end
+		if i % 300 == 0 then
+			task.wait()
+		end
 	end
 	mesh:RemoveUnused()
 	local part = asset:CreateMeshPartAsync(Content.fromObject(mesh), {
@@ -52,7 +57,12 @@ model.Parent = workspace
 local cf, size = model:GetBoundingBox()
 assert(math.abs(cf.Position.Y - size.Y / 2 - 20.26) < 0.01, "Incorrect base height")
 assert(math.abs(size.Y - 8) < 0.01, "Incorrect trophy height")
-game:GetService("Selection"):Set({model})
+game:GetService("Selection"):Set({ model })
 _G.ImportedTrophyEditableMeshes = meshes
 game:GetService("ChangeHistoryService"):SetWaypoint("Imported Blender trophy")
-return {path = model:GetFullName(), pendingMeshUpload = true, size = tostring(size), pivot = tostring(model:GetPivot())}
+return {
+	path = model:GetFullName(),
+	pendingMeshUpload = true,
+	size = tostring(size),
+	pivot = tostring(model:GetPivot()),
+}

@@ -1,3 +1,7 @@
+-- Studio Edit only: this script mutates the scene.
+local RunService = game:GetService("RunService")
+assert(RunService:IsStudio(), "This script must run in Studio, not on a live server")
+assert(not RunService:IsRunning(), "This script must run in Edit mode, not during Play")
 -- Additive, edit-time scenery. Run through Studio MCP; never rebuild the map.
 local map = workspace:FindFirstChild("ProgressionMap")
 assert(map and map:FindFirstChild("SpawnGarden"), "Expected authored lobby")
@@ -81,12 +85,24 @@ end
 for _, site in ipairs({ { -4.5, -8.8 }, { -3, 9 }, { -1.5, 7.6 } }) do
 	for i = 1, 3 do
 		local h = 1.5 + i * 0.55
-		part("Reed", Vector3.new(0.28, h, 0.28), Vector3.new(site[1] + i * 0.38, h / 2 + 0.4, site[2] + (i % 2) * 0.6), Color3.fromRGB(139, 216, 55), false)
+		part(
+			"Reed",
+			Vector3.new(0.28, h, 0.28),
+			Vector3.new(site[1] + i * 0.38, h / 2 + 0.4, site[2] + (i % 2) * 0.6),
+			Color3.fromRGB(139, 216, 55),
+			false
+		)
 	end
 end
 for _, site in ipairs({ { 0.9, -7, 20.8 }, { 9.1, 6, 42.6 } }) do
 	for i = 1, 6 do
-		part("TrailingVine", Vector3.new(0.35, 1.7, 1.1), Vector3.new(site[1] - 1.8, site[3] - i * 1.5, site[2] + math.sin(i) * 0.5), i % 2 == 0 and green or Color3.fromRGB(112, 220, 48), true)
+		part(
+			"TrailingVine",
+			Vector3.new(0.35, 1.7, 1.1),
+			Vector3.new(site[1] - 1.8, site[3] - i * 1.5, site[2] + math.sin(i) * 0.5),
+			i % 2 == 0 and green or Color3.fromRGB(112, 220, 48),
+			true
+		)
 	end
 end
 for _, site in ipairs({ { -4.8, -13 }, { -3.4, 13.4 }, { 1.8, -6.4, 21.6 }, { 10.9, 6, 42.6 } }) do
@@ -96,7 +112,13 @@ for _, site in ipairs({ { -4.8, -13 }, { -3.4, 13.4 }, { 1.8, -6.4, 21.6 }, { 10
 		part("FlowerStem", Vector3.new(0.12, 0.85, 0.12), Vector3.new(x, y + 0.43, z), green, false)
 		local petals = i == 2 and Color3.fromRGB(255, 171, 215) or Color3.fromRGB(255, 251, 228)
 		part("FlowerPetals", Vector3.new(0.85, 0.17, 0.85), Vector3.new(x, y + 0.93, z), petals, false)
-		part("FlowerCenter", Vector3.new(0.28, 0.18, 0.28), Vector3.new(x, y + 1.1, z), Color3.fromRGB(255, 221, 67), false)
+		part(
+			"FlowerCenter",
+			Vector3.new(0.28, 0.18, 0.28),
+			Vector3.new(x, y + 1.1, z),
+			Color3.fromRGB(255, 221, 67),
+			false
+		)
 	end
 end
 model.WorldPivot = CFrame.new(base)
@@ -116,11 +138,26 @@ model:SetAttribute("ClearWalkwayWidth", 9.36)
 model.Parent = map
 local changed = 0
 for p, old in pairs(before) do
-	if p.CFrame ~= old[1] or p.Size ~= old[2] or p.CanCollide ~= old[3] or p.CanTouch ~= old[4] or p.CanQuery ~= old[5] then
+	if
+		p.CFrame ~= old[1]
+		or p.Size ~= old[2]
+		or p.CanCollide ~= old[3]
+		or p.CanTouch ~= old[4]
+		or p.CanQuery ~= old[5]
+	then
 		changed += 1
 	end
 end
 assert(changed == 0, "Existing geometry changed")
-model:SetAttribute("OriginalPartsVerified", (function() local n = 0 for _ in pairs(before) do n += 1 end return n end)())
+model:SetAttribute(
+	"OriginalPartsVerified",
+	(function()
+		local n = 0
+		for _ in pairs(before) do
+			n += 1
+		end
+		return n
+	end)()
+)
 game:GetService("Selection"):Set({ model })
 return "Added " .. #model:GetChildren() .. " decorative parts; existing transforms and collision flags unchanged."

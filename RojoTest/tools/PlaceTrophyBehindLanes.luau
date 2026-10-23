@@ -1,7 +1,12 @@
+-- Studio Edit only: this script mutates the scene.
+local RunService = game:GetService("RunService")
+assert(RunService:IsStudio(), "This script must run in Studio, not on a live server")
+assert(not RunService:IsRunning(), "This script must run in Edit mode, not during Play")
 -- Local preview placement only; no Roblox asset upload.
-assert(not game:GetService("RunService"):IsRunning(), "Edit mode required")
 local trophy = assert(workspace:FindFirstChild("ImportedTrophy"))
-if trophy:GetAttribute("GrassPlacementVersion") == 1 then return "Already placed" end
+if trophy:GetAttribute("GrassPlacementVersion") == 1 then
+	return "Already placed"
+end
 local _, oldSize = trophy:GetBoundingBox()
 assert(math.abs(oldSize.Y - 8) < 0.01, "Unexpected starting size")
 local backups = assert(game.ServerStorage:FindFirstChild("WorldBackups"))
@@ -24,6 +29,12 @@ for _, part in trophy:GetDescendants() do
 	end
 end
 trophy:SetAttribute("GrassPlacementVersion", 1)
-game:GetService("Selection"):Set({trophy})
+game:GetService("Selection"):Set({ trophy })
 game:GetService("ChangeHistoryService"):SetWaypoint("Trophy enlarged five times behind training lanes")
-return {path = trophy:GetFullName(), height = size.Y, size = tostring(size), baseHeight = cf.Y - size.Y / 2, pendingUpload = trophy:GetAttribute("PendingMeshUpload")}
+return {
+	path = trophy:GetFullName(),
+	height = size.Y,
+	size = tostring(size),
+	baseHeight = cf.Y - size.Y / 2,
+	pendingUpload = trophy:GetAttribute("PendingMeshUpload"),
+}

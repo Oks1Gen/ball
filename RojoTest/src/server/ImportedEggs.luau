@@ -1,3 +1,4 @@
+--!strict
 local Eggs = {}
 local meshIds = require(script.Parent.ImportedEggMeshIds)
 
@@ -6,15 +7,19 @@ function Eggs.apply(map)
 	for _, part in templates:GetDescendants() do
 		if part:IsA("MeshPart") and part.MeshId == "" then
 			local size = part.Size
-			local mesh = game:GetService("AssetService"):CreateMeshPartAsync(Content.fromUri(assert(meshIds[part.Name])))
+			local mesh = game:GetService("AssetService"):CreateMeshPartAsync(
+				Content.fromUri(assert(meshIds[part.Name], "Missing egg mesh ID: " .. part.Name))
+			)
 			part:ApplyMesh(mesh)
 			part.Size = size
 			mesh:Destroy()
 		end
 	end
-	for _, id in {"Common", "Uncommon", "Rare", "Rainbow"} do
+	for _, id in { "Common", "Uncommon", "Rare", "Rainbow" } do
 		local stand = assert(map.SkippingWorld:FindFirstChild("Egg_" .. id))
-		if stand:FindFirstChild("ImportedVisual") then continue end
+		if stand:FindFirstChild("ImportedVisual") then
+			continue
+		end
 		local shell = assert(stand:FindFirstChild("EggShell"))
 		local ring = assert(stand:FindFirstChild("EggRing"))
 		local visual = assert(templates:FindFirstChild(id)):Clone()

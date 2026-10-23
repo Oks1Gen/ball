@@ -1,3 +1,4 @@
+--!strict
 return {
 	["Amethyst perimeter crystal"] = "rbxassetid://107938796742888",
 	["Amethyst perimeter crystal.001"] = "rbxassetid://88901389095697",

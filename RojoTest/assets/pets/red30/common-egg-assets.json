@@ -1,0 +1,74 @@
+[
+  {
+    "colorMap": "",
+    "source": "RedPet25ScarletMushroom",
+    "meshSize": [
+      2.5015788078308105,
+      3.000000476837158,
+      2.060991048812866
+    ],
+    "meshId": "rbxassetid://115323676389151",
+    "size": [
+      2.5015788078308105,
+      3.000000476837158,
+      2.060991048812866
+    ],
+    "texture": "rbxassetid://123032152483532",
+    "id": "ScarletMushroom",
+    "bodyWidth": 1.9818511964591594
+  },
+  {
+    "colorMap": "",
+    "source": "RedPet21StrawberryCake",
+    "meshSize": [
+      2.648575782775879,
+      2.999999761581421,
+      2.1386609077453613
+    ],
+    "meshId": "rbxassetid://135155628560474",
+    "size": [
+      2.648575782775879,
+      2.999999761581421,
+      2.1386609077453613
+    ],
+    "texture": "rbxassetid://123032152483532",
+    "id": "StrawberryCake",
+    "bodyWidth": 1.843037933552742
+  },
+  {
+    "colorMap": "",
+    "source": "RedPet09Autumn",
+    "meshSize": [
+      2.3404784202575684,
+      3,
+      1.8291229009628296
+    ],
+    "meshId": "rbxassetid://99920021246903",
+    "size": [
+      2.3404784202575684,
+      3,
+      1.8291229009628296
+    ],
+    "texture": "rbxassetid://123032152483532",
+    "id": "AutumnCat",
+    "bodyWidth": 1.6864865081315006
+  },
+  {
+    "colorMap": "",
+    "source": "RedPet06Flame",
+    "meshSize": [
+      1.9629442691802979,
+      3,
+      1.7261052131652832
+    ],
+    "meshId": "rbxassetid://76962930992027",
+    "size": [
+      1.9629442691802979,
+      3,
+      1.7261052131652832
+    ],
+    "texture": "rbxassetid://123032152483532",
+    "id": "FlameCat",
+    "bodyWidth": 1.5599999284744281
+  }
+]

@@ -1,13 +1,40 @@
-local C = Color3.fromRGB
-return {
-	Outline = C(12, 20, 39), Body = C(24, 43, 65), Recess = C(15, 29, 47),
-	Text = C(255, 255, 255), Muted = C(181, 204, 226), Gold = C(255, 221, 83),
-	Colors = {
-		Pets = C(16, 177, 255), Eggs = C(171, 71, 255), Trails = C(14, 206, 229), Shop = C(255, 45, 137),
-		Green = C(94, 237, 28), Blue = C(27, 183, 247), Red = C(255, 59, 89), Slate = C(87, 110, 137),
-	},
-	Rarity = {Common = C(139, 162, 190), Uncommon = C(87, 220, 129), Rare = C(43, 176, 255),
-		Epic = C(181, 100, 255), Legendary = C(255, 197, 61), Mythic = C(255, 75, 158)},
-	Motion = {Frequency = 5, DampingRatio = 1, Lift = 4, PressDepth = 3, Brighten = 0.12,
-		Darken = 0.1, WindowRise = 24, WindowFrequency = 4.5},
+--!strict
+-- The colours and the motion of the collector interface. The values come
+-- from the shared style sheet so that the React screens and the legacy
+-- panels speak the same visual language.
+local Style = require(script.Parent.Parent.UiStyle)
+local Theme = {
+	Outline = Style.Ink,
+	Body = Style.Panel,
+	Recess = Style.PanelDeep,
+	Slot = Style.Slot,
+	Text = Style.Text,
+	Muted = Style.Muted,
+	Gold = Style.Gold,
+	Colors = Style.Colors,
+	Rarity = Style.Rarity,
+	Motion = Style.Motion,
+	Stroke = Style.Stroke,
+	WindowStroke = Style.WindowStroke,
+	Radius = Style.Radius,
+	PanelRadius = Style.PanelRadius,
+	StudTile = Style.StudTile,
+	StudAlpha = Style.StudAlpha,
+	TitleSize = Style.TitleSize,
+	TitleMin = Style.TitleMin,
+	IconSize = Style.IconSize,
+	CloseSize = Style.CloseSize,
 }
+-- The colour of a plate that carries text: a little ink keeps the white
+-- caption readable on a bright brick.
+function Theme.plate(color: Color3): Color3
+	return color:Lerp(Style.Ink, 0.14)
+end
+
+-- The colour of a plate that sits inside a window and must not fight with
+-- the text on it.
+function Theme.slot(color: Color3): Color3
+	return color:Lerp(Style.Ink, 0.35)
+end
+
+return Theme

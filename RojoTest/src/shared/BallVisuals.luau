@@ -1,5 +1,6 @@
+--!strict
 local Shared = script.Parent
-local Config = require(Shared.GameConfig)
+local _Config = require(Shared.GameConfig)
 local Visuals = {}
 
 function Visuals.create(id, diameter)
@@ -26,7 +27,9 @@ end
 
 function Visuals.visible(model, visible)
 	for _, part in model:GetDescendants() do
-		if part:IsA("BasePart") then part.LocalTransparencyModifier = visible and 0 or 1 end
+		if part:IsA("BasePart") then
+			part.LocalTransparencyModifier = visible and 0 or 1
+		end
 	end
 end
 

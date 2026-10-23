@@ -1,0 +1,351 @@
+{
+  "source": "C:\\Users\\userr\\Downloads\\30 красных петов.blend",
+  "pets": [
+    {
+      "index": 1,
+      "id": "RedPet01Forest",
+      "name": "Forest",
+      "sourceObjects": 46,
+      "vertices": 1180,
+      "triangles": 2088,
+      "heightStuds": 3
+    },
+    {
+      "index": 2,
+      "id": "RedPet02Meadow",
+      "name": "Meadow",
+      "sourceObjects": 106,
+      "vertices": 4090,
+      "triangles": 7668,
+      "heightStuds": 3
+    },
+    {
+      "index": 3,
+      "id": "RedPet03GiftFairy",
+      "name": "Gift Fairy",
+      "sourceObjects": 38,
+      "vertices": 1036,
+      "triangles": 1808,
+      "heightStuds": 3
+    },
+    {
+      "index": 4,
+      "id": "RedPet04Sakura",
+      "name": "Sakura",
+      "sourceObjects": 146,
+      "vertices": 5598,
+      "triangles": 10516,
+      "heightStuds": 3
+    },
+    {
+      "index": 5,
+      "id": "RedPet05Mushroom",
+      "name": "Mushroom",
+      "sourceObjects": 34,
+      "vertices": 1170,
+      "triangles": 2116,
+      "heightStuds": 3
+    },
+    {
+      "index": 6,
+      "id": "RedPet06Flame",
+      "name": "Flame",
+      "sourceObjects": 44,
+      "vertices": 1040,
+      "triangles": 1648,
+      "heightStuds": 3
+    },
+    {
+      "index": 7,
+      "id": "RedPet07Frost",
+      "name": "Frost",
+      "sourceObjects": 34,
+      "vertices": 896,
+      "triangles": 1568,
+      "heightStuds": 3
+    },
+    {
+      "index": 8,
+      "id": "RedPet08Moon",
+      "name": "Moon",
+      "sourceObjects": 70,
+      "vertices": 2312,
+      "triangles": 4232,
+      "heightStuds": 3
+    },
+    {
+      "index": 9,
+      "id": "RedPet09Autumn",
+      "name": "Autumn",
+      "sourceObjects": 46,
+      "vertices": 1180,
+      "triangles": 2088,
+      "heightStuds": 3
+    },
+    {
+      "index": 10,
+      "id": "RedPet10Cosmos",
+      "name": "Cosmos",
+      "sourceObjects": 24,
+      "vertices": 922,
+      "triangles": 1664,
+      "heightStuds": 3
+    },
+    {
+      "index": 11,
+      "id": "RedPet11Ocean",
+      "name": "Ocean",
+      "sourceObjects": 40,
+      "vertices": 1380,
+      "triangles": 2512,
+      "heightStuds": 3
+    },
+    {
+      "index": 12,
+      "id": "RedPet12BambooPanda",
+      "name": "Bamboo Panda",
+      "sourceObjects": 63,
+      "vertices": 5716,
+      "triangles": 11120,
+      "heightStuds": 3
+    },
+    {
+      "index": 13,
+      "id": "RedPet13SakuraShrine",
+      "name": "Sakura Shrine",
+      "sourceObjects": 158,
+      "vertices": 5916,
+      "triangles": 11100,
+      "heightStuds": 3
+    },
+    {
+      "index": 14,
+      "id": "RedPet14Angel",
+      "name": "Angel",
+      "sourceObjects": 33,
+      "vertices": 1036,
+      "triangles": 1848,
+      "heightStuds": 3
+    },
+    {
+      "index": 15,
+      "id": "RedPet15AncientRune",
+      "name": "Ancient Rune",
+      "sourceObjects": 38,
+      "vertices": 1100,
+      "triangles": 1808,
+      "heightStuds": 3
+    },
+    {
+      "index": 16,
+      "id": "RedPet16Shadow",
+      "name": "Shadow",
+      "sourceObjects": 34,
+      "vertices": 896,
+      "triangles": 1568,
+      "heightStuds": 3
+    },
+    {
+      "index": 17,
+      "id": "RedPet17Volcano",
+      "name": "Volcano",
+      "sourceObjects": 31,
+      "vertices": 756,
+      "triangles": 1264,
+      "heightStuds": 3
+    },
+    {
+      "index": 18,
+      "id": "RedPet18Lotus",
+      "name": "Lotus",
+      "sourceObjects": 33,
+      "vertices": 846,
+      "triangles": 1472,
+      "heightStuds": 3
+    },
+    {
+      "index": 19,
+      "id": "RedPet19Rose",
+      "name": "Rose",
+      "sourceObjects": 86,
+      "vertices": 4506,
+      "triangles": 8604,
+      "heightStuds": 3
+    },
+    {
+      "index": 20,
+      "id": "RedPet20Love",
+      "name": "Love",
+      "sourceObjects": 88,
+      "vertices": 3260,
+      "triangles": 5992,
+      "heightStuds": 3
+    },
+    {
+      "index": 21,
+      "id": "RedPet21StrawberryCake",
+      "name": "Strawberry Cake",
+      "sourceObjects": 113,
+      "vertices": 3692,
+      "triangles": 6844,
+      "heightStuds": 3
+    },
+    {
+      "index": 22,
+      "id": "RedPet22Dragon",
+      "name": "Dragon",
+      "sourceObjects": 46,
+      "vertices": 1104,
+      "triangles": 1744,
+      "heightStuds": 3
+    },
+    {
+      "index": 23,
+      "id": "RedPet23CrimsonShrine",
+      "name": "Crimson Shrine",
+      "sourceObjects": 158,
+      "vertices": 5916,
+      "triangles": 11100,
+      "heightStuds": 3
+    },
+    {
+      "index": 24,
+      "id": "RedPet24CherryBlossom",
+      "name": "Cherry Blossom",
+      "sourceObjects": 146,
+      "vertices": 5598,
+      "triangles": 10516,
+      "heightStuds": 3
+    },
+    {
+      "index": 25,
+      "id": "RedPet25ScarletMushroom",
+      "name": "Scarlet Mushroom",
+      "sourceObjects": 34,
+      "vertices": 1170,
+      "triangles": 2116,
+      "heightStuds": 3
+    },
+    {
+      "index": 26,
+      "id": "RedPet26FireGarden",
+      "name": "Fire Garden",
+      "sourceObjects": 68,
+      "vertices": 2362,
+      "triangles": 4356,
+      "heightStuds": 3
+    },
+    {
+      "index": 27,
+      "id": "RedPet27Ruby",
+      "name": "Ruby",
+      "sourceObjects": 34,
+      "vertices": 896,
+      "triangles": 1568,
+      "heightStuds": 3
+    },
+    {
+      "index": 28,
+      "id": "RedPet28GoldenDragon",
+      "name": "Golden Dragon",
+      "sourceObjects": 44,
+      "vertices": 1072,
+      "triangles": 1712,
+      "heightStuds": 3
+    },
+    {
+      "index": 29,
+      "id": "RedPet29Inferno",
+      "name": "Inferno",
+      "sourceObjects": 44,
+      "vertices": 1040,
+      "triangles": 1648,
+      "heightStuds": 3
+    },
+    {
+      "index": 30,
+      "id": "RedPet30FestivalShrine",
+      "name": "Festival Shrine",
+      "sourceObjects": 158,
+      "vertices": 5916,
+      "triangles": 11100,
+      "heightStuds": 3
+    }
+  ],
+  "colors": [
+    [
+      0.2,
+      0.055,
+      0.035,
+      1.0
+    ],
+    [
+      0.027,
+      0.012,
+      0.045,
+      1.0
+    ],
+    [
+      0.12,
+      0.72,
+      0.035,
+      1.0
+    ],
+    [
+      1.0,
+      0.18,
+      0.44,
+      1.0
+    ],
+    [
+      1.0,
+      0.92,
+      0.78,
+      1.0
+    ],
+    [
+      1.0,
+      0.66,
+      0.015,
+      1.0
+    ],
+    [
+      0.015,
+      0.65,
+      1.0,
+      1.0
+    ],
+    [
+      0.88,
+      0.015,
+      0.045,
+      1.0
+    ],
+    [
+      1.0,
+      0.22,
+      0.005,
+      1.0
+    ],
+    [
+      0.33,
+      0.015,
+      0.72,
+      1.0
+    ],
+    [
+      0.46,
+      0.85,
+      0.035,
+      1.0
+    ],
+    [
+      0.025,
+      0.2,
+      0.34,
+      1.0
+    ]
+  ],
+  "texture": "red-pets30-colors.png",
+  "fbx": "red-pets30.fbx"
+}
