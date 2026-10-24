@@ -52,13 +52,11 @@ return {
 		check(result.settings.music == 100, "A broken music volume falls back")
 	end,
 	["a toggle survives only as a boolean"] = function()
-		local result = Data.normalize({ settings = { shake = false, effects = true, hideHUD = true } }, catalog)
+		local result = Data.normalize({ settings = { shake = false, effects = true } }, catalog)
 		check(not result.settings.shake, "The shake toggle is kept")
 		check(result.settings.effects, "The effects toggle is kept")
-		check(result.settings.hideHUD, "The hide HUD toggle is kept")
-		local broken = Data.normalize({ settings = { shake = "no", effects = 1, hideHUD = nil } }, catalog)
+		local broken = Data.normalize({ settings = { shake = "no", effects = 1 } }, catalog)
 		check(broken.settings.shake == true, "A broken shake toggle keeps the default")
 		check(broken.settings.effects == true, "A broken effects toggle keeps the default")
-		check(broken.settings.hideHUD == false, "A missing hide HUD toggle keeps the default")
 	end,
 }

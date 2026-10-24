@@ -18,6 +18,8 @@ function Controller:Start()
 	local HudLayout = require(clientRoot.Modules:WaitForChild("HudLayout"))
 	local Kit = require(clientRoot.Controllers:WaitForChild("HudKit"))
 	local HudBuilder = require(clientRoot.Controllers:WaitForChild("HudBuilder"))
+	local HudMotion = require(clientRoot.Controllers:WaitForChild("HudMotion"))
+	local MotionConfig = require(ReplicatedStorage.Shared:WaitForChild("UiMotionConfig"))
 	local HudPanels = require(clientRoot.Controllers:WaitForChild("HudPanels"))
 	local PetFollowers = require(clientRoot.Controllers:WaitForChild("PetFollowers"))
 	local InputController = require(clientRoot.Controllers:WaitForChild("InputController"))
@@ -105,6 +107,29 @@ function Controller:Start()
 		end,
 	})
 	local hud = hudRefs.hud
+	local hudMotion = HudMotion.mount(hud, canvas, scale)
+	local blurTween: Tween? = nil
+	local function syncPresentation()
+		local modal = currentPanel ~= nil
+		hud.Visible = true
+		hudMotion.setHidden(modal, latest and latest.data.settings.effects == false)
+		if collectorUI then
+			collectorUI:setModalOpen(modal)
+		end
+		if adminUI then
+			adminUI.setLauncherHidden(modal)
+		end
+		local goal = if modal then MotionConfig.Blur.Size else 0
+		if blur:GetAttribute("Goal") ~= goal then
+			if blurTween then
+				blurTween:Cancel()
+			end
+			blur:SetAttribute("Goal", goal)
+			local tween = TweenService:Create(blur, TweenInfo.new(MotionConfig.Blur.Time), { Size = goal })
+			blurTween = tween
+			tween:Play()
+		end
+	end
 
 	local layout =
 		{ mode = "landscape", portrait = false, width = 1280, height = 720, levelWidth = 592, levelHeight = 61 }
@@ -115,7 +140,7 @@ function Controller:Start()
 	-- orientation, it never switches it, so no panel is closed on startup.
 	local orientationKnown = false
 
-	local function closePanel()
+	local function closePanel(switching: boolean?)
 		if hatchPromptState ~= nil then
 			ProximityPrompts.Enabled = hatchPromptState
 			hatchPromptState = nil
@@ -128,40 +153,11 @@ function Controller:Start()
 			adminUI.close()
 		end
 		currentPanel = nil
-		panels.reset()
+		panels.close()
 		hatchBusy = false
-		-- The panel leaves the screen instead of vanishing: it shrinks a little
-		-- and the world behind it comes back into focus.
-		for _, child in ipairs(canvas:GetChildren()) do
-			if child:IsA("Frame") and child.Name == "Modal" then
-				local shrink = child:FindFirstChildOfClass("UIScale")
-				if shrink then
-					TweenService:Create(shrink, TweenInfo.new(0.14), { Scale = shrink.Scale * 0.86 }):Play()
-				end
-				task.delay(0.15, function()
-					if child.Parent then
-						child:Destroy()
-					end
-				end)
-			end
+		if not switching then
+			syncPresentation()
 		end
-		TweenService:Create(blur, TweenInfo.new(0.18), { Size = 0 }):Play()
-		if latest then
-			hud.Visible = not latest.data.settings.hideHUD
-		end
-	end
-
-	-- The tab row of the collector belongs to the collector: the legacy
-	-- panels are modal and hide it while they are open.
-	local function navAllowed(panel: string?): boolean
-		if panel == nil then
-			return true
-		end
-		return panel == "Pets"
-			or panel == "Trails"
-			or panel == "Shop"
-			or panel == "Hatch"
-			or panel == Config.find(Config.Eggs, activeEgg).name
 	end
 
 	panels = HudPanels.mount({
@@ -170,19 +166,10 @@ function Controller:Start()
 		snapshot = function()
 			return latest
 		end,
-		portrait = function()
-			return layout.portrait
-		end,
 		closePanel = closePanel,
 		showPanel = function(name: string)
 			currentPanel = name
-			hud.Visible = false
-			if collectorUI then
-				collectorUI:setHidden(not navAllowed(name))
-			end
-		end,
-		blur = function(size: number)
-			TweenService:Create(blur, TweenInfo.new(0.18), { Size = size }):Play()
+			syncPresentation()
 		end,
 	})
 
@@ -207,7 +194,36 @@ function Controller:Start()
 		layout.width = area.size.X
 		layout.height = area.size.Y
 		local spec = if portrait then HudLayout.portrait(area.size.X, area.size.Y) else HudLayout.landscape()
+		local phone = game:GetService("UserInputService").TouchEnabled and area.size.Y < 520
+		if not portrait and phone then
+			spec = HudLayout.phoneLandscape()
+		end
+		hudMotion.layout(phone)
 		HudLayout.apply(spec, { hud, canvas })
+		-- Scale the entire offer, including its artwork, price and hover motion.
+		for _, name in { "StarterPack", "DoubleSkill", "DoubleWins" } do
+			local offer = HudLayout.findNode(hud, name)
+			local base = if phone or portrait then 1 else 1.4
+			if offer then
+				offer:SetAttribute("RestScale", base)
+				local motion = offer:FindFirstChild("RestScale")
+				if not motion then
+					local resting = Instance.new("UIScale")
+					resting.Name = "RestScale"
+					resting.Parent = offer
+					motion = resting
+				end
+				if motion and motion:IsA("UIScale") then
+					motion.Scale = base
+				end
+			end
+			local shadow = HudLayout.findNode(hud, name .. "Shadow")
+			if shadow then
+				local motion = shadow:FindFirstChildOfClass("UIScale") or Instance.new("UIScale")
+				motion.Scale = base
+				motion.Parent = shadow
+			end
+		end
 		local level = spec.elements["LevelBar"]
 		layout.levelWidth = level.w
 		layout.levelHeight = level.h
@@ -224,6 +240,7 @@ function Controller:Start()
 			canvas.Position = UDim2.fromOffset(area.offset.X + area.size.X / 2, area.offset.Y + area.size.Y / 2)
 			local gutter = (area.size.X / factor - 1280) / 2
 			local margin = 16 / factor
+			pins = HudLayout.pins(spec, hud)
 			for _, pin in pins do
 				local x = pin.side == "left" and (-gutter + margin + pin.offset)
 					or (1280 + gutter - margin + pin.offset)
@@ -231,58 +248,43 @@ function Controller:Start()
 				pin.node.Position = UDim2.new(0, x, position.Y.Scale, position.Y.Offset)
 			end
 		end
+		-- TextScaled constraints cap physical pixels, so they must follow the
+		-- board and the larger side offers as well as their containing plates.
+		for _, label in hud:GetDescendants() do
+			if label:IsA("TextLabel") then
+				local limit = label:FindFirstChildOfClass("UITextSizeConstraint")
+				if limit then
+					local extra = 1
+					local ancestor = label.Parent
+					while ancestor and ancestor ~= hud do
+						local rest = ancestor:GetAttribute("RestScale")
+						if typeof(rest) == "number" then
+							extra *= rest
+						end
+						ancestor = ancestor.Parent
+					end
+					local factor = scale.Scale * extra
+					limit.MinTextSize = 1
+					limit.MaxTextSize = math.max(1, math.floor(label.TextSize * factor))
+					limit.MinTextSize = math.min(limit.MaxTextSize, math.max(1, math.floor(10 * factor)))
+				end
+			end
+		end
+		hudMotion.refresh()
+		panels.layout()
 	end
 
-	local toastId = 0
-	-- The toast fades in over the world and fades out again: the message is
-	-- the only thing that moves when nothing else happens.
-	local function notice(message: string?)
-		if not message or message == "" then
-			return
+	local notifications: any = nil
+	local function notice(message: string?, kind: string?, wins: number?, distance: number?)
+		if notifications then
+			notifications.show(message, kind, wins, distance)
 		end
-		-- The legacy toast lives under the collector windows: its gui sits
-		-- on DisplayOrder 20 while the collector mounts at 30, so while a
-		-- collector screen owns the panel the answer has to be drawn inside
-		-- its window as well. Legacy panels keep the plain toast on top.
-		if currentPanel ~= nil and navAllowed(currentPanel) and collectorUI then
-			collectorUI:notice(message)
-		end
-		toastId += 1
-		local id = toastId
-		local toast = hudRefs.toast
-		local stroke = toast:FindFirstChildOfClass("UIStroke")
-		toast.Text = message
-		toast.Visible = true
-		hudRefs.toastPlate.Visible = true
-		TweenService:Create(toast, TweenInfo.new(0.16), { TextTransparency = 0 }):Play()
-		if stroke then
-			TweenService:Create(stroke, TweenInfo.new(0.16), { Transparency = 0 }):Play()
-		end
-		task.delay(2.6, function()
-			if toastId ~= id then
-				return
-			end
-			local fade = TweenService:Create(toast, TweenInfo.new(0.32), { TextTransparency = 1 })
-			if stroke then
-				TweenService:Create(stroke, TweenInfo.new(0.32), { Transparency = 1 }):Play()
-			end
-			fade.Completed:Once(function()
-				if toastId == id then
-					toast.Visible = false
-					hudRefs.toastPlate.Visible = false
-				end
-			end)
-			fade:Play()
-		end)
 	end
 
 	local function openCollector(name: string, kind: string, eggId: string?)
-		closePanel()
+		closePanel(true)
 		currentPanel = name
-		hud.Visible = false
-		-- The world behind an open screen is blurred like the legacy panels:
-		-- the window is translucent and the world must not fight with it.
-		TweenService:Create(blur, TweenInfo.new(0.18), { Size = 22 }):Play()
+		syncPresentation()
 		collectorUI:setHidden(false)
 		collectorUI:open(kind, eggId)
 	end
@@ -333,6 +335,8 @@ function Controller:Start()
 			openCollector("Pets", "Pets")
 		elseif name == "Gifts" then
 			panels.open("Gifts")
+		elseif name == "Daily" then
+			panels.open("Daily")
 		elseif name == "Shop" then
 			openCollector("Shop", "Shop")
 		end
@@ -351,6 +355,13 @@ function Controller:Start()
 		panelOpen = function()
 			return currentPanel ~= nil
 		end,
+	})
+	notifications = require(clientRoot.Controllers.Notifications).mount({
+		parent = player:WaitForChild("PlayerGui"),
+		snapshot = function()
+			return latest
+		end,
+		playSound = effects.playSound,
 	})
 	local followers = PetFollowers.mount({
 		effectsFolder = effectsFolder,
@@ -447,13 +458,12 @@ function Controller:Start()
 		if hatchBusy then
 			return
 		end
-		closePanel()
+		closePanel(true)
 		hatchBusy = true
 		hatchPromptState = ProximityPrompts.Enabled
 		ProximityPrompts.Enabled = false
 		currentPanel = "Hatch"
-		hud.Visible = false
-		TweenService:Create(blur, TweenInfo.new(0.2), { Size = 18 }):Play()
+		syncPresentation()
 		collectorUI:setHidden(false)
 		collectorUI:hatch(pets)
 	end
@@ -467,7 +477,12 @@ function Controller:Start()
 			effects.floatingGain(info.gain)
 			balls.setPractice(latest and latest.data.stone or "Pebble")
 		elseif kind == "Result" then
-			notice("+" .. Config.format(info.wins) .. " WINS • " .. Config.format(info.distance) .. " m")
+			notice(
+				"+" .. Config.format(info.wins) .. " WINS • " .. Config.format(info.distance) .. " m",
+				"Success",
+				info.wins,
+				info.distance
+			)
 		elseif kind == "Hatch" then
 			task.spawn(hatchAnimation, info)
 		elseif kind == "Egg" then
@@ -485,7 +500,7 @@ function Controller:Start()
 		elseif kind == "OpenBall" then
 			panels.open("Inventory", info)
 		elseif kind == "Rebirth" then
-			notice("REBIRTH! Your skill multiplier increased!")
+			notice("REBIRTH! Your skill multiplier increased!", "Success")
 			closePanel()
 		elseif kind == "AdminResetView" or kind == "ShotCancelled" then
 			world.restoreCamera()
@@ -516,8 +531,9 @@ function Controller:Start()
 			adminUI.update(info)
 		end
 		collectorUI:update(info)
-		collectorUI:setHidden(flight ~= nil or not navAllowed(currentPanel))
+		collectorUI:setHidden(flight ~= nil)
 		local d = info.data
+		gui:SetAttribute("ReducedMotion", d.settings.effects == false)
 		hudRefs.skillText.Text = Config.format(d.skill) .. " SKILL"
 		hudRefs.multiText.Text = "×" .. string.format("%.2f", info.multiplier) .. " Multiplier"
 		hudRefs.levelText.Text = "Level " .. info.level
@@ -539,19 +555,19 @@ function Controller:Start()
 		hudRefs.rebirthPercent.Text = math.floor((info.rebirthProgress or 0) * 100) .. "%"
 		hudRefs.throwButton.Visible = info.canThrow and not flight and not info.training
 		hudRefs.stopButton.Visible = info.training ~= nil
-		local throwShadow = hud:FindFirstChild("ThrowShadow")
+		local throwShadow = HudLayout.findNode(hud, "ThrowShadow")
 		if throwShadow and throwShadow:IsA("GuiObject") then
 			throwShadow.Visible = hudRefs.throwButton.Visible
 		end
-		local stopShadow = hud:FindFirstChild("StopTrainingShadow")
+		local stopShadow = HudLayout.findNode(hud, "StopTrainingShadow")
 		if stopShadow and stopShadow:IsA("GuiObject") then
 			stopShadow.Visible = hudRefs.stopButton.Visible
 		end
 		local autoCaption = Kit.captionOf(hudRefs.auto)
 		if autoCaption then
-			autoCaption.Text = info.auto and "AUTO: ON" or "AUTO THROW"
+			autoCaption.Text = info.auto and "AUTO: ON" or "AUTO KICK"
 		end
-		hud.Visible = currentPanel == nil and not d.settings.hideHUD
+		syncPresentation()
 		hudRefs.tutorial.Visible = not flight
 		hudRefs.tutorial.Text = info.training and "Training! STOP TRAINING or jump to leave"
 			or (
@@ -570,7 +586,7 @@ function Controller:Start()
 	end)
 
 	effect.OnClientEvent:Connect(function(kind: string)
-		if kind == "Result" or kind == "Hatch" or kind == "Rebirth" then
+		if kind == "Hatch" then
 			effects.playSound("rbxasset://sounds/volume_slider.ogg", 0.25, 1.4)
 		end
 	end)
@@ -578,11 +594,9 @@ function Controller:Start()
 	adminUI = require(clientRoot.AdminPanel).mount({
 		closePanel = closePanel,
 		activate = function()
-			closePanel()
+			closePanel(true)
 			currentPanel = "Admin"
-			hud.Visible = false
-			collectorUI:setHidden(true)
-			TweenService:Create(blur, TweenInfo.new(0.18), { Size = 16 }):Play()
+			syncPresentation()
 		end,
 	})
 
@@ -651,6 +665,7 @@ function Controller:Start()
 		viewportConnection:Disconnect()
 		input.destroy()
 		followers.destroy()
+		notifications.destroy()
 		effects.destroy()
 		balls.destroy()
 		world.destroy()
@@ -658,6 +673,12 @@ function Controller:Start()
 			adminUI.destroy()
 		end
 		collectorUI:destroy()
+		panels.destroy()
+		hudMotion.destroy()
+		if blurTween then
+			blurTween:Cancel()
+		end
+		blur:Destroy()
 	end)
 
 	send("Snapshot")

@@ -10,7 +10,7 @@ function Purchases.buyOrEquip(data, id)
 	end
 	local owned = data.stones[id] == true
 	if not owned and data.wins < item.cost then
-		return false, "Need " .. Config.format(item.cost) .. " Crowns"
+		return false, "Need " .. Config.format(item.cost) .. " Wins"
 	end
 	if not owned then
 		data.wins -= item.cost

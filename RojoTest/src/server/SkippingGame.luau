@@ -312,11 +312,6 @@ function Game.start(map, world2)
 		if testing then
 			assert(s.adminOriginal, "Test hatching requires an admin test session")
 		end
-		local pos = rootFor(player)
-		if not testing and not EggInteraction.inRange(arenaFor(player), id, pos and pos.Position) then
-			publish(player, "Walk to the " .. egg.name)
-			return
-		end
 		if os.clock() < s.busyUntil then
 			publish(player, "Wait for your throw to finish")
 			return
@@ -329,6 +324,23 @@ function Game.start(map, world2)
 		if d.wins < cost * amount then
 			publish(player, "Need " .. Config.format(cost * amount) .. " Wins")
 			return
+		end
+		if not testing then
+			local root, hum = rootFor(player)
+			if not root or not hum or hum.Health <= 0 then
+				publish(player, "Wait for your character to respawn")
+				return
+			end
+			local destination = EggInteraction.destination(arenaFor(player), id, standingHeight(root, hum))
+			if not destination then
+				publish(player, "This egg is unavailable right now")
+				return
+			end
+			stopTraining(player)
+			s.stopUntil = os.clock() + 0.6
+			root.CFrame = destination
+			root.AssemblyLinearVelocity = Vector3.zero
+			root.AssemblyAngularVelocity = Vector3.zero
 		end
 		d.wins -= cost * amount
 		local hatched = {}

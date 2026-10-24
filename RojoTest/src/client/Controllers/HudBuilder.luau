@@ -9,6 +9,9 @@ local Config = require(game.ReplicatedStorage.Shared.GameConfig)
 local Builder = {}
 local C = Color3.fromRGB
 local yellow = C(255, 225, 66)
+local function caption(button: TextButton): TextLabel
+	return assert(Kit.captionOf(button))
+end
 
 export type Context = {
 	canvas: Frame,
@@ -19,8 +22,6 @@ export type Context = {
 
 export type Refs = {
 	hud: Frame,
-	toast: TextLabel,
-	toastPlate: Frame,
 	auto: TextButton,
 	throwButton: TextButton,
 	stopButton: TextButton,
@@ -53,26 +54,11 @@ function Builder.build(context: Context): Refs
 	local hud = Kit.frame(canvas, "HUD", hudItem.x, hudItem.y, hudItem.w, hudItem.h)
 	hud.BackgroundTransparency = 1
 
-	local toastItem = at("Toast")
-	-- The toast is a brick plate: the message has to read over the world.
-	local toastPlate =
-		Kit.brick(canvas, "ToastPlate", toastItem.x, toastItem.y, toastItem.w, toastItem.h, C(38, 50, 74))
-	toastPlate.Visible = false
-	toastPlate.ZIndex = 29
-	local toast = Kit.text(toastPlate, "Toast", "", 16, 5, toastItem.w - 32, toastItem.h - 10, toastItem.text, yellow)
-	toast.Visible = false
-	toast.TextTransparency = 1
-	toast.ZIndex = 30
-	local toastStroke = toast:FindFirstChildOfClass("UIStroke")
-	if toastStroke then
-		toastStroke.Transparency = 1
-	end
-
 	local autoItem = at("AutoThrow")
 	local auto = Kit.button(
 		hud,
 		"AutoThrow",
-		"AUTO THROW",
+		"AUTO KICK",
 		autoItem.x,
 		autoItem.y,
 		autoItem.w,
@@ -88,10 +74,12 @@ function Builder.build(context: Context): Refs
 			end
 		end
 	)
-	auto.Caption.Position = UDim2.fromOffset(3, 7)
-	auto.Caption.Size = UDim2.fromOffset(146, 25)
-	Kit.icon(auto, "Wins", 55, -15, 43, 31)
-	Kit.text(auto, "Price", "ONLY ◉ 25", 9, 30, 133, 17, 14, yellow)
+	caption(auto).Position = UDim2.fromOffset(3, 7)
+	caption(auto).Size = UDim2.fromOffset(autoItem.w - 6, 25)
+	Kit.icon(auto, "Wins", (autoItem.w - 43) / 2, -15, 43, 31)
+	Kit.text(auto, "Price", "ONLY", 56, 32, 43, 17, 14, yellow)
+	Kit.icon(auto, "Robux", 103, 32, 17, 17)
+	Kit.text(auto, "Amount", "25", 124, 32, 27, 17, 14, yellow)
 
 	local settingsItem = at("Settings")
 	local settings = Kit.button(
@@ -108,7 +96,26 @@ function Builder.build(context: Context): Refs
 			context.openPanel("Settings")
 		end
 	)
-	Kit.icon(settings, "Settings", 3, 3, 23, 23)
+	Kit.icon(settings, "Settings", 3, 3, 30, 30)
+	local dailyItem = at("Daily")
+	local daily = Kit.button(
+		hud,
+		"Daily",
+		"",
+		dailyItem.x,
+		dailyItem.y,
+		dailyItem.w,
+		dailyItem.h,
+		C(30, 32, 39),
+		18,
+		function()
+			context.openPanel("Daily")
+		end
+	)
+	Kit.hide(daily, "Studs")
+	Kit.hide(hud, "DailyShadow")
+	Kit.corner(daily, 999)
+	Kit.icon(daily, "Daily", 5, 5, dailyItem.w - 10, dailyItem.h - 10)
 
 	local starterItem = at("StarterPack")
 	local starter = Kit.button(
@@ -125,7 +132,7 @@ function Builder.build(context: Context): Refs
 			send("Product", "StarterPack")
 		end
 	)
-	starter.BackgroundTransparency = 1
+	Kit.visualOf(starter).BackgroundTransparency = 1
 	Kit.hide(starter, "Studs")
 	Kit.hide(starter, "UIStroke")
 	Kit.hide(hud, "StarterPackShadow")
@@ -149,10 +156,12 @@ function Builder.build(context: Context): Refs
 			send("Product", "DoubleSkill")
 		end
 	)
-	skillOffer.Caption.Position = UDim2.fromOffset(3, 12)
-	skillOffer.Caption.Size = UDim2.fromOffset(119, 25)
+	caption(skillOffer).Position = UDim2.fromOffset(3, 12)
+	caption(skillOffer).Size = UDim2.fromOffset(119, 25)
 	Kit.icon(skillOffer, "Skill", 50, -13, 39, 37)
-	Kit.text(skillOffer, "Price", "ONLY ◉ 5", 4, 42, 117, 15, 14, yellow)
+	Kit.text(skillOffer, "Price", "ONLY", 17, 42, 43, 15, 14, yellow)
+	Kit.icon(skillOffer, "Robux", 64, 40, 17, 17)
+	Kit.text(skillOffer, "Amount", "5", 85, 42, 20, 15, 14, yellow)
 
 	local winsItem = at("DoubleWins")
 	local winsOffer = Kit.button(
@@ -169,15 +178,18 @@ function Builder.build(context: Context): Refs
 			send("Product", "DoubleWins")
 		end
 	)
-	winsOffer.Caption.Position = UDim2.fromOffset(3, 9)
-	winsOffer.Caption.Size = UDim2.fromOffset(119, 27)
-	Kit.text(winsOffer, "Price", "ONLY ◉ 59", 4, 42, 117, 15, 14, yellow)
+	caption(winsOffer).Position = UDim2.fromOffset(3, 9)
+	caption(winsOffer).Size = UDim2.fromOffset(119, 27)
+	Kit.icon(winsOffer, "Wins", 46, -7, 39, 37)
+	Kit.text(winsOffer, "Price", "ONLY", 13, 42, 43, 15, 14, yellow)
+	Kit.icon(winsOffer, "Robux", 60, 40, 17, 17)
+	Kit.text(winsOffer, "Amount", "59", 81, 42, 30, 15, 14, yellow)
 
 	local throwItem = at("Throw")
 	local throwButton = Kit.button(
 		hud,
 		"Throw",
-		"THROW",
+		"KICK",
 		throwItem.x,
 		throwItem.y,
 		throwItem.w,
@@ -271,8 +283,9 @@ function Builder.build(context: Context): Refs
 			send("Product", offer[2])
 		end)
 		Kit.icon(b, "Skill", 72, -7, 40, 67)
-		b.Caption.ZIndex = 3
-		Kit.text(b, "Price", "◉ " .. Config.Products[offer[2]].price, 117, 44, 73, 23, 18, C(142, 255, 51))
+		caption(b).ZIndex = 3
+		Kit.icon(b, "Robux", item.w - 54, 44, 22, 22)
+		Kit.text(b, "Price", tostring(Config.Products[offer[2]].price), item.w - 30, 44, 30, 23, 18, C(142, 255, 51))
 	end
 
 	local rebirthIconItem = at("RebirthIcon")
@@ -375,8 +388,6 @@ function Builder.build(context: Context): Refs
 
 	return {
 		hud = hud,
-		toast = toast,
-		toastPlate = toastPlate,
 		auto = auto,
 		throwButton = throwButton,
 		stopButton = stopButton,

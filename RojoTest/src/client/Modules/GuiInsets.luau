@@ -85,6 +85,16 @@ function GuiInsets.prepare(screenGui: ScreenGui)
 	screenGui.ScreenInsets = Enum.ScreenInsets.DeviceSafeInsets
 end
 
+-- Центр всего экрана в координатах GuiObject.AbsolutePosition.
+-- Вычитание top bar уже включено в GetInsetArea(None); не добавлять inset снова.
+function GuiInsets.screenCenter(viewport: Vector2): Vector2
+	local full = insetRect(Enum.ScreenInsets.None)
+	if full then
+		return Vector2.new(full.x + full.width / 2, full.y + full.height / 2)
+	end
+	return viewport / 2 - GuiService:GetGuiInset()
+end
+
 -- The usable rectangle in probe coordinates. `probe` is a full size frame
 -- inside the ScreenGui: it reports the area the engine really granted, so the
 -- notch and the gesture bar are already outside of it. The offset is relative

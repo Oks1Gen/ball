@@ -1,0 +1,418 @@
+[
+  {
+    "key": "shop",
+    "width": 512,
+    "height": 512,
+    "bounds": [
+      18,
+      33,
+      494,
+      479
+    ],
+    "edgePixels": 0,
+    "blackFraction": 0.21
+  },
+  {
+    "key": "rebirth",
+    "width": 512,
+    "height": 512,
+    "bounds": [
+      19,
+      43,
+      491,
+      473
+    ],
+    "edgePixels": 0,
+    "blackFraction": 0.257
+  },
+  {
+    "key": "auras",
+    "width": 512,
+    "height": 512,
+    "bounds": [
+      91,
+      24,
+      413,
+      489
+    ],
+    "edgePixels": 0,
+    "blackFraction": 0.252
+  },
+  {
+    "key": "pets",
+    "width": 512,
+    "height": 512,
+    "bounds": [
+      18,
+      28,
+      497,
+      483
+    ],
+    "edgePixels": 0,
+    "blackFraction": 0.2
+  },
+  {
+    "key": "trails",
+    "width": 512,
+    "height": 512,
+    "bounds": [
+      34,
+      35,
+      488,
+      478
+    ],
+    "edgePixels": 0,
+    "blackFraction": 0.258
+  },
+  {
+    "key": "inventory",
+    "width": 512,
+    "height": 512,
+    "bounds": [
+      53,
+      35,
+      461,
+      476
+    ],
+    "edgePixels": 0,
+    "blackFraction": 0.195
+  },
+  {
+    "key": "gifts",
+    "width": 512,
+    "height": 512,
+    "bounds": [
+      33,
+      29,
+      478,
+      490
+    ],
+    "edgePixels": 0,
+    "blackFraction": 0.18
+  },
+  {
+    "key": "wins",
+    "width": 512,
+    "height": 512,
+    "bounds": [
+      22,
+      54,
+      490,
+      460
+    ],
+    "edgePixels": 0,
+    "blackFraction": 0.23
+  },
+  {
+    "key": "daily",
+    "width": 512,
+    "height": 512,
+    "bounds": [
+      32,
+      36,
+      480,
+      484
+    ],
+    "edgePixels": 0,
+    "blackFraction": 0.168
+  },
+  {
+    "key": "offline",
+    "width": 512,
+    "height": 512,
+    "bounds": [
+      55,
+      39,
+      477,
+      475
+    ],
+    "edgePixels": 0,
+    "blackFraction": 0.205
+  },
+  {
+    "key": "close",
+    "width": 512,
+    "height": 512,
+    "bounds": [
+      56,
+      64,
+      455,
+      447
+    ],
+    "edgePixels": 0,
+    "blackFraction": 0.25
+  },
+  {
+    "key": "ball",
+    "width": 512,
+    "height": 512,
+    "bounds": [
+      35,
+      37,
+      475,
+      479
+    ],
+    "edgePixels": 0,
+    "blackFraction": 0.337
+  },
+  {
+    "key": "egg",
+    "width": 512,
+    "height": 512,
+    "bounds": [
+      85,
+      48,
+      424,
+      473
+    ],
+    "edgePixels": 0,
+    "blackFraction": 0.144
+  },
+  {
+    "key": "items",
+    "width": 512,
+    "height": 512,
+    "bounds": [
+      42,
+      28,
+      469,
+      486
+    ],
+    "edgePixels": 0,
+    "blackFraction": 0.156
+  },
+  {
+    "key": "relic",
+    "width": 512,
+    "height": 512,
+    "bounds": [
+      39,
+      30,
+      492,
+      483
+    ],
+    "edgePixels": 0,
+    "blackFraction": 0.246
+  },
+  {
+    "key": "white-trail",
+    "width": 512,
+    "height": 512,
+    "bounds": [
+      26,
+      36,
+      490,
+      473
+    ],
+    "edgePixels": 0,
+    "blackFraction": 0.291
+  },
+  {
+    "key": "red-trail",
+    "width": 512,
+    "height": 512,
+    "bounds": [
+      44,
+      34,
+      486,
+      482
+    ],
+    "edgePixels": 0,
+    "blackFraction": 0.348
+  },
+  {
+    "key": "blue-trail",
+    "width": 512,
+    "height": 512,
+    "bounds": [
+      36,
+      43,
+      479,
+      473
+    ],
+    "edgePixels": 0,
+    "blackFraction": 0.321
+  },
+  {
+    "key": "purple-trail",
+    "width": 512,
+    "height": 512,
+    "bounds": [
+      64,
+      35,
+      492,
+      483
+    ],
+    "edgePixels": 0,
+    "blackFraction": 0.263
+  },
+  {
+    "key": "rainbow-trail",
+    "width": 512,
+    "height": 512,
+    "bounds": [
+      52,
+      38,
+      483,
+      473
+    ],
+    "edgePixels": 0,
+    "blackFraction": 0.269
+  },
+  {
+    "key": "settings",
+    "width": 512,
+    "height": 512,
+    "bounds": [
+      27,
+      26,
+      484,
+      479
+    ],
+    "edgePixels": 0,
+    "blackFraction": 0.201
+  },
+  {
+    "key": "arrow",
+    "width": 512,
+    "height": 512,
+    "bounds": [
+      38,
+      87,
+      478,
+      427
+    ],
+    "edgePixels": 0,
+    "blackFraction": 0.336
+  },
+  {
+    "key": "plus",
+    "width": 512,
+    "height": 512,
+    "bounds": [
+      44,
+      50,
+      473,
+      468
+    ],
+    "edgePixels": 0,
+    "blackFraction": 0.216
+  },
+  {
+    "key": "check",
+    "width": 512,
+    "height": 512,
+    "bounds": [
+      20,
+      50,
+      491,
+      469
+    ],
+    "edgePixels": 0,
+    "blackFraction": 0.265
+  },
+  {
+    "key": "alert",
+    "width": 512,
+    "height": 512,
+    "bounds": [
+      58,
+      61,
+      451,
+      449
+    ],
+    "edgePixels": 0,
+    "blackFraction": 0.212
+  },
+  {
+    "key": "lock",
+    "width": 512,
+    "height": 512,
+    "bounds": [
+      100,
+      30,
+      422,
+      475
+    ],
+    "edgePixels": 0,
+    "blackFraction": 0.27
+  },
+  {
+    "key": "luck",
+    "width": 512,
+    "height": 512,
+    "bounds": [
+      62,
+      32,
+      449,
+      469
+    ],
+    "edgePixels": 0,
+    "blackFraction": 0.141
+  },
+  {
+    "key": "win-boost",
+    "width": 512,
+    "height": 512,
+    "bounds": [
+      54,
+      32,
+      457,
+      474
+    ],
+    "edgePixels": 0,
+    "blackFraction": 0.177
+  },
+  {
+    "key": "lucky-cat",
+    "width": 512,
+    "height": 512,
+    "bounds": [
+      13,
+      43,
+      500,
+      472
+    ],
+    "edgePixels": 0,
+    "blackFraction": 0.195
+  },
+  {
+    "key": "titles",
+    "width": 512,
+    "height": 512,
+    "bounds": [
+      40,
+      38,
+      471,
+      474
+    ],
+    "edgePixels": 0,
+    "blackFraction": 0.219
+  },
+  {
+    "key": "skill",
+    "width": 512,
+    "height": 512,
+    "bounds": [
+      116,
+      42,
+      414,
+      466
+    ],
+    "edgePixels": 0,
+    "blackFraction": 0.182
+  },
+  {
+    "key": "robux",
+    "width": 512,
+    "height": 512,
+    "bounds": [
+      69,
+      53,
+      442,
+      461
+    ],
+    "edgePixels": 0,
+    "blackFraction": 0.343
+  }
+]

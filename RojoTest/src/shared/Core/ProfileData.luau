@@ -22,7 +22,7 @@ function Data.fresh(): any
 		unlockedWorld2 = false,
 		perks = {},
 		receipts = {},
-		settings = { sound = 100, music = 100, shake = true, effects = true, hideHUD = false },
+		settings = { sound = 100, music = 100, shake = true, effects = true },
 		daily = 0,
 	}
 end
@@ -106,7 +106,7 @@ function Data.normalize(input: any, catalog: any): any
 		for _, key in { "sound", "music" } do
 			data.settings[key] = bounded(input.settings[key], 100, 100)
 		end
-		for _, key in { "shake", "effects", "hideHUD" } do
+		for _, key in { "shake", "effects" } do
 			if type(input.settings[key]) == "boolean" then
 				data.settings[key] = input.settings[key]
 			end

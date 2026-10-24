@@ -2,15 +2,14 @@
 local Packages = game.ReplicatedStorage.Packages
 local React = require(Packages.React)
 local Ripple = require(Packages.Ripple)
-local Input = game:GetService("UserInputService")
 local Run = game:GetService("RunService")
 local Theme = require(script.Parent.Theme)
+local Motion = require(game.ReplicatedStorage.Shared.UiMotion)
 local Art = require(script.Parent.Art)
-local OldArt = require(script.Parent.Parent.UIAssets)
 local Config = require(game.ReplicatedStorage.Shared.GameConfig)
 local Visuals = require(game.ReplicatedStorage.Shared.PetVisuals)
 local PetViewCamera = require(script.Parent.PetViewCamera)
-local Hooks = require(script.Parent.createHooks)(React, Ripple, Input)
+local Hooks = require(script.Parent.createHooks)(React, Ripple)
 local e, C = React.createElement, Color3.fromRGB
 local U = { Hooks = Hooks }
 
@@ -74,19 +73,15 @@ function U.Label(p)
 	})
 end
 function U.Icon(p)
-	local slot = Art.Slots[p.Kind]
-	local rect = not slot and OldArt.Rects[p.Kind] or nil
-	local image, offset, size
-	if slot then
-		image = Art.Image
-		offset, size = Vector2.new(slot % 4 * 256, math.floor(slot / 4) * 256), Vector2.new(256, 256)
-	elseif rect then
-		image = OldArt.Image
-		offset, size =
-			Vector2.new(rect[1] * OldArt.Width, rect[2] * OldArt.Height),
-			Vector2.new(rect[3] * OldArt.Width, rect[4] * OldArt.Height)
-	end
+	local image, offset, size = Art.resolve(p.Kind)
+	local ref = React.useRef(nil)
+	React.useEffect(function()
+		if ref.current then
+			Art.bind(ref.current)
+		end
+	end, { image })
 	return e("ImageLabel", {
+		ref = ref,
 		Name = p.Name or (p.Kind .. "Art"),
 		BackgroundTransparency = 1,
 		Position = p.Position,
@@ -98,7 +93,7 @@ function U.Icon(p)
 		ImageRectOffset = offset,
 		ImageRectSize = size,
 		ScaleType = Enum.ScaleType.Fit,
-		ImageColor3 = p.Color or Color3.new(1, 1, 1),
+		ImageColor3 = Color3.new(1, 1, 1),
 		Rotation = p.Rotation or 0,
 		Active = false,
 		ZIndex = p.ZIndex or 14,
@@ -122,7 +117,13 @@ function U.Surface(p)
 	if not p.Quiet then
 		decoration.Gradient = e("UIGradient", {
 			Rotation = 90,
-			Color = ColorSequence.new(color:Lerp(WHITE, 0.22), color),
+			Color = p.Rainbow and ColorSequence.new({
+				ColorSequenceKeypoint.new(0, C(255, 92, 111)),
+				ColorSequenceKeypoint.new(0.25, C(188, 109, 255)),
+				ColorSequenceKeypoint.new(0.5, C(70, 213, 255)),
+				ColorSequenceKeypoint.new(0.75, C(216, 250, 90)),
+				ColorSequenceKeypoint.new(1, C(255, 193, 81)),
+			}) or ColorSequence.new(color:Lerp(WHITE, 0.22), color),
 		})
 	end
 	if p.Studs ~= false and not p.Quiet then
@@ -160,19 +161,6 @@ function U.Surface(p)
 			}),
 		})
 	end
-	if p.Motion then
-		decoration.Tint = e("Frame", {
-			Size = UDim2.fromScale(1, 1),
-			BorderSizePixel = 0,
-			BackgroundColor3 = p.Motion:map(function(t)
-				return t >= 0 and WHITE or Color3.new()
-			end),
-			BackgroundTransparency = p.Motion:map(function(t)
-				return 1 - math.abs(t) * 0.12
-			end),
-			ZIndex = 5,
-		}, { Corner = U.corner(radius) })
-	end
 	-- The content lives inside the moving plate: when the button lifts or dips,
 	-- its caption and its icon travel with it. A content frame outside the
 	-- plate would stand still while the brick under it moves.
@@ -182,6 +170,7 @@ function U.Surface(p)
 		p.Children
 	)
 	return e("Frame", {
+		ref = p.Ref,
 		Name = p.Name or "Surface",
 		Size = p.Size or UDim2.fromScale(1, 1),
 		Position = p.Position,
@@ -200,9 +189,7 @@ function U.Surface(p)
 		Body = e("Frame", {
 			Name = "Body",
 			Size = UDim2.fromScale(1, 1),
-			Position = p.Motion and p.Motion:map(function(t)
-				return UDim2.fromOffset(0, math.round(-t * (t > 0 and Theme.Motion.Lift or Theme.Motion.PressDepth)))
-			end) or nil,
+
 			BackgroundColor3 = color,
 			BackgroundTransparency = p.Transparency or 0,
 			BorderSizePixel = 0,
@@ -228,12 +215,27 @@ function U.Slot(p)
 		Children = p.Children,
 	})
 end
-function U.Button(p)
+local function useButtonMotion(p)
 	local reduced = React.useContext(U.MotionContext)
-	local motionProps = table.clone(p)
-	motionProps.ReducedMotion = reduced or p.ReducedMotion
-	local progress, events = Hooks.useButtonMotion(motionProps, Theme)
+	local buttonRef: any = React.useRef(nil)
+	local visualRef: any = React.useRef(nil)
+	React.useEffect(function()
+		if buttonRef.current and visualRef.current then
+			return Motion.button(buttonRef.current, visualRef.current)
+		end
+		return function() end
+	end, {})
+	React.useEffect(function()
+		if buttonRef.current then
+			Motion.resetButtons(buttonRef.current)
+		end
+	end, { p.Disabled == true, p.Loading == true, reduced == true })
+	return buttonRef, visualRef
+end
+function U.Button(p)
+	local buttonRef, visualRef = useButtonMotion(p)
 	local props = {
+		ref = buttonRef,
 		Name = p.Name or "Button",
 		Text = "",
 		BackgroundTransparency = 1,
@@ -241,18 +243,15 @@ function U.Button(p)
 		Position = p.Position,
 		AnchorPoint = p.AnchorPoint,
 		AutoButtonColor = false,
-		Active = not p.Disabled,
-		Selectable = not p.Disabled,
+		Active = not p.Disabled and not p.Loading,
+		Selectable = not p.Disabled and not p.Loading,
 		ZIndex = p.ZIndex or 20,
 		[React.Event.Activated] = function()
-			if not p.Disabled and p.OnActivated then
+			if not p.Disabled and not p.Loading and p.OnActivated and Motion.enabled(buttonRef.current) then
 				p.OnActivated()
 			end
 		end,
 	}
-	for key, value in events do
-		props[key] = value
-	end
 	local children = table.clone(p.Children or {})
 	if p.Text then
 		children.Caption = e(U.Label, {
@@ -274,9 +273,11 @@ function U.Button(p)
 	return e("TextButton", props, {
 		Visual = e(U.Surface, {
 			Color = p.Disabled and Theme.Colors.Slate or (p.Color or Theme.Colors.Green),
+			Transparency = p.Transparency,
+			NoShadow = p.NoShadow,
 			Radius = p.Radius or Theme.Radius,
 			Shine = p.Shine,
-			Motion = progress,
+			Ref = visualRef,
 			Children = children,
 			Studs = p.Studs,
 			ZIndex = p.ZIndex or 20,
@@ -287,11 +288,9 @@ end
 -- content is given by the caller: the cards of the collection grids are
 -- tiles, not buttons.
 function U.Tile(p)
-	local reduced = React.useContext(U.MotionContext)
-	local motionProps = table.clone(p)
-	motionProps.ReducedMotion = reduced or p.ReducedMotion
-	local progress, events = Hooks.useButtonMotion(motionProps, Theme)
+	local buttonRef, visualRef = useButtonMotion(p)
 	local props = {
+		ref = buttonRef,
 		Name = p.Name or "Tile",
 		Text = "",
 		BackgroundTransparency = 1,
@@ -299,18 +298,15 @@ function U.Tile(p)
 		Position = p.Position,
 		AnchorPoint = p.AnchorPoint,
 		AutoButtonColor = false,
-		Active = not p.Disabled,
-		Selectable = not p.Disabled,
+		Active = not p.Disabled and not p.Loading,
+		Selectable = not p.Disabled and not p.Loading,
 		ZIndex = p.ZIndex or 20,
 		[React.Event.Activated] = function()
-			if not p.Disabled and p.OnActivated then
+			if not p.Disabled and not p.Loading and p.OnActivated and Motion.enabled(buttonRef.current) then
 				p.OnActivated()
 			end
 		end,
 	}
-	for key, value in events do
-		props[key] = value
-	end
 	return e("TextButton", props, {
 		Visual = e(U.Surface, {
 			Color = p.Color or Theme.Body,
@@ -319,7 +315,7 @@ function U.Tile(p)
 			Quiet = p.Quiet,
 			Selected = p.Selected,
 			Outline = p.Outline,
-			Motion = progress,
+			Ref = visualRef,
 			Children = p.Children,
 			ZIndex = p.ZIndex or 20,
 		}),
@@ -330,11 +326,9 @@ end
 -- Balls panels. A transparent plate carries it, so only the picture of the
 -- game is on screen.
 function U.CloseButton(p)
-	local reduced = React.useContext(U.MotionContext)
-	local motionProps = table.clone(p)
-	motionProps.ReducedMotion = reduced or p.ReducedMotion
-	local progress, events = Hooks.useButtonMotion(motionProps, Theme)
+	local buttonRef, visualRef = useButtonMotion(p)
 	local props = {
+		ref = buttonRef,
 		Name = p.Name or "Close",
 		Text = "",
 		BackgroundTransparency = 1,
@@ -345,23 +339,21 @@ function U.CloseButton(p)
 		Selectable = false,
 		ZIndex = p.ZIndex or 20,
 		[React.Event.Activated] = function()
-			if p.OnActivated then
+			if p.OnActivated and Motion.enabled(buttonRef.current) then
 				p.OnActivated()
 			end
 		end,
 	}
-	for key, value in events do
-		props[key] = value
-	end
 	return e("TextButton", props, {
 		Visual = e(U.Surface, {
 			Color = Theme.Colors.Red,
+			Outline = 0,
 			Radius = p.Radius or 12,
 			Transparency = 1,
 			Quiet = true,
 			NoShadow = true,
 			Studs = false,
-			Motion = progress,
+			Ref = visualRef,
 			ZIndex = p.ZIndex or 20,
 			Children = {
 				X = e(U.Icon, {

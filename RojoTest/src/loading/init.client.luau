@@ -19,12 +19,7 @@ local SLATE = Color3.fromRGB(115, 127, 143)
 
 -- The stud texture of a brick plate. The shared config holds the same id; it
 -- is the fallback for the moment the config is not replicated yet.
-local STUD_TEXTURE = "rbxassetid://88156646156237"
-
--- The idle motion of the intro. The settings snapshot is not available while
--- the intro runs, so the flag of the module is the switch: the settings
--- system sets it to false when the player turned the effects off.
-local effectsEnabled = true
+local STUD_TEXTURE = "rbxassetid://138746650062134"
 
 local playerGui = player:WaitForChild("PlayerGui")
 local screen = Instance.new("ScreenGui")
@@ -220,11 +215,11 @@ local ok, failure = xpcall(function()
 	local ReactRoblox = require(packages:WaitForChild("ReactRoblox"))
 	local Ripple = require(packages:WaitForChild("Ripple"))
 	local e = React.createElement
+	local Motion = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("UiMotion"))
 	local fade, setFade = React.createBinding(1)
 	local progress, setProgress = React.createBinding(0)
 	local caption, setCaption = React.createBinding("Preparing your adventure…")
 	local phase, setPhase = React.createBinding("LOADING")
-	local breathing, setBreathing = React.createBinding(1)
 	local spring = Ripple.createSpring(1, { frequency = 7, dampingRatio = 1, start = true })
 	local disconnect = spring:onChange(setFade)
 	table.insert(connections, {
@@ -233,6 +228,41 @@ local ok, failure = xpcall(function()
 			spring:destroy()
 		end,
 	})
+	-- The intro uses the same feedback as every in-game button.
+	local function SkipButton(p)
+		local buttonRef: any = React.useRef(nil)
+		local visualRef: any = React.useRef(nil)
+		React.useEffect(function()
+			return Motion.button(buttonRef.current, visualRef.current)
+		end, {})
+		local props = table.clone(p)
+		local children = props.children
+		props.children = nil
+		props.ref = buttonRef
+		props.Name = "Skip"
+		props.BackgroundTransparency = 1
+		return e("TextButton", props, {
+			Visual = e(
+				"Frame",
+				{ ref = visualRef, Name = "ButtonVisual", Size = UDim2.fromScale(1, 1), BackgroundTransparency = 1 },
+				{
+					Shadow = e("Frame", {
+						Size = UDim2.fromScale(1, 1),
+						Position = UDim2.fromOffset(0, 4),
+						BackgroundColor3 = INK,
+						BackgroundTransparency = 0.28,
+						BorderSizePixel = 0,
+						ZIndex = 0,
+					}, { Corner = e("UICorner", { CornerRadius = UDim.new(0, 9) }) }),
+					Body = e(
+						"Frame",
+						{ Size = UDim2.fromScale(1, 1), BackgroundColor3 = RED, BorderSizePixel = 0, ZIndex = 1 },
+						children
+					),
+				}
+			),
+		})
+	end
 	-- The stud texture of the plates. The shared config holds the id, the
 	-- constant of the module is the fallback for the moment the config is
 	-- not replicated yet.
@@ -396,7 +426,7 @@ local ok, failure = xpcall(function()
 					}),
 					Subtitle = e("TextLabel", {
 						BackgroundTransparency = 1,
-						Text = "STONE SKIPPING",
+						Text = "FOOTBALL SIMULATOR",
 						Position = UDim2.fromScale(0, 0.72),
 						Size = UDim2.fromScale(1, 0.28),
 						Font = Enum.Font.GothamBlack,
@@ -478,19 +508,7 @@ local ok, failure = xpcall(function()
 					Limit = e("UITextSizeConstraint", { MinTextSize = 8, MaxTextSize = 18 }),
 				}),
 			}),
-			SkipShadow = e("Frame", {
-				AnchorPoint = Vector2.new(1, 0),
-				Position = UDim2.new(1, -20, 0.09, 4),
-				Size = UDim2.fromOffset(136, 44),
-				BackgroundColor3 = INK,
-				BackgroundTransparency = 0.28,
-				BorderSizePixel = 0,
-				ZIndex = 4,
-			}, {
-				Corner = e("UICorner", { CornerRadius = UDim.new(0, 9) }),
-				Scale = e("UIScale", { Scale = breathing }),
-			}),
-			Skip = e("TextButton", {
+			Skip = e(SkipButton, {
 				AnchorPoint = Vector2.new(1, 0),
 				Position = UDim2.new(1, -20, 0.09, 0),
 				Size = UDim2.fromOffset(136, 44),
@@ -534,21 +552,9 @@ local ok, failure = xpcall(function()
 						LineJoinMode = Enum.LineJoinMode.Round,
 					}),
 				}),
-				Scale = e("UIScale", { Scale = breathing }),
 			}),
 		}),
 	}))
-	-- The idle breath of the skip button. The connection lives in the list
-	-- of the cleanup, so the intro leaves nothing behind.
-	if effectsEnabled then
-		local started = os.clock()
-		table.insert(
-			connections,
-			RunService.RenderStepped:Connect(function()
-				setBreathing(1 + math.sin((os.clock() - started) * 1.6) * 0.03)
-			end)
-		)
-	end
 	RunService.Heartbeat:Wait()
 	game:GetService("ReplicatedFirst"):RemoveDefaultLoadingScreen()
 	streamingRemote = ReplicatedStorage:WaitForChild("MapIntroStreaming", 20)

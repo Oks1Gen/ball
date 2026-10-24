@@ -6,51 +6,69 @@ local Kit = require(script.Parent.HudKit)
 local Config = require(game.ReplicatedStorage.Shared.GameConfig)
 local BallVisuals = require(game.ReplicatedStorage.Shared.BallVisuals)
 local UserInputService = game:GetService("UserInputService")
-local TweenService = game:GetService("TweenService")
+local Motion = require(game.ReplicatedStorage.Shared.UiMotion)
+local MotionConfig = require(game.ReplicatedStorage.Shared.UiMotionConfig)
+local GuiInsets = require(script.Parent.Parent.Modules.GuiInsets)
 
 local Panels = {}
 local C = Color3.fromRGB
 local yellow = C(255, 225, 66)
 -- The legacy panels live in the HUD canvas next to the HUD itself. Their
 -- layer is fixed by ZIndex, not by the order the instances were created in:
--- the panel is above the HUD and the settings button (1) and below the
--- toast (30).
+-- the panel is above the HUD and the settings button (1). Notifications use
+-- their own ScreenGui above every gameplay window.
 local LAYER_PANEL = 20
 
 export type Context = {
 	canvas: Frame,
 	send: (string, any?, any?) -> (),
 	snapshot: () -> any?,
-	portrait: () -> boolean,
-	closePanel: () -> (),
+	closePanel: (boolean?) -> (),
 	showPanel: (string) -> (),
-	blur: (number) -> (),
 }
 
 export type Handle = {
 	open: (string, any?) -> (),
 	shell: (string, string, number, number) -> Frame,
 	refresh: () -> (),
-	reset: () -> (),
+	close: () -> (),
+	destroy: () -> (),
+	layout: () -> (),
 }
 
 function Panels.mount(context: Context): Handle
 	local canvas = context.canvas
 	local refresh: (() -> ())? = nil
+	local windows: { [string]: any } = {}
+	local activeName: string? = nil
+	local function place(group: CanvasGroup)
+		local center = GuiInsets.screenCenter(workspace.CurrentCamera.ViewportSize) - canvas.AbsolutePosition
+		local factor = canvas.AbsoluteSize.X / math.max(1, canvas.Size.X.Offset)
+		group.Position = UDim2.fromOffset(center.X / math.max(0.01, factor), center.Y / math.max(0.01, factor))
+	end
 
 	-- Every panel takes over the screen the same way: drop the current one,
 	-- remember the new name and dim the world behind it.
 	local function begin(name: string)
-		context.closePanel()
+		context.closePanel(true)
+		activeName = name
 		context.showPanel(name)
-		context.blur(22)
 	end
 
-	-- The panel is placed by shell(): the landscape board keeps the designed
-	-- place, portrait centres it in the safe area.
+	-- A padded group keeps the whole window centred, including its chrome.
 	local function shell(name: string, kind: string, width: number, height: number): Frame
-		local modal = Kit.frame(canvas, "Modal", 0, 0, width, height, C(55, 63, 79))
-		modal.BackgroundTransparency = 0.55
+		local margin = MotionConfig.Window.ChromeMargin
+		local group = Instance.new("CanvasGroup")
+		group.Name = "Window_" .. (activeName or name)
+		group.Size = UDim2.fromOffset(width + margin * 2, height + margin * 2)
+		group.AnchorPoint = Vector2.new(0.5, 0.5)
+		group.Position = UDim2.fromScale(0.5, 0.5)
+		group.BackgroundTransparency = 1
+		group.ZIndex = LAYER_PANEL
+		group.Parent = canvas
+		place(group)
+		local modal = Kit.frame(group, "Modal", margin, margin, width, height, C(55, 63, 79))
+		modal.BackgroundTransparency = 0.3
 		modal.ZIndex = LAYER_PANEL
 		Kit.stroke(modal, 2)
 		local heading = Kit.text(modal, "Heading", name, 85, -50, width - 170, 66, 63)
@@ -63,37 +81,21 @@ function Panels.mount(context: Context): Handle
 		Kit.icon(modal, kind, -15, -54, 100, 100).ZIndex = 10
 		local close = Kit.button(modal, "Close", "", width - 32, -31, 60, 60, C(252, 24, 68), 52, context.closePanel)
 		close.ZIndex = 11
-		close.BackgroundTransparency = 1
+		Kit.visualOf(close).BackgroundTransparency = 1
 		Kit.hide(close, "Studs")
 		Kit.hide(close, "UIStroke")
 		Kit.hide(modal, "CloseShadow")
 		Kit.icon(close, "Close", 0, 0, 60, 60)
-		-- The panel is placed by the canvas: the landscape board keeps the
-		-- designed place, portrait centres it in the safe area.
-		local factor = 1
-		if context.portrait() then
-			-- The canvas is the safe area in portrait, so the panel is scaled
-			-- into it and centred in it.
-			factor = math.min(
-				1,
-				math.max(1, canvas.Size.X.Offset - 16) / width,
-				math.max(1, canvas.Size.Y.Offset - 120) / height
-			)
-			modal.AnchorPoint = Vector2.new(0.5, 0.5)
-			modal.Position = UDim2.fromScale(0.5, 0.5)
-		else
-			-- The landscape board keeps the place the panel was designed for.
-			modal.Position = UDim2.fromOffset((1280 - width) / 2, (720 - height) / 2)
-		end
-		-- The panel opens with a short pop: it grows out of the middle and
-		-- the world behind it comes back into focus.
-		local scale = Instance.new("UIScale")
-		scale.Scale = factor * 0.9
-		scale.Parent = modal
-		TweenService
-			:Create(scale, TweenInfo.new(0.24, Enum.EasingStyle.Back, Enum.EasingDirection.Out), { Scale = factor })
-			:Play()
-		TweenService:Create(modal, TweenInfo.new(0.18), { BackgroundTransparency = 0.3 }):Play()
+		local factor = math.min(
+			1,
+			math.max(1, canvas.Size.X.Offset - 24) / (width + margin * 2),
+			math.max(1, canvas.Size.Y.Offset - 24) / (height + margin * 2)
+		)
+		local animation = Motion.window(group, factor)
+		local key = activeName or name
+		local record = { group = group, animation = animation, refresh = nil }
+		windows[key] = record
+		animation.setOpen(true)
 		-- The world behind a legacy modal must not take clicks: the
 		-- collector screens own a blocker of their own, so the panels match
 		-- them. The SkippingHUD screen runs the Sibling ZIndex behaviour, so
@@ -111,7 +113,7 @@ function Panels.mount(context: Context): Handle
 		blocker.Modal = true
 		blocker.ZIndex = LAYER_PANEL - 1
 		blocker.Parent = canvas
-		modal.Destroying:Connect(function()
+		group.Destroying:Connect(function()
 			blocker:Destroy()
 		end)
 		return modal
@@ -132,24 +134,32 @@ function Panels.mount(context: Context): Handle
 		local layout = Instance.new("UIListLayout")
 		layout.Padding = UDim.new(0, 12)
 		layout.SortOrder = Enum.SortOrder.LayoutOrder
+		layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 		layout.Parent = s
+		local padding = Instance.new("UIPadding")
+		padding.PaddingTop = UDim.new(0, 4)
+		padding.PaddingBottom = UDim.new(0, 4)
+		padding.Parent = s
 		return s
 	end
 
 	local function openSettings()
 		begin("Settings")
 		local modal = shell("Settings", "Settings", 585, 474)
-		local toggles: { [string]: (boolean) -> () } = {}
+		local toggles: { [string]: (any) -> () } = {}
+		local list = scrolling(modal, 70, 390)
 		for i, info in
 			{
 				{ "Sound Effects", "sound" },
 				{ "Music", "music" },
 				{ "Camera Shake", "shake" },
 				{ "Effects", "effects" },
-				{ "Hide HUD", "hideHUD" },
 			}
 		do
-			local row = Kit.brick(modal, info[2], 14, 75 + (i - 1) * 75, 556, 63, C(72, 84, 106))
+			local row = Kit.frame(list, info[2], 7, 0, 556, 63, C(48, 53, 67))
+			row.LayoutOrder = i
+			row.BackgroundTransparency = 0.25
+			Kit.stroke(row, 2)
 			Kit.text(row, "Name", info[1], 12, 9, 280, 42, 32).TextXAlignment = Enum.TextXAlignment.Left
 			if i <= 2 then
 				local track = Kit.frame(row, "Track", 310, 25, 220, 12, C(12, 27, 30))
@@ -235,7 +245,7 @@ function Panels.mount(context: Context): Handle
 					move:Disconnect()
 					finish:Disconnect()
 				end)
-				toggles[info[2]] = function(v: boolean)
+				toggles[info[2]] = function(v: number)
 					if not dragging then
 						value = v
 						fill.Size = UDim2.fromScale(v / 100, 1)
@@ -359,9 +369,9 @@ function Panels.mount(context: Context): Handle
 	end
 
 	local function openInventory(selectedId: string?)
-		begin("Balls")
-		local modal = shell("Balls", "Inventory", 680, 470)
-		Kit.text(modal, "Description", "Buy with Crowns • Boost training and hits", 25, 32, 630, 38, 23, yellow)
+		begin("Inventory")
+		local modal = shell("Balls", "Ball", 680, 470)
+		Kit.text(modal, "Description", "Buy with Wins • Boost training and hits", 25, 32, 630, 38, 23, yellow)
 		local scroll = scrolling(modal, 80, 380)
 		local rows: { [string]: { b: TextButton, item: any } } = {}
 		for i, item in Config.Stones do
@@ -384,7 +394,7 @@ function Panels.mount(context: Context): Handle
 					if caption then
 						caption.Text = snapshot.data.stone == id and "Equipped"
 							or snapshot.data.stones[id] and "Equip"
-							or Config.format(row.item.cost) .. " Crowns"
+							or Config.format(row.item.cost) .. " Wins"
 					end
 				end
 			end
@@ -414,48 +424,102 @@ function Panels.mount(context: Context): Handle
 
 	local function openGifts()
 		begin("Gifts")
-		local modal = shell("Gifts", "Gifts", 650, 455)
-		Kit.button(modal, "Daily", "Daily Gift • +500 Wins", 30, 37, 590, 52, C(255, 205, 48), 29, function()
-			context.send("Daily")
-		end)
-		local scroll = scrolling(modal, 112, 330)
+		local modal = shell("Playtime Rewards", "Gifts", 700, 452)
 		local rows: { [number]: TextButton } = {}
+		local checks: { [number]: Frame } = {}
+		local dimmers: { [number]: Frame } = {}
 		for i, gift in Config.Gifts do
-			local row = Kit.brick(scroll, "Gift" .. i, 0, 0, 620, 90, C(74, 141, 199))
-			Kit.icon(row, "Gifts", 5, 5, 75, 75)
-			Kit.text(row, "Reward", "+" .. Config.format(gift.wins) .. " Wins", 92, 7, 315, 37, 28, yellow).TextXAlignment =
-				Enum.TextXAlignment.Left
-			Kit.text(row, "Skill", "+" .. Config.format(gift.skill) .. " Skill", 92, 48, 315, 29, 23).TextXAlignment =
-				Enum.TextXAlignment.Left
-			rows[i] = Kit.button(row, "Claim", "", 441, 25, 160, 44, C(84, 235, 24), 24, function()
+			local x = 18 + (i - 1) % 3 * 226
+			local y = 56 + math.floor((i - 1) / 3) * 192
+			local color = i <= 3 and C(39, 167, 225) or i <= 5 and C(184, 104, 239) or C(255, 203, 33)
+			local row = Kit.brick(modal, "Gift" .. i, x, y, 212, 178, color, 18)
+			Kit.burst(row)
+			Kit.text(row, "Wins", "+" .. Config.format(gift.wins) .. " WINS", 8, 7, 196, 27, 22)
+			Kit.text(row, "Skill", "+" .. Config.format(gift.skill) .. " SKILL", 8, 34, 196, 24, 19)
+			Kit.icon(row, i % 2 == 0 and "Skill" or "Wins", 55, 62, 102, 65)
+			rows[i] = Kit.button(row, "Claim", "", 14, 134, 184, 34, C(250, 53, 53), 22, function()
 				context.send("Gift", i)
 			end)
+			local dimmer = Kit.frame(row, "ClaimedShade", 0, 0, 212, 178, C(10, 13, 22))
+			dimmer.BackgroundTransparency = 0.48
+			dimmer.ZIndex = 7
+			Kit.corner(dimmer, 18)
+			dimmers[i] = dimmer
+			local check = Kit.icon(row, "Check", 50, 56, 112, 105)
+			check.ZIndex = 8
+			checks[i] = check
 		end
 		refresh = function()
 			local snapshot = context.snapshot()
-			if snapshot then
-				for i, b in rows do
-					local claimed = snapshot.gifts[i] == true
-					local remaining = Config.Gifts[i].time - snapshot.elapsed
-					local caption = Kit.captionOf(b)
-					if caption then
-						caption.Text = claimed and "Claimed"
-							or remaining <= 0 and "Claim"
-							or string.format("%02d:%02d", math.floor(remaining / 60), remaining % 60)
-					end
-					-- Green says "you can claim right now". A claimed gift
-					-- wears the same muted block as a running countdown, so
-					-- the row never reads as collectible again.
-					Kit.paint(b, (not claimed and remaining <= 0) and C(84, 235, 24) or C(90, 106, 136))
-					b.Active = not claimed
-				end
+			if not snapshot then
+				return
 			end
+			for i, b in rows do
+				local claimed = snapshot.gifts[i] == true
+				local remaining = math.max(0, Config.Gifts[i].time - snapshot.elapsed)
+				local ready = not claimed and remaining <= 0
+				local caption = Kit.captionOf(b)
+				if caption then
+					caption.Text = claimed and "Claimed"
+						or ready and "Claim!"
+						or string.format(
+							"%02d:%02d:%02d",
+							math.floor(remaining / 3600),
+							math.floor(remaining / 60) % 60,
+							remaining % 60
+						)
+				end
+				checks[i].Visible = claimed
+				dimmers[i].Visible = claimed
+				Kit.paint(b, ready and C(84, 235, 24) or C(250, 53, 53))
+				b.Active = ready
+			end
+		end
+		refresh()
+	end
+
+	local function openDaily()
+		begin("Daily")
+		local modal = shell("Daily Reward", "Daily", 600, 418)
+		Kit.text(modal, "Subtitle", "COME BACK EVERY DAY!", 25, 43, 550, 38, 30)
+		local card = Kit.brick(modal, "DailyReward", 130, 95, 340, 230, C(255, 211, 31), 12)
+		Kit.burst(card)
+		Kit.icon(card, "Wins", 82, 8, 176, 130)
+		Kit.text(card, "Wins", "+500 WINS", 15, 143, 310, 39, 34, yellow)
+		Kit.text(card, "Skill", "+100 SKILL", 15, 187, 310, 29, 25)
+		local claim = Kit.button(modal, "DailyClaim", "Claim!", 170, 345, 260, 51, C(84, 235, 24), 32, function()
+			context.send("Daily")
+		end)
+		refresh = function()
+			local snapshot = context.snapshot()
+			if not snapshot then
+				return
+			end
+			local ready = snapshot.data.daily < math.floor(os.time() / 86400)
+			local caption = Kit.captionOf(claim)
+			if caption then
+				caption.Text = ready and "Claim!" or "Claimed"
+			end
+			Kit.paint(claim, ready and C(84, 235, 24) or C(115, 118, 126))
+			claim.Active = ready
 		end
 		refresh()
 	end
 
 	return {
 		open = function(name: string, argument: any?)
+			local existing = windows[name]
+			if existing and existing.group.Parent then
+				context.closePanel(true)
+				activeName = name
+				refresh = existing.refresh
+				context.showPanel(name)
+				existing.animation.setOpen(true)
+				if refresh then
+					refresh()
+				end
+				return
+			end
 			if name == "Settings" then
 				openSettings()
 			elseif name == "Rebirth" then
@@ -464,6 +528,12 @@ function Panels.mount(context: Context): Handle
 				openInventory(argument)
 			elseif name == "Gifts" then
 				openGifts()
+			elseif name == "Daily" then
+				openDaily()
+			end
+			local record = windows[name]
+			if record then
+				record.refresh = refresh
 			end
 		end,
 		shell = function(name: string, kind: string, width: number, height: number): Frame
@@ -475,8 +545,33 @@ function Panels.mount(context: Context): Handle
 				refresh()
 			end
 		end,
-		reset = function()
+		close = function()
+			if activeName then
+				local name = activeName
+				local record = windows[name]
+				activeName = nil
+				if record then
+					record.refresh = refresh
+					record.animation.setOpen(false, function()
+						if windows[name] == record then
+							windows[name] = nil
+						end
+						record.group:Destroy()
+					end)
+				end
+			end
 			refresh = nil
+		end,
+		layout = function()
+			for _, record in windows do
+				place(record.group)
+			end
+		end,
+		destroy = function()
+			for _, record in windows do
+				record.group:Destroy()
+			end
+			table.clear(windows)
 		end,
 	}
 end

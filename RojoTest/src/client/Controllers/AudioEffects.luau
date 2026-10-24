@@ -73,6 +73,29 @@ function Effects.mount(context: Context): Handle
 		Debris:AddItem(sound, 3)
 	end
 
+	-- Warm notification audio without delaying the HUD or creating overlapping sounds.
+	local notificationSounds = require(game.ReplicatedStorage.Shared.NotificationSounds)
+	local notificationAudio = Instance.new("Folder")
+	notificationAudio.Name = "NotificationAudio"
+	notificationAudio.Parent = context.effectsFolder
+	local preload = {}
+	for role, entry in notificationSounds do
+		local sound = Instance.new("Sound")
+		sound.Name = "Notification" .. role
+		sound.SoundId = entry.id
+		sound.Volume = 0
+		sound.Parent = notificationAudio
+		table.insert(preload, sound)
+	end
+	task.spawn(function()
+		local ok, reason = pcall(function()
+			game:GetService("ContentProvider"):PreloadAsync(preload)
+		end)
+		if not ok and alive then
+			warn("Notification audio preload failed: " .. tostring(reason))
+		end
+	end)
+
 	local function bounce(position: Vector3, trailId: string, contact: number, intensity: number)
 		local snapshot = context.snapshot()
 		local camera = workspace.CurrentCamera
@@ -171,8 +194,7 @@ function Effects.mount(context: Context): Handle
 	end
 
 	local function floatingGain(gain: number)
-		local snapshot = context.snapshot()
-		if context.panelOpen() or (snapshot and snapshot.data.settings.hideHUD) then
+		if context.panelOpen() then
 			return
 		end
 		local t = Kit.text(
@@ -206,6 +228,7 @@ function Effects.mount(context: Context): Handle
 		destroy = function()
 			alive = false
 			impactAudio:Destroy()
+			notificationAudio:Destroy()
 			music:Stop()
 			music:Destroy()
 			musicGroup:Destroy()

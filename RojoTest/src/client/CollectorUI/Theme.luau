@@ -13,7 +13,6 @@ local Theme = {
 	Gold = Style.Gold,
 	Colors = Style.Colors,
 	Rarity = Style.Rarity,
-	Motion = Style.Motion,
 	Stroke = Style.Stroke,
 	WindowStroke = Style.WindowStroke,
 	Radius = Style.Radius,

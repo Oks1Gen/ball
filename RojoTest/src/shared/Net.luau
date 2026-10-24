@@ -43,7 +43,7 @@ function Net.validAction(command: any, value: any, extra: any): boolean
 		if value == "sound" or value == "music" then
 			return typeof(extra) == "number" and extra == extra and math.abs(extra) < math.huge
 		end
-		return (value == "shake" or value == "effects" or value == "hideHUD") and typeof(extra) == "boolean"
+		return (value == "shake" or value == "effects") and typeof(extra) == "boolean"
 	end
 	return false
 end

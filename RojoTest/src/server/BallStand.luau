@@ -112,7 +112,7 @@ function Stand.apply(map)
 			.. "\n×"
 			.. item.power
 			.. "\n"
-			.. (item.cost == 0 and "FREE" or Config.format(item.cost) .. " Crowns")
+			.. (item.cost == 0 and "FREE" or Config.format(item.cost) .. " Wins")
 		title.TextColor3 = item.color
 		anchor.Position =
 			Vector3.new(cf.Position.X, cf.Position.Y + size.Y / 2 + (0.75 + 2.7) * displayScale, cf.Position.Z)

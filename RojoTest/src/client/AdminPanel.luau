@@ -7,7 +7,9 @@ local Players = game:GetService("Players")
 local Input = game:GetService("UserInputService")
 local LogService = game:GetService("LogService")
 local TextService = game:GetService("TextService")
-local TweenService = game:GetService("TweenService")
+local Motion = require(game.ReplicatedStorage.Shared.UiMotion)
+local MotionConfig = require(game.ReplicatedStorage.Shared.UiMotionConfig)
+local Spacing = require(game.ReplicatedStorage.Shared.UiSpacing)
 local Config = require(game.ReplicatedStorage.Shared.GameConfig)
 local Kit = require(script.Parent.Controllers.HudKit)
 local Style = require(script.Parent.UiStyle)
@@ -22,9 +24,6 @@ local TIMEOUT = 10
 -- ScreenGui. Their layer is fixed by ZIndex, not by the order they were
 -- created in: the window is always above the launcher.
 local LAYER_WINDOW = 20
--- The window opens with a short scale and a short fade.
-local OPEN_TIME = 0.18
-local OPEN_SCALE = 0.94
 
 -- The light of a brick: the gradient multiplies the fill of the plate, so the
 -- bright end keeps the colour of the plate and the dark end deepens it.
@@ -92,8 +91,13 @@ export type Context = {
 
 function Panel.mount(context: Context)
 	local authorized, testing, busy = false, false, false
+	local launcherHidden = false
 	local window: any = nil
 	local windowGroup: any = nil
+	local windowAnimation: any = nil
+	local windowClosing = false
+	local launcherGroup: Frame? = nil
+	local launcherAnimation: any = nil
 	local statusLabel: any = nil
 	local summary: any = nil
 	local modeButton: any = nil
@@ -141,7 +145,19 @@ function Panel.mount(context: Context)
 		return nil
 	end
 
-	local function close()
+	local function close(immediate: boolean?)
+		if windowGroup and windowAnimation and not immediate then
+			local group = windowGroup
+			windowClosing = true
+			windowAnimation.setOpen(false, function()
+				if windowGroup == group and windowClosing then
+					window, windowGroup, windowAnimation = nil, nil, nil
+					group:Destroy()
+				end
+			end)
+			return
+		end
+		windowClosing = false
 		if window then
 			window:Destroy()
 			window = nil
@@ -152,7 +168,7 @@ function Panel.mount(context: Context)
 		end
 		if launcher then
 			launcher.Visible = authorized
-			local shadow = probe and probe:FindFirstChild("AdminLauncherShadow")
+			local shadow = launcherGroup and launcherGroup:FindFirstChild("AdminLauncherShadow")
 			if shadow and shadow:IsA("GuiObject") then
 				shadow.Visible = authorized
 			end
@@ -271,17 +287,21 @@ function Panel.mount(context: Context)
 	end
 
 	local function grid(items: any, y: number, minWidth: number, cellHeight: number): number
-		local columns = math.max(1, math.floor((bodyWidth + 10) / (minWidth + 10)))
-		local cellWidth = (bodyWidth - (columns - 1) * 10) / columns
+		local inset = MotionConfig.Spacing.ScrollInset
+		local available = bodyWidth - inset * 2
+		local minimumGap = Spacing.gap(minWidth)
+		local columns = math.max(1, math.floor((available + minimumGap) / (minWidth + minimumGap)))
+		local cellWidth, gap = Spacing.row(available, columns, cellHeight)
+		y += 8
 		for i, item in items do
-			local x = ((i - 1) % columns) * (cellWidth + 10)
+			local x = inset + ((i - 1) % columns) * (cellWidth + gap)
 			local row = math.floor((i - 1) / columns)
 			brickButton(
 				body,
 				"Action" .. i .. "_" .. y,
 				item.label,
 				x,
-				y + row * (cellHeight + 10),
+				y + row * (cellHeight + gap),
 				cellWidth,
 				cellHeight,
 				item.color or Style.Colors.Blue,
@@ -291,7 +311,7 @@ function Panel.mount(context: Context)
 				end
 			)
 		end
-		return y + math.ceil(#items / columns) * (cellHeight + 10)
+		return y + math.ceil(#items / columns) * (cellHeight + gap)
 	end
 
 	-- A caption of a section is a gold heading of the window.
@@ -434,14 +454,14 @@ function Panel.mount(context: Context)
 			local egg = Config.find(Config.Eggs, selectedEgg) or Config.Eggs[1]
 			selectedEgg = egg.id
 			local eggColumns = math.max(1, math.min(#Config.Eggs, math.floor((bodyWidth + 10) / 155)))
-			local eggWidth = (bodyWidth - (eggColumns - 1) * 10) / eggColumns
+			local eggWidth, eggGap = Spacing.row(bodyWidth - 32, eggColumns, 36)
 			for i, option in Config.Eggs do
 				brickButton(
 					body,
 					"SelectEgg_" .. option.id,
 					option.name,
-					((i - 1) % eggColumns) * (eggWidth + 10),
-					y + math.floor((i - 1) / eggColumns) * 48,
+					16 + ((i - 1) % eggColumns) * (eggWidth + eggGap),
+					y + math.floor((i - 1) / eggColumns) * (38 + eggGap),
 					eggWidth,
 					38,
 					option.id == selectedEgg and Style.Colors.Purple or Style.Colors.Slate,
@@ -452,7 +472,7 @@ function Panel.mount(context: Context)
 					end
 				)
 			end
-			y += math.ceil(#Config.Eggs / eggColumns) * 48
+			y += math.ceil(#Config.Eggs / eggColumns) * (38 + eggGap)
 			local worldBoost = status.world == 2 and 3 or 1
 			y = label(egg.name .. " · " .. Config.format(egg.cost * (status.world == 2 and 10 or 1)) .. " Wins", y + 4)
 			local pool = Config.eggPets(egg.id)
@@ -578,7 +598,7 @@ function Panel.mount(context: Context)
 	end
 
 	build = function(animate: boolean)
-		close()
+		close(true)
 		local viewport = workspace.CurrentCamera.ViewportSize
 		-- The chrome of the reference panels hangs 54 pixels above the upper
 		-- edge of the plate, so the plate starts below it.
@@ -596,7 +616,10 @@ function Panel.mount(context: Context)
 		-- margin of the group leaves room for the hanging chrome.
 		local group = Instance.new("CanvasGroup")
 		group.Name = "AdminWindowGroup"
-		group.Size = UDim2.fromOffset(width + 140, height + 140)
+		group.Size = UDim2.fromOffset(
+			width + MotionConfig.Window.ChromeMargin * 2,
+			height + MotionConfig.Window.ChromeMargin * 2
+		)
 		group.AnchorPoint = Vector2.new(0.5, 0.5)
 		-- The granted area of the probe does not always start at the top of
 		-- the screen, so the plate is centred on the visible screen itself
@@ -605,16 +628,35 @@ function Panel.mount(context: Context)
 		if not grantedProbe then
 			return
 		end
-		group.Position = UDim2.fromOffset(
-			viewport.X / 2 - grantedProbe.AbsolutePosition.X,
-			viewport.Y / 2 - grantedProbe.AbsolutePosition.Y
-		)
+		local center = GuiInsets.screenCenter(viewport) - grantedProbe.AbsolutePosition
+		group.Position = UDim2.fromOffset(center.X, center.Y)
 		group.BackgroundTransparency = 1
 		group.BorderSizePixel = 0
 		group.ZIndex = LAYER_WINDOW
+		local blocker = Instance.new("TextButton")
+		blocker.Name = "AdminModalBlocker"
+		blocker.Size = UDim2.fromScale(1, 1)
+		blocker.BackgroundTransparency = 1
+		blocker.Text = ""
+		blocker.AutoButtonColor = false
+		blocker.Modal = true
+		blocker.ZIndex = LAYER_WINDOW - 1
+		blocker.Parent = container
+		group.Destroying:Connect(function()
+			blocker:Destroy()
+		end)
 		group.Parent = container
 		windowGroup = group
-		window = Kit.frame(group, "AdminWindow", 70, 70, width, height, Style.Panel)
+		windowClosing = false
+		window = Kit.frame(
+			group,
+			"AdminWindow",
+			MotionConfig.Window.ChromeMargin,
+			MotionConfig.Window.ChromeMargin,
+			width,
+			height,
+			Style.Panel
+		)
 		window.BackgroundTransparency = 0.3
 		window.ZIndex = LAYER_WINDOW
 		Kit.stroke(window, Style.Stroke, Style.Ink)
@@ -628,7 +670,7 @@ function Panel.mount(context: Context)
 		Kit.icon(window, "Settings", -15, -54, 100, 100)
 		local cross = Kit.button(window, "Close", "", width - 32, -31, 60, 60, Style.Colors.Red)
 		cross.ZIndex = 12
-		cross.BackgroundTransparency = 1
+		Kit.visualOf(cross).BackgroundTransparency = 1
 		Kit.hide(cross, "Studs")
 		Kit.hide(cross, "UIStroke")
 		Kit.hide(window, "CloseShadow")
@@ -673,7 +715,7 @@ function Panel.mount(context: Context)
 				name,
 				(i - 1) * 184,
 				0,
-				174,
+				154,
 				36,
 				selected and Style.Colors.Purple or Style.Colors.Slate,
 				18,
@@ -685,7 +727,7 @@ function Panel.mount(context: Context)
 			)
 			if selected then
 				-- The open tab carries a gold border, so it is read at once.
-				local stroke = tabButton:FindFirstChildOfClass("UIStroke")
+				local stroke = Kit.visualOf(tabButton):FindFirstChildOfClass("UIStroke")
 				if stroke then
 					stroke.Color = Style.Gold
 					stroke.Thickness = 3
@@ -714,29 +756,9 @@ function Panel.mount(context: Context)
 		)
 		statusLabel.TextWrapped = true
 		statusLabel.TextXAlignment = Enum.TextXAlignment.Left
-		if launcher then
-			launcher.Visible = false
-		end
-		local launcherShadow = probe and probe:FindFirstChild("AdminLauncherShadow")
-		if launcherShadow and launcherShadow:IsA("GuiObject") then
-			launcherShadow.Visible = false
-		end
-		-- The window opens with a short scale and a short fade. A rebuild (a
-		-- new tab or a new viewport) keeps the plate where it is.
-		local zoom = Instance.new("UIScale")
-		zoom.Scale = animate and OPEN_SCALE or 1
-		zoom.Parent = group
-		if animate then
-			group.GroupTransparency = 1
-			TweenService
-				:Create(zoom, TweenInfo.new(OPEN_TIME, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Scale = 1 })
-				:Play()
-			TweenService:Create(
-				group,
-				TweenInfo.new(OPEN_TIME, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-				{ GroupTransparency = 0 }
-			):Play()
-		end
+		windowAnimation = Motion.window(group)
+		windowAnimation.setOpen(true, nil, not animate)
+
 		refreshSummary()
 		renderPage()
 	end
@@ -746,7 +768,13 @@ function Panel.mount(context: Context)
 			return
 		end
 		if window then
-			context.closePanel()
+			if windowClosing and windowAnimation then
+				context.activate()
+				windowClosing = false
+				windowAnimation.setOpen(true)
+			else
+				context.closePanel()
+			end
 			return
 		end
 		context.activate()
@@ -808,8 +836,16 @@ function Panel.mount(context: Context)
 		area.BackgroundTransparency = 1
 		area.Parent = created
 		probe = area
+		local top = Instance.new("Frame")
+		top.Name = "Top"
+		top.Size = UDim2.fromScale(1, 1)
+		top.BackgroundTransparency = 1
+		top.Parent = area
+		launcherGroup = top
+		launcherAnimation = Motion.slide(top, "Top")
+		launcherAnimation.setHidden(launcherHidden, true)
 		launcher = brickButton(
-			area,
+			top,
 			"AdminLauncher",
 			"ADMIN · F2",
 			16,
@@ -823,12 +859,12 @@ function Panel.mount(context: Context)
 			end
 		)
 		launcher.Visible = false
-		Kit.hide(area, "AdminLauncherShadow")
+		Kit.hide(top, "AdminLauncherShadow")
 		-- The shadow of the launcher is the ink of the style.
-		local launcherShadow = area:FindFirstChild("AdminLauncherShadow")
+		local launcherShadow = top:FindFirstChild("AdminLauncherShadow")
 		if launcherShadow and launcherShadow:IsA("GuiObject") then
-			launcherShadow.BackgroundColor3 = Style.Ink
-			launcherShadow.BackgroundTransparency = 0.28
+			Kit.visualOf(launcherShadow).BackgroundColor3 = Style.Ink
+			Kit.visualOf(launcherShadow).BackgroundTransparency = 0.28
 		end
 		-- The HUD owns the top of the screen in portrait: the launcher stands
 		-- in the middle of the left edge, where nothing else is drawn.
@@ -843,12 +879,26 @@ function Panel.mount(context: Context)
 				launcher.Position = UDim2.fromOffset(16, granted.offset.Y + granted.size.Y / 2)
 			else
 				launcher.AnchorPoint = Vector2.new(0, 0)
-				launcher.Position = UDim2.fromOffset(16, granted.offset.Y + 112)
+				local phone = Input.TouchEnabled and granted.size.Y < 520
+				launcher.Position = UDim2.fromOffset(
+					phone and 180 or 16,
+					granted.offset.Y + (if phone then MotionConfig.Navigation.PhoneAdminY else 8)
+				)
+				launcher.Size = UDim2.fromOffset(phone and 110 or 150, phone and 32 or 38)
+				local caption = Kit.captionOf(launcher)
+				if caption then
+					caption.Size = UDim2.new(1, -8, 1, -4)
+					local limit = caption:FindFirstChildOfClass("UITextSizeConstraint")
+					if limit then
+						limit.MaxTextSize = phone and 14 or 19
+					end
+				end
 			end
 			-- The shadow of a button is a separate frame: it has to follow the
 			-- button, or it stays behind as a dark plate.
-			local shadow = area:FindFirstChild("AdminLauncherShadow")
+			local shadow = top:FindFirstChild("AdminLauncherShadow")
 			if shadow and shadow:IsA("GuiObject") then
+				shadow.Size = launcher.Size
 				local anchor = launcher.AnchorPoint
 				local size = launcher.Size
 				shadow.Position = UDim2.new(
@@ -872,7 +922,7 @@ function Panel.mount(context: Context)
 				placeLauncher()
 			end)
 		)
-		indicator = Kit.text(area, "TestIndicator", "● ТЕСТ", 0, 6, 130, 30, 19, Style.Gold)
+		indicator = Kit.text(top, "TestIndicator", "● ТЕСТ", 0, 6, 130, 30, 19, Style.Gold)
 		indicator.AnchorPoint = Vector2.new(0, 0)
 		indicator.TextXAlignment = Enum.TextXAlignment.Left
 		indicator.Visible = false
@@ -924,11 +974,14 @@ function Panel.mount(context: Context)
 			return
 		end
 		if launcher then
-			launcher.Visible = authorized and not window
+			launcher.Visible = authorized
 		end
-		local shadow = probe and probe:FindFirstChild("AdminLauncherShadow")
+		local shadow = launcherGroup and launcherGroup:FindFirstChild("AdminLauncherShadow")
 		if shadow and shadow:IsA("GuiObject") then
 			shadow.Visible = launcher and launcher.Visible or false
+		end
+		if gui then
+			gui:SetAttribute("ReducedMotion", info.data and info.data.settings.effects == false)
 		end
 		local data = info.data
 		if data then
@@ -946,6 +999,22 @@ function Panel.mount(context: Context)
 		close = close,
 		open = open,
 		update = update,
+		setLauncherHidden = function(value: boolean)
+			if launcherHidden == value then
+				return
+			end
+			launcherHidden = value
+			if launcherAnimation then
+				launcherAnimation.setHidden(value)
+			end
+			if launcher then
+				launcher.Visible = authorized
+			end
+			local shadow = launcherGroup and launcherGroup:FindFirstChild("AdminLauncherShadow")
+			if shadow and shadow:IsA("GuiObject") then
+				shadow.Visible = launcher and launcher.Visible or false
+			end
+		end,
 		destroy = unmount,
 	}
 end

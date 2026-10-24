@@ -72,7 +72,7 @@ end
 function Config.shotBounceGain(multiplier)
 	return Economy.shotBounceGain(multiplier)
 end
-Config.StudTexture = "rbxassetid://88156646156237"
+Config.StudTexture = "rbxassetid://138746650062134"
 Config.Music = "rbxassetid://1836105470"
 Config.WaterTexture = "rbxassetid://6757160733"
 Config.RiverX = -116

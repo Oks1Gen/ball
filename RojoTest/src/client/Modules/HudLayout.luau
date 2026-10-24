@@ -5,6 +5,9 @@
 -- buttons at the bottom of the screen, because a scaled board would shrink the
 -- captions below the readable size on a phone.
 local HudLayout = {}
+local Spacing = require(game.ReplicatedStorage.Shared.UiSpacing)
+local MotionConfig = require(game.ReplicatedStorage.Shared.UiMotionConfig)
+local Kit = require(script.Parent.Parent.Controllers.HudKit)
 
 export type Child = {
 	name: string,
@@ -95,25 +98,26 @@ end
 
 -- Landscape: the board as it was authored, one pixel per layout unit.
 function HudLayout.landscape(): Spec
+	local offerWidth, offerGap = Spacing.row(592, 3, 53)
 	local elements: { [string]: Entry } = {
 		HUD = entry(0, 0, BOARD_WIDTH, BOARD_HEIGHT),
-		Toast = entry(330, 185, 620, 44, { text = 27 }),
-		AutoThrow = entry(564, 43, 152, 43),
-		Settings = entry(160, 60, 29, 29),
-		StarterPack = entry(1080, 201, 119, 83),
-		DoubleSkill = entry(1080, 303, 125, 53),
-		DoubleWins = entry(1080, 366, 125, 53),
+		AutoThrow = entry(540, 3, 200, 52),
+		Settings = entry(160, 5, 36, 36),
+		Daily = entry(1159, 4, 44, 44),
+		StarterPack = entry(1038.4, 155, 119, 83),
+		DoubleSkill = entry(1030, 303, 125, 53),
+		DoubleWins = entry(1030, 401, 125, 53),
 		Throw = entry(577, 406, 126, 51),
 		StopTraining = entry(533, 205, 214, 51),
 		SkillIcon = entry(345, 479, 31, 39),
 		Skill = entry(377, 482, 279, 30, { text = 22 }),
 		Multiplier = entry(774, 482, 205, 30, { text = 22 }),
-		LevelBar = entry(344, 528, 592, 61),
+		LevelBar = entry(344, MotionConfig.Hud.LevelBarY, 592, 61),
 		["LevelBar/Level"] = entry(14, 4, 260, 50, { text = 29 }),
 		["LevelBar/Maximum"] = entry(303, 8, 271, 43, { text = 23 }),
-		Skill10M = entry(344, 600, 193, 53),
-		Skill100M = entry(543, 600, 193, 53),
-		Skill1B = entry(742, 600, 193, 53),
+		Skill10M = entry(344, MotionConfig.Hud.BottomOffersY, offerWidth, 53),
+		Skill100M = entry(344 + offerWidth + offerGap, MotionConfig.Hud.BottomOffersY, offerWidth, 53),
+		Skill1B = entry(344 + 2 * (offerWidth + offerGap), MotionConfig.Hud.BottomOffersY, offerWidth, 53),
 		RebirthIcon = entry(79, 554, 40, 40),
 		RebirthCount = entry(128, 556, 110, 34, { text = 31 }),
 		WinsIcon = entry(78, 601, 42, 43),
@@ -132,6 +136,21 @@ function HudLayout.landscape(): Spec
 		scaled = true,
 		elements = elements,
 	}
+end
+
+-- Landscape phones keep both thumb controls free; counters move above the
+-- right offer stack instead of occupying the thumbstick zone.
+function HudLayout.phoneLandscape(): Spec
+	local spec = HudLayout.landscape()
+	spec.elements.StarterPack = entry(1080, 201, 119, 83)
+	spec.elements.DoubleSkill = entry(1080, MotionConfig.Hud.PhoneSkillOfferY, 125, 53)
+	spec.elements.DoubleWins = entry(1080, MotionConfig.Hud.PhoneWinsOfferY, 125, 53)
+	spec.elements.RebirthIcon = entry(890, 70, 36, 36)
+	spec.elements.RebirthCount = entry(934, 73, 95, 32, { text = 27 })
+	spec.elements.WinsIcon = entry(1045, 70, 36, 36)
+	spec.elements.WinsCount = entry(1089, 73, 155, 32, { text = 27 })
+	spec.elements.FriendBoost = entry(900, 114, 280, 26, { text = 18 })
+	return spec
 end
 
 -- Portrait: one column, real pixels, nothing below a 44 pixel touch target.
@@ -248,7 +267,6 @@ function HudLayout.portrait(width: number, height: number): Spec
 		Throw = entry(8, throwTop, width - 16, throwHeight, { caption = 30, captionFill = true }),
 		StopTraining = entry(8, throwTop, width - 16, throwHeight, { caption = 24, captionFill = true }),
 		Hint = entry(8, hintTop, width - 16, hintHeight, { text = 14, visible = plan.hint }),
-		Toast = entry(8, height * 0.4, width - 16, 40, { text = 20 }),
 		RebirthProgress = entry(0, 0, 1, 1, { visible = false }),
 		-- The shop screen owns the paid offers on narrow screens.
 		StarterPack = entry(1080, 201, 119, 83, { visible = false }),
@@ -267,9 +285,25 @@ function HudLayout.portrait(width: number, height: number): Spec
 	}
 end
 
+function HudLayout.findNode(root: Instance, name: string): Instance?
+	local direct = root:FindFirstChild(name)
+	if direct then
+		return direct
+	end
+	for _, group in root:GetChildren() do
+		if group:GetAttribute("HudDirection") then
+			local node = group:FindFirstChild(name)
+			if node then
+				return node
+			end
+		end
+	end
+	return nil
+end
+
 local function findChild(roots: { Instance }, name: string): Instance?
 	for _, root in roots do
-		local node = root:FindFirstChild(name)
+		local node = HudLayout.findNode(root, name)
 		if node then
 			return node
 		end
@@ -341,7 +375,7 @@ local function showNode(node: Instance)
 end
 
 local function applyCaption(target: GuiObject, item: Entry)
-	local caption = target:FindFirstChild("Caption")
+	local caption = Kit.captionOf(target)
 	if not caption or not caption:IsA("TextLabel") then
 		return
 	end
@@ -365,7 +399,7 @@ end
 
 local function applyChildren(target: GuiObject, children: { Child })
 	for _, child in children do
-		local node = target:FindFirstChild(child.name)
+		local node = Kit.visualOf(target):FindFirstChild(child.name)
 		if node and node:IsA("GuiObject") then
 			stateOf(node)
 			node.Position = UDim2.fromOffset(child.x, child.y)
@@ -406,7 +440,7 @@ function HudLayout.apply(spec: Spec, roots: { Instance })
 		if parentPath and name then
 			local container = findChild(roots, parentPath)
 			if container then
-				target = container:FindFirstChild(name)
+				target = Kit.visualOf(container):FindFirstChild(name)
 			end
 		else
 			target = findChild(roots, path)
@@ -427,7 +461,7 @@ function HudLayout.apply(spec: Spec, roots: { Instance })
 			end
 			if item.hide then
 				for _, childName in item.hide do
-					local node = target:FindFirstChild(childName)
+					local node = Kit.visualOf(target):FindFirstChild(childName)
 					if node then
 						hideNode(node)
 					end
@@ -456,6 +490,7 @@ end
 
 -- The side columns leave the board and hug the window edges in landscape.
 local PIN_SOURCES: { { name: string, side: string, offset: number? } } = {
+	{ name = "Daily", side = "right" },
 	{ name = "Shop", side = "left" },
 	{ name = "Rebirth", side = "left" },
 	{ name = "Pets", side = "left" },
@@ -476,7 +511,7 @@ local PIN_SOURCES: { { name: string, side: string, offset: number? } } = {
 function HudLayout.pins(spec: Spec, hud: Instance): { Pin }
 	local pins: { Pin } = {}
 	for _, source in PIN_SOURCES do
-		local node = hud:FindFirstChild(source.name)
+		local node = HudLayout.findNode(hud, source.name)
 		local item = spec.elements[source.name]
 		if node and node:IsA("GuiObject") and item then
 			local offset = source.offset
@@ -484,7 +519,7 @@ function HudLayout.pins(spec: Spec, hud: Instance): { Pin }
 				offset = if source.side == "left" then item.x - 75 else item.x - 1205
 			end
 			table.insert(pins, { node = node, side = source.side, offset = offset })
-			local shadow = hud:FindFirstChild(source.name .. "Shadow")
+			local shadow = HudLayout.findNode(hud, source.name .. "Shadow")
 			if shadow and shadow:IsA("GuiObject") then
 				table.insert(pins, { node = shadow, side = source.side, offset = offset })
 			end

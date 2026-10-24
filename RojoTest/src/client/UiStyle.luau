@@ -7,14 +7,14 @@ local C = Color3.fromRGB
 local Style = {}
 
 -- Ink is the colour of every border and of every text outline.
-Style.Ink = C(20, 22, 33)
+Style.Ink = C(12, 13, 19)
 -- The body of a window is translucent: the world stays visible behind it.
-Style.Panel = C(55, 63, 79)
-Style.PanelDeep = C(38, 44, 58)
-Style.Slot = C(30, 36, 48)
+Style.Panel = C(62, 65, 71)
+Style.PanelDeep = C(39, 41, 48)
+Style.Slot = C(122, 130, 138)
 Style.Text = C(255, 255, 255)
 Style.Muted = C(206, 220, 240)
-Style.Gold = C(255, 225, 66)
+Style.Gold = C(255, 221, 38)
 
 Style.Colors = {
 	Pets = C(27, 183, 247),
@@ -43,12 +43,12 @@ Style.Rarity = {
 }
 
 -- Shape of the plates.
-Style.Stroke = 2
+Style.Stroke = 2.5
 Style.WindowStroke = 2
 Style.Radius = 9
 Style.PanelRadius = 12
-Style.StudTile = 64
-Style.StudAlpha = 0.5
+Style.StudTile = 32
+Style.StudAlpha = 0.7
 
 -- The window chrome comes from the Settings and Balls panels: the heading is
 -- a 63 pixel label that floats over the top edge, the icon is 100 and
@@ -58,18 +58,6 @@ Style.TitleSize = 63
 Style.TitleMin = 24
 Style.IconSize = 100
 Style.CloseSize = 60
-
-Style.Motion = {
-	Frequency = 6,
-	DampingRatio = 1,
-	Lift = 4,
-	PressDepth = 3,
-	Brighten = 0.12,
-	Darken = 0.1,
-	CardLift = 3,
-	WindowRise = 24,
-	WindowFrequency = 4.5,
-}
 
 -- The colour of a plate that carries text: a little ink keeps the white
 -- caption readable on a bright plate.

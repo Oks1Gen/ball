@@ -620,10 +620,10 @@ not a measured retention result. Save the current place to retain scene edits.
 
 The ball stand has ten purchasable balls, ordered left to right across the lower
 row, then the upper row. `src/shared/GameConfig.luau` is the source for names,
-prices in Crowns (the existing saved `wins` balance), powers, and display slots.
+prices in Wins (the existing saved `wins` balance), powers, and display slots.
 Existing stone IDs and profile storage version are retained for compatibility.
 Powers are 1, 1.15, 1.35, 1.6, 1.9, 2.5, 3.5, 5, 7.5, and 10; prices are
-0, 250, 2.5K, 15K, 75K, 350K, 2M, 8M, 25M, and 75M Crowns.
+0, 250, 2.5K, 15K, 75K, 350K, 2M, 8M, 25M, and 75M Wins.
 
 `src/server/BallStand.luau` maintains both worlds' displays and per-ball
 prompts. Prompts open the selected ball in the inventory; buying also equips
@@ -669,7 +669,7 @@ Global DataStore behavior still needs verification in a published server.
 and affected stand visuals. `tools/VerifyBallGameplay.luau` checks transaction
 failures, ownership, increasing tiers, model sizes, animation, and both stands.
 The Rojo build and Luau syntax checks passed. Studio Play verified actual remote
-purchase (250 Crowns), free re-equipping, insufficient funds, equipped meshes in
+purchase (250 Wins), free re-equipping, insufficient funds, equipped meshes in
 the hand/practice/throw, increased training gain (8 instead of 7), throw rewards,
 smooth motion, and ten inventory rows with previews. The final Play console had
 no errors. Persistence uses the existing profile save path; live DataStore
