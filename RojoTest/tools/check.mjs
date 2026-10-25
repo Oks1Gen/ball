@@ -260,6 +260,10 @@ step('verify Packages match wally.lock', () => {
 });
 
 // ------------------------------------------------------------------ static checks
+step('motion style tokens', () => {
+  run('motion-theme', process.execPath, [path.join(project, 'tools', 'sync-motion-theme.mjs'), '--check']);
+});
+
 step('stylua', () => {
   run('stylua', pinned('stylua'), ['--check', '--glob', '**/*.luau', 'src/client', 'src/server', 'src/shared', 'src/loading', 'tests', 'lune', 'tools']);
 });

@@ -45,9 +45,7 @@ client/NativeIcons.luau|TypeError|Unknown type used in - operation; consider add
 client/NativeIcons.luau|TypeError|Unknown type used in - operation; consider adding a type annotation to 'y'
 client/NativeIcons.luau|TypeError|Unknown type used in / operation; consider adding a type annotation to 'h'
 client/NativeIcons.luau|TypeError|Unknown type used in / operation; consider adding a type annotation to 'w'
-loading/init.client.luau|TypeError|Argument count mismatch. Function 'label' expects 5 arguments, but only 4 are specified
 loading/init.client.luau|TypeError|Function only returns 1 value, but 2 are required here
-loading/init.client.luau|TypeError|Type T where T = {- IsA: (T, b...) -, string) -> ('a} cannot be compared with ScreenGui
 server/AdminDiagnostics.luau|TypeError|Expected this to be 'Instance', but got '<type>' caused by: Property 'FindFirstChild' is not compatible. Expected this to be but got caused by: Return type is not compatible. Expected this to be '<type>', but got 'Instance?' caused by: Not all union options are compatible. Key 'Position' not found in external type 'Instance'
 server/AdminDiagnostics.luau|TypeError|Type 'unknown' does not have key 'id'
 server/AdminDiagnostics.luau|TypeError|Unknown type used in - operation; consider adding a type annotation to 'front'

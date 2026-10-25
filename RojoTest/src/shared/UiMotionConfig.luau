@@ -1,24 +1,29 @@
 --!strict
 -- Все настройки движения UI собраны здесь. Масштаб 1 = обычный размер.
+local Theme = require(script.Parent.UiMotionTheme)
 return {
 	Button = {
-		HoverScale = 1.08, -- +8% из центра, без изменения цвета.
-		PressScale = 0.96, -- Размер при удержании мыши / пальца / кнопки A.
-		HoverTime = 0.11, -- Секунды наведения и ухода курсора.
-		PressTime = 0.06, -- Быстрый отклик в момент нажатия.
-		ReleaseFrequency = 10, -- Больше = быстрее возврат после нажатия.
-		ReleaseDamping = 0.85, -- Ближе к 1 = меньше колебаний.
+		HoverScale = Theme.hover.scale, -- +8% из центра, без изменения цвета.
+		PressScale = Theme.press.scale, -- Размер при удержании мыши / пальца / кнопки A.
+		HoverTime = Theme.hover.time, -- Более плавное наведение и уход курсора.
+		PressTime = Theme.press.time, -- Плавное сжатие при нажатии.
+		ReleaseOvershoot = Theme.release.overshootMultiplier, -- После отпускания на 5% выше целевого размера.
+		ReleaseTime = Theme.release.time, -- Более долгий рост до пика overshoot.
+		MaximumScale = Theme.release.maximumScale, -- Запас раскладки, включая hover × overshoot.
+		ReleaseFrequency = Theme.release.spring.frequency, -- Более медленный пружинный возврат с пика.
+		ReleaseDamping = Theme.release.spring.dampingRatio, -- Ближе к 1 = меньше колебаний.
 	},
 	Window = {
-		ClosedScale = 0.70, -- Окно на 30% меньше перед открытием / после закрытия.
-		OvershootScale = 1.06, -- Пик выпрыгивания перед возвратом к размеру 1.
-		OpenTime = 0.30, -- Более плавный рост от текущего размера до пика.
-		SettleFrequency = 6.5, -- Неторопливый пружинный возврат от пика к 1.
-		SettleDamping = 0.85, -- Мягкий возврат без длинного раскачивания.
-		CloseAnticipationTime = 0.07, -- Небольшое расширение перед закрытием.
-		CloseTime = 0.18, -- Сжатие от пика до ClosedScale.
-		FadeInTime = 0.14, -- Проявление согласовано с более медленным ростом окна.
-		FadeOutTime = 0.14, -- Исчезновение во время сжатия.
+		ClosedScale = Theme.open.from, -- Открытие начинается с 5%, как обратное закрытие.
+		CloseScale = Theme.close.to, -- При закрытии сжимаем до 5% обычного размера.
+		OvershootScale = Theme.open.overshoot, -- Пик выпрыгивания перед возвратом к размеру 1.
+		OpenTime = Theme.open.time, -- Обратное сжатию раскрытие: быстро в начале, мягко в конце.
+		SettleFrequency = Theme.open.spring.frequency, -- Неторопливый пружинный возврат от пика к 1.
+		SettleDamping = Theme.open.spring.dampingRatio, -- Мягкий возврат без длинного раскачивания.
+		CloseAnticipationTime = Theme.close.anticipationTime, -- Небольшое расширение перед закрытием.
+		CloseTime = Theme.close.time, -- Сжатие от пика до CloseScale.
+		FadeInTime = Theme.open.fadeTime, -- Сначала проявляем маленькое окно, затем раскрываем.
+		FadeOutTime = Theme.close.fadeTime, -- Короткое исчезновение строго после достижения 5%.
 		ChromeMargin = 70, -- Запас под выступающие заголовки, иконки и крестик.
 	},
 	Navigation = {
@@ -37,13 +42,17 @@ return {
 		PhoneWinsOfferY = 364,
 		LevelBarY = 520, -- Запас над нижними предложениями, включая выступающие иконки.
 		BottomOffersY = 604, -- Цены и hover нижнего ряда остаются выше подсказки.
-		SlideTime = 0.45, -- Более медленный выезд и возврат, с мягким началом и остановкой.
-		OffscreenPadding = 80, -- Дополнительный запас за экраном, в экранных px.
+		SlideTime = Theme.hud.time, -- Более медленный выезд и возврат, с мягким началом и остановкой.
+		SlideOvershoot = Theme.hud.overshootPixels, -- Замах/перелёт на 12 экранных px, независимо от экрана.
+		SlideAnticipationTime = Theme.hud.anticipationTime, -- Небольшой замах внутрь перед уходом.
+		SlideSettleFrequency = Theme.hud.spring.frequency, -- Плавное возвращение с перелёта на своё место.
+		SlideSettleDamping = Theme.hud.spring.dampingRatio,
+		OffscreenPadding = Theme.hud.offscreenPaddingPixels, -- Дополнительный запас за экраном, в экранных px.
 		-- Состав блоков: дочерние иконки и тени движутся со своей кнопкой.
 		Groups = {
 			Left = { "RebirthIcon", "RebirthCount", "WinsIcon", "WinsCount", "FriendBoost" },
 			Right = { "StarterPack", "DoubleSkill", "DoubleWins", "Best" },
-			Top = { "AutoThrow", "Daily", "Settings", "Distance", "HitDistance", "StopTraining" },
+			Top = { "AutoThrow", "Distance", "HitDistance", "StopTraining" },
 			Bottom = {
 				"Throw",
 				"SkillIcon",
@@ -60,7 +69,7 @@ return {
 		},
 	},
 	Blur = {
-		Size = 22, -- Сила размытия мира за любым открытым окном.
-		Time = 0.35, -- Размытие сопровождает более медленное движение HUD.
+		Size = Theme.blur.size, -- Сила размытия мира за любым открытым окном.
+		Time = Theme.blur.time, -- Размытие сопровождает более медленное движение HUD.
 	},
 }

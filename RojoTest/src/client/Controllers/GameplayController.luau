@@ -19,6 +19,7 @@ function Controller:Start()
 	local Presentation = require(clientRoot.Modules:WaitForChild("UiPresentation"))
 	local Kit = require(clientRoot.Controllers:WaitForChild("HudKit"))
 	local HudBuilder = require(clientRoot.Controllers:WaitForChild("HudBuilder"))
+	local TopbarControls = require(clientRoot.Controllers:WaitForChild("TopbarControls"))
 	local HudMotion = require(clientRoot.Controllers:WaitForChild("HudMotion"))
 	local MotionConfig = require(ReplicatedStorage.Shared:WaitForChild("UiMotionConfig"))
 	local HudPanels = require(clientRoot.Controllers:WaitForChild("HudPanels"))
@@ -49,6 +50,7 @@ function Controller:Start()
 	local yellow = C(255, 225, 66)
 	local latest: any = nil
 	local currentPanel: string? = nil
+	local topbar: any = nil
 	local flight: any = nil
 	local hatchBusy = false
 	local hatchPromptState: boolean? = nil
@@ -115,8 +117,17 @@ function Controller:Start()
 	local hud = hudRefs.hud
 	local hudMotion = HudMotion.mount(hud, canvas, scale)
 	local blurTween: Tween? = nil
+	local levelTween: Tween? = nil
+	local notifications: any = nil
 	local function syncPresentation()
 		local modal = currentPanel ~= nil
+		local reduced = latest ~= nil and latest.data.settings.effects == false
+		if notifications then
+			notifications.setReduced(reduced)
+		end
+		if topbar then
+			topbar.setHidden(modal, latest and latest.data.settings.effects == false)
+		end
 		if modal and kickTiming and kickTiming.active() then
 			kickTiming.cancel()
 		end
@@ -129,14 +140,19 @@ function Controller:Start()
 			adminUI.setLauncherHidden(modal)
 		end
 		local goal = if modal then MotionConfig.Blur.Size else 0
-		if blur:GetAttribute("Goal") ~= goal then
+		if blur:GetAttribute("Goal") ~= goal or reduced then
 			if blurTween then
 				blurTween:Cancel()
 			end
 			blur:SetAttribute("Goal", goal)
-			local tween = TweenService:Create(blur, TweenInfo.new(MotionConfig.Blur.Time), { Size = goal })
-			blurTween = tween
-			tween:Play()
+			blurTween = nil
+			if reduced then
+				blur.Size = goal
+			else
+				local tween = TweenService:Create(blur, TweenInfo.new(MotionConfig.Blur.Time), { Size = goal })
+				blurTween = tween
+				tween:Play()
+			end
 		end
 	end
 
@@ -260,18 +276,6 @@ function Controller:Start()
 			-- inside the granted rectangle.
 			canvas.Position = UDim2.fromOffset(area.offset.X + area.size.X / 2, area.offset.Y + area.size.Y / 2)
 			local gutter = (area.size.X / factor - 1280) / 2
-			if phone then
-				-- The desktop settings position must clear the wider touch navigation.
-				for _, part in { "Settings", "SettingsShadow" } do
-					local node = HudLayout.findNode(hud, part)
-					if node and node:IsA("GuiObject") then
-						node.Position = UDim2.fromOffset(
-							math.max(node.Position.X.Offset, 128 / factor - gutter),
-							node.Position.Y.Offset
-						)
-					end
-				end
-			end
 			local margin = 16 / factor
 			pins = HudLayout.pins(spec, hud)
 			for _, pin in pins do
@@ -307,7 +311,6 @@ function Controller:Start()
 		panels.layout()
 	end
 
-	local notifications: any = nil
 	local function notice(message: string?, kind: string?, wins: number?, distance: number?)
 		if notifications then
 			notifications.show(message, kind, wins, distance)
@@ -377,6 +380,10 @@ function Controller:Start()
 			openCollector("Shop", "Shop")
 		end
 	end
+
+	topbar = TopbarControls.mount(player, function(name: string)
+		openPanel(name)
+	end)
 
 	applyLayout()
 	local viewportConnection = workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(applyLayout)
@@ -615,9 +622,19 @@ function Controller:Start()
 			or Config.format(d.skill - info.levelStart) .. " / " .. Config.format(info.nextLevel - info.levelStart)
 		local progress = info.level == Config.MaxLevel and 1
 			or math.clamp((d.skill - info.levelStart) / math.max(1, info.nextLevel - info.levelStart), 0, 1)
-		TweenService:Create(hudRefs.levelFill, TweenInfo.new(0.3), {
-			Size = UDim2.fromScale(progress, 1),
-		}):Play()
+		if levelTween then
+			levelTween:Cancel()
+			levelTween = nil
+		end
+		if d.settings.effects == false then
+			hudRefs.levelFill.Size = UDim2.fromScale(progress, 1)
+		else
+			local tween = TweenService:Create(hudRefs.levelFill, TweenInfo.new(0.3), {
+				Size = UDim2.fromScale(progress, 1),
+			})
+			levelTween = tween
+			tween:Play()
+		end
 		hudRefs.rebirthText.Text = tostring(d.rebirths)
 		hudRefs.winsText.Text = Config.format(d.wins)
 		hudRefs.friendText.Text = "Friend Boost +" .. info.friendBoost .. "%"
@@ -769,8 +786,12 @@ function Controller:Start()
 		collectorUI:destroy()
 		panels.destroy()
 		hudMotion.destroy()
+		topbar.destroy()
 		if blurTween then
 			blurTween:Cancel()
+		end
+		if levelTween then
+			levelTween:Cancel()
 		end
 		blur:Destroy()
 	end)

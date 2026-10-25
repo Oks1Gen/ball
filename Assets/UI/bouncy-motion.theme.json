@@ -1,0 +1,75 @@
+{
+  "motion": {
+    "hover": {
+      "scale": 1.08,
+      "rotate": 0,
+      "time": 0.2,
+      "style": "Quad",
+      "easing": "quadOut"
+    },
+    "press": {
+      "scale": 0.96,
+      "time": 0.11,
+      "easing": "quadOut"
+    },
+    "release": {
+      "overshootMultiplier": 1.05,
+      "time": 0.18,
+      "easing": "quartOut",
+      "maximumScale": 1.14,
+      "spring": {
+        "frequency": 4,
+        "dampingRatio": 0.85
+      }
+    },
+    "open": {
+      "style": "pop",
+      "from": 0.05,
+      "time": 0.26,
+      "easing": "quartOut",
+      "fadeTime": 0.04,
+      "fadeEasing": "linear",
+      "fadeBeforeScale": true,
+      "overshoot": 1.06,
+      "spring": {
+        "frequency": 6.5,
+        "dampingRatio": 0.85
+      }
+    },
+    "close": {
+      "anticipationScale": 1.06,
+      "anticipationTime": 0.07,
+      "anticipationEasing": "quadOut",
+      "to": 0.05,
+      "time": 0.26,
+      "easing": "quartIn",
+      "fadeTime": 0.04,
+      "fadeEasing": "linear",
+      "fadeAfterScale": true
+    },
+    "hud": {
+      "time": 0.45,
+      "hideEasing": "quartIn",
+      "showEasing": "quartOut",
+      "overshootPixels": 12,
+      "anticipationTime": 0.1,
+      "anticipationEasing": "quadOut",
+      "offscreenPaddingPixels": 80,
+      "spring": {
+        "frequency": 4,
+        "dampingRatio": 0.85
+      }
+    },
+    "blur": {
+      "size": 22,
+      "time": 0.35,
+      "easing": "quadOut"
+    },
+    "disabled": {
+      "mode": "instant",
+      "cancelRunning": true,
+      "buttonScale": 1,
+      "keepStaticBlur": true
+    }
+  }
+}

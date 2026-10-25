@@ -69,6 +69,7 @@ function Notifications.mount(context: Context)
 	local motion = Ripple.createMotion(0, { start = true })
 	local changed = motion:onChange(updateProgress)
 	local alive, visible = true, false
+	local leaving = false
 	local revision = 0
 	local message, category = "", "Info"
 	local lastRaw, lastRawTime = "", -math.huge
@@ -173,6 +174,7 @@ function Notifications.mount(context: Context)
 			message = "+" .. Config.format(wins or 0) .. " Wins • " .. Config.format(distance) .. " m"
 		end
 		visible = true
+		leaving = false
 		revision += 1
 		local id = revision
 		render()
@@ -191,6 +193,7 @@ function Notifications.mount(context: Context)
 			if not alive or revision ~= id then
 				return
 			end
+			leaving = true
 			motion:tween(0, { duration = if reduced() then 0 else 0.25, easing = "quadIn" })
 			task.delay(if reduced() then 0 else 0.26, function()
 				if alive and revision == id then
@@ -205,6 +208,14 @@ function Notifications.mount(context: Context)
 	render()
 	return {
 		show = show,
+		setReduced = function(value: boolean)
+			gui:SetAttribute("ReducedMotion", value)
+			if value then
+				local goal = if visible and not leaving then 1 else 0
+				motion:setPosition(goal)
+				motion:tween(goal, { duration = 0 })
+			end
+		end,
 		destroy = function()
 			alive = false
 			revision += 1

@@ -294,7 +294,7 @@ function UI.mount(context)
 			local gap = phone and area.Y < 300 and 4
 				or math.max(
 					MotionConfig.Navigation.MinimumGap,
-					math.ceil(size * (MotionConfig.Button.HoverScale - 1)) + MotionConfig.Navigation.HoverClearance
+					math.ceil(size * (MotionConfig.Button.MaximumScale - 1)) + MotionConfig.Navigation.HoverClearance
 				)
 			local width = size * 2 + gap
 			local banner = math.max(phone and 44 or 36, math.floor(size * 0.62))

@@ -103,8 +103,6 @@ function HudLayout.landscape(): Spec
 	local elements: { [string]: Entry } = {
 		HUD = entry(0, 0, BOARD_WIDTH, BOARD_HEIGHT),
 		AutoThrow = entry(540, 3, 200, 52),
-		Settings = entry(160, 5, 36, 36),
-		Daily = entry(1159, 4, 44, 44),
 		StarterPack = entry(1038.4, 155, 119, 83),
 		DoubleSkill = entry(1030, 303, 125, 53),
 		DoubleWins = entry(1030, 401, 125, 53),
@@ -148,8 +146,6 @@ function HudLayout.phoneLandscape(factor: number?, viewportWidth: number?): Spec
 	local minimum = math.ceil(44 / physicalScale)
 	spec.mode = "phoneLandscape"
 	-- Preserve the desktop board and its regions. Only proportions change.
-	spec.elements.Settings = entry(160, 5, minimum, minimum)
-	spec.elements.Daily = entry(1205 - minimum, 4, minimum, minimum)
 	spec.elements.AutoThrow.h = minimum
 	spec.elements.Throw.h = minimum
 	spec.elements.Throw.y = 420 - minimum
@@ -272,11 +268,6 @@ function HudLayout.portrait(width: number, height: number): Spec
 	end
 	local elements: { [string]: Entry } = {
 		HUD = entry(0, 0, width, height),
-		Settings = entry(8, top("head"), 48, 48, {
-			children = {
-				{ name = "SettingsIcon", x = 12, y = 12, w = 24, h = 24 },
-			},
-		}),
 		AutoThrow = entry(64, top("head"), width - 72, 48, {
 			caption = 18,
 			captionFill = true,
@@ -605,7 +596,6 @@ end
 
 -- The side columns leave the board and hug the window edges in landscape.
 local PIN_SOURCES: { { name: string, side: string, offset: number? } } = {
-	{ name = "Daily", side = "right" },
 	{ name = "Shop", side = "left" },
 	{ name = "Rebirth", side = "left" },
 	{ name = "Pets", side = "left" },

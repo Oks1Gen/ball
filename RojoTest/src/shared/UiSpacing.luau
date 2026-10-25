@@ -7,7 +7,7 @@ local Spacing = {}
 function Spacing.gap(span: number): number
 	return math.max(
 		Config.Spacing.MinimumGap,
-		math.ceil(span * (Config.Button.HoverScale - 1)) + Config.Spacing.HoverClearance
+		math.ceil(span * (Config.Button.MaximumScale - 1)) + Config.Spacing.HoverClearance
 	)
 end
 

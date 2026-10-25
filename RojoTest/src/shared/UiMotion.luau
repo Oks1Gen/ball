@@ -4,6 +4,7 @@
 local Ripple = require(game.ReplicatedStorage.Packages.Ripple)
 local Input = game:GetService("UserInputService")
 local Config = require(script.Parent.UiMotionConfig)
+local Theme = require(script.Parent.UiMotionTheme)
 local Motion = {}
 local resets: { [GuiButton]: () -> () } = {}
 
@@ -50,8 +51,10 @@ function Motion.button(button: GuiButton, visual: GuiObject, shadow: GuiObject?)
 	local pressed: InputObject? = nil
 	local connections: { RBXScriptConnection } = {}
 	local destroyed = false
+	local releaseTarget: number? = nil
 	local limits: { [UITextSizeConstraint]: { min: number, max: number, lastMin: number, lastMax: number } } = {}
 	local function target(release: boolean?)
+		releaseTarget = nil
 		local enabled = Motion.enabled(button)
 		local value = if not enabled
 			then 1
@@ -62,18 +65,29 @@ function Motion.button(button: GuiButton, visual: GuiObject, shadow: GuiObject?)
 			spring:setPosition(1)
 			spring:setVelocity(0)
 			spring:spring(1)
-		elseif release then
-			spring:spring(value, { frequency = settings.ReleaseFrequency, dampingRatio = settings.ReleaseDamping })
-		else
+		elseif release and enabled then
+			releaseTarget = value
 			spring:tween(
-				value,
-				{ duration = if pressed then settings.PressTime else settings.HoverTime, easing = "quadOut" }
+				value * settings.ReleaseOvershoot,
+				{ duration = settings.ReleaseTime, easing = Theme.release.easing }
 			)
+		else
+			spring:tween(value, {
+				duration = if pressed then settings.PressTime else settings.HoverTime,
+				easing = if pressed then Theme.press.easing else Theme.hover.easing,
+			})
 		end
 	end
+	local completed = spring:onComplete(function()
+		if releaseTarget then
+			local value = releaseTarget
+			releaseTarget = nil
+			spring:spring(value, { frequency = settings.ReleaseFrequency, dampingRatio = settings.ReleaseDamping })
+		end
+	end)
 	local disconnect = spring:onChange(function(value)
 		-- Layout reserves this exact maximum, including during spring reversals.
-		value = math.min(value, settings.HoverScale)
+		value = math.min(value, settings.MaximumScale)
 		scale.Scale = value
 		-- TextScaled uses physical pixel caps: follow the visual scale too,
 		-- otherwise the plate grows while its caption stays at the old cap.
@@ -171,6 +185,10 @@ function Motion.button(button: GuiButton, visual: GuiObject, shadow: GuiObject?)
 			target(true)
 		end
 	end)
+	local screen = button:FindFirstAncestorOfClass("ScreenGui")
+	if screen then
+		connect(screen:GetAttributeChangedSignal("ReducedMotion"), reset)
+	end
 	connect(Input.WindowFocusReleased, reset)
 	connect(button:GetPropertyChangedSignal("Active"), reset)
 	connect(button:GetPropertyChangedSignal("Interactable"), reset)
@@ -185,6 +203,7 @@ function Motion.button(button: GuiButton, visual: GuiObject, shadow: GuiObject?)
 			connection:Disconnect()
 		end
 		disconnect()
+		completed()
 		spring:destroy()
 		scale:Destroy()
 	end
@@ -206,6 +225,8 @@ function Motion.window(group: CanvasGroup, baseScale: number?, reduced: (() -> b
 	local opened = false
 	local destroyed = false
 	local closed: (() -> ())? = nil
+	local revision = 0
+	local reducedConnection: RBXScriptConnection? = nil
 	scale.Scale = base * settings.ClosedScale
 	group.GroupTransparency = 1
 	local sizeChanged = size:onChange(function(value)
@@ -214,19 +235,30 @@ function Motion.window(group: CanvasGroup, baseScale: number?, reduced: (() -> b
 	local opacityChanged = opacity:onChange(function(value)
 		group.GroupTransparency = math.clamp(value, 0, 1)
 	end)
+	local function startOpening()
+		phase = "opening"
+		size:tween(settings.OvershootScale, { duration = settings.OpenTime, easing = Theme.open.easing })
+	end
+	local faded = opacity:onComplete(function()
+		if phase == "appearing" then
+			startOpening()
+		elseif phase == "fading" then
+			phase = "closed"
+			if closed then
+				closed()
+			end
+		end
+	end)
 	local completed = size:onComplete(function()
 		if phase == "opening" then
 			phase = "settling"
 			size:spring(1, { frequency = settings.SettleFrequency, dampingRatio = settings.SettleDamping })
 		elseif phase == "anticipating" then
 			phase = "closing"
-			size:tween(settings.ClosedScale, { duration = settings.CloseTime, easing = "quadIn" })
-			opacity:tween(1, { duration = settings.FadeOutTime })
+			size:tween(settings.CloseScale, { duration = settings.CloseTime, easing = Theme.close.easing })
 		elseif phase == "closing" then
-			phase = "closed"
-			if closed then
-				closed()
-			end
+			phase = "fading"
+			opacity:tween(1, { duration = settings.FadeOutTime, easing = Theme.close.fadeEasing })
 		elseif phase == "settling" then
 			phase = "open"
 		end
@@ -236,47 +268,77 @@ function Motion.window(group: CanvasGroup, baseScale: number?, reduced: (() -> b
 			return
 		end
 		destroyed = true
+		if reducedConnection then
+			reducedConnection:Disconnect()
+		end
 		sizeChanged()
 		opacityChanged()
 		completed()
+		faded()
 		size:destroy()
 		opacity:destroy()
 	end
 	local destroying = group.Destroying:Connect(destroy)
-	return {
-		setOpen = function(value: boolean, onClosed: (() -> ())?, instant: boolean?)
-			if destroyed then
-				return
+	local function deferClosed(callback: () -> ())
+		local id = revision
+		task.defer(function()
+			if not destroyed and not opened and revision == id then
+				callback()
 			end
-			closed = onClosed
-			if opened == value and phase ~= "closed" then
-				return
+		end)
+	end
+	local function setOpen(value: boolean, onClosed: (() -> ())?, instant: boolean?)
+		if destroyed then
+			return
+		end
+		closed = onClosed
+		local immediate = instant == true or (reduced and reduced()) or Motion.reduced(group)
+		if opened == value and phase ~= "closed" and not immediate then
+			return
+		end
+		revision += 1
+		opened = value
+		group.Interactable = value
+		Motion.resetButtons(group)
+		if immediate then
+			phase = if value then "open" else "closed"
+			size:setPosition(if value then 1 else settings.CloseScale)
+			size:tween(if value then 1 else settings.CloseScale, { duration = 0 })
+			opacity:setPosition(if value then 0 else 1)
+			opacity:tween(if value then 0 else 1, { duration = 0 })
+			if not value and closed then
+				deferClosed(closed)
 			end
-			opened = value
-			group.Interactable = value
-			Motion.resetButtons(group)
-			if instant or (reduced and reduced()) or Motion.reduced(group) then
-				phase = if value then "open" else "closed"
-				size:setPosition(if value then 1 else settings.ClosedScale)
-				size:tween(if value then 1 else settings.ClosedScale, { duration = 0 })
-				opacity:setPosition(if value then 0 else 1)
-				opacity:tween(if value then 0 else 1, { duration = 0 })
-				if not value and closed then
-					task.defer(closed)
-				end
-			elseif value then
-				phase = "opening"
-				opacity:tween(0, { duration = settings.FadeInTime })
-				size:tween(settings.OvershootScale, { duration = settings.OpenTime, easing = "quadOut" })
-			elseif phase == "closed" then
-				if closed then
-					task.defer(closed)
-				end
+		elseif value then
+			if opacity:getPosition() <= 0.001 then
+				startOpening()
 			else
-				phase = "anticipating"
-				size:tween(settings.OvershootScale, { duration = settings.CloseAnticipationTime, easing = "quadOut" })
+				phase = "appearing"
+				size:tween(size:getPosition(), { duration = 0 })
+				opacity:tween(0, { duration = settings.FadeInTime, easing = Theme.open.fadeEasing })
 			end
-		end,
+		elseif phase == "closed" then
+			if closed then
+				deferClosed(closed)
+			end
+		else
+			phase = "anticipating"
+			size:tween(
+				settings.OvershootScale,
+				{ duration = settings.CloseAnticipationTime, easing = Theme.close.anticipationEasing }
+			)
+		end
+	end
+	local screen = group:FindFirstAncestorOfClass("ScreenGui")
+	if screen then
+		reducedConnection = screen:GetAttributeChangedSignal("ReducedMotion"):Connect(function()
+			if Motion.reduced(group) then
+				setOpen(opened, closed, true)
+			end
+		end)
+	end
+	return {
+		setOpen = setOpen,
 		destroy = function()
 			destroying:Disconnect()
 			destroy()
@@ -290,6 +352,13 @@ end
 function Motion.slide(group: GuiObject, direction: string, unitsPerPixel: (() -> number)?)
 	local progress = Ripple.createMotion(0, { start = true })
 	local hidden = false
+	local reducedConnection: RBXScriptConnection? = nil
+	local phase = "visible"
+	local function overshoot(): number
+		local viewport = workspace.CurrentCamera.ViewportSize
+		local span = if direction == "Left" or direction == "Right" then viewport.X else viewport.Y
+		return Config.Hud.SlideOvershoot / math.max(1, span + Config.Hud.OffscreenPadding)
+	end
 	local function place(value: number)
 		local viewport = workspace.CurrentCamera.ViewportSize
 		local unit = if unitsPerPixel then unitsPerPixel() else 1
@@ -305,35 +374,79 @@ function Motion.slide(group: GuiObject, direction: string, unitsPerPixel: (() ->
 		group.Position = UDim2.fromOffset(x * unit * value, y * unit * value)
 	end
 	local changed = progress:onChange(place)
+	local completed = progress:onComplete(function()
+		if phase == "anticipating" then
+			phase = "hiding"
+			progress:tween(1, { duration = Config.Hud.SlideTime, easing = Theme.hud.hideEasing })
+		elseif phase == "returning" then
+			phase = "settling"
+			progress:spring(0, {
+				frequency = Config.Hud.SlideSettleFrequency,
+				dampingRatio = Config.Hud.SlideSettleDamping,
+			})
+		elseif phase == "hiding" then
+			phase = "hidden"
+		elseif phase == "settling" then
+			phase = "visible"
+		end
+	end)
 	local destroying = group.Destroying:Connect(function()
+		if reducedConnection then
+			reducedConnection:Disconnect()
+		end
 		changed()
+		completed()
 		progress:destroy()
 	end)
+	local function setHidden(value: boolean, instant: boolean?)
+		group.Interactable = not value
+		local immediate = instant == true or Motion.reduced(group)
+		if hidden == value and not immediate then
+			return
+		end
+		hidden = value
+		if value then
+			Motion.resetButtons(group)
+		end
+		local goal = if value then 1 else 0
+		if immediate then
+			phase = if value then "hidden" else "visible"
+			progress:setPosition(goal)
+			progress:tween(goal, { duration = 0 })
+		elseif value and progress:getPosition() <= overshoot() then
+			phase = "anticipating"
+			progress:tween(
+				-overshoot(),
+				{ duration = Config.Hud.SlideAnticipationTime, easing = Theme.hud.anticipationEasing }
+			)
+		elseif value then
+			phase = "hiding"
+			progress:tween(1, { duration = Config.Hud.SlideTime, easing = Theme.hud.hideEasing })
+		else
+			phase = "returning"
+			progress:tween(-overshoot(), { duration = Config.Hud.SlideTime, easing = Theme.hud.showEasing })
+		end
+	end
+	local screen = group:FindFirstAncestorOfClass("ScreenGui")
+	if screen then
+		reducedConnection = screen:GetAttributeChangedSignal("ReducedMotion"):Connect(function()
+			if Motion.reduced(group) then
+				setHidden(hidden, true)
+			end
+		end)
+	end
 	return {
-		setHidden = function(value: boolean, instant: boolean?)
-			group.Interactable = not value
-			if hidden == value and not instant then
-				return
-			end
-			hidden = value
-			if value then
-				Motion.resetButtons(group)
-			end
-			local goal = if value then 1 else 0
-			if instant or Motion.reduced(group) then
-				progress:setPosition(goal)
-			end
-			progress:tween(goal, {
-				duration = if instant or Motion.reduced(group) then 0 else Config.Hud.SlideTime,
-				easing = "sineInOut",
-			})
-		end,
+		setHidden = setHidden,
 		refresh = function()
 			place(progress:getPosition())
 		end,
 		destroy = function()
 			destroying:Disconnect()
+			if reducedConnection then
+				reducedConnection:Disconnect()
+			end
 			changed()
+			completed()
 			progress:destroy()
 		end,
 	}

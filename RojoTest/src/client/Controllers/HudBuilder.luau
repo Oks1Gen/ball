@@ -82,42 +82,6 @@ function Builder.build(context: Context): Refs
 	Kit.icon(auto, "Robux", 103, 32, 17, 17)
 	Kit.text(auto, "Amount", "25", 124, 32, 27, 17, 14, yellow)
 
-	local settingsItem = at("Settings")
-	local settings = Kit.button(
-		canvas,
-		"Settings",
-		"",
-		settingsItem.x,
-		settingsItem.y,
-		settingsItem.w,
-		settingsItem.h,
-		C(37, 47, 58),
-		16,
-		function()
-			context.openPanel("Settings")
-		end
-	)
-	Kit.icon(settings, "Settings", 3, 3, 30, 30)
-	local dailyItem = at("Daily")
-	local daily = Kit.button(
-		hud,
-		"Daily",
-		"",
-		dailyItem.x,
-		dailyItem.y,
-		dailyItem.w,
-		dailyItem.h,
-		C(30, 32, 39),
-		18,
-		function()
-			context.openPanel("Daily")
-		end
-	)
-	Kit.hide(daily, "Studs")
-	Kit.hide(hud, "DailyShadow")
-	Kit.corner(daily, 999)
-	Kit.icon(daily, "Daily", 5, 5, dailyItem.w - 10, dailyItem.h - 10)
-
 	local starterItem = at("StarterPack")
 	local starter = Kit.button(
 		hud,
