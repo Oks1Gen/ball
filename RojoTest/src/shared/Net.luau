@@ -2,6 +2,10 @@
 -- Action: client -> server, command:string, value?, extra?. Requests never carry rewards.
 -- Update: server -> owner, authoritative snapshot table; receipts are removed.
 -- Effect: server -> owner/all, effect name:string and server-authored payload.
+-- Throw.zoneCrossings: ordered {alpha, zone, name, multiplier}; cosmetic timing only.
+-- Throw begins manual timing. KickRelease(token, serverClockPressTime) consumes it.
+-- KickReady carries a server-generated token/start clock; KickCancel has no payload.
+-- Result.zone/zoneMultiplier: server-selected furthest zone and Wins factor; no client reward inputs.
 -- Admin: client -> server RemoteFunction, command:string/value?; authorized and rate-limited server-side.
 local Net = {}
 Net.Folder = "SkippingRemotes"
@@ -13,12 +17,14 @@ Net.AdminName = "Admin"
 local simple = {
 	Snapshot = true,
 	Throw = true,
+	KickCancel = true,
 	Auto = true,
 	StopTraining = true,
 	Rebirth = true,
 	EquipBest = true,
 	UnequipAll = true,
 	Daily = true,
+	OfflineClaim = true,
 	UnlockAuto = true,
 }
 local identifiers = { Stone = true, Trail = true, Pet = true, DeletePet = true, Product = true }
@@ -32,6 +38,14 @@ function Net.validAction(command: any, value: any, extra: any): boolean
 	end
 	if identifiers[command] then
 		return typeof(value) == "string" and #value <= 100 and extra == nil
+	end
+	if command == "KickRelease" then
+		return typeof(value) == "string"
+			and #value > 0
+			and #value <= 64
+			and typeof(extra) == "number"
+			and extra == extra
+			and math.abs(extra) < math.huge
 	end
 	if command == "Hatch" then
 		return typeof(value) == "string" and #value <= 100 and (extra == nil or extra == 1 or extra == 3)

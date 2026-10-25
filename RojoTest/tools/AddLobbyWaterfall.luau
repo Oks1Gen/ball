@@ -3,7 +3,7 @@ local RunService = game:GetService("RunService")
 assert(RunService:IsStudio(), "This script must run in Studio, not on a live server")
 assert(not RunService:IsRunning(), "This script must run in Edit mode, not during Play")
 -- Additive, edit-time scenery. Run through Studio MCP; never rebuild the map.
-local map = workspace:FindFirstChild("ProgressionMap")
+local map = workspace:FindFirstChild("Map") and workspace.Map:FindFirstChild("World1")
 assert(map and map:FindFirstChild("SpawnGarden"), "Expected authored lobby")
 assert(not map:FindFirstChild("LobbyWaterfallGarden"), "Waterfall already exists")
 local apron = map.Lobby.ThrowingApron

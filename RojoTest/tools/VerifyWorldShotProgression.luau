@@ -13,7 +13,7 @@ local function check(ok, message)
 end
 for world = 1, 2 do
 	local definition = Config.WorldShotProgression[world]
-	local map = workspace[world == 1 and "ProgressionMap" or "World2Map"]
+	local map = workspace.Map[world == 1 and "World1" or "World2"]
 	local limit = Config.shotLimit(world, map)
 	local previous = 0
 	for _, fraction in { 0, 0.0001, 0.001, 0.01, 0.1, 0.5, 0.9, 1 } do

@@ -2,7 +2,7 @@
 local RunService = game:GetService("RunService")
 assert(RunService:IsStudio(), "This script must run in Studio, not on a live server")
 assert(not RunService:IsRunning(), "This script must run in Edit mode, not during Play")
-local map = assert(workspace:FindFirstChild("ProgressionMap"), "Missing map")
+local map = assert(workspace:FindFirstChild("Map") and workspace.Map:FindFirstChild("World1"), "Missing map")
 local stand = assert(map:FindFirstChild("EmptyItemStand"), "Missing stand")
 local balls = assert(workspace:FindFirstChild("AllBalls_NoTextures"), "Missing imported balls")
 if balls:GetAttribute("StandPlacementVersion") == 1 then

@@ -7,15 +7,15 @@ local V = Vector3.new
 local rng = Random.new(41)
 
 function MapBuilder.build()
-	local existing = workspace:FindFirstChild("ProgressionMap")
+	local existing = workspace:FindFirstChild("Map") and workspace.Map:FindFirstChild("World1")
 	if existing and existing:GetAttribute("Version") == VERSION then
 		return existing
 	end
 	if existing then
 		existing:Destroy()
 	end
-	local root = Instance.new("Model")
-	root.Name = "ProgressionMap"
+	local root = Instance.new("Folder")
+	root.Name = "World1"
 	local function group(name)
 		local model = Instance.new("Model")
 		model.Name = name
@@ -342,7 +342,7 @@ function MapBuilder.build()
 	lighting.OutdoorAmbient = C(155, 172, 190)
 	lighting.GlobalShadows = true
 	root:SetAttribute("Version", VERSION)
-	root.Parent = workspace
+	root.Parent = require(script.Parent.MapHierarchy).container()
 	return root
 end
 

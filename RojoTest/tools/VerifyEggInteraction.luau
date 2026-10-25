@@ -2,7 +2,7 @@
 local Interaction = require(game.ServerScriptService.Server.Gameplay.EggInteraction)
 local Config = require(game.ReplicatedStorage.Shared.GameConfig)
 local checked = 0
-for _, world in { workspace.ProgressionMap, workspace.World2Map } do
+for _, world in { workspace.Map.World1, workspace.Map.World2 } do
 	for _, egg in Config.Eggs do
 		local shell = world.SkippingWorld["Egg_" .. egg.id].EggShell
 		local destination = Interaction.destination(world, egg.id, 3)

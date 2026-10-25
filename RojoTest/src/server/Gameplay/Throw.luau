@@ -6,6 +6,9 @@ local Config = require(game.ReplicatedStorage.Shared.GameConfig)
 local BallPurchases = require(game.ReplicatedStorage.Shared.BallPurchases)
 local ShotFeedback = require(game.ReplicatedStorage.Shared.ShotFeedback)
 local ShotMotion = require(game.ReplicatedStorage.Shared.ShotMotion)
+local Data = require(game.ReplicatedStorage.Shared.Core.ProfileData)
+local Zones = require(game.ReplicatedStorage.Shared.Core.ZoneProgression)
+local ShotZones = require(script.Parent.ShotZones)
 
 local Throw = {}
 
@@ -24,8 +27,8 @@ export type Context = {
 	multiplier: (any) -> number,
 }
 
-function Throw.build(context: Context): (Player, number?) -> ()
-	return function(player: Player, adminDistance: number?)
+function Throw.build(context: Context): (Player, number?, number?) -> ()
+	return function(player: Player, adminDistance: number?, timingMultiplier: number?)
 		local s = context.states[player]
 		if not s or os.clock() < s.busyUntil then
 			return
@@ -41,7 +44,13 @@ function Throw.build(context: Context): (Player, number?) -> ()
 		end
 		local distance = adminDistance
 			or Config.shotDistance(d.skill, BallPurchases.power(d), d.world, context.arenaFor(player))
-		local feedback = ShotFeedback.profile(d.skill, BallPurchases.power(d), d.world)
+		local timing = if adminDistance then 1 else math.clamp(timingMultiplier or 1, 0.5, 2)
+		if timingMultiplier and not adminDistance then
+			-- Keep the flight inside the authored river, including at maximum progression.
+			distance = math.clamp(math.floor(distance * timing), 1, Config.shotLimit(d.world, context.arenaFor(player)))
+		end
+		s.kickTiming = nil
+		local feedback = ShotFeedback.profile(d.skill, BallPurchases.power(d), d.world, timing)
 		local duration = Config.shotDuration(distance, d.world, feedback.intensity)
 		context.stopTraining(player)
 		local root, hum = context.rootFor(player)
@@ -74,6 +83,7 @@ function Throw.build(context: Context): (Player, number?) -> ()
 			distance = distance,
 			duration = duration,
 			feedback = feedback,
+			timingMultiplier = timing,
 			stone = d.stone,
 			trail = d.trail,
 			world = d.world,
@@ -83,6 +93,7 @@ function Throw.build(context: Context): (Player, number?) -> ()
 			waterY = frame:PointToWorldSpace(Vector3.new(-116, 0.82, 0)).Y,
 		}
 		local character = player.Character
+		info.zoneCrossings = ShotZones.crossings(context.arenaFor(player), info)
 		local skillMultiplier = context.multiplier(s)
 		context.FlightStreaming.start(player, info, function()
 			return context.states[player] == s
@@ -105,7 +116,7 @@ function Throw.build(context: Context): (Player, number?) -> ()
 					return
 				end
 				local gain = Config.shotBounceGain(skillMultiplier)
-				d.skill += gain
+				Data.add(d, "skill", gain)
 				context.effect:FireClient(
 					player,
 					"ShotBounce",
@@ -113,12 +124,20 @@ function Throw.build(context: Context): (Player, number?) -> ()
 				)
 				if contact == ShotMotion.BounceCount then
 					s.activeShot = nil
-					d.wins += award
-					d.best = math.max(d.best, distance)
-					context.effect:FireClient(player, "Result", { wins = award, distance = distance })
+					local zone = Zones.reached(info.zoneCrossings, 1)
+					local zoneMultiplier = Zones.multiplier(zone)
+					local finalAward = Zones.award(award, zone)
+					Data.add(d, "wins", finalAward)
+					d.best = Data.bound(math.max(d.best, distance))
+					context.effect:FireClient(player, "Result", {
+						wins = finalAward,
+						distance = distance,
+						zone = zone,
+						zoneMultiplier = zoneMultiplier,
+					})
 					context.publish(
 						player,
-						"+" .. Config.format(award) .. " WINS • " .. Config.format(distance) .. " m"
+						"+" .. Config.format(finalAward) .. " WINS • " .. Config.format(distance) .. " m"
 					)
 				else
 					context.publish(player)

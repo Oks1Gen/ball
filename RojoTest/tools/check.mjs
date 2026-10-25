@@ -8,6 +8,8 @@ import path from 'node:path';
 import os from 'node:os';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
+import { assertAnalyzerComplete, isProbeDiagnostic } from './typecheck-result.mjs';
 
 const project = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const repoRoot = path.resolve(project, '..');
@@ -271,12 +273,49 @@ step('lune unit tests', () => {
   run('lune', pinned('lune'), ['run', 'lune/test.luau']);
 });
 
+step('verification gate tests', () => {
+  run('node-tests', process.execPath, ['--test', 'tests/typecheck-result.test.mjs']);
+});
+
 step('rojo build', () => {
   run('rojo-build', pinned('rojo'), ['build', 'default.project.json', '-o', '.tools/Ball.rbxlx']);
 });
 
 step('rojo sourcemap', () => {
   run('rojo-sourcemap', pinned('rojo'), ['sourcemap', 'default.project.json', '-o', '.tools/sourcemap.json']);
+});
+
+step('ProfileStore integrity and server-only routing', () => {
+  const readme = fs.readFileSync(path.join(project, 'src/serverPackages/README.md'), 'utf8');
+  const expectedHash = readme.match(/SHA-256: `([a-f0-9]{64})`/i)?.[1];
+  const actualHash = createHash('sha256')
+    .update(fs.readFileSync(path.join(project, 'src/serverPackages/ProfileStore.luau'))).digest('hex');
+  if (!expectedHash || actualHash !== expectedHash.toLowerCase()) {
+    throw new Error('ProfileStore must match the pinned upstream source in serverPackages/README.md');
+  }
+  const map = JSON.parse(fs.readFileSync(path.join(logs, 'sourcemap.json'), 'utf8'));
+  const routes = new Map([
+    ['src/serverPackages/ProfileStore.luau', 'ServerStorage/ServerPackages/ProfileStore'],
+    ['src/server/Services/ProfileService.luau', 'ServerScriptService/Server/Services/ProfileService'],
+    ['src/server/ProfileStorage.luau', 'ServerScriptService/Server/ProfileStorage'],
+  ]);
+  const found = new Set();
+  function visit(node, location = '') {
+    for (const file of node.filePaths || []) {
+      const source = file.replace(/\\/g, '/');
+      if (!routes.has(source)) continue;
+      if (location !== routes.get(source) || found.has(source)) {
+        throw new Error('Profile module is outside its server-only route: ' + source + ' -> ' + location);
+      }
+      found.add(source);
+    }
+    for (const child of node.children || []) {
+      visit(child, location ? location + '/' + child.name : child.name);
+    }
+  }
+  visit(map);
+  if (found.size !== routes.size) throw new Error('A server-only profile module is missing from the build');
+  process.stdout.write('Pinned ProfileStore verified; library, service and environment config stay server-only.\n');
 });
 
 // ------------------------------------------------------------ studio verify scripts
@@ -561,6 +600,8 @@ step('luau type check', () => {
   const checked = sources.filter((file) => !file.includes(path.join('src', 'serverPackages')));
   if (checked.length === 0) throw new Error('Type check has no source files to analyse');
 
+  const probe = path.join(logs, 'typecheck-probe.luau');
+  fs.writeFileSync(probe, 'local _completionProbe: number = "Ball typecheck completion probe"\n');
   const analyzed = run('luau-analyze', pinned('luau-lsp'), [
     'analyze',
     '--defs',
@@ -570,6 +611,7 @@ step('luau type check', () => {
     '--ignore',
     'src/serverPackages/*',
     ...checked,
+    probe,
   ], { quiet: true, allowFailure: true, silent: true });
   const output = analyzed.output;
 
@@ -584,10 +626,15 @@ step('luau type check', () => {
   }
 
   const findings = [];
+  let probeFound = false;
+  const unparsedDiagnostics = [];
   const lines = output.split(/\r?\n/);
   for (let i = 0; i < lines.length; i++) {
     const match = lines[i].match(FINDING);
-    if (!match) continue;
+    if (!match) {
+      if (/\(\d+,\d+\):\s*\w+:/.test(lines[i])) unparsedDiagnostics.push(lines[i]);
+      continue;
+    }
     // A finding can carry more lines: the type the analyzer complains about
     // is printed under the message.
     const block = [];
@@ -602,6 +649,10 @@ step('luau type check', () => {
       next++;
     }
     i = next - 1;
+    if (isProbeDiagnostic(match[1], probe, project)) {
+      probeFound = match[5] === 'TypeError';
+      continue;
+    }
     findings.push({
       file: relativeToSrc(match[1]),
       kind: match[5],
@@ -610,32 +661,9 @@ step('luau type check', () => {
       raw: match[1] + ' (' + match[3] + ',' + match[4] + '): ' + match[5] + ': ' + match[6],
     });
   }
-  // The gate has to fail closed. An analyzer that printed nothing, or an
-  // output format the parser does not understand, used to look like a clean
-  // run: zero findings meant zero regressions.
-  if (findings.length === 0) {
-    throw new Error(
-      'Type check found no findings at all: the analyzer output could not be parsed'
-      + ' (exit code ' + analyzed.status + ', log: .tools/luau-analyze.log)',
-    );
-  }
-
-  // An analyzer that died halfway reports the findings of the files it
-  // reached and says nothing about the rest, and a partial set of findings
-  // looks like a clean run against the baseline. The healthy project reports
-  // findings in 68 of its 92 analysed files, so half of the files is a wide
-  // margin: a run that covered a third of the tree fails, and a project that
-  // fixed half of its type errors still passes.
-  const MIN_FINDING_COVERAGE = 0.5;
-  const covered = new Set(findings.map((finding) => finding.file)).size;
-  const required = Math.ceil(checked.length * MIN_FINDING_COVERAGE);
-  if (covered < required) {
-    throw new Error(
-      'Type check covered only ' + covered + ' of the ' + checked.length
-      + ' analysed files: the analyzer run was partial'
-      + ' (exit code ' + analyzed.status + ', log: .tools/luau-analyze.log)',
-    );
-  }
+  // The last input is an intentional type error. A successful parse of that
+  // diagnostic plus normal process termination also accepts a clean project.
+  assertAnalyzerComplete(analyzed.status, probeFound, unparsedDiagnostics);
 
   const baselineFile = path.join(project, 'tools', 'typecheck-baseline.txt');
   const baseline = new Set(fs.existsSync(baselineFile) ? fs.readFileSync(baselineFile, 'utf8').split('\n').filter(Boolean) : []);

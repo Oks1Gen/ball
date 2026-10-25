@@ -9,7 +9,7 @@ function Layout.apply(map)
 	if map:GetAttribute("LobbyLayoutVersion") == VERSION then
 		return map:FindFirstChild("TwoAxesLayout")
 	end
-	assert(map.Name == "ProgressionMap" and map:GetAttribute("Version") == 9, "Unexpected authored map")
+	assert(map.Name == "World1" and map:GetAttribute("Version") == 9, "Unexpected authored map")
 	local lobby, skip, training = map.Lobby, map.SkippingWorld, map.TrainingZone
 	local frame = lobby.ThrowingApron.CFrame * CF(115, -0.3, -13)
 	local function localPoint(p)

@@ -4,15 +4,14 @@ local RunService = game:GetService("RunService")
 local DataStoreService = game:GetService("DataStoreService")
 local Data = require(game.ReplicatedStorage.Shared.Core.ProfileData)
 local Config = require(game.ReplicatedStorage.Shared.GameConfig)
+local BallPurchases = require(game.ReplicatedStorage.Shared.BallPurchases)
+local ReturnRewards = require(game.ReplicatedStorage.Shared.Core.ReturnRewards)
 local AdminService = require(script.Parent.Parent.AdminService)
+local Log = require(script.Parent.Parent.ProfileLog)
+local Storage = require(script.Parent.Parent.ProfileStorage)
 local Service: any = { profiles = {}, loading = {} }
 
 -- The datastore key and the user id must never reach the log.
-local function redact(text: string, player: Player): string
-	local result = string.gsub(text, "u_" .. player.UserId, "<key>")
-	return (string.gsub(result, tostring(player.UserId), "<user>"))
-end
-
 function Service:Init(context: any)
 	self.ProfileStore = context.ProfileStore
 	self.catalog = { stones = {}, trails = {}, pets = {} }
@@ -35,17 +34,40 @@ function Service:Init(context: any)
 			self.catalog.pets[item.id] = item
 		end
 	end
-	local store =
-		context.ProfileStore.New("BallProfiles_v" .. Config.DataVersion, { version = 0, progress = Data.fresh() })
-	self.store = if RunService:IsStudio() then store.Mock else store
-	self.legacyStore = if RunService:IsStudio()
-		then nil
-		else DataStoreService:GetDataStore("StoneSkipping_" .. Config.DataVersion)
+	self.environment = Storage.select(RunService:IsStudio())
+	self.store = context.ProfileStore.New(self.environment.storeName, { version = 0, progress = Data.fresh() })
+	self.legacyStore = if self.environment.legacyStoreName
+		then DataStoreService:GetDataStore(self.environment.legacyStoreName)
+		else nil
+end
+
+function Service:waitForStorage(player: Player): boolean
+	local deadline = os.clock() + Storage.AccessTimeout
+	while self.ProfileStore.DataStoreState == "NotReady" and os.clock() < deadline do
+		if player.Parent ~= Players or self.ProfileStore.IsClosing then
+			return false
+		end
+		task.wait(0.1)
+	end
+	if not Storage.canPersist(self.ProfileStore.DataStoreState) then
+		-- ProfileStore can fall back to memory when Studio API access is off.
+		-- Refuse that session: both configured environments must persist.
+		warn("[Ball profiles] Persistent storage unavailable: " .. tostring(self.ProfileStore.DataStoreState))
+		if player.Parent == Players then
+			player:Kick(
+				if RunService:IsStudio()
+					then "Saving is unavailable. Enable Studio Access to API Services in Game Settings > Security, then restart Play."
+					else "Saving is temporarily unavailable. Please rejoin shortly."
+			)
+		end
+		return false
+	end
+	return not self.ProfileStore.IsClosing and player.Parent == Players
 end
 
 function Service:Start()
 	self.ProfileStore.OnError:Connect(function(message, store, key)
-		warn(string.format("[Ball profiles] %s / %s: %s", store, key, message))
+		warn("[Ball profiles] " .. Log.redact(tostring(store) .. ": " .. tostring(message), nil, tostring(key)))
 	end)
 end
 
@@ -62,7 +84,7 @@ function Service:Load(player: Player): any
 	end)
 	self.loading[player] = nil
 	if not ok then
-		warn("[Ball profiles] Load failed: " .. tostring(result))
+		warn("[Ball profiles] Load failed: " .. Log.redact(tostring(result), player.UserId))
 		if player.Parent == Players then
 			player:Kick("Your data could not be loaded. Please rejoin.")
 		end
@@ -74,6 +96,9 @@ end
 -- Starts the session, migrates the data and publishes the profile. The caller
 -- holds the loading guard, so the profile is registered while it is still set.
 function Service:loadSession(player: Player): any
+	if not self:waitForStorage(player) then
+		return nil
+	end
 	local ok, profile = pcall(function()
 		return self.store:StartSessionAsync("Player_" .. player.UserId, {
 			Cancel = function()
@@ -82,7 +107,7 @@ function Service:loadSession(player: Player): any
 		})
 	end)
 	if not ok then
-		warn("[Ball profiles] Load failed: " .. tostring(profile))
+		warn("[Ball profiles] Load failed: " .. Log.redact(tostring(profile), player.UserId))
 		profile = nil
 	end
 	if not profile then
@@ -98,15 +123,16 @@ function Service:loadSession(player: Player): any
 	local initialized, reason = pcall(function()
 		assert(profile.Data.version == 0 or profile.Data.version == 1, "Unsupported profile version")
 		if profile.Data.version == 0 and self.legacyStore then
-			self:importLegacy(player, profile)
+			assert(self:importLegacy(player, profile), "Legacy import pending; progress was not replaced")
 		end
 		profile.Data.progress = Data.normalize(profile.Data.progress, self.catalog)
+		ReturnRewards.arrive(profile.Data.progress, os.time())
 		profile.Data.version = 1
 	end)
 	if not initialized or player.Parent ~= Players or not profile:IsActive() then
 		profile:EndSession()
 		if not initialized then
-			warn("[Ball profiles] Migration failed: " .. tostring(reason))
+			warn("[Ball profiles] Migration failed: " .. Log.redact(tostring(reason), player.UserId))
 		end
 		if player.Parent == Players then
 			player:Kick("Your saved data is unavailable. Please rejoin shortly.")
@@ -114,34 +140,40 @@ function Service:loadSession(player: Player): any
 		return nil
 	end
 	self.profiles[player] = profile
-	player:SetAttribute("ProfileStorage", if RunService:IsStudio() then "ProfileStore.Mock" else "ProfileStore")
+	player:SetAttribute("ProfileStorage", "ProfileStore")
+	player:SetAttribute("ProfileEnvironment", self.environment.name)
 	return profile
 end
 
--- A broken legacy record must not lock the player out: the import is skipped
--- and the session continues with a fresh profile instead of kicking the player.
-function Service:importLegacy(player: Player, profile: any)
+-- Do not expose fresh progress until the old store has been read successfully.
+-- A failed attempt leaves version zero, so rejoining retries the import.
+function Service:importLegacy(player: Player, profile: any): boolean
 	local ok, record = pcall(function()
 		return self.legacyStore:GetAsync("u_" .. player.UserId)
 	end)
 	if not ok then
-		warn("[Ball profiles] Legacy store read failed, starting fresh: " .. redact(tostring(record), player))
-		return
+		warn(
+			"[Ball profiles] Legacy store read failed; import pending: " .. Log.redact(tostring(record), player.UserId)
+		)
+		return false
 	end
 	local progress, err = Data.legacy(record, os.time())
 	if err then
-		warn("[Ball profiles] Legacy import skipped, starting fresh: " .. err)
-		return
+		warn("[Ball profiles] Legacy import pending: " .. err)
+		return false
 	end
 	if progress then
 		profile.Data.progress = progress
 	end
+	return true
 end
 
 function Service:Attach(player: Player, state: any, onLost: () -> ())
 	local profile = assert(self.profiles[player], "Profile session is missing")
 	local function sync()
 		local original = AdminService.persistence(state)
+		original.lastSeen = os.time()
+		original.offlineRate = ReturnRewards.offlineRate(original, Config.Lanes, BallPurchases.power(original))
 		profile.Data.progress = original
 	end
 	profile.OnSave:Connect(sync)
@@ -183,7 +215,7 @@ function Service:Save(player: Player, state: any, receiptId: string?): boolean
 		end)
 		state.awaitingReceipt = false
 		if not ok then
-			warn("[Ball profiles] Receipt wait failed: " .. tostring(saved))
+			warn("[Ball profiles] Receipt wait failed: " .. Log.redact(tostring(saved), player.UserId))
 			return false
 		end
 		return profile:IsActive() and saved
@@ -197,6 +229,9 @@ function Service:Release(player: Player, state: any)
 		return
 	end
 	profile.Data.progress = AdminService.persistence(state)
+	profile.Data.progress.lastSeen = os.time()
+	profile.Data.progress.offlineRate =
+		ReturnRewards.offlineRate(profile.Data.progress, Config.Lanes, BallPurchases.power(profile.Data.progress))
 	self.profiles[player] = nil
 	profile:EndSession()
 	player:SetAttribute("ProfileStorage", nil)

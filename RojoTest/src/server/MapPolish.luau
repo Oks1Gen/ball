@@ -63,7 +63,7 @@ local function texture(part, face)
 end
 
 function MapPolish.apply(root)
-	assert(root and root:IsA("Model"), "ProgressionMap model required")
+	assert(root and (root:IsA("Model") or root:IsA("Folder")), "ProgressionMap model required")
 	assert(root:GetAttribute("Version") == 9, "Visual pass requires the authored v9 layout")
 	if root:GetAttribute("VisualPolishVersion") == VERSION then
 		return root

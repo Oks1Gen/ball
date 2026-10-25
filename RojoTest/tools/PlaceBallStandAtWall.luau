@@ -3,7 +3,7 @@ local RunService = game:GetService("RunService")
 assert(RunService:IsStudio(), "This script must run in Studio, not on a live server")
 assert(not RunService:IsRunning(), "This script must run in Edit mode, not during Play")
 -- Run in Studio Edit through Studio MCP. Only the authored World 1 display moves.
-local map = workspace.ProgressionMap
+local map = workspace.Map.World1
 local stand = map.EmptyItemStand
 local balls = workspace.AllBalls_NoTextures
 assert(map:GetAttribute("LobbyLayoutVersion") == 1, "Unexpected lobby")

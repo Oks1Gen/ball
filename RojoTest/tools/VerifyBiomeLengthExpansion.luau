@@ -1,5 +1,5 @@
 -- Read-only route checks in Edit or Server. Does not modify player progression.
-local map = workspace.ProgressionMap
+local map = workspace.Map.World1
 local world = map.SkippingWorld
 -- The front of the route is the front edge of the first biome: the scene is
 -- the truth, the attribute of the map only describes it.

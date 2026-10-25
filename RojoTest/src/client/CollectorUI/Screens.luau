@@ -7,6 +7,7 @@ local Spacing = require(game.ReplicatedStorage.Shared.UiSpacing)
 local MotionConfig = require(game.ReplicatedStorage.Shared.UiMotionConfig)
 local EggCardLayout = require(script.Parent.EggCardLayout)
 local HatchStage = require(script.Parent.HatchStage)
+local Presentation = require(script.Parent.Parent.Modules.UiPresentation)
 local e = React.createElement
 local S = {}
 type InventoryPet = { uid: string, id: string, name: string, rarity: string, boost: number }
@@ -73,16 +74,55 @@ function S.Pets(p)
 		end
 	end
 	pet = pet or pets[1]
-	local w, h = p.Width, p.Height
+	local w: number, h: number = p.Width, p.Height
+	if #pets == 0 then
+		local art = p.Phone and 96 or 150
+		local contentWidth = math.min(w - 32, 480)
+		local x = (w - contentWidth) / 2
+		return childrenFrame({
+			Art = e(U.Icon, {
+				Kind = "Pets",
+				Position = UDim2.fromOffset(x, math.max(4, (h - art) / 2)),
+				Size = UDim2.fromOffset(art, art),
+			}),
+			Title = label(
+				"Your first pet awaits!",
+				x + art + 16,
+				math.max(4, h / 2 - 72),
+				contentWidth - art - 16,
+				32,
+				p.Phone and 21 or 27
+			),
+			Hint = e(U.Label, {
+				Text = "Hatch an egg to gain a Skill boost.",
+				Position = UDim2.fromOffset(x + art + 16, math.max(40, h / 2 - 34)),
+				Size = UDim2.fromOffset(contentWidth - art - 16, 48),
+				TextSize = p.Phone and 17 or 21,
+				Wrap = true,
+			}),
+			FindEggs = button(
+				"FindEggs",
+				"Find Eggs",
+				x + art + 16,
+				h / 2 + 26,
+				contentWidth - art - 16,
+				48,
+				function()
+					p.Open("Eggs")
+				end,
+				T.Colors.Eggs
+			),
+		}, 0, 0, w, h)
+	end
 	local compact = w < 730
 	local previewWidth = compact and 0 or 220
 	local gridW = w - previewWidth - (compact and 0 or 16)
-	local inset = MotionConfig.Spacing.ScrollInset
+	local inset = p.Phone and 8 or MotionConfig.Spacing.ScrollInset
 	local cols = gridW < 380 and 2 or compact and 3 or 4
 	local footer = 62
 	local header = 32
 	local gridH = h - footer - header
-	local cardH = compact and math.clamp(gridH - 12, 132, 176) or 136
+	local cardH = p.Phone and math.max(72, gridH - inset * 2) or (compact and math.clamp(gridH - 12, 132, 176) or 136)
 	local cardW, gap = Spacing.row(gridW - inset * 2, cols, cardH)
 	local visibleRows = math.ceil(gridH / (cardH + gap))
 	local slots, cards = math.max(9, #pets), {}
@@ -103,7 +143,7 @@ function S.Pets(p)
 							Key = item.uid,
 							FitToView = true,
 							ReducedMotion = true,
-							Size = UDim2.fromOffset(cardW - 16, cardH - 45),
+							Size = UDim2.fromOffset(cardW - 16, cardH - (p.Phone and 58 or 45)),
 							Position = UDim2.fromOffset(14, 9),
 						})
 					or label("?", 14, 9, cardW - 28, cardH - 74, 36, T.Muted)
@@ -112,7 +152,7 @@ function S.Pets(p)
 				Text = item.name,
 				Position = UDim2.fromOffset(5, cardH - 44),
 				Size = UDim2.fromOffset(cardW - 10, 20),
-				TextSize = 13,
+				TextSize = p.Phone and 14 or 13,
 				Small = true,
 				Wrap = true,
 			})
@@ -142,6 +182,7 @@ function S.Pets(p)
 			Studs = false,
 			Selected = chosen,
 			Disabled = item == nil,
+			Inert = item == nil,
 			OnActivated = function()
 				if item then
 					setSelected(item.uid)
@@ -335,12 +376,20 @@ function S.Eggs(p)
 	for i, item in Config.Eggs do
 		tabs[item.id] = button("EggTab" .. item.id, item.id, 16 + (i - 1) * (tabW + tabGap), 0, tabW, 44, function()
 			p.SelectEgg(item.id)
-		end, item.id == egg.id and T.Colors.Eggs or T.Colors.Slate, false, compact and 15 or 18)
+		end, item.id == egg.id and T.Colors.Eggs or T.Colors.Slate, false, p.Phone and 13 or compact and 15 or 18)
 	end
 	local leftW = w >= 1000 and math.floor(w * 0.24) or 0
 	local rightX = leftW == 0 and 0 or leftW + 20
 	local rightW = w - rightX
-	local layout = EggCardLayout.calculate(rightW, h - 184, #pool, p.EggCardVariant)
+	local poolY = p.Phone and (p.UnifiedInventory and 54 or 58) or 91
+	local poolHeight = p.Phone and h - (p.UnifiedInventory and 120 or 112) or h - 184
+	local poolInset = p.UnifiedInventory and (p.Phone and 6 or 16) or 0
+	local layout = EggCardLayout.calculate(
+		rightW - poolInset * 2,
+		poolHeight - poolInset * 2,
+		#pool,
+		p.Phone and "CompactSplit" or p.EggCardVariant
+	)
 	local cols, itemW, itemH = layout.Columns, layout.CardWidth, layout.CardHeight
 	local function cardLabel(text: string, rect: { number }, size: number, color: Color3?)
 		return e(U.Label, {
@@ -349,7 +398,9 @@ function S.Eggs(p)
 			Size = UDim2.fromOffset(rect[3], rect[4]),
 			TextSize = size,
 			Color = color,
-			Wrap = true,
+			Wrap = not p.Phone,
+			Scaled = p.Phone,
+			MinTextSize = 12,
 		})
 	end
 	local cards = {}
@@ -362,6 +413,9 @@ function S.Eggs(p)
 		cards[item.id] = e(U.Surface, {
 			Name = "EggPet" .. item.id,
 			Color = T.plate(rarity(item.rarity)),
+			Quiet = p.UnifiedInventory,
+			NoShadow = p.UnifiedInventory,
+			BorderColor = p.UnifiedInventory and rarity(item.rarity):Lerp(Color3.new(1, 1, 1), 0.5) or nil,
 			Position = UDim2.fromOffset(
 				(i - 1) % cols * (itemW + 12) + 4,
 				math.floor((i - 1) / cols) * (itemH + 12) + 4
@@ -375,31 +429,36 @@ function S.Eggs(p)
 					Size = UDim2.fromOffset(layout.Pet[3], layout.Pet[4]),
 					FitToView = true,
 				}),
-				Chance = cardLabel(string.format("%g%%", item.weight / total * 100), layout.Chance, 19, T.Gold),
+				Chance = cardLabel(
+					string.format("%g%%", item.weight / total * 100),
+					layout.Chance,
+					p.Phone and 16 or 19,
+					T.Gold
+				),
 				Name = cardLabel(item.name, layout.Name, 16),
-				Boost = cardLabel("×" .. boost, layout.Boost, 17, T.Gold),
+				Boost = cardLabel("×" .. boost, layout.Boost, p.Phone and 15 or 17, T.Gold),
 			},
 		})
 	end
 	local hatchWidth, hatchGap = Spacing.row(w - 32, 2, 46)
 	local result = {
 		Tabs = childrenFrame(tabs, 0, 0, w, 44),
-		Name = label(egg.name, 8, 52, w - 16, 30, 25, T.Gold),
+		Name = not p.Phone and label(egg.name, 8, 52, w - 16, 30, 25, T.Gold) or nil,
 		-- The pool stays a scroll in every window size: it clips the cards, so
 		-- they can never cover the hatch buttons, and scrolls the rows that
 		-- do not fit.
 		Pool = e(U.Scroll, {
 			Name = "EggOutcomes",
-			Position = UDim2.fromOffset(rightX, 91),
-			Size = UDim2.fromOffset(rightW, h - 184),
+			Position = UDim2.fromOffset(rightX, poolY),
+			Size = UDim2.fromOffset(rightW, poolHeight),
 			Height = layout.CanvasHeight,
 			Children = cards,
 		}),
 		Hatch = button(
 			"Hatch",
-			"E • Hatch  /  " .. Config.format(cost) .. " Wins",
+			(Presentation.keyboard() and "E • " or "") .. "Hatch / " .. Config.format(cost) .. " Wins",
 			16,
-			h - 82,
+			h - (p.Phone and 48 or 82),
 			hatchWidth,
 			46,
 			function()
@@ -411,9 +470,9 @@ function S.Eggs(p)
 		),
 		Triple = button(
 			"Hatch3",
-			"R • Hatch 3  /  " .. Config.format(cost * 3) .. " Wins",
+			(Presentation.keyboard() and "R • " or "") .. "Hatch 3 / " .. Config.format(cost * 3) .. " Wins",
 			16 + hatchWidth + hatchGap,
-			h - 82,
+			h - (p.Phone and 48 or 82),
 			hatchWidth,
 			46,
 			function()
@@ -423,8 +482,30 @@ function S.Eggs(p)
 			p.Busy or #p.Inventory.pets > 57,
 			compact and 16 or 21
 		),
-		Hint = label("Hatch teleports you to the selected egg", 5, h - 27, w - 10, 24, 17, T.Muted),
+		Hint = not p.Phone and label("Hatch teleports you to the selected egg", 5, h - 27, w - 10, 24, 17, T.Muted)
+			or nil,
 	}
+	if p.UnifiedInventory then
+		result.Pool = e(U.Slot, {
+			Name = "EggGridPanel",
+			Position = UDim2.fromOffset(rightX, poolY),
+			Size = UDim2.fromOffset(rightW, poolHeight),
+			Color = T.Recess,
+			Radius = 16,
+			Outline = 3,
+			NoShadow = true,
+			Children = {
+				Scroll = e(U.Scroll, {
+					Name = "EggOutcomes",
+					Position = UDim2.fromOffset(poolInset, poolInset),
+					Size = UDim2.fromOffset(rightW - poolInset * 2, poolHeight - poolInset * 2),
+					Height = layout.CanvasHeight,
+					BarColor = Color3.fromRGB(125, 223, 255),
+					Children = cards,
+				}),
+			},
+		})
+	end
 	if leftW > 0 then
 		result.Egg = e(U.Slot, {
 			Position = UDim2.fromOffset(0, 91),
@@ -446,7 +527,7 @@ function S.Trails(p)
 	local w: number = p.Width
 	local h: number = p.Height
 	local cards = {}
-	local rowH = 155
+	local rowH = p.Phone and 112 or 155
 	for i = 2, #Config.Trails do
 		local item = Config.Trails[i]
 		local owned, equipped = p.Data.trails[item.id], p.Data.trail == item.id
@@ -462,14 +543,30 @@ function S.Trails(p)
 				Art = e(U.Icon, {
 					Kind = item.id .. "Trail",
 					Position = UDim2.fromOffset(12, 4),
-					Size = UDim2.fromOffset(210, rowH - 8),
+					Size = UDim2.fromOffset(p.Phone and 96 or 210, rowH - 8),
 				}),
-				Name = label(item.name, 234, 9, w - 268, 46, 39),
-				Trophy = e(
-					U.Icon,
-					{ Kind = "Wins", Position = UDim2.fromOffset(234, 58), Size = UDim2.fromOffset(37, 36) }
+				Name = label(
+					item.name,
+					p.Phone and 116 or 234,
+					9,
+					w - (p.Phone and 150 or 268),
+					p.Phone and 28 or 46,
+					p.Phone and 23 or 39
 				),
-				Boost = label("×" .. item.boost .. " Wins Boost", 274, 58, w - 308, 37, 27, T.Gold),
+				Trophy = e(U.Icon, {
+					Kind = "Wins",
+					Position = UDim2.fromOffset(p.Phone and 116 or 234, p.Phone and 44 or 58),
+					Size = UDim2.fromOffset(p.Phone and 24 or 37, p.Phone and 24 or 36),
+				}),
+				Boost = label(
+					"×" .. item.boost .. " Wins Boost",
+					p.Phone and 146 or 274,
+					p.Phone and 38 or 58,
+					w - (p.Phone and 180 or 308),
+					p.Phone and 20 or 28,
+					p.Phone and 17 or 27,
+					T.Gold
+				),
 				Action = button(
 					"TrailAction" .. item.id,
 					p.Busy and "Please wait…"
@@ -477,9 +574,9 @@ function S.Trails(p)
 						or owned and "Equip"
 						or Config.format(item.cost) .. " Wins",
 					w - 290,
-					102,
+					p.Phone and 64 or 102,
 					250,
-					42,
+					44,
 					function()
 						p.Request("Trail", item.id)
 					end,
@@ -534,6 +631,61 @@ function S.Shop(p)
 				),
 			},
 		})
+	end
+	if p.Phone then
+		local offers = {
+			{ "StarterPack", "Starter Pack", "10K Wins + 2× Skill", "Wins", T.Colors.Gold },
+			{ "AdminEgg", "Admin Egg", Config.AdminPet.name .. " • ×25 Skill", "Egg", T.Colors.Green },
+			{ "DoubleSkill", "2× Skill", "Double your Skill gain", "Skill", T.Colors.Green },
+			{ "DoubleWins", "2× Wins", "Double your Wins", "Wins", T.Colors.Gold },
+			{ "AutoThrow", "Auto Kick", "Automatic kicks", "Ball", T.Colors.Blue },
+			{ "Skill10M", "+10M Skill", "Instant Skill", "Skill", T.Colors.Gold },
+			{ "Skill100M", "+100M Skill", "Instant Skill", "Skill", T.Colors.Red },
+			{ "Skill1B", "+1B Skill", "Instant Skill", "Skill", T.Colors.Purple },
+			{ "SkipRebirth", "Skip Rebirth", "Skip the level requirement", "Rebirth", T.Colors.Purple },
+		}
+		for i, info in offers do
+			children[info[1]] = e(U.Surface, {
+				Name = "Offer" .. info[1],
+				Position = UDim2.fromOffset(12, 12 + (i - 1) * 124),
+				Size = UDim2.fromOffset(w - 30, 104),
+				Color = info[5],
+				Children = {
+					Icon = e(
+						U.Icon,
+						{ Kind = info[4], Position = UDim2.fromOffset(8, 16), Size = UDim2.fromOffset(72, 72) }
+					),
+					Title = label(info[2], 92, 8, w - 260, 30, 23),
+					Details = e(U.Label, {
+						Text = info[3],
+						Position = UDim2.fromOffset(92, 42),
+						Size = UDim2.fromOffset(w - 260, 52),
+						TextSize = 17,
+						Wrap = true,
+					}),
+					Buy = buyButton(info[1], w - 154, 44, 108, 48),
+				},
+			})
+		end
+		local bottom = 12 + #offers * 124
+		children.EarnedAuto = button(
+			"EarnAutoThrow",
+			p.Data.perks.AutoThrow and "Auto Kick owned" or "Unlock Auto Kick • 2.5K Wins",
+			12,
+			bottom,
+			w - 30,
+			48,
+			function()
+				p.Request("UnlockAuto")
+			end,
+			T.Colors.Green,
+			p.Busy,
+			20
+		)
+		return e(
+			U.Scroll,
+			{ Name = "ShopOffers", Size = UDim2.fromOffset(w, h), Height = bottom + 68, Children = children }
+		)
 	end
 	children.PackHeading = label("~ Pack ~", 0, 0, w, 36, 30)
 	children.Starter = e(U.Surface, {

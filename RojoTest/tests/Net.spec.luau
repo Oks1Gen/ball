@@ -13,12 +13,14 @@ end
 local SIMPLE = {
 	"Snapshot",
 	"Throw",
+	"KickCancel",
 	"Auto",
 	"StopTraining",
 	"Rebirth",
 	"EquipBest",
 	"UnequipAll",
 	"Daily",
+	"OfflineClaim",
 	"UnlockAuto",
 }
 local IDENTIFIERS = { "Stone", "Trail", "Pet", "DeletePet", "Product" }
@@ -26,6 +28,16 @@ local IDENTIFIERS = { "Stone", "Trail", "Pet", "DeletePet", "Product" }
 local function dummy() end
 
 return {
+	["timing release accepts a token and finite press time only"] = function()
+		check(Net.validAction("KickRelease", "server-token", 1234.5), "Valid timing release")
+		for _, bad in { {}, false, "now", math.huge, -math.huge, 0 / 0 } do
+			check(not Net.validAction("KickRelease", "server-token", bad), "Invalid clock rejected")
+		end
+		check(not Net.validAction("KickRelease", "", 1), "Empty token rejected")
+		check(not Net.validAction("KickRelease", string.rep("x", 65), 1), "Oversized token rejected")
+		check(not Net.validAction("KickRelease", {}, 1), "Non-string token rejected")
+		check(not Net.validAction("KickRelease", "token", nil), "Missing clock rejected")
+	end,
 	["a command has to be a short string"] = function()
 		for _, bad in { 1, true, {}, dummy } do
 			local ok, result = pcall(Net.validAction, bad, nil, nil)

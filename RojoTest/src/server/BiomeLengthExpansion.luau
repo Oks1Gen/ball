@@ -309,7 +309,7 @@ function Expansion.apply(map, dryRun)
 		child:Clone().Parent = backup
 		task.wait()
 	end
-	backup.WorldPivot = map:GetPivot()
+	backup.WorldPivot = map:GetAttribute("MapPivot") or CFrame.identity
 	-- Move complete prop models via PivotTo; resize only structural surfaces.
 	local moved = {}
 	for _, entry in rigid do

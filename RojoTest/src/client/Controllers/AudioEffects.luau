@@ -7,6 +7,7 @@ local Debris = game:GetService("Debris")
 local SoundService = game:GetService("SoundService")
 local Config = require(game.ReplicatedStorage.Shared.GameConfig)
 local Kit = require(script.Parent.HudKit)
+local ZoneSound = require(game.ReplicatedStorage.Shared.ZoneTransitionSound)
 
 local Effects = {}
 local C = Color3.fromRGB
@@ -22,6 +23,7 @@ local IMPACT_SOUNDS = {
 
 export type Context = {
 	canvas: Frame,
+	distanceLabel: TextLabel?,
 	effectsFolder: Folder,
 	snapshot: () -> any?,
 	panelOpen: () -> boolean,
@@ -32,6 +34,7 @@ export type Handle = {
 	bounce: (Vector3, string, number, number) -> (),
 	ripple: (Vector3, Color3?, number?) -> (),
 	floatingGain: (number) -> (),
+	zoneTransition: (any) -> (),
 	applyVolumes: (number, number) -> (),
 	destroy: () -> (),
 }
@@ -79,6 +82,12 @@ function Effects.mount(context: Context): Handle
 	notificationAudio.Name = "NotificationAudio"
 	notificationAudio.Parent = context.effectsFolder
 	local preload = {}
+	local zoneAudio = Instance.new("Sound")
+	zoneAudio.Name = "ZoneTransitionPreload"
+	zoneAudio.SoundId = ZoneSound.id
+	zoneAudio.Volume = 0
+	zoneAudio.Parent = notificationAudio
+	table.insert(preload, zoneAudio)
 	for role, entry in notificationSounds do
 		local sound = Instance.new("Sound")
 		sound.Name = "Notification" .. role
@@ -216,17 +225,63 @@ function Effects.mount(context: Context): Handle
 		Debris:AddItem(t, 1)
 	end
 
+	local zoneLabel: TextLabel? = nil
+	local zoneToken = 0
+	local function zoneTransition(crossing: any)
+		zoneToken += 1
+		local token = zoneToken
+		if zoneLabel then
+			zoneLabel:Destroy()
+		end
+		local label = Instance.new("TextLabel")
+		label.Name = "ZoneTransition"
+		label.AnchorPoint = Vector2.new(0.5, 0)
+		local top = 148
+		local distanceLabel = context.distanceLabel
+		if distanceLabel then
+			local scale = canvas.AbsoluteSize.Y / math.max(1, canvas.Size.Y.Offset)
+			top = (distanceLabel.AbsolutePosition.Y + distanceLabel.AbsoluteSize.Y - canvas.AbsolutePosition.Y)
+					/ math.max(0.001, scale)
+				+ 8
+		end
+		label.Position = UDim2.new(0.5, 0, 0, top)
+		label.Size = UDim2.new(1, -24, 0, 42)
+		label.BackgroundTransparency = 1
+		label.Font = Enum.Font.FredokaOne
+		label.TextSize = 28
+		label.TextScaled = false
+		label.TextColor3 = yellow
+		label.TextStrokeColor3 = C(20, 24, 40)
+		label.TextStrokeTransparency = 0
+		label.Text = crossing.name .. "  ·  ×" .. string.format("%.1f", crossing.multiplier) .. " WINS"
+		label.ZIndex = 30
+		label.Parent = canvas
+		zoneLabel = label
+		playSound(ZoneSound.id, ZoneSound.volume, 1 + (crossing.zone - 2) * 0.035)
+		task.delay(0.65, function()
+			if not alive or zoneToken ~= token then
+				return
+			end
+			TweenService:Create(label, TweenInfo.new(0.25), { TextTransparency = 1, TextStrokeTransparency = 1 }):Play()
+		end)
+		Debris:AddItem(label, 1)
+	end
+
 	return {
 		playSound = playSound,
 		bounce = bounce,
 		ripple = ripple,
 		floatingGain = floatingGain,
+		zoneTransition = zoneTransition,
 		applyVolumes = function(sound: number, musicVolume: number)
 			effectsGroup.Volume = sound
 			musicGroup.Volume = musicVolume
 		end,
 		destroy = function()
 			alive = false
+			if zoneLabel then
+				zoneLabel:Destroy()
+			end
 			impactAudio:Destroy()
 			notificationAudio:Destroy()
 			music:Stop()

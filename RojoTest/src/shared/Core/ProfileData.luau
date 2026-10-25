@@ -1,6 +1,17 @@
 --!strict
 -- Save data contains only JSON values. This module has no engine dependencies.
 local Data = {}
+-- Largest whole number represented exactly by a Luau number. Accrual and
+-- loading share this cap, so a rejoin cannot change valid live counters.
+Data.MaxProgress = 9007199254740991
+
+function Data.bound(value: number): number
+	return math.clamp(math.floor(value), 0, Data.MaxProgress)
+end
+
+function Data.add(data: any, key: string, amount: number)
+	data[key] = Data.bound(data[key] + amount)
+end
 
 -- Every runtime path assumes at most 60 pets, so a stored profile with more
 -- is trimmed on load instead of breaking the inventory limits later.
@@ -24,6 +35,10 @@ function Data.fresh(): any
 		receipts = {},
 		settings = { sound = 100, music = 100, shake = true, effects = true },
 		daily = 0,
+		dailyCount = 0,
+		lastSeen = 0,
+		offlineRate = 0,
+		offlinePending = 0,
 	}
 end
 
@@ -52,9 +67,11 @@ function Data.normalize(input: any, catalog: any): any
 	if type(input) ~= "table" then
 		return data
 	end
-	for _, key in { "skill", "wins", "rebirths", "best", "daily" } do
-		data[key] = bounded(input[key], 0, 1e15)
+	for _, key in { "skill", "wins", "rebirths", "best", "daily", "lastSeen", "offlinePending" } do
+		data[key] = bounded(input[key], 0, Data.MaxProgress)
 	end
+	data.dailyCount = bounded(input.dailyCount, if data.daily > 0 then 1 else 0, 7)
+	data.offlineRate = if Data.finite(input.offlineRate) then math.clamp(input.offlineRate, 0, Data.MaxProgress) else 0
 	data.stones = flags(input.stones)
 	data.trails = flags(input.trails)
 	data.stones.Pebble, data.trails.None = true, true

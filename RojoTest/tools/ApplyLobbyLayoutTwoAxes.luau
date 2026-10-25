@@ -8,7 +8,7 @@ local module = server.LobbyLayoutTwoAxes:Clone()
 module.Name = "LayoutTwoAxesEditRun"
 module.Parent = server
 local ok, result = pcall(function()
-	return require(module).apply(workspace.ProgressionMap)
+	return require(module).apply(workspace.Map.World1)
 end)
 module:Destroy()
 assert(ok, result)
@@ -17,7 +17,7 @@ local standModule = server.BallStand:Clone()
 standModule.Name = "BallStandLayoutEditRun"
 standModule.Parent = server
 local standOk, standResult = pcall(function()
-	return require(standModule).apply(workspace.ProgressionMap)
+	return require(standModule).apply(workspace.Map.World1)
 end)
 standModule:Destroy()
 assert(standOk, standResult)

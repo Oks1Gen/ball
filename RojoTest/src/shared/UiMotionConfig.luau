@@ -32,8 +32,9 @@ return {
 		ScrollInset = 16, -- Поля сетки, чтобы увеличенная карточка не обрезалась скроллом.
 	},
 	Hud = {
-		PhoneSkillOfferY = 320, -- Между правыми предложениями учитываются выступающие иконки.
-		PhoneWinsOfferY = 400,
+		PhoneStarterOfferY = 122, -- Между календарём и зоной прыжка, включая выступающий арт.
+		PhoneSkillOfferY = 243,
+		PhoneWinsOfferY = 364,
 		LevelBarY = 520, -- Запас над нижними предложениями, включая выступающие иконки.
 		BottomOffersY = 604, -- Цены и hover нижнего ряда остаются выше подсказки.
 		SlideTime = 0.45, -- Более медленный выезд и возврат, с мягким началом и остановкой.
@@ -47,6 +48,7 @@ return {
 				"Throw",
 				"SkillIcon",
 				"Skill",
+				"LevelUp",
 				"Multiplier",
 				"LevelBar",
 				"Skill10M",

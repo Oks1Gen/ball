@@ -3,6 +3,8 @@ local Service: any = {}
 function Service:Init(_context: any) end
 function Service:Start()
 	local root = script.Parent.Parent
+	local hierarchy = require(root.MapHierarchy)
+	hierarchy.migrate()
 	local map = require(root.MapBuilder).build()
 	require(root.MapPolish).apply(map)
 	require(root.MapSurfaceFix).apply(map)
@@ -42,8 +44,14 @@ function Service:Start()
 	require(root.VolcanicEgg).apply(world2)
 	require(root.FootballPitches).apply(map)
 	require(root.FootballPitches).apply(world2)
+	require(root.ZoneDividers).apply(map)
+	require(root.ZoneDividers).apply(world2)
 	require(game.ReplicatedStorage.Shared.PetVisuals).prepare()
 
+	require(root.MapCleanup).apply(map)
+	require(root.MapCleanup).apply(world2)
+	hierarchy.organize(map)
+	hierarchy.organize(world2)
 	self.map, self.world2 = map, world2
 end
 return Service

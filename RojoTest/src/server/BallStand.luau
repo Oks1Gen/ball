@@ -10,7 +10,7 @@ function Stand.apply(map)
 	local stand = assert(map:FindFirstChild("EmptyItemStand"))
 	local displayScale = stand:GetAttribute("BallDisplayScale") or 1
 	local root = assert(map:FindFirstChild("SkippingWorld"))
-	local imported = map.Name == "ProgressionMap" and workspace:FindFirstChild("AllBalls_NoTextures")
+	local imported = map.Name == "World1" and workspace:FindFirstChild("AllBalls_NoTextures")
 	local container = imported or stand:FindFirstChild("DisplayBalls")
 	if not container then
 		container = Instance.new("Folder")

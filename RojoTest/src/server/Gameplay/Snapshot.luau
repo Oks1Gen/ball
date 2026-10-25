@@ -8,6 +8,7 @@
 local Config = require(game.ReplicatedStorage.Shared.GameConfig)
 local BallPurchases = require(game.ReplicatedStorage.Shared.BallPurchases)
 local AdminAccess = require(script.Parent.Parent.AdminAccess)
+local ReturnRewards = require(game.ReplicatedStorage.Shared.Core.ReturnRewards)
 
 local Snapshot = {}
 
@@ -28,6 +29,8 @@ function Snapshot.build(context: Context, player: Player, notice: string?, force
 	view.equipped = nil
 	local payload: any = {
 		data = view,
+		welcome = { claimed = s.welcomeClaimed == true, skill = d.offlinePending },
+		dailyReward = ReturnRewards.calendar(d, os.time()),
 		level = level,
 		multiplier = context.multiplier(s),
 		canThrow = context.inApron(player) and os.clock() >= s.busyUntil,
@@ -36,6 +39,7 @@ function Snapshot.build(context: Context, player: Player, notice: string?, force
 		rebirthReady = level >= rebirthRequiredLevel,
 		training = s.lane,
 		trainingStarted = s.trainingStarted,
+		trainingLevelsGained = s.trainingLevelsGained or 0,
 		shotDistance = Config.shotDistance(d.skill, BallPurchases.power(d), d.world, context.arenaFor(player)),
 		auto = s.auto,
 		friendBoost = s.friends * 10,

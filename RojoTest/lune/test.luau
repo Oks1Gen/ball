@@ -1,5 +1,10 @@
 --!strict
 local suites = {
+	require("../tests/ReturnRewards.spec"),
+	require("../tests/KickTiming.spec"),
+	require("../tests/ZoneProgression.spec"),
+	require("../tests/ProfileStorage.spec"),
+	require("../tests/PaidRewards.spec"),
 	require("../tests/ProfileData.spec"),
 	require("../tests/ProfileData.bounds.spec"),
 	require("../tests/Economy.spec"),

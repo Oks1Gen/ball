@@ -1,5 +1,5 @@
 -- Run this read-only audit in Studio Edit mode after applying SkippingWorld.
-local map = assert(workspace:FindFirstChild("ProgressionMap"), "Missing map")
+local map = assert(workspace:FindFirstChild("Map") and workspace.Map:FindFirstChild("World1"), "Missing map")
 local backup = game.ServerStorage:FindFirstChild("WorldBackups")
 backup = backup and backup:FindFirstChild("BeforeSkippingGame")
 backup = backup and backup:FindFirstChild("ProgressionMap")
@@ -67,7 +67,7 @@ for x = -170, -60, 11 do
 		samples += 1
 	end
 end
-local advanced = workspace:FindFirstChild("World2Map")
+local advanced = workspace:FindFirstChild("Map") and workspace.Map:FindFirstChild("World2")
 local advancedSamples = 0
 if advanced then
 	assert(advanced:GetAttribute("GameplayWorld2Version") == 1, "Incomplete advanced arena")

@@ -3,7 +3,7 @@ local RunService = game:GetService("RunService")
 assert(RunService:IsStudio(), "This script must run in Studio, not on a live server")
 assert(not RunService:IsRunning(), "This script must run in Edit mode, not during Play")
 -- Run once in Studio Edit via Studio MCP. Preserve lane IDs and progression.
-local map = workspace.ProgressionMap
+local map = workspace.Map.World1
 assert(map:GetAttribute("LobbyLayoutVersion") == 1, "Unexpected authored lobby")
 if map:GetAttribute("TrainingLaneOrderVersion") == 1 then
 	return "Already reversed"

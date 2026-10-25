@@ -2,7 +2,7 @@
 local RunService = game:GetService("RunService")
 assert(RunService:IsStudio(), "This script must run in Studio, not on a live server")
 assert(not RunService:IsRunning(), "This script must run in Edit mode, not during Play")
-local map = workspace.ProgressionMap
+local map = workspace.Map.World1
 local walk = assert(map:FindFirstChild("StoneGrassWalkway"), "Apply stone path first")
 assert(not walk:FindFirstChild("PlantedBorders"), "Already planted")
 local backup = walk:Clone()

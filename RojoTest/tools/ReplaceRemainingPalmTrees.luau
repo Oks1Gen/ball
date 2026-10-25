@@ -6,7 +6,7 @@ local template = game.ServerStorage.Assets.Environment.Oak
 local backup = game.ServerStorage.WorldBackups.BeforeOakTreeReplacement
 local added = {}
 local index = 38
-for _, map in { workspace.ProgressionMap, workspace.World2Map } do
+for _, map in { workspace.Map.World1, workspace.Map.World2 } do
 	assert(not map:GetAttribute("OakPalmLeftoversVersion"), "Palm pass already applied")
 	local roots = {}
 	local all = map:GetDescendants()

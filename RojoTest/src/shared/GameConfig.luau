@@ -41,7 +41,8 @@ function Config.trainingSurface(lane)
 end
 function Config.shotLimit(world, arena)
 	local definition = Config.WorldShotProgression[world == 2 and 2 or 1]
-	arena = arena or workspace:FindFirstChild(world == 2 and "World2Map" or "ProgressionMap")
+	arena = arena
+		or (workspace:FindFirstChild("Map") and workspace.Map:FindFirstChild(world == 2 and "World2" or "World1"))
 	local scenery = arena and arena:FindFirstChild("SkippingWorld")
 	local water = scenery and scenery:FindFirstChild("Water_8")
 	if water then
@@ -360,6 +361,7 @@ Config.Products = {
 	SkipRebirth = { id = 0, price = 49 },
 	AdminEgg = { id = 0, price = 175 },
 }
+
 function Config.find(list, id)
 	for _, item in list do
 		if item.id == id then

@@ -16,6 +16,7 @@ function Controller:Start()
 	local Snapshot = require(clientRoot.Modules:WaitForChild("Snapshot"))
 	local GuiInsets = require(clientRoot.Modules:WaitForChild("GuiInsets"))
 	local HudLayout = require(clientRoot.Modules:WaitForChild("HudLayout"))
+	local Presentation = require(clientRoot.Modules:WaitForChild("UiPresentation"))
 	local Kit = require(clientRoot.Controllers:WaitForChild("HudKit"))
 	local HudBuilder = require(clientRoot.Controllers:WaitForChild("HudBuilder"))
 	local HudMotion = require(clientRoot.Controllers:WaitForChild("HudMotion"))
@@ -55,9 +56,14 @@ function Controller:Start()
 	local collectorUI: any = nil
 	local adminUI: any = nil
 	local panels: any = nil
+	local kickTiming: any = nil
 	local openPanel: (string) -> () = function() end
 
 	local function send(command: string, value: any?, extra: any?)
+		if command == "Throw" and kickTiming then
+			kickTiming.request()
+			return
+		end
 		if player:GetAttribute("MapIntroActive") and command ~= "Snapshot" then
 			return
 		end
@@ -111,6 +117,9 @@ function Controller:Start()
 	local blurTween: Tween? = nil
 	local function syncPresentation()
 		local modal = currentPanel ~= nil
+		if modal and kickTiming and kickTiming.active() then
+			kickTiming.cancel()
+		end
 		hud.Visible = true
 		hudMotion.setHidden(modal, latest and latest.data.settings.effects == false)
 		if collectorUI then
@@ -140,7 +149,10 @@ function Controller:Start()
 	-- orientation, it never switches it, so no panel is closed on startup.
 	local orientationKnown = false
 
-	local function closePanel(switching: boolean?)
+	local function closePanel(switching: boolean?, onClosed: (() -> ())?)
+		if currentPanel == "Offline" and not switching and latest and not latest.welcome.claimed then
+			return
+		end
 		if hatchPromptState ~= nil then
 			ProximityPrompts.Enabled = hatchPromptState
 			hatchPromptState = nil
@@ -153,7 +165,7 @@ function Controller:Start()
 			adminUI.close()
 		end
 		currentPanel = nil
-		panels.close()
+		panels.close(onClosed)
 		hatchBusy = false
 		if not switching then
 			syncPresentation()
@@ -170,6 +182,15 @@ function Controller:Start()
 		showPanel = function(name: string)
 			currentPanel = name
 			syncPresentation()
+		end,
+		finishWelcome = function()
+			closePanel(true, function()
+				if currentPanel == nil and latest and latest.dailyReward.ready then
+					panels.open("Daily")
+				else
+					syncPresentation()
+				end
+			end)
 		end,
 	})
 
@@ -196,7 +217,7 @@ function Controller:Start()
 		local spec = if portrait then HudLayout.portrait(area.size.X, area.size.Y) else HudLayout.landscape()
 		local phone = game:GetService("UserInputService").TouchEnabled and area.size.Y < 520
 		if not portrait and phone then
-			spec = HudLayout.phoneLandscape()
+			spec = HudLayout.phoneLandscape(math.min(area.size.X / 1280, area.size.Y / 720), area.size.X)
 		end
 		hudMotion.layout(phone)
 		HudLayout.apply(spec, { hud, canvas })
@@ -239,6 +260,18 @@ function Controller:Start()
 			-- inside the granted rectangle.
 			canvas.Position = UDim2.fromOffset(area.offset.X + area.size.X / 2, area.offset.Y + area.size.Y / 2)
 			local gutter = (area.size.X / factor - 1280) / 2
+			if phone then
+				-- The desktop settings position must clear the wider touch navigation.
+				for _, part in { "Settings", "SettingsShadow" } do
+					local node = HudLayout.findNode(hud, part)
+					if node and node:IsA("GuiObject") then
+						node.Position = UDim2.fromOffset(
+							math.max(node.Position.X.Offset, 128 / factor - gutter),
+							node.Position.Y.Offset
+						)
+					end
+				end
+			end
 			local margin = 16 / factor
 			pins = HudLayout.pins(spec, hud)
 			for _, pin in pins do
@@ -282,7 +315,10 @@ function Controller:Start()
 	end
 
 	local function openCollector(name: string, kind: string, eggId: string?)
-		closePanel(true)
+		local inventoryTab = kind == "Pets" or kind == "Eggs" or kind == "Inventory"
+		if not (inventoryTab and collectorUI:isInventoryOpen()) then
+			closePanel(true)
+		end
 		currentPanel = name
 		syncPresentation()
 		collectorUI:setHidden(false)
@@ -330,7 +366,7 @@ function Controller:Start()
 		elseif name == "Rebirth" then
 			panels.open("Rebirth")
 		elseif name == "Inventory" then
-			panels.open("Inventory")
+			openCollector("Inventory", "Inventory")
 		elseif name == "Pets" then
 			openCollector("Pets", "Pets")
 		elseif name == "Gifts" then
@@ -348,6 +384,7 @@ function Controller:Start()
 
 	local effects = AudioEffects.mount({
 		canvas = canvas,
+		distanceLabel = hudRefs.distanceText,
 		effectsFolder = effectsFolder,
 		snapshot = function()
 			return latest
@@ -379,10 +416,37 @@ function Controller:Start()
 			return latest and latest.training
 		end,
 		blocked = function()
-			return flight ~= nil
+			return flight ~= nil or (kickTiming ~= nil and kickTiming.active())
 		end,
 		effects = function()
 			return latest == nil or latest.data.settings.effects
+		end,
+	})
+	kickTiming = require(clientRoot.Controllers.KickTiming).mount({
+		snapshot = function()
+			return latest
+		end,
+		canStart = function()
+			return latest ~= nil
+				and latest.canThrow
+				and not latest.training
+				and not flight
+				and currentPanel == nil
+				and not player:GetAttribute("MapIntroActive")
+		end,
+		canContinue = function()
+			local hum = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+			return latest ~= nil
+				and latest.canThrow
+				and not latest.training
+				and not flight
+				and currentPanel == nil
+				and hum ~= nil
+				and hum.Health > 0
+				and not player:GetAttribute("MapIntroActive")
+		end,
+		send = function(command: string, value: any?, extra: any?)
+			action:FireServer(command, value, extra)
 		end,
 	})
 	local input = InputController.mount({
@@ -418,6 +482,7 @@ function Controller:Start()
 		local me = info.userId == player.UserId
 		local token = {}
 		if me then
+			kickTiming.accepted(info.timingMultiplier or 1)
 			world.restoreCamera()
 			closePanel()
 			flight = token
@@ -438,6 +503,7 @@ function Controller:Start()
 			end,
 			ripple = effects.ripple,
 			bounce = effects.bounce,
+			zone = effects.zoneTransition,
 			distance = function(value: string)
 				hudRefs.distanceText.Text = value
 			end,
@@ -469,7 +535,11 @@ function Controller:Start()
 	end
 
 	effect.OnClientEvent:Connect(function(kind: string, info: any)
-		if kind == "Throw" then
+		if kind == "KickReady" then
+			kickTiming.ready(info)
+		elseif kind == "KickCancelled" then
+			kickTiming.cancel()
+		elseif kind == "Throw" then
 			beginThrow(info)
 		elseif kind == "ShotBounce" then
 			effects.floatingGain(info.gain)
@@ -498,11 +568,12 @@ function Controller:Start()
 		elseif kind == "Open" then
 			openPanel(info)
 		elseif kind == "OpenBall" then
-			panels.open("Inventory", info)
+			openCollector("Inventory", "Inventory", info)
 		elseif kind == "Rebirth" then
 			notice("REBIRTH! Your skill multiplier increased!", "Success")
 			closePanel()
 		elseif kind == "AdminResetView" or kind == "ShotCancelled" then
+			kickTiming.cancel()
 			world.restoreCamera()
 			if flight then
 				local saved = flight.saved
@@ -536,13 +607,16 @@ function Controller:Start()
 		gui:SetAttribute("ReducedMotion", d.settings.effects == false)
 		hudRefs.skillText.Text = Config.format(d.skill) .. " SKILL"
 		hudRefs.multiText.Text = "×" .. string.format("%.2f", info.multiplier) .. " Multiplier"
+		local gainedLevels = info.trainingLevelsGained or 0
+		hudRefs.levelUpText.Text = "Level Up! [x" .. tostring(gainedLevels) .. "]"
+		hudRefs.levelUpText.Visible = info.training ~= nil and gainedLevels > 0
 		hudRefs.levelText.Text = "Level " .. info.level
 		hudRefs.maxText.Text = info.level == Config.MaxLevel and "MAX LEVEL"
 			or Config.format(d.skill - info.levelStart) .. " / " .. Config.format(info.nextLevel - info.levelStart)
 		local progress = info.level == Config.MaxLevel and 1
 			or math.clamp((d.skill - info.levelStart) / math.max(1, info.nextLevel - info.levelStart), 0, 1)
 		TweenService:Create(hudRefs.levelFill, TweenInfo.new(0.3), {
-			Size = UDim2.fromOffset(math.max(4, layout.levelWidth * progress), layout.levelHeight),
+			Size = UDim2.fromScale(progress, 1),
 		}):Play()
 		hudRefs.rebirthText.Text = tostring(d.rebirths)
 		hudRefs.winsText.Text = Config.format(d.wins)
@@ -569,11 +643,7 @@ function Controller:Start()
 		end
 		syncPresentation()
 		hudRefs.tutorial.Visible = not flight
-		hudRefs.tutorial.Text = info.training and "Training! STOP TRAINING or jump to leave"
-			or (
-				info.canThrow and "Press E to kick • Train to increase hit distance"
-				or "Walk onto a training pad to gain Skill"
-			)
+		hudRefs.tutorial.Text = Presentation.kickHint(info.canThrow, info.training ~= nil)
 		if not info.training then
 			balls.setPractice(nil)
 		else
@@ -602,9 +672,23 @@ function Controller:Start()
 
 	local appliedSoundVolume = -1
 	local appliedMusicVolume = -1
+	local welcomeShown = false
 
 	RunService.RenderStepped:Connect(function(dt: number)
 		local now = os.clock()
+		if
+			not welcomeShown
+			and latest
+			and latest.welcome
+			and player:GetAttribute("MapIntroActive") == false
+			and not currentPanel
+			and not flight
+		then
+			welcomeShown = true
+			if not latest.welcome.claimed then
+				panels.open("Offline")
+			end
+		end
 		-- The safe area is only known after the first layout pass, so the
 		-- board is rebuilt whenever the granted rectangle changes. A zero
 		-- measurement means the probe is not laid out yet, it is ignored.
@@ -639,6 +723,14 @@ function Controller:Start()
 			end
 		end
 		if latest then
+			local timingActive = kickTiming.active()
+			hudRefs.throwButton.Visible = latest.canThrow and not flight and not latest.training and not timingActive
+			local throwShadow = HudLayout.findNode(hud, "ThrowShadow")
+			if throwShadow and throwShadow:IsA("GuiObject") then
+				throwShadow.Visible = hudRefs.throwButton.Visible
+			end
+			hudRefs.tutorial.Visible = not flight and not timingActive
+			hudRefs.tutorial.Text = Presentation.kickHint(latest.canThrow, latest.training ~= nil)
 			local soundVolume = latest.data.settings.sound / 100
 			local musicVolume = latest.data.settings.music / 100
 			if soundVolume ~= appliedSoundVolume or musicVolume ~= appliedMusicVolume then
@@ -650,6 +742,7 @@ function Controller:Start()
 	end)
 
 	player.CharacterAdded:Connect(function()
+		kickTiming.cancel()
 		world.restoreCamera()
 		if flight then
 			local saved = flight.saved
@@ -662,6 +755,7 @@ function Controller:Start()
 	end)
 
 	clientRoot.Destroying:Connect(function()
+		kickTiming.destroy()
 		viewportConnection:Disconnect()
 		input.destroy()
 		followers.destroy()

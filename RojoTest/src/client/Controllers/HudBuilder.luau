@@ -30,6 +30,7 @@ export type Refs = {
 	maxText: TextLabel,
 	skillText: TextLabel,
 	multiText: TextLabel,
+	levelUpText: TextLabel,
 	rebirthText: TextLabel,
 	winsText: TextLabel,
 	friendText: TextLabel,
@@ -247,14 +248,24 @@ function Builder.build(context: Context): Refs
 		yellow
 	)
 	multiText.TextXAlignment = Enum.TextXAlignment.Left
+	local levelUpItem = at("LevelUp")
+	local levelUpText =
+		Kit.text(hud, "LevelUp", "", levelUpItem.x, levelUpItem.y, levelUpItem.w, levelUpItem.h, levelUpItem.text)
+	levelUpText.Visible = false
 
 	local levelItem = at("LevelBar")
-	local levelBase =
-		Kit.button(hud, "LevelBar", "", levelItem.x, levelItem.y, levelItem.w, levelItem.h, C(15, 161, 244), 30)
-	levelBase.Active = false
-	local levelFill = Kit.frame(levelBase, "Progress", 0, 0, levelItem.w, levelItem.h, C(15, 139, 232))
-	Kit.corner(levelFill, 5)
-	Kit.pattern(levelFill, C(80, 223, 255))
+	local levelBase = Kit.frame(hud, "LevelBar", levelItem.x, levelItem.y, levelItem.w, levelItem.h, C(226, 230, 235))
+	Kit.corner(levelBase, 9)
+	Kit.stroke(levelBase, 3)
+	Kit.pattern(levelBase, C(190, 196, 204))
+	local levelFill = Kit.frame(levelBase, "Progress", 0, 0, 0, levelItem.h, Color3.new(1, 1, 1))
+	levelFill.Size = UDim2.fromScale(0, 1)
+	Kit.corner(levelFill, 8)
+	local fillGradient = Instance.new("UIGradient")
+	fillGradient.Rotation = 90
+	fillGradient.Color = ColorSequence.new(C(0, 214, 255), C(0, 112, 255))
+	fillGradient.Parent = levelFill
+	Kit.pattern(levelFill, C(64, 179, 223))
 	local levelTextItem = at("LevelBar/Level")
 	local levelText = Kit.text(
 		levelBase,
@@ -267,9 +278,11 @@ function Builder.build(context: Context): Refs
 		levelTextItem.text
 	)
 	levelText.TextXAlignment = Enum.TextXAlignment.Left
+	levelText.ZIndex = 3
 	local maxItem = at("LevelBar/Maximum")
 	local maxText = Kit.text(levelBase, "Maximum", "0 / 2", maxItem.x, maxItem.y, maxItem.w, maxItem.h, maxItem.text)
 	maxText.TextXAlignment = Enum.TextXAlignment.Right
+	maxText.ZIndex = 3
 
 	for _, offer in
 		{
@@ -396,6 +409,7 @@ function Builder.build(context: Context): Refs
 		maxText = maxText,
 		skillText = skillText,
 		multiText = multiText,
+		levelUpText = levelUpText,
 		rebirthText = rebirthText,
 		winsText = winsText,
 		friendText = friendText,

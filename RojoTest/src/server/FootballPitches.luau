@@ -16,15 +16,20 @@ function Pitches.apply(map)
 		local surface = assert(world:FindFirstChild("Water_" .. i))
 		-- Keep the authored plane and all route/gameplay coordinates unchanged.
 		local originalColor = surface:GetAttribute("OriginalPitchColor")
+		if i == 1 then
+			originalColor = world.BiomeBank1_1.Color
+			surface:SetAttribute("OriginalPitchColor", originalColor)
+		end
 		if not originalColor then
 			originalColor = surface:GetAttribute("FootballPitch") and Config.Biomes[i].color or surface.Color
-			if surface:GetAttribute("FootballPitch") and map.Name == "World2Map" then
+			if surface:GetAttribute("FootballPitch") and map.Name == "World2" then
 				originalColor = originalColor:Lerp(Color3.fromRGB(142, 119, 252), 0.3)
 			end
 			surface:SetAttribute("OriginalPitchColor", originalColor)
 		end
 		surface.Color = originalColor
-		surface.Material = Enum.Material.Grass
+		surface.Material = Enum.Material.SmoothPlastic
+		surface.MaterialVariant = ""
 		surface.Transparency = 0
 		surface.Reflectance = 0
 		surface.CanCollide = true
@@ -47,7 +52,7 @@ function Pitches.apply(map)
 			p.CanCollide, p.CanTouch, p.CanQuery = false, false, false
 			p.CastShadow = false
 			p.Color = color
-			p.Material = color == WHITE and Enum.Material.SmoothPlastic or Enum.Material.Grass
+			p.Material = Enum.Material.SmoothPlastic
 			p.TopSurface, p.BottomSurface = Enum.SurfaceType.Smooth, Enum.SurfaceType.Smooth
 			p.Parent = field
 			return p
@@ -102,5 +107,6 @@ function Pitches.apply(map)
 		task.wait()
 	end
 	map:SetAttribute("FootballPitchVersion", 1)
+	require(script.Parent.FootballSurface).apply(map)
 end
 return Pitches

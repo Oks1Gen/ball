@@ -31,12 +31,24 @@ return {
 		end
 	end,
 	["the floor keeps the cap and the bottom of the range"] = function()
-		local capped = Data.normalize({ skill = 1e15 + 0.5, wins = 1e15 + 0.9 }, catalog)
-		check(capped.skill == 1e15, "The skill cap survives a fractional overflow")
-		check(capped.wins == 1e15, "The win cap survives a fractional overflow")
+		local capped = Data.normalize({ skill = Data.MaxProgress * 2, wins = Data.MaxProgress * 2 }, catalog)
+		check(capped.skill == Data.MaxProgress, "The skill cap survives overflow")
+		check(capped.wins == Data.MaxProgress, "The win cap survives overflow")
 		local negative = Data.normalize({ skill = -0.5, wins = -3.7 }, catalog)
 		check(negative.skill == 0, "A negative skill stays at zero")
 		check(negative.wins == 0, "Negative wins stay at zero")
+	end,
+	["late progress survives a reload and every accrual shares the storage cap"] = function()
+		local live = Data.fresh()
+		live.skill = 1000000000000123
+		live.wins = 1000000000000456
+		local loaded = Data.normalize(live, catalog)
+		check(loaded.skill == live.skill and loaded.wins == live.wins, "Progress above the old cap survives")
+		live.skill = Data.MaxProgress - 1
+		Data.add(live, "skill", 5000)
+		check(live.skill == Data.MaxProgress, "Accrual saturates at the exact integer limit")
+		loaded = Data.normalize(live, catalog)
+		check(loaded.skill == live.skill, "The live counter and loaded counter agree")
 	end,
 	["the volume settings are floored and clamped to the slider range"] = function()
 		local result = Data.normalize({ settings = { sound = 55.7, music = 99.9 } }, catalog)

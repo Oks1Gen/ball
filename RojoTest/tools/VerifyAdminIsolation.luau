@@ -40,6 +40,9 @@ local context = {
 	rootFor = function()
 		return nil
 	end,
+	arenaFor = function()
+		return workspace:FindFirstChild("Map") and workspace.Map:FindFirstChild("World1")
+	end,
 	publish = function() end,
 	effect = { FireClient = function() end },
 }

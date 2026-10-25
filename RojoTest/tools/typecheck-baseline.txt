@@ -555,7 +555,6 @@ server/VolcanicEgg.luau|TypeError|Expected type table, got 'nil' instead
 server/VolcanicEgg.luau|TypeError|Unknown type used in + operation; consider adding a type annotation to 'anchor'
 server/VolcanicEgg.luau|TypeError|Unknown type used in + operation; consider adding a type annotation to 'stand'
 server/VolcanicEgg.luau|TypeError|Unknown type used in / operation; consider adding a type annotation to 'stand'
-server/World2.luau|TypeError|Unknown type used in + operation
 shared/BallVisuals.luau|TypeError|Unknown type used in % operation; consider adding a type annotation to 'time'
 shared/BallVisuals.luau|TypeError|Unknown type used in + operation; consider adding a type annotation to 'base'
 shared/GameConfig.luau|TypeError|Expected this to be exactly but got caused by: Property '[indexer value]' is not compatible.

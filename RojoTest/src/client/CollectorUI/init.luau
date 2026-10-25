@@ -9,6 +9,10 @@ local Screens = require(script.Screens)
 local GuiInsets = require(script.Parent.Modules.GuiInsets)
 local Motion = require(game.ReplicatedStorage.Shared.UiMotion)
 local MotionConfig = require(game.ReplicatedStorage.Shared.UiMotionConfig)
+local Presentation = require(script.Parent.Modules.UiPresentation)
+local InventoryTabs = require(script.InventoryTabs)
+local InventoryWindow = require(script.InventoryWindow)
+local InventoryPages = require(script.InventoryPages)
 local e = React.createElement
 local UI = {}
 -- ReactRoblox mounts the children of an element in the hash order of the
@@ -48,6 +52,7 @@ type WindowProps = {
 	Close: () -> (),
 	Settled: () -> (),
 	Children: { [string]: any },
+	Phone: boolean,
 }
 
 local function Window(p: WindowProps)
@@ -78,14 +83,17 @@ local function Window(p: WindowProps)
 		end
 	end, { p.Visible, p.Reduced })
 	local w, h = p.Width, p.Height
+	local iconSize = p.Phone and 64 or 100
+	local closeSize = p.Phone and 44 or 60
 	local margin = WINDOW_MARGIN
 	local chrome = {
 		Icon = e(U.Icon, {
 			-- The corner icon of the reference panels: it hangs over the top
 			-- left corner of the plate.
 			Kind = (p.Kind == "Eggs" or p.Kind == "Hatch") and "Egg" or p.Kind,
-			Position = UDim2.fromOffset(WINDOW_MARGIN - 15, WINDOW_MARGIN - 54),
-			Size = UDim2.fromOffset(100, 100),
+			Position = UDim2.fromOffset(WINDOW_MARGIN, WINDOW_MARGIN),
+			AnchorPoint = Vector2.new(0.5, 0.5),
+			Size = UDim2.fromOffset(iconSize, iconSize),
 			ZIndex = 20,
 		}),
 		Title = e(U.Label, {
@@ -94,19 +102,20 @@ local function Window(p: WindowProps)
 			-- The heading of the reference panels stands half above the upper
 			-- edge of the plate and keeps the corners clear for the icon and
 			-- the cross.
-			Position = UDim2.fromOffset(WINDOW_MARGIN + 85, WINDOW_MARGIN - 50),
-			Size = UDim2.fromOffset(w - 170, 66),
-			TextSize = T.TitleSize,
+			Position = UDim2.fromOffset(WINDOW_MARGIN + (p.Phone and 64 or 85), WINDOW_MARGIN - (p.Phone and 38 or 50)),
+			Size = UDim2.fromOffset(w - (p.Phone and 128 or 170), p.Phone and 44 or 66),
+			TextSize = p.Phone and 34 or T.TitleSize,
 			Scaled = true,
 			MinTextSize = T.TitleMin,
-			MaxTextSize = T.TitleSize,
+			MaxTextSize = p.Phone and 34 or T.TitleSize,
 			ZIndex = 20,
 		}),
 		Close = e(U.CloseButton, {
 			-- The cross of the reference panels hangs half above the top right
 			-- corner of the plate.
-			Position = UDim2.fromOffset(WINDOW_MARGIN + w - 32, WINDOW_MARGIN - 31),
-			Size = UDim2.fromOffset(60, 60),
+			Position = UDim2.fromOffset(WINDOW_MARGIN + w, WINDOW_MARGIN),
+			AnchorPoint = Vector2.new(0.5, 0.5),
+			Size = UDim2.fromOffset(closeSize, closeSize),
 			OnActivated = p.Close,
 			ZIndex = 20,
 		}),
@@ -166,8 +175,8 @@ local function Window(p: WindowProps)
 					}) or nil,
 					Content = e("Frame", {
 						Name = "ScreenContent",
-						Position = UDim2.fromOffset(12, 68),
-						Size = UDim2.fromOffset(w - 24, h - 80),
+						Position = UDim2.fromOffset(12, p.Phone and 28 or 68),
+						Size = UDim2.fromOffset(w - 24, h - (p.Phone and 40 or 80)),
 						BackgroundTransparency = 1,
 						ZIndex = 10,
 					}, p.Children),
@@ -241,6 +250,8 @@ function UI.mount(context)
 		Serial = 0,
 		Pending = nil,
 		EggId = "Common",
+		BallId = nil,
+		SelectedPet = nil,
 		Hidden = false,
 		ModalOpen = false,
 	}
@@ -280,12 +291,13 @@ function UI.mount(context)
 				then math.clamp(math.floor(area.Y * 0.1), 44, 88)
 				else math.clamp(math.floor(area.Y * 0.132), 52, 144)
 			-- Reserve room for both neighbours at full hover during a fast cursor move.
-			local gap = math.max(
-				MotionConfig.Navigation.MinimumGap,
-				math.ceil(size * (MotionConfig.Button.HoverScale - 1)) + MotionConfig.Navigation.HoverClearance
-			)
+			local gap = phone and area.Y < 300 and 4
+				or math.max(
+					MotionConfig.Navigation.MinimumGap,
+					math.ceil(size * (MotionConfig.Button.HoverScale - 1)) + MotionConfig.Navigation.HoverClearance
+				)
 			local width = size * 2 + gap
-			local banner = math.max(36, math.floor(size * 0.62))
+			local banner = math.max(phone and 44 or 36, math.floor(size * 0.62))
 			local captionHeight = math.max(22, math.floor(size * 0.3))
 			local navItems = {}
 			for i, item in navigation do
@@ -306,6 +318,23 @@ function UI.mount(context)
 						open(item[1])
 					end,
 					Children = {
+						Ready = item[1] == "Gifts" and Presentation.readyGifts(handle.Snapshot) > 0 and e(U.Surface, {
+							Name = "ReadyGifts",
+							Position = UDim2.new(1, -22, 0, -6),
+							Size = UDim2.fromOffset(24, 24),
+							Color = T.Colors.Red,
+							Radius = 12,
+							Quiet = true,
+							NoShadow = true,
+							ZIndex = 40,
+							Children = {
+								Count = e(U.Label, {
+									Text = tostring(Presentation.readyGifts(handle.Snapshot)),
+									TextSize = 16,
+									ZIndex = 45,
+								}),
+							},
+						}) or nil,
 						Art = e(U.Icon, {
 							Kind = item[2],
 							Position = UDim2.fromOffset(shop and 2 or 3, shop and -3 or 1),
@@ -327,7 +356,8 @@ function UI.mount(context)
 				})
 			end
 			local totalH = banner + 3 * (size + gap)
-			local navY = phone and 8 or math.min(math.floor(area.Y * 0.36), math.max(62, area.Y * 0.76 - totalH))
+			local navY = phone and (area.Y < 300 and 0 or 8)
+				or math.min(math.floor(area.Y * 0.36), math.max(62, area.Y * 0.76 - totalH))
 			children.Navigation = e(Navigation, {
 				Hidden = handle.Hidden or handle.ModalOpen,
 				Reduced = reduced,
@@ -348,30 +378,46 @@ function UI.mount(context)
 			if data and area.X > 120 and area.Y > 160 then
 				-- The window is built in the design space of the reference panels:
 				-- the plate is 680x470 and the HUD board scales it to the screen.
-				local designScale = math.max(0.05, math.min(area.X / 1280, area.Y / 720))
-				local w = view.Kind == "Pets" and 900 or WINDOW_WIDTH
-				local h = WINDOW_HEIGHT
-				local factor = math.min(
-					1,
-					(area.X - 24) / ((w + WINDOW_MARGIN * 2) * designScale),
-					(area.Y - 24) / ((h + WINDOW_MARGIN * 2) * designScale)
-				)
+				local phone = game:GetService("UserInputService").TouchEnabled and area.Y < 520
+				local designScale = phone and 1 or math.max(0.05, math.min(area.X / 1280, area.Y / 720))
+				local collection = view.Kind == "Collection"
+				local w = phone and math.min(collection and 900 or 680, area.X - (collection and 144 or 64))
+					or (collection and 940 or WINDOW_WIDTH)
+				local h = phone and math.max(227, area.Y - (collection and 72 or 96)) or WINDOW_HEIGHT
+				local factor = phone and 1
+					or math.min(
+						1,
+						(area.X - 24) / ((w + WINDOW_MARGIN * 2 + (collection and 164 or 0)) * designScale),
+						(area.Y - 24) / ((h + WINDOW_MARGIN * 2) * designScale)
+					)
 				local centerY = screenCenter.Y
 				-- The screen fills the plate. Only the collection grid asks for
 				-- more room than it gets: its rows have a height of their own.
-				local baseH = h - 80
+				local baseH = h - (collection and (phone and 50 or 76) or (phone and 40 or 80))
 				local contentHeight = baseH
 				local short = baseH < 420
 				local props = {
 					Data = data,
+					Phone = phone,
 					Inventory = inventory or { pets = {}, equipped = {} },
-					Width = w - 24,
+					Width = w - 24 - (collection and (phone and 104 or 164) or 0),
 					Height = contentHeight,
 					Request = request,
 					Busy = handle.Pending ~= nil,
 					Reduced = data.settings.effects == false,
 					Short = short,
 					EggId = handle.EggId,
+					UnifiedInventory = collection,
+					BallId = handle.BallId,
+					SelectedPet = handle.SelectedPet,
+					SelectBall = function(id)
+						handle.BallId = id
+						render()
+					end,
+					SelectPet = function(id)
+						handle.SelectedPet = id
+						render()
+					end,
 					Open = open,
 					Close = context.close,
 					SelectEgg = function(id)
@@ -402,9 +448,18 @@ function UI.mount(context)
 						Modal = true,
 					})
 				end
-				children["Window" .. serial] = e(Window, {
+				local page = collection and (InventoryPages[view.Tab] or Screens[view.Tab]) or Screens[kind]
+				children["Window" .. serial] = e(collection and InventoryWindow or Window, {
 					key = kind .. serial,
 					Kind = kind,
+					Tab = view.Tab,
+					SelectTab = function(route)
+						local nextTab = InventoryTabs.resolve(route)
+						if nextTab and nextTab.Id ~= view.Tab then
+							open(route)
+						end
+					end,
+					Phone = phone,
 					Title = title,
 					Width = w,
 					Height = h,
@@ -427,8 +482,8 @@ function UI.mount(context)
 							Name = "CompactScreenScroll",
 							Size = UDim2.fromOffset(w - 24, baseH),
 							Height = contentHeight + 6,
-							Children = { Screen = e(Screens[kind], props) },
-						}) or e(Screens[kind], props),
+							Children = { Screen = e(page, props) },
+						}) or e(page, props),
 					},
 				})
 			end
@@ -483,6 +538,23 @@ function UI.mount(context)
 		render()
 	end
 	function handle:open(kind, eggId)
+		local tab = InventoryTabs.resolve(kind)
+		if tab then
+			if tab.Id == "Eggs" and eggId then
+				self.EggId = eggId
+			elseif tab.Id == "Balls" and eggId then
+				self.BallId = eggId
+			end
+			eggId = nil
+			if self.View and self.View.Kind == "Collection" then
+				self.View.Tab = tab.Id
+				self.Active = "Collection"
+				self.Pending = nil
+				render()
+				return
+			end
+			kind = "Collection"
+		end
 		if self.View and self.View.Kind == kind then
 			self.Active = kind
 			if eggId then
@@ -498,6 +570,7 @@ function UI.mount(context)
 			if previous.Kind == kind then
 				self.Exiting[serial] = nil
 				self.View = previous
+				previous.Tab = tab and tab.Id or nil
 				self.Active = kind
 				if eggId then
 					self.EggId = eggId
@@ -512,8 +585,11 @@ function UI.mount(context)
 		if eggId then
 			self.EggId = eggId
 		end
-		self.View = { Kind = kind, Serial = self.Serial }
+		self.View = { Kind = kind, Serial = self.Serial, Tab = tab and tab.Id or nil }
 		render()
+	end
+	function handle:isInventoryOpen()
+		return self.Active == "Collection"
 	end
 	function handle:close()
 		-- The view is cleared by the settle callback of the window, not here:

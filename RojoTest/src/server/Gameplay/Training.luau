@@ -4,6 +4,7 @@
 -- the player joins, so the tick never builds a lane name and never walks the
 -- arena tree again.
 local TrainingMotion = require(game.ReplicatedStorage.Shared.TrainingMotion)
+local Data = require(game.ReplicatedStorage.Shared.Core.ProfileData)
 
 local Training = {}
 
@@ -15,6 +16,7 @@ export type Context = {
 	startTraining: (Player, number) -> (),
 	stopTraining: (Player, boolean?) -> (),
 	throw: (Player, number?) -> (),
+	kickTiming: any,
 	inApron: (Player) -> boolean,
 	arenaFor: (Player) -> any,
 	rootFor: (Player) -> (any, any),
@@ -26,6 +28,7 @@ function Training.run(context: Context)
 		while true do
 			task.wait(0.1)
 			for player, s in context.states do
+				context.kickTiming.validate(player)
 				local pos, hum = context.rootFor(player)
 				local laneIndex = nil
 				if pos and hum and hum.Health > 0 and os.clock() >= s.busyUntil then
@@ -73,7 +76,10 @@ function Training.run(context: Context)
 						/ 0.8
 					local gain, remainder = TrainingMotion.reward(cycleGain, s.lane, s.gainRemainder)
 					s.gainRemainder = remainder
-					s.data.skill += gain
+					local beforeLevel = context.Config.level(s.data.skill, s.data.rebirths)
+					Data.add(s.data, "skill", gain)
+					local gainedLevels = math.max(0, context.Config.level(s.data.skill, s.data.rebirths) - beforeLevel)
+					s.trainingLevelsGained = (s.trainingLevelsGained or 0) + gainedLevels
 					context.effect:FireClient(player, "Train", { gain = gain, lane = s.lane, hit = s.trainingHit })
 					s.trainingHit += 1
 					contacts += 1
@@ -86,7 +92,13 @@ function Training.run(context: Context)
 						+ s.trainingCycle * context.Config.TrainingCycle
 						+ TrainingMotion.hitTime(s.lane, s.trainingHit)
 				end
-				if s.auto and not laneIndex and context.inApron(player) and os.clock() >= s.busyUntil then
+				if
+					s.auto
+					and not s.kickTiming
+					and not laneIndex
+					and context.inApron(player)
+					and os.clock() >= s.busyUntil
+				then
 					context.throw(player)
 				end
 				if os.clock() >= (s.nextPublish or 0) then

@@ -538,7 +538,6 @@ function World.apply(map)
 				end
 			end
 		end
-		label(biome.name .. "\n" .. Config.format(biome.distance) .. " m", V(-116, 21, startZ - 20), 48, biome.color)
 	end
 	-- Extend only the end of the watercourse; existing lobby and lane volumes stay intact.
 	workspace.Terrain:FillBlock(CFrame.new(-116, -8, -1360), V(112, 16, 160), Enum.Material.Water)

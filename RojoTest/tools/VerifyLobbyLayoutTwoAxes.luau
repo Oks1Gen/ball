@@ -1,5 +1,5 @@
 -- Read-only checks in Studio Edit or Server; never touches player progression.
-local map = workspace.ProgressionMap
+local map = workspace.Map.World1
 local f = map.Lobby.ThrowingApron.CFrame * CFrame.new(115, -0.3, -13)
 local n = 0
 local function check(ok, message)

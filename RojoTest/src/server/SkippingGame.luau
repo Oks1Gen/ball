@@ -23,6 +23,7 @@ local Receipts = require(script.Parent.Gameplay.Receipts)
 local Training = require(script.Parent.Gameplay.Training)
 local Session = require(script.Parent.Gameplay.Session)
 local Throw = require(script.Parent.Gameplay.Throw)
+local KickTiming = require(script.Parent.Gameplay.KickTiming)
 local Prompts = require(script.Parent.Gameplay.Prompts)
 local EggInteraction = require(script.Parent.Gameplay.EggInteraction)
 local Lifecycle = require(script.Parent.Gameplay.Lifecycle)
@@ -112,6 +113,7 @@ function Game.start(map, world2)
 		end
 		s.lane = nil
 		s.trainingStarted = nil
+		s.trainingLevelsGained = nil
 		s.nextTraining = nil
 		s.trainingHit = nil
 		s.trainingCycle = nil
@@ -152,6 +154,7 @@ function Game.start(map, world2)
 		lockPose(s, root, hum, CFrame.lookAt(position, position + Vector3.xAxis))
 		s.lane = index
 		s.trainingStarted = workspace:GetServerTimeNow()
+		s.trainingLevelsGained = 0
 		s.trainingHit = 1
 		s.trainingCycle = 0
 		s.nextTraining = s.trainingStarted + TrainingMotion.hitTime(index, 1)
@@ -391,7 +394,7 @@ function Game.start(map, world2)
 		end
 		stopTraining(player, true)
 		s.data.skill = 0
-		s.data.rebirths += 1
+		ProfileData.add(s.data, "rebirths", 1)
 		effect:FireClient(player, "Rebirth", {})
 		publish(player, "REBIRTH! ×" .. (s.data.rebirths + 1) .. " SKILL")
 		return true
@@ -414,25 +417,38 @@ function Game.start(map, world2)
 		Game.studioThrow = throw
 		Game.studioPublish = publish
 	end
-	Commands.install({
-		action = action,
+	local kickTiming = KickTiming.build({
 		states = states,
+		effect = effect,
 		publish = publish,
+		rootFor = rootFor,
+		inApron = inApron,
 		throw = throw,
-		hatch = hatch,
-		purchaseItem = purchaseItem,
-		rebirth = rebirth,
-		equipBest = equipBest,
-		stopTraining = stopTraining,
 	})
-	Receipts.install({
+	local receiptContext = {
 		states = states,
 		Config = Config,
 		save = save,
 		publish = publish,
 		effect = effect,
 		equipBest = equipBest,
+	}
+	local function claimPending(player: Player)
+		Receipts.claimPending(receiptContext, player)
+	end
+	Commands.install({
+		action = action,
+		states = states,
+		publish = publish,
+		kickTiming = kickTiming,
+		hatch = hatch,
+		purchaseItem = purchaseItem,
+		rebirth = rebirth,
+		equipBest = equipBest,
+		stopTraining = stopTraining,
+		claimPending = claimPending,
 	})
+	Receipts.install(receiptContext)
 	Prompts.install({
 		states = states,
 		Config = Config,
@@ -452,6 +468,7 @@ function Game.start(map, world2)
 		startTraining = startTraining,
 		stopTraining = stopTraining,
 		throw = throw,
+		kickTiming = kickTiming,
 		inApron = inApron,
 		arenaFor = arenaFor,
 		rootFor = rootFor,
@@ -468,8 +485,8 @@ function Game.start(map, world2)
 		Profiles = Profiles,
 		LobbyRankings = LobbyRankings,
 		FlightStreaming = FlightStreaming,
-		isStudio = RunService:IsStudio(),
 		lanes = lanes,
+		claimPending = claimPending,
 	}
 	local function setup(player)
 		Session.setup(sessionContext, player)

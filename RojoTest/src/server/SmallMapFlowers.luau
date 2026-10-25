@@ -7,7 +7,7 @@ function Flowers.apply(map)
 	if map:FindFirstChild("SmallMapFlowers") then
 		return map.SmallMapFlowers
 	end
-	assert(map.Name == "ProgressionMap" and map:FindFirstChild("SpawnGarden"), "Missing lobby garden")
+	assert(map.Name == "World1" and map:FindFirstChild("SpawnGarden"), "Missing lobby garden")
 	local apron = map.Lobby.ThrowingApron
 	local random = Random.new(18472)
 	local surfaces, obstacles, protected = {}, {}, {}

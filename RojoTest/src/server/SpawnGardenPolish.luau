@@ -10,7 +10,7 @@ function Polish.apply(map)
 	if map:FindFirstChild("SpawnGardenPolish") then
 		return map.SpawnGardenPolish
 	end
-	assert(map.Name == "ProgressionMap" and map:FindFirstChild("SpawnGarden"), "Spawn garden is missing")
+	assert(map.Name == "World1" and map:FindFirstChild("SpawnGarden"), "Spawn garden is missing")
 	local frame = map.Lobby.ThrowingApron.CFrame * CFrame.new(115, -0.3, -13)
 	local protected = {}
 	for _, p in map:GetDescendants() do

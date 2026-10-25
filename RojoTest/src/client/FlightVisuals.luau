@@ -8,6 +8,7 @@ local Config = require(Shared.GameConfig)
 local Motion = require(Shared.ShotMotion)
 local BallVisuals = require(Shared.BallVisuals)
 local ShotFeedback = require(Shared.ShotFeedback)
+local Zones = require(Shared.Core.ZoneProgression)
 local BallEffects = require(script.Parent.BallEffects)
 local Flight = {}
 
@@ -36,10 +37,11 @@ local function humanoidOf(player: Player?): Humanoid?
 	return humanoid :: Humanoid
 end
 
--- The camera has to drive the character again: Scriptable never follows.
+-- Startup can capture Fixed before the player camera initializes. Neither
+-- Fixed nor Scriptable can resume normal character following.
 local function followType(saved: any): Enum.CameraType
 	local cameraType = saved and saved.cameraType or Enum.CameraType.Custom
-	if cameraType == Enum.CameraType.Scriptable then
+	if cameraType == Enum.CameraType.Scriptable or cameraType == Enum.CameraType.Fixed then
 		return Enum.CameraType.Custom
 	end
 	return cameraType
@@ -116,6 +118,7 @@ end
 
 function Flight.start(info, context)
 	local feedback = info.feedback or ShotFeedback.profile(0, 1, info.world)
+	local timingQuality = feedback.timingQuality or 0
 	local ball = BallVisuals.create(info.stone, 2.2)
 	ball.Name = "ThrownBall_" .. info.userId
 	ball.Parent = workspace
@@ -141,6 +144,10 @@ function Flight.start(info, context)
 	local waterY = info.waterY or 0.82
 	local lastContact = 0
 	local kicked = false
+	local lastZone = 1
+	local zoneCrossings: { any } = info.zoneCrossings or {}
+	local zonePulseAt = -math.huge
+	local baseFov = saved.fov
 	local trailEffect = BallEffects.flight(trailId)
 	local previousPosition: Vector3? = nil
 	local connection
@@ -168,6 +175,20 @@ function Flight.start(info, context)
 		local elapsed = workspace:GetServerTimeNow() - started
 		local alpha = math.clamp((elapsed - Config.KickWindup) / info.duration, 0, 1)
 		local position = Motion.position(startPosition, info.distance, alpha, direction)
+		if context.me and elapsed >= Config.KickWindup then
+			for _, crossing in zoneCrossings do
+				if crossing.zone > lastZone and alpha >= crossing.alpha then
+					lastZone = crossing.zone
+					local age = elapsed - Config.KickWindup - crossing.alpha * info.duration
+					if age < 0.25 then
+						zonePulseAt = elapsed - age
+						if context.zone then
+							context.zone(crossing)
+						end
+					end
+				end
+			end
+		end
 		local velocity = previousPosition and (position - previousPosition) / math.max(dt, 1 / 240) or direction
 		previousPosition = position
 		ball:PivotTo(CFrame.new(position) * CFrame.Angles(alpha * 25, alpha * 12, 0))
@@ -203,7 +224,12 @@ function Flight.start(info, context)
 		end
 		lastContact = contacts
 		if context.me then
-			context.distance(elapsed < Config.KickWindup and "KICK!" or Config.format(info.distance * alpha) .. " m")
+			context.distance(
+				elapsed < Config.KickWindup and "KICK!"
+					or Config.format(info.distance * alpha)
+						.. " m  •  ×"
+						.. string.format("%.1f", Zones.multiplier(lastZone))
+			)
 			local blend = 1 - math.exp(-dt * (9 + 5 * feedback.intensity))
 			local height = position.Y - startPosition.Y
 			local cameraPosition = position
@@ -212,13 +238,31 @@ function Flight.start(info, context)
 				+ Vector3.new(0, 5.5 - height * 0.35, 0)
 			local sinceKick = elapsed - Config.KickWindup
 			local shake = context.shake()
+					and context.effects()
 					and sinceKick >= 0
-					and math.sin(sinceKick * 45) * feedback.shakeAmplitude * math.exp(-sinceKick * 5)
+					and math.sin(sinceKick * (45 - 25 * timingQuality)) * feedback.shakeAmplitude * math.exp(
+						-sinceKick * (5 - 2.8 * timingQuality)
+					)
 				or 0
-			local target = CFrame.lookAt(cameraPosition + Vector3.new(0, shake, 0), position + Vector3.new(0, 0.4, 0))
+			local kickDecay = if sinceKick >= 0 then math.exp(-sinceKick * 2.6) else 0
+			local roll = if context.shake() and context.effects()
+				then math.sin(math.max(0, sinceKick) * 18) * kickDecay * timingQuality * 0.045
+				else 0
+			local target = CFrame.lookAt(
+				cameraPosition + right * shake * 0.5 + Vector3.new(0, shake, 0),
+				position + Vector3.new(0, 0.4, 0)
+			) * CFrame.Angles(0, 0, roll)
 			camera.CFrame = camera.CFrame:Lerp(target, blend)
-			local targetFov = elapsed < Config.KickWindup and 68 or feedback.fieldOfView
-			camera.FieldOfView += (targetFov - camera.FieldOfView) * blend
+			local targetFov = if not context.effects()
+				then saved.fov
+				elseif elapsed < Config.KickWindup then 68 - timingQuality * 6
+				else feedback.fieldOfView
+			local pulse = context.effects() and Zones.pulse(elapsed - zonePulseAt) or 0
+			local timingPulse = if context.effects() and sinceKick >= 0
+				then timingQuality * 22 * (1 - math.exp(-sinceKick * 14)) * kickDecay
+				else 0
+			baseFov += (targetFov - baseFov) * blend
+			camera.FieldOfView = baseFov + pulse + timingPulse
 		end
 		if alpha >= 1 then
 			connection:Disconnect()

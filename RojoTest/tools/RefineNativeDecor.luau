@@ -4,7 +4,7 @@ assert(RunService:IsStudio(), "This script must run in Studio, not on a live ser
 assert(not RunService:IsRunning(), "This script must run in Edit mode, not during Play")
 local V = Vector3.new
 local reports = {}
-for _, map in { workspace.ProgressionMap, workspace.World2Map } do
+for _, map in { workspace.Map.World1, workspace.Map.World2 } do
 	local decor = map.NativeEnvironment
 	local frame = map.Lobby.ThrowingApron.CFrame * CFrame.new(115, -0.3, -13)
 	assert(not decor:GetAttribute("ShapeRefinementVersion"), "Refinement already applied")

@@ -41,9 +41,9 @@ for lane = 1, 7 do
 end
 local oldCF, oldFov = workspace.CurrentCamera.CFrame, workspace.CurrentCamera.FieldOfView
 local camera = workspace.CurrentCamera
-local sizes = { Vector2.new(1920, 1080), Vector2.new(1280, 720), Vector2.new(844, 390), Vector2.new(390, 844) }
-for _, name in { "ProgressionMap", "World2Map" } do
-	local map = workspace:FindFirstChild(name)
+local sizes = { Vector2.new(1920, 1080), Vector2.new(1280, 720), Vector2.new(844, 390) }
+for _, name in { "World1", "World2" } do
+	local map = workspace.Map:FindFirstChild(name)
 	if map then
 		local previousLength = 0
 		for i = 1, 7 do

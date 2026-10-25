@@ -45,7 +45,7 @@ template.Parent = environment
 
 local manifest = {}
 local index = 0
-for _, map in { workspace.ProgressionMap, workspace.World2Map } do
+for _, map in { workspace.Map.World1, workspace.Map.World2 } do
 	local roots = {}
 	for _, part in map:GetDescendants() do
 		if not part:IsA("BasePart") or part.Transparency >= 0.99 then
@@ -152,15 +152,14 @@ end
 
 -- Normalize the reference display too, using the lobby's existing ground height.
 local referenceBase = source:GetPivot().Position
-local floorY = workspace.ProgressionMap.Lobby.ThrowingApron.Position.Y
-	- workspace.ProgressionMap.Lobby.ThrowingApron.Size.Y / 2
+local floorY = workspace.Map.World1.Lobby.ThrowingApron.Position.Y - workspace.Map.World1.Lobby.ThrowingApron.Size.Y / 2
 local referenceCopy = template:Clone()
 referenceCopy.Name = "Oak_ImportPreview"
 referenceCopy:PivotTo(CFrame.new(referenceBase.X, floorY + 0.03, referenceBase.Z))
 referenceCopy.Parent = source.Parent
 source.Name = "OriginalOakPreview"
 source.Parent = backup
-game:GetService("Selection"):Set({ workspace.ProgressionMap.ImportedOakTrees })
+game:GetService("Selection"):Set({ workspace.Map.World1.ImportedOakTrees })
 return {
 	replaced = index,
 	backup = backup:GetFullName(),

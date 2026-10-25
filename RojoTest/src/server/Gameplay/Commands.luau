@@ -5,6 +5,8 @@ local MarketplaceService = game:GetService("MarketplaceService")
 local Net = require(game.ReplicatedStorage.Shared.Net)
 local Config = require(game.ReplicatedStorage.Shared.GameConfig)
 local BallPurchases = require(game.ReplicatedStorage.Shared.BallPurchases)
+local Data = require(game.ReplicatedStorage.Shared.Core.ProfileData)
+local ReturnRewards = require(game.ReplicatedStorage.Shared.Core.ReturnRewards)
 
 local Commands = {}
 
@@ -12,12 +14,13 @@ export type Context = {
 	action: RemoteEvent,
 	states: { [Player]: any },
 	publish: (Player, string?, boolean?) -> (),
-	throw: (Player, number?) -> (),
+	kickTiming: any,
 	hatch: (Player, string, number?, boolean?) -> (),
 	purchaseItem: (Player, any, string, string, string) -> (),
 	rebirth: (Player, boolean?) -> boolean,
 	equipBest: (any) -> (),
 	stopTraining: (Player, boolean?) -> (),
+	claimPending: (Player) -> (),
 }
 
 function Commands.install(context: Context)
@@ -33,12 +36,19 @@ function Commands.install(context: Context)
 			return
 		end
 		s.tokens -= 1
+		if command ~= "Throw" and command ~= "KickRelease" and command ~= "Snapshot" and command ~= "Setting" then
+			context.kickTiming.cancel(player)
+		end
 		if command == "Snapshot" then
 			-- The client asks for the state it lost, so the inventory travels
 			-- with it even when nothing changed.
 			context.publish(player, nil, true)
 		elseif command == "Throw" then
-			context.throw(player)
+			context.kickTiming.begin(player)
+		elseif command == "KickRelease" then
+			context.kickTiming.release(player, value, extra)
+		elseif command == "KickCancel" then
+			context.kickTiming.cancel(player)
 		elseif command == "Auto" then
 			if s.data.perks.AutoThrow then
 				s.auto = not s.auto
@@ -96,6 +106,9 @@ function Commands.install(context: Context)
 					return
 				end
 				s.inventoryVersion += 1
+				if command == "DeletePet" then
+					context.claimPending(player)
+				end
 				context.publish(player)
 			else
 				context.publish(player, "That pet is not in your inventory")
@@ -110,17 +123,32 @@ function Commands.install(context: Context)
 				context.publish(player, "That gift is not available yet")
 			else
 				s.gifts[value] = true
-				s.data.wins += gift.wins
-				s.data.skill += gift.skill
+				Data.add(s.data, "wins", gift.wins)
+				Data.add(s.data, "skill", gift.skill)
 				context.publish(player, "Gift claimed!")
 			end
+		elseif command == "OfflineClaim" then
+			if not s.welcomeClaimed then
+				s.welcomeClaimed = true
+				local amount = ReturnRewards.claimOffline(s.data)
+				context.publish(
+					player,
+					if amount > 0 then "Offline reward claimed! +" .. Config.format(amount) .. " Skill" else nil
+				)
+			else
+				context.publish(player)
+			end
 		elseif command == "Daily" then
-			local day = math.floor(os.time() / 86400)
-			if s.data.daily < day then
-				s.data.daily = day
-				s.data.wins += 500
-				s.data.skill += 100
-				context.publish(player, "Daily gift: +500 Wins +100 Skill")
+			local reward = ReturnRewards.claimDaily(s.data, os.time())
+			if reward then
+				context.publish(
+					player,
+					"Daily gift: +"
+						.. Config.format(reward.wins)
+						.. " Wins +"
+						.. Config.format(reward.skill)
+						.. " Skill"
+				)
 			else
 				context.publish(player, "Daily gift already claimed")
 			end

@@ -154,8 +154,10 @@ local function restoreCamera(waitForCharacter: boolean)
 		return
 	end
 	local saved = cameraState
+	-- During startup Roblox can still have a Fixed camera. Restoring that
+	-- snapshot strands the view away from the character after the intro.
+	camera.CameraType = Enum.CameraType.Custom
 	if saved then
-		camera.CameraType = saved.Type
 		camera.FieldOfView = saved.FOV
 	end
 	local humanoid = characterHumanoid()
@@ -560,7 +562,7 @@ local ok, failure = xpcall(function()
 	streamingRemote = ReplicatedStorage:WaitForChild("MapIntroStreaming", 20)
 	assert(streamingRemote, "Streaming service unavailable")
 	streamingRemote:FireServer("Prepare")
-	local map = workspace:WaitForChild("ProgressionMap", 30)
+	local map = workspace:WaitForChild("Map", 30):WaitForChild("World1", 30)
 	assert(map, "Map unavailable")
 	local shots = {
 		{
@@ -631,8 +633,7 @@ local ok, failure = xpcall(function()
 		return
 	end
 	local camera = workspace.CurrentCamera
-	cameraState =
-		{ Type = camera.CameraType, Subject = camera.CameraSubject, FOV = camera.FieldOfView, CFrame = camera.CFrame }
+	cameraState = { Subject = camera.CameraSubject, FOV = camera.FieldOfView, CFrame = camera.CFrame }
 	-- Hide only world captions; restore their exact local state afterwards.
 	for _, node in map:GetDescendants() do
 		if node:IsA("BillboardGui") and node.Enabled then

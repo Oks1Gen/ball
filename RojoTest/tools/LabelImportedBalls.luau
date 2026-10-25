@@ -2,7 +2,7 @@
 local RunService = game:GetService("RunService")
 assert(RunService:IsStudio(), "This script must run in Studio, not on a live server")
 assert(not RunService:IsRunning(), "This script must run in Edit mode, not during Play")
-local map = assert(workspace:FindFirstChild("ProgressionMap"))
+local map = assert(workspace:FindFirstChild("Map") and workspace.Map:FindFirstChild("World1"))
 local root = assert(map:FindFirstChild("SkippingWorld"))
 local balls = assert(workspace:FindFirstChild("AllBalls_NoTextures"))
 if balls:GetAttribute("StandLabelsVersion") == 1 then

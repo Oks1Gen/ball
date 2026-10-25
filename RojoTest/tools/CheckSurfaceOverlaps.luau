@@ -1,6 +1,6 @@
 -- Read-only Studio audit. Wedge side rectangles conservatively enclose their triangles.
 -- Ignores fully occluded faces and reports coincident or close parallel exposed faces.
-local root = workspace.ProgressionMap
+local root = workspace.Map.World1
 local axes = { Vector3.xAxis, Vector3.yAxis, Vector3.zAxis }
 local bins = {}
 local parts = 0

@@ -60,7 +60,7 @@ function Visual.start()
 	-- Render locally so EditableMesh contents need no asset upload or replication.
 	local watched, busy, failed = {}, {}, {}
 	local function watch(map)
-		if watched[map] or (map.Name ~= "ProgressionMap" and map.Name ~= "World2Map") then
+		if watched[map] or (map.Name ~= "World1" and map.Name ~= "World2") then
 			return
 		end
 		watched[map] = true
@@ -85,8 +85,9 @@ function Visual.start()
 		end)
 		attempt()
 	end
-	workspace.ChildAdded:Connect(watch)
-	for _, map in workspace:GetChildren() do
+	local maps = workspace:WaitForChild("Map")
+	maps.ChildAdded:Connect(watch)
+	for _, map in maps:GetChildren() do
 		watch(map)
 	end
 end

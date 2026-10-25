@@ -5,6 +5,9 @@
 # Windows batch files keep CRLF so cmd.exe always reads them correctly.
 *.bat text eol=crlf
 
+# Preserve the exact pinned upstream ProfileStore bytes, including its whitespace.
+RojoTest/src/serverPackages/ProfileStore.luau -whitespace
+
 # Binary game assets and Blender sources are stored in Git LFS.
 # Runtime XML and JSON stay as plain text so diffs and reviews keep working.
 *.blend filter=lfs diff=lfs merge=lfs -text

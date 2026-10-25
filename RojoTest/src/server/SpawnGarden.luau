@@ -11,7 +11,7 @@ function Garden.apply(map)
 	if map:FindFirstChild("SpawnGarden") then
 		return map.SpawnGarden
 	end
-	assert(map.Name == "ProgressionMap", "Spawn garden is scoped to World 1")
+	assert(map.Name == "World1", "Spawn garden is scoped to World 1")
 	local frame = map.Lobby.ThrowingApron.CFrame * CFrame.new(115, -0.3, -13)
 	local protected = {}
 	for _, p in map:GetDescendants() do

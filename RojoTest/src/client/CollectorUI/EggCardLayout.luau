@@ -9,7 +9,7 @@ function Layout.calculate(width: number, height: number, count: number, variant:
 		else math.min(count, width >= 460 and 2 or 1)
 	local rows = math.ceil(count / cols)
 	local cardW = math.floor((width - 12 - (cols - 1) * 12) / cols)
-	local minimum = mode == "Split" and 88 or 174
+	local minimum = mode == "CompactSplit" and 64 or mode == "Split" and 88 or 174
 	local cardH = math.max(minimum, math.floor((height - 16 - (rows - 1) * 12) / rows))
 	local r: any = {
 		Columns = cols,
@@ -18,13 +18,18 @@ function Layout.calculate(width: number, height: number, count: number, variant:
 		CardHeight = cardH,
 		CanvasHeight = rows * cardH + (rows - 1) * 12 + 13,
 	}
-	if mode == "Split" then
+	if mode == "Split" or mode == "CompactSplit" then
 		local artW = math.min(math.floor(cardW * 0.42), cardH + 12)
 		local textX = artW + 12
 		r.Pet = { 6, 6, artW, cardH - 12 }
 		r.Chance = { textX, 5, cardW - textX - 8, 23 }
 		r.Name = { textX, 29, cardW - textX - 8, cardH - 55 }
 		r.Boost = { textX, cardH - 25, cardW - textX - 8, 21 }
+		if mode == "CompactSplit" then
+			r.Chance = { textX, 1, cardW - textX - 8, 19 }
+			r.Name = { textX, 22, cardW - textX - 8, 20 }
+			r.Boost = { textX, cardH - 20, cardW - textX - 8, 19 }
+		end
 	elseif mode == "Gallery" then
 		r.Pet = { 6, 24, cardW - 12, cardH - 86 }
 		r.Chance = { 8, 4, cardW - 16, 24 }

@@ -15,6 +15,7 @@ local Kit = require(script.Parent.Controllers.HudKit)
 local Style = require(script.Parent.UiStyle)
 local GuiInsets = require(script.Parent.Modules.GuiInsets)
 local Net = require(game.ReplicatedStorage.Shared.Net)
+local Presentation = require(script.Parent.Modules.UiPresentation)
 
 local Panel = {}
 local C = Color3.fromRGB
@@ -667,8 +668,12 @@ function Panel.mount(context: Context)
 		headingLimit.MinTextSize = 24
 		headingLimit.MaxTextSize = 63
 		headingLimit.Parent = heading
-		Kit.icon(window, "Settings", -15, -54, 100, 100)
+		local cornerIcon = Kit.icon(window, "Settings", 0, 0, 100, 100)
+		cornerIcon.AnchorPoint = Vector2.new(0.5, 0.5)
+		cornerIcon.ZIndex = 10
 		local cross = Kit.button(window, "Close", "", width - 32, -31, 60, 60, Style.Colors.Red)
+		cross.AnchorPoint = Vector2.new(0.5, 0.5)
+		cross.Position = UDim2.fromScale(1, 0)
 		cross.ZIndex = 12
 		Kit.visualOf(cross).BackgroundTransparency = 1
 		Kit.hide(cross, "Studs")
@@ -884,9 +889,10 @@ function Panel.mount(context: Context)
 					phone and 180 or 16,
 					granted.offset.Y + (if phone then MotionConfig.Navigation.PhoneAdminY else 8)
 				)
-				launcher.Size = UDim2.fromOffset(phone and 110 or 150, phone and 32 or 38)
+				launcher.Size = UDim2.fromOffset(phone and 110 or 150, phone and 44 or 38)
 				local caption = Kit.captionOf(launcher)
 				if caption then
+					caption.Text = Presentation.keyboard() and "ADMIN · F2" or "ADMIN"
 					caption.Size = UDim2.new(1, -8, 1, -4)
 					local limit = caption:FindFirstChildOfClass("UITextSizeConstraint")
 					if limit then
@@ -916,6 +922,7 @@ function Panel.mount(context: Context)
 			end
 		end
 		placeLauncher()
+		table.insert(connections, Input:GetPropertyChangedSignal("PreferredInput"):Connect(placeLauncher))
 		table.insert(
 			connections,
 			area:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()

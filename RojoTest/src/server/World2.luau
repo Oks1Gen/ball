@@ -3,12 +3,15 @@ local Config = require(game.ReplicatedStorage.Shared.GameConfig)
 local World2 = {}
 local C = Color3.fromRGB
 function World2.build(original)
-	local existing = workspace:FindFirstChild("World2Map")
+	local existing = workspace:FindFirstChild("Map") and workspace.Map:FindFirstChild("World2")
 	if existing then
 		assert(existing:GetAttribute("GameplayWorld2Version") == 1, "Review existing World2Map before replacing it")
 		if existing:GetAttribute("ArenaOffsetX") ~= Config.WorldOffset.X then
 			local oldRiverX = existing.SkippingWorld.Water_1.Position.X
-			existing:PivotTo(original:GetPivot() + Config.WorldOffset)
+			require(script.Parent.MapHierarchy).offset(
+				existing,
+				Config.WorldOffset - Vector3.new(existing:GetAttribute("ArenaOffsetX") or 0, 0, 0)
+			)
 			workspace.Terrain:FillBlock(CFrame.new(oldRiverX, -8, -720), Vector3.new(112, 16, 1440), Enum.Material.Air)
 			workspace.Terrain:FillBlock(
 				CFrame.new(Config.RiverX + Config.WorldOffset.X, -8, -720),
@@ -19,9 +22,9 @@ function World2.build(original)
 		end
 		return existing
 	end
-	local world = original:Clone()
-	world.Name = "World2Map"
-	world:PivotTo(original:GetPivot() + Config.WorldOffset)
+	local world: any = original:Clone()
+	world.Name = "World2"
+	require(script.Parent.MapHierarchy).offset(world, Config.WorldOffset)
 	world.Lobby.MapSpawn.Enabled = false
 	-- Give the advanced arena its own sky-garden palette while retaining its layout.
 	for _, p in world:GetDescendants() do
@@ -49,7 +52,10 @@ function World2.build(original)
 	for i = 1, 8 do
 		local water = world.SkippingWorld["Water_" .. i]
 		water.Color = water.Color:Lerp(C(142, 119, 252), 0.3)
-		water.WaterCaustics.Color3 = water.Color:Lerp(C(255, 255, 255), 0.5)
+		local caustics = water:FindFirstChild("WaterCaustics")
+		if caustics then
+			caustics.Color3 = water.Color:Lerp(C(255, 255, 255), 0.5)
+		end
 	end
 	for _, egg in Config.Eggs do
 		local model = world.SkippingWorld["Egg_" .. egg.id]
@@ -68,7 +74,7 @@ function World2.build(original)
 	prompt.ObjectText = "Return to World 1"
 	world:SetAttribute("GameplayWorld2Version", 1)
 	world:SetAttribute("ArenaOffsetX", Config.WorldOffset.X)
-	world.Parent = workspace
+	world.Parent = require(script.Parent.MapHierarchy).container()
 	workspace.Terrain:FillBlock(
 		CFrame.new(Config.RiverX + Config.WorldOffset.X, -8, -720),
 		Vector3.new(112, 16, 1440),

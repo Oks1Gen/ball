@@ -78,6 +78,7 @@ type NodeState = {
 	position: UDim2,
 	size: UDim2,
 	textSize: number?,
+	wrapped: boolean?,
 	limit: { max: number, min: number }?,
 }
 
@@ -110,11 +111,12 @@ function HudLayout.landscape(): Spec
 		Throw = entry(577, 406, 126, 51),
 		StopTraining = entry(533, 205, 214, 51),
 		SkillIcon = entry(345, 479, 31, 39),
-		Skill = entry(377, 482, 279, 30, { text = 22 }),
-		Multiplier = entry(774, 482, 205, 30, { text = 22 }),
+		Skill = entry(377, 482, 171, 30, { text = 20 }),
+		LevelUp = entry(552, 482, 207, 30, { text = 21 }),
+		Multiplier = entry(771, 482, 208, 30, { text = 20 }),
 		LevelBar = entry(344, MotionConfig.Hud.LevelBarY, 592, 61),
-		["LevelBar/Level"] = entry(14, 4, 260, 50, { text = 29 }),
-		["LevelBar/Maximum"] = entry(303, 8, 271, 43, { text = 23 }),
+		["LevelBar/Level"] = entry(14, 4, 246, 53, { text = 32 }),
+		["LevelBar/Maximum"] = entry(273, 8, 303, 45, { text = 25 }),
 		Skill10M = entry(344, MotionConfig.Hud.BottomOffersY, offerWidth, 53),
 		Skill100M = entry(344 + offerWidth + offerGap, MotionConfig.Hud.BottomOffersY, offerWidth, 53),
 		Skill1B = entry(344 + 2 * (offerWidth + offerGap), MotionConfig.Hud.BottomOffersY, offerWidth, 53),
@@ -140,16 +142,52 @@ end
 
 -- Landscape phones keep both thumb controls free; counters move above the
 -- right offer stack instead of occupying the thumbstick zone.
-function HudLayout.phoneLandscape(): Spec
+function HudLayout.phoneLandscape(factor: number?, viewportWidth: number?): Spec
 	local spec = HudLayout.landscape()
-	spec.elements.StarterPack = entry(1080, 201, 119, 83)
+	local physicalScale = math.max(0.01, factor or 0.5)
+	local minimum = math.ceil(44 / physicalScale)
+	spec.mode = "phoneLandscape"
+	-- Preserve the desktop board and its regions. Only proportions change.
+	spec.elements.Settings = entry(160, 5, minimum, minimum)
+	spec.elements.Daily = entry(1205 - minimum, 4, minimum, minimum)
+	spec.elements.AutoThrow.h = minimum
+	spec.elements.Throw.h = minimum
+	spec.elements.Throw.y = 420 - minimum
+	spec.elements.StopTraining.h = minimum
+	for _, name in { "Skill10M", "Skill100M", "Skill1B" } do
+		spec.elements[name].h = minimum
+		spec.elements[name].y = 588
+	end
+	spec.elements.Hint.y = 700
+	spec.elements.SkillIcon.y = 430
+	spec.elements.Skill.y = 433
+	spec.elements.LevelUp.y = 433
+	spec.elements.LevelUp.h = 36
+	spec.elements.LevelUp.text = 27
+	spec.elements.Multiplier.y = 433
+	spec.elements.LevelBar.y = 480
+	spec.elements.StarterPack = entry(1080, MotionConfig.Hud.PhoneStarterOfferY, 119, 83)
 	spec.elements.DoubleSkill = entry(1080, MotionConfig.Hud.PhoneSkillOfferY, 125, 53)
 	spec.elements.DoubleWins = entry(1080, MotionConfig.Hud.PhoneWinsOfferY, 125, 53)
-	spec.elements.RebirthIcon = entry(890, 70, 36, 36)
-	spec.elements.RebirthCount = entry(934, 73, 95, 32, { text = 27 })
-	spec.elements.WinsIcon = entry(1045, 70, 36, 36)
-	spec.elements.WinsCount = entry(1089, 73, 155, 32, { text = 27 })
-	spec.elements.FriendBoost = entry(900, 114, 280, 26, { text = 18 })
+	for _, name in { "StarterPack", "DoubleSkill", "DoubleWins" } do
+		spec.elements[name].h = math.max(spec.elements[name].h, minimum)
+	end
+	spec.elements.RebirthIcon = entry(1050, 70, 36, 36)
+	spec.elements.RebirthCount = entry(1094, 73, 80, 32, { text = 27 })
+	spec.elements.WinsIcon = entry(1195, 70, 36, 36)
+	spec.elements.WinsCount = entry(1239, 73, 90, 32, { text = 27 })
+	spec.elements.FriendBoost = entry(1040, 114, 280, 26, { text = 18 })
+	if viewportWidth then
+		local total = (116 + 126) * physicalScale + 12
+		local start = (viewportWidth / 2 + 100 * physicalScale + viewportWidth - 16 - 44 - total) / 2
+		local first = 75 + (start - 16) / physicalScale
+		local second = first + 116 + 12 / physicalScale
+		spec.elements.RebirthIcon.x = first
+		spec.elements.RebirthCount.x = first + 44
+		spec.elements.WinsIcon.x = second
+		spec.elements.WinsCount.x = second + 44
+		spec.elements.FriendBoost.x = first + (total / physicalScale - 280) / 2
+	end
 	return spec
 end
 
@@ -325,6 +363,7 @@ local function stateOf(node: GuiObject): NodeState
 			position = node.Position,
 			size = node.Size,
 			textSize = if node:IsA("TextLabel") then node.TextSize else nil,
+			wrapped = if node:IsA("TextLabel") then node.TextWrapped else nil,
 		}
 		authored[node] = state
 	end
@@ -342,6 +381,7 @@ local function restore(node: Instance)
 	node.Size = state.size
 	if state.textSize and node:IsA("TextLabel") then
 		node.TextSize = state.textSize
+		node.TextWrapped = state.wrapped == true
 	end
 	if state.limit then
 		local limit = node:FindFirstChildOfClass("UITextSizeConstraint")
@@ -446,7 +486,82 @@ function HudLayout.apply(spec: Spec, roots: { Instance })
 			target = findChild(roots, path)
 		end
 		if target and target:IsA("GuiObject") then
-			stateOf(target)
+			local original = stateOf(target)
+			if spec.mode == "phoneLandscape" and target:IsA("GuiButton") then
+				local sx = item.w / math.max(1, original.size.X.Offset)
+				local sy = item.h / math.max(1, original.size.Y.Offset)
+				for _, child in Kit.visualOf(target):GetChildren() do
+					if child:IsA("GuiObject") then
+						local baseline = stateOf(child)
+						child.Position = UDim2.new(
+							baseline.position.X.Scale,
+							baseline.position.X.Offset * sx,
+							baseline.position.Y.Scale,
+							baseline.position.Y.Offset * sy
+						)
+						child.Size = UDim2.new(
+							baseline.size.X.Scale,
+							baseline.size.X.Offset * sx,
+							baseline.size.Y.Scale,
+							baseline.size.Y.Offset * sy
+						)
+						if child:IsA("TextLabel") then
+							child.TextSize = math.max(child.TextSize, 30)
+						end
+					end
+				end
+				if path:match("^Skill%d") then
+					local visual = Kit.visualOf(target)
+					local caption = Kit.captionOf(target)
+					if caption then
+						caption.Position = UDim2.fromOffset(4, 4)
+						caption.Size = UDim2.fromOffset(item.w - 8, item.h - 38)
+					end
+					for _, pricePart in { "RobuxIcon", "Price" } do
+						local child = visual:FindFirstChild(pricePart)
+						if child and child:IsA("GuiObject") then
+							child.Position =
+								UDim2.fromOffset(pricePart == "Price" and item.w - 44 or item.w - 76, item.h - 32)
+							child.Size = UDim2.fromOffset(pricePart == "Price" and 40 or 28, 28)
+						end
+					end
+				end
+				if path == "AutoThrow" or path == "DoubleSkill" or path == "DoubleWins" then
+					local visual = Kit.visualOf(target)
+					local price = visual:FindFirstChild("Price")
+					if price then
+						hideNode(price)
+					end
+					for _, partName in { "RobuxIcon", "Amount" } do
+						local part = visual:FindFirstChild(partName)
+						if part and part:IsA("GuiObject") then
+							part.Position =
+								UDim2.fromOffset(item.w / 2 + (partName == "Amount" and -4 or -34), item.h - 34)
+							part.Size = UDim2.fromOffset(partName == "Amount" and 50 or 26, 30)
+						end
+					end
+					if path ~= "AutoThrow" then
+						local icon = visual:FindFirstChild(path == "DoubleSkill" and "SkillIcon" or "WinsIcon")
+						if icon and icon:IsA("GuiObject") then
+							icon.Position = UDim2.fromOffset((item.w - 39) / 2, -6)
+							icon.Size = UDim2.fromOffset(39, 26)
+						end
+					end
+				end
+				if path == "StarterPack" then
+					for _, child in Kit.visualOf(target):GetChildren() do
+						if child:IsA("GuiObject") and child.Name:match("Icon$") then
+							child.Position = UDim2.fromOffset(child.Position.X.Offset, 0)
+							child.Size = UDim2.fromOffset(child.Size.X.Offset, 42)
+						elseif child:IsA("TextLabel") and child.Name == "Caption2" then
+							child.Position = UDim2.fromOffset(0, item.h - 64)
+							child.Size = UDim2.fromOffset(item.w, 64)
+							child.TextWrapped = true
+							child.TextSize = 28
+						end
+					end
+				end
+			end
 			target.Position = UDim2.fromOffset(item.x, item.y)
 			target.Size = UDim2.fromOffset(item.w, item.h)
 			if item.text and target:IsA("TextLabel") then

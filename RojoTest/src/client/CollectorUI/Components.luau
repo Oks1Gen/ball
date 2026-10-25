@@ -110,7 +110,7 @@ function U.Surface(p)
 		-- Selection comes from the callers (the collection cards) and repeats the yellow 4 px outline of the legacy panels.
 		Outline = e("UIStroke", {
 			Thickness = p.Selected and 4 or (p.Outline or Theme.Stroke),
-			Color = p.Selected and Theme.Gold or Theme.Outline,
+			Color = p.Selected and (p.SelectionColor or Theme.Gold) or (p.BorderColor or Theme.Outline),
 			ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
 		}),
 	}
@@ -229,7 +229,7 @@ local function useButtonMotion(p)
 		if buttonRef.current then
 			Motion.resetButtons(buttonRef.current)
 		end
-	end, { p.Disabled == true, p.Loading == true, reduced == true })
+	end, { p.Inert == true, reduced == true })
 	return buttonRef, visualRef
 end
 function U.Button(p)
@@ -243,8 +243,8 @@ function U.Button(p)
 		Position = p.Position,
 		AnchorPoint = p.AnchorPoint,
 		AutoButtonColor = false,
-		Active = not p.Disabled and not p.Loading,
-		Selectable = not p.Disabled and not p.Loading,
+		Active = not p.Inert,
+		Selectable = not p.Inert,
 		ZIndex = p.ZIndex or 20,
 		[React.Event.Activated] = function()
 			if not p.Disabled and not p.Loading and p.OnActivated and Motion.enabled(buttonRef.current) then
@@ -272,7 +272,9 @@ function U.Button(p)
 	end
 	return e("TextButton", props, {
 		Visual = e(U.Surface, {
-			Color = p.Disabled and Theme.Colors.Slate or (p.Color or Theme.Colors.Green),
+			Color = if p.Disabled or p.Loading
+				then (p.Color or Theme.Colors.Green):Lerp(Color3.new(0, 0, 0), 0.45)
+				else (p.Color or Theme.Colors.Green),
 			Transparency = p.Transparency,
 			NoShadow = p.NoShadow,
 			Radius = p.Radius or Theme.Radius,
@@ -280,6 +282,8 @@ function U.Button(p)
 			Ref = visualRef,
 			Children = children,
 			Studs = p.Studs,
+			Quiet = p.Quiet,
+			BorderColor = p.BorderColor,
 			ZIndex = p.ZIndex or 20,
 		}),
 	})
@@ -298,8 +302,8 @@ function U.Tile(p)
 		Position = p.Position,
 		AnchorPoint = p.AnchorPoint,
 		AutoButtonColor = false,
-		Active = not p.Disabled and not p.Loading,
-		Selectable = not p.Disabled and not p.Loading,
+		Active = not p.Inert,
+		Selectable = not p.Inert,
 		ZIndex = p.ZIndex or 20,
 		[React.Event.Activated] = function()
 			if not p.Disabled and not p.Loading and p.OnActivated and Motion.enabled(buttonRef.current) then
@@ -314,6 +318,8 @@ function U.Tile(p)
 			Studs = p.Studs,
 			Quiet = p.Quiet,
 			Selected = p.Selected,
+			SelectionColor = p.SelectionColor,
+			BorderColor = p.BorderColor,
 			Outline = p.Outline,
 			Ref = visualRef,
 			Children = p.Children,
@@ -747,7 +753,7 @@ function U.Scroll(p)
 		BackgroundTransparency = 1,
 		BorderSizePixel = 0,
 		ScrollBarThickness = 5,
-		ScrollBarImageColor3 = Theme.Gold,
+		ScrollBarImageColor3 = p.BarColor or Theme.Gold,
 		ScrollBarImageTransparency = 0.15,
 		CanvasSize = UDim2.fromOffset(0, p.Height or 0),
 		ScrollingDirection = Enum.ScrollingDirection.Y,

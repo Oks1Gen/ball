@@ -3,7 +3,7 @@ local RunService = game:GetService("RunService")
 assert(RunService:IsStudio(), "This script must run in Studio, not on a live server")
 assert(not RunService:IsRunning(), "This script must run in Edit mode, not during Play")
 -- Edit-time visual replacement of the right lobby strip; keep physical floor.
-local map = assert(workspace:FindFirstChild("ProgressionMap"), "Missing map")
+local map = assert(workspace:FindFirstChild("Map") and workspace.Map:FindFirstChild("World1"), "Missing map")
 assert(not map:FindFirstChild("StoneGrassWalkway"), "Already applied")
 local floor = map.Lobby.CentralWalkway
 assert((floor.Size - Vector3.new(16, 0.4, 202)).Magnitude < 0.01, "Remeasure walkway")

@@ -17,8 +17,8 @@ export type Context = {
 	Profiles: any,
 	LobbyRankings: any,
 	FlightStreaming: any,
-	isStudio: boolean,
 	lanes: { [number]: any },
+	claimPending: (Player) -> (),
 }
 
 function Session.setup(context: Context, player: Player)
@@ -42,7 +42,7 @@ function Session.setup(context: Context, player: Player)
 		lane = nil,
 		auto = false,
 		friends = friendCount,
-		sessionOnly = context.isStudio,
+		sessionOnly = false,
 		inventoryVersion = 1,
 		sentInventoryVersion = 0,
 		lanes = context.lanes,
@@ -56,6 +56,7 @@ function Session.setup(context: Context, player: Player)
 	profile.OnAfterSave:Connect(function(snapshot)
 		task.spawn(context.LobbyRankings.record, player.UserId, snapshot.progress)
 	end)
+	context.claimPending(player)
 	local leader = Instance.new("Folder")
 	leader.Name = "leaderstats"
 	leader.Parent = player
@@ -83,12 +84,17 @@ function Session.setup(context: Context, player: Player)
 		end
 		local s = context.states[player]
 		if s then
+			s.kickTiming = nil
 			context.stopTraining(player)
 			s.blockedLane = nil
 			s.busyUntil = 0
 		end
 		if hum then
 			hum.Died:Connect(function()
+				local current = context.states[player]
+				if current then
+					current.kickTiming = nil
+				end
 				context.stopTraining(player)
 				context.FlightStreaming.stop(player)
 			end)

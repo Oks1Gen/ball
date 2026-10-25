@@ -49,8 +49,8 @@ function World.mount(context: Context): Handle
 		end)
 
 	task.spawn(function()
-		for _, name in { "ProgressionMap", "World2Map" } do
-			local map: any = workspace:WaitForChild(name)
+		for _, name in { "World1", "World2" } do
+			local map: any = workspace:WaitForChild("Map"):WaitForChild(name)
 			local world: any = map:WaitForChild("SkippingWorld")
 			for _, part in world.World2Portal:GetChildren() do
 				if part:IsA("BasePart") and part:GetAttribute("AnimatedPortal") then
@@ -87,7 +87,9 @@ function World.mount(context: Context): Handle
 		end
 		local map = mapCache[world]
 		if map == nil or not map.Parent then
-			map = workspace:FindFirstChild(world == 2 and "World2Map" or "ProgressionMap")
+			map = (
+				workspace:FindFirstChild("Map") and workspace.Map:FindFirstChild(world == 2 and "World2" or "World1")
+			)
 			mapCache[world] = map
 		end
 		local found: any = nil

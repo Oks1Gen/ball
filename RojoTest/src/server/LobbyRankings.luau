@@ -4,6 +4,7 @@ local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local DataStoreService = game:GetService("DataStoreService")
 local Config = require(game.ReplicatedStorage.Shared.GameConfig)
+local Data = require(game.ReplicatedStorage.Shared.Core.ProfileData)
 local C, V = Color3.fromRGB, Vector3.new
 local categories = {
 	{ key = "skill", title = "TOP SKILL", color = C(66, 219, 255) },
@@ -154,7 +155,7 @@ function Rankings.record(userId, data)
 		return
 	end
 	for _, category in categories do
-		local value = math.floor(math.clamp(data[category.key] or 0, 0, 1e15))
+		local value = Data.bound(data[category.key] or 0)
 		local entry = written[userId]
 		if entry and entry[category.key] == value then
 			continue
