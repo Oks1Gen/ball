@@ -52,7 +52,7 @@ return {
 		Groups = {
 			Left = { "RebirthIcon", "RebirthCount", "WinsIcon", "WinsCount", "FriendBoost" },
 			Right = { "StarterPack", "DoubleSkill", "DoubleWins", "Best" },
-			Top = { "AutoThrow", "Distance", "HitDistance", "StopTraining" },
+			Top = { "AutoThrow", "Distance", "HitDistance" },
 			Bottom = {
 				"Throw",
 				"SkillIcon",

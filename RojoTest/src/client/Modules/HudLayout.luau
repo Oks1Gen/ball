@@ -107,7 +107,6 @@ function HudLayout.landscape(): Spec
 		DoubleSkill = entry(1030, 303, 125, 53),
 		DoubleWins = entry(1030, 401, 125, 53),
 		Throw = entry(577, 406, 126, 51),
-		StopTraining = entry(533, 205, 214, 51),
 		SkillIcon = entry(345, 479, 31, 39),
 		Skill = entry(377, 482, 171, 30, { text = 20 }),
 		LevelUp = entry(552, 482, 207, 30, { text = 21 }),
@@ -149,7 +148,6 @@ function HudLayout.phoneLandscape(factor: number?, viewportWidth: number?): Spec
 	spec.elements.AutoThrow.h = minimum
 	spec.elements.Throw.h = minimum
 	spec.elements.Throw.y = 420 - minimum
-	spec.elements.StopTraining.h = minimum
 	for _, name in { "Skill10M", "Skill100M", "Skill1B" } do
 		spec.elements[name].h = minimum
 		spec.elements[name].y = 588
@@ -294,7 +292,6 @@ function HudLayout.portrait(width: number, height: number): Spec
 		FriendBoost = entry(8, top("boost"), width * 0.6 - 8, 22, { text = 15, visible = not plan.drop["boost"] }),
 		Best = entry(width * 0.6, top("boost"), width * 0.4 - 8, 22, { text = 14, visible = not plan.drop["boost"] }),
 		Throw = entry(8, throwTop, width - 16, throwHeight, { caption = 30, captionFill = true }),
-		StopTraining = entry(8, throwTop, width - 16, throwHeight, { caption = 24, captionFill = true }),
 		Hint = entry(8, hintTop, width - 16, hintHeight, { text = 14, visible = plan.hint }),
 		RebirthProgress = entry(0, 0, 1, 1, { visible = false }),
 		-- The shop screen owns the paid offers on narrow screens.

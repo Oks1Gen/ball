@@ -8,6 +8,7 @@ local SoundService = game:GetService("SoundService")
 local Config = require(game.ReplicatedStorage.Shared.GameConfig)
 local Kit = require(script.Parent.HudKit)
 local ZoneSound = require(game.ReplicatedStorage.Shared.ZoneTransitionSound)
+local LevelSound = require(game.ReplicatedStorage.Shared.LevelUpSound)
 
 local Effects = {}
 local C = Color3.fromRGB
@@ -88,6 +89,12 @@ function Effects.mount(context: Context): Handle
 	zoneAudio.Volume = 0
 	zoneAudio.Parent = notificationAudio
 	table.insert(preload, zoneAudio)
+	local levelAudio = Instance.new("Sound")
+	levelAudio.Name = "LevelUpPreload"
+	levelAudio.SoundId = LevelSound.id
+	levelAudio.Volume = 0
+	levelAudio.Parent = notificationAudio
+	table.insert(preload, levelAudio)
 	for role, entry in notificationSounds do
 		local sound = Instance.new("Sound")
 		sound.Name = "Notification" .. role

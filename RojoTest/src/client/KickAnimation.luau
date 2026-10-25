@@ -6,6 +6,23 @@ local Kick = {}
 local shots = {}
 local active = {}
 
+-- Strip our last overlay before Animator evaluates the next walk/run pose.
+-- Restore only a transform we still own, so other animation writers are respected.
+local function restore(joints)
+	for joint, entry in joints do
+		if joint.Parent and entry.applied and joint.Transform:FuzzyEq(entry.applied, 0.00001) then
+			joint.Transform = entry.base
+		end
+		entry.applied = nil
+	end
+end
+
+RunService.PreAnimation:Connect(function()
+	for _, joints in active do
+		restore(joints)
+	end
+end)
+
 local function envelope(phase)
 	local windupEnd = Config.KickContact - 0.14
 	if phase < windupEnd then
@@ -26,11 +43,7 @@ end
 local function reset(character)
 	local joints = active[character]
 	if joints then
-		for joint, base in joints do
-			if joint.Parent then
-				joint.Transform = base
-			end
-		end
+		restore(joints)
 		active[character] = nil
 	end
 end
@@ -65,33 +78,40 @@ RunService.PreSimulation:Connect(function()
 			local joints = {}
 			for _, joint in character:GetDescendants() do
 				if joint:IsA("Motor6D") or joint:IsA("AnimationConstraint") then
-					joints[joint] = CFrame.identity
+					joints[joint] = { base = joint.Transform, applied = nil }
 				end
 			end
 			active[character] = joints
 		end
 		local angle, knee = envelope(phase)
-		for joint, base in active[character] do
+		local weight = math.clamp(math.abs(angle) / 1.25 + knee / 0.7, 0, 1)
+		for joint, entry in active[character] do
 			if not joint.Parent then
 				continue
 			end
 			local name = joint.Name
+			local offset: CFrame? = nil
 			if name == "RightHip" then
-				joint.Transform = base * CFrame.Angles(angle, 0, -0.06)
+				offset = CFrame.Angles(angle, 0, -0.06 * weight)
 			elseif name == "Right Hip" then
-				joint.Transform = base * CFrame.Angles(0, 0, angle)
+				offset = CFrame.Angles(0, 0, angle)
 			elseif name == "RightKnee" then
-				joint.Transform = base * CFrame.Angles(-knee, 0, 0)
+				offset = CFrame.Angles(-knee, 0, 0)
 			elseif name == "Waist" or name == "RootJoint" then
-				joint.Transform = base * CFrame.Angles(-angle * 0.12, -angle * 0.08, 0)
+				offset = CFrame.Angles(-angle * 0.12, -angle * 0.08, 0)
 			elseif name == "LeftShoulder" then
-				joint.Transform = base * CFrame.Angles(-angle * 0.4, 0, -0.2)
+				offset = CFrame.Angles(-angle * 0.4, 0, -0.2 * weight)
 			elseif name == "RightShoulder" then
-				joint.Transform = base * CFrame.Angles(angle * 0.35, 0, 0.2)
+				offset = CFrame.Angles(angle * 0.35, 0, 0.2 * weight)
 			elseif name == "Left Shoulder" then
-				joint.Transform = base * CFrame.Angles(0, 0, angle * 0.3)
+				offset = CFrame.Angles(0, 0, angle * 0.3)
 			elseif name == "Right Shoulder" then
-				joint.Transform = base * CFrame.Angles(0, 0, -angle * 0.3)
+				offset = CFrame.Angles(0, 0, -angle * 0.3)
+			end
+			if offset then
+				entry.base = joint.Transform
+				entry.applied = entry.base * offset
+				joint.Transform = entry.applied
 			end
 		end
 	end

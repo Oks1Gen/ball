@@ -1,5 +1,5 @@
 --!strict
--- Keyboard and gamepad input for the legacy HUD.
+-- HUD shortcuts. Normal walking/jumping never sends StopTraining.
 -- The module owns its connections so the controller can drop them on teardown.
 local UserInputService = game:GetService("UserInputService")
 
@@ -52,16 +52,9 @@ function Input.mount(context: Context): Handle
 			context.openPanel("Gifts")
 		end
 	end)
-	local jump = UserInputService.JumpRequest:Connect(function()
-		local snapshot = context.snapshot()
-		if snapshot and snapshot.training then
-			context.send("StopTraining")
-		end
-	end)
 	return {
 		destroy = function()
 			began:Disconnect()
-			jump:Disconnect()
 		end,
 	}
 end

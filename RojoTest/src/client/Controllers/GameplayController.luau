@@ -11,6 +11,7 @@ function Controller:Start()
 	local ProximityPrompts = game:GetService("ProximityPromptService")
 	local Config = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("GameConfig"))
 	local TrainingMotion = require(ReplicatedStorage.Shared:WaitForChild("TrainingMotion"))
+	local TrainingShot = require(clientRoot.Modules:WaitForChild("TrainingShot"))
 	local KickAnimation = require(clientRoot:WaitForChild("KickAnimation"))
 	local FlightVisuals = require(clientRoot:WaitForChild("FlightVisuals"))
 	local Snapshot = require(clientRoot.Modules:WaitForChild("Snapshot"))
@@ -26,6 +27,8 @@ function Controller:Start()
 	local PetFollowers = require(clientRoot.Controllers:WaitForChild("PetFollowers"))
 	local InputController = require(clientRoot.Controllers:WaitForChild("InputController"))
 	local AudioEffects = require(clientRoot.Controllers:WaitForChild("AudioEffects"))
+	local LevelUpEffects = require(clientRoot.Controllers:WaitForChild("LevelUpEffects"))
+	local GoalImpactEffects = require(clientRoot.Controllers:WaitForChild("GoalImpactEffects"))
 	local BallHolder = require(clientRoot.Controllers:WaitForChild("BallHolder"))
 	local WorldVisuals = require(clientRoot.Controllers:WaitForChild("WorldVisuals"))
 	task.spawn(function()
@@ -52,6 +55,7 @@ function Controller:Start()
 	local currentPanel: string? = nil
 	local topbar: any = nil
 	local flight: any = nil
+	local trainingShot: any = nil
 	local hatchBusy = false
 	local hatchPromptState: boolean? = nil
 	local activeEgg = "Common"
@@ -400,6 +404,17 @@ function Controller:Start()
 			return currentPanel ~= nil
 		end,
 	})
+	local levelUp = LevelUpEffects.mount({
+		player = player,
+		effectsFolder = effectsFolder,
+		snapshot = function()
+			return latest
+		end,
+		playSound = effects.playSound,
+		blocked = function()
+			return flight ~= nil or player:GetAttribute("MapIntroActive") == true
+		end,
+	})
 	notifications = require(clientRoot.Controllers.Notifications).mount({
 		parent = player:WaitForChild("PlayerGui"),
 		snapshot = function()
@@ -415,18 +430,14 @@ function Controller:Start()
 	})
 	local balls = BallHolder.mount()
 	local world = WorldVisuals.mount({
-		player = player,
-		world = function()
-			return latest and latest.data.world or 1
-		end,
-		training = function()
-			return latest and latest.training
-		end,
-		blocked = function()
-			return flight ~= nil or (kickTiming ~= nil and kickTiming.active())
-		end,
 		effects = function()
 			return latest == nil or latest.data.settings.effects
+		end,
+	})
+	local goalEffects = GoalImpactEffects.mount({
+		folder = effectsFolder,
+		enabled = function()
+			return latest == nil or latest.data.settings.effects ~= false
 		end,
 	})
 	kickTiming = require(clientRoot.Controllers.KickTiming).mount({
@@ -490,7 +501,6 @@ function Controller:Start()
 		local token = {}
 		if me then
 			kickTiming.accepted(info.timingMultiplier or 1)
-			world.restoreCamera()
 			closePanel()
 			flight = token
 			hudRefs.powerText.Visible = false
@@ -579,9 +589,9 @@ function Controller:Start()
 		elseif kind == "Rebirth" then
 			notice("REBIRTH! Your skill multiplier increased!", "Success")
 			closePanel()
+			levelUp.rebirth()
 		elseif kind == "AdminResetView" or kind == "ShotCancelled" then
 			kickTiming.cancel()
-			world.restoreCamera()
 			if flight then
 				local saved = flight.saved
 				if saved and saved.cancel then
@@ -601,10 +611,8 @@ function Controller:Start()
 
 	update.OnClientEvent:Connect(function(payload: any)
 		local info = Snapshot.apply(payload)
-		if not info.training then
-			world.restoreCamera()
-		end
 		latest = info
+		levelUp.observe(info)
 		if adminUI then
 			adminUI.update(info)
 		end
@@ -645,14 +653,9 @@ function Controller:Start()
 		hudRefs.bestText.Text = d.best > 0 and "BEST: " .. Config.format(d.best) .. " m" or ""
 		hudRefs.rebirthPercent.Text = math.floor((info.rebirthProgress or 0) * 100) .. "%"
 		hudRefs.throwButton.Visible = info.canThrow and not flight and not info.training
-		hudRefs.stopButton.Visible = info.training ~= nil
 		local throwShadow = HudLayout.findNode(hud, "ThrowShadow")
 		if throwShadow and throwShadow:IsA("GuiObject") then
 			throwShadow.Visible = hudRefs.throwButton.Visible
-		end
-		local stopShadow = HudLayout.findNode(hud, "StopTrainingShadow")
-		if stopShadow and stopShadow:IsA("GuiObject") then
-			stopShadow.Visible = hudRefs.stopButton.Visible
 		end
 		local autoCaption = Kit.captionOf(hudRefs.auto)
 		if autoCaption then
@@ -715,7 +718,7 @@ function Controller:Start()
 			applyLayout()
 		end
 		local root = player.Character and player.Character:FindFirstChild("HumanoidRootPart") :: BasePart?
-		world.frame(dt)
+		world.frame()
 		local hand = player.Character
 			and (player.Character:FindFirstChild("RightHand") or player.Character:FindFirstChild("Right Arm"))
 		if hand and latest then
@@ -728,16 +731,25 @@ function Controller:Start()
 			local lane = world.lane(latest.data.world, latest.training)
 			local started = player.Character:GetAttribute("TrainingStarted") or latest.trainingStarted
 			if lane and started then
-				local phase = (workspace:GetServerTimeNow() - started) % Config.TrainingCycle
-				local radius = 0.8
-				local start =
-					Vector3.new(root.Position.X + 2.2, Config.trainingSurface(lane) + radius, root.Position.Z + 0.65)
-				local target =
-					Vector3.new(lane.TrainingStrip.Position.X + lane.TrainingStrip.Size.X / 2 - 2, start.Y, start.Z)
-				local position = TrainingMotion.position(start, target, phase, latest.training)
-				practice:PivotTo(CFrame.new(position) * CFrame.Angles(0, 0, -(position.X - start.X) / radius))
-				balls.showPractice(phase < 1.15)
+				local elapsed = math.max(0, workspace:GetServerTimeNow() - started)
+				local phase = elapsed % Config.TrainingCycle
+				local seed = player.Character:GetAttribute("TrainingSeed")
+					or latest.trainingSeed
+					or math.floor(started * 1000) % 2147483647
+				trainingShot = TrainingShot.update(trainingShot, lane, root.Position, seed, elapsed, started)
+				local shot = trainingShot.shot
+				if shot then
+					local position = TrainingMotion.position(shot.start, shot.finish, phase, latest.training)
+					goalEffects.training(lane, shot.start, shot.finish, elapsed, latest.training, started, shot.seed)
+					local distance = (position - shot.start).Magnitude
+					local facing = shot.finish - shot.start
+					practice:PivotTo(CFrame.lookAt(position, position + facing) * CFrame.Angles(distance / 0.8, 0, 0))
+				end
+				balls.showPractice(shot ~= nil and phase < 1.15)
 			end
+		else
+			trainingShot = nil
+			goalEffects.clearTraining()
 		end
 		if latest then
 			local timingActive = kickTiming.active()
@@ -756,11 +768,11 @@ function Controller:Start()
 				effects.applyVolumes(soundVolume, musicVolume)
 			end
 		end
+		levelUp.frame(dt)
 	end)
 
 	player.CharacterAdded:Connect(function()
 		kickTiming.cancel()
-		world.restoreCamera()
 		if flight then
 			local saved = flight.saved
 			flight = nil
@@ -775,6 +787,8 @@ function Controller:Start()
 		kickTiming.destroy()
 		viewportConnection:Disconnect()
 		input.destroy()
+		levelUp.destroy()
+		goalEffects.destroy()
 		followers.destroy()
 		notifications.destroy()
 		effects.destroy()

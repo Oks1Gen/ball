@@ -52,12 +52,15 @@ function Game.start(map, world2)
 		for index = 1, 7 do
 			local lane = zone and zone:FindFirstChild("TrainingLane" .. index)
 			local pad = lane and lane:FindFirstChild("StartingPad")
+			local strip = lane and lane:FindFirstChild("TrainingStrip")
 			if not lane then
 				warn("[Ball] " .. label .. " has no training lane " .. index)
 			elseif not pad then
 				warn("[Ball] " .. label .. " training lane " .. index .. " has no starting pad")
+			elseif not strip then
+				warn("[Ball] " .. label .. " training lane " .. index .. " has no training strip")
 			else
-				set[index] = { lane = lane, pad = pad }
+				set[index] = { lane = lane, pad = pad, strip = strip }
 			end
 		end
 		return set
@@ -110,9 +113,15 @@ function Game.start(map, world2)
 		end
 		if block then
 			s.blockedLane = s.lane
+			local root = rootFor(player)
+			s.blockedPosition = root and root.Position
+		end
+		if s.lane then
+			s.nextPublish = 0
 		end
 		s.lane = nil
 		s.trainingStarted = nil
+		s.trainingSeed = nil
 		s.trainingLevelsGained = nil
 		s.nextTraining = nil
 		s.trainingHit = nil
@@ -121,6 +130,7 @@ function Game.start(map, world2)
 		if char then
 			char:SetAttribute("TrainingLane", nil)
 			char:SetAttribute("TrainingStarted", nil)
+			char:SetAttribute("TrainingSeed", nil)
 		end
 		releasePose(s)
 	end
@@ -149,11 +159,12 @@ function Game.start(map, world2)
 		if not lane or not pad then
 			return
 		end
-		local position =
-			Vector3.new(pad.Position.X - 1, Config.trainingSurface(lane) + standingHeight(root, hum), pad.Position.Z)
-		lockPose(s, root, hum, CFrame.lookAt(position, position + Vector3.xAxis))
+		-- Training is an overlay on normal locomotion. Never anchor, reposition,
+		-- zero velocity or take AutoRotate away from the player's movement controller.
+		releasePose(s)
 		s.lane = index
 		s.trainingStarted = workspace:GetServerTimeNow()
+		s.trainingSeed = math.random(1, 2147483646)
 		s.trainingLevelsGained = 0
 		s.trainingHit = 1
 		s.trainingCycle = 0
@@ -162,6 +173,7 @@ function Game.start(map, world2)
 		local character = player.Character :: Model
 		character:SetAttribute("TrainingLane", index)
 		character:SetAttribute("TrainingStarted", s.trainingStarted)
+		character:SetAttribute("TrainingSeed", s.trainingSeed)
 	end
 	local function petBoost(data: any)
 		local bonus = 0

@@ -188,24 +188,30 @@ shot with 1,121 Wins, and World 2 scaling up to its 100-million-power target.
 isolated admin session and restored its original progression afterward. Build
 passed; progression pacing over a full playthrough still needs player feedback.
 
-Training attaches the character to the lane surface and faces the goal.
+Training starts immediately anywhere on the playable lane, while walking or
+standing still. It never anchors, repositions or rotates the character.
 The character winds up, swings the right leg, and launches a bouncing ball at
 contact. Lanes 1–3 give three ground-contact rewards per kick; lanes 4–7 give
 four. Shared `TrainingMotion` defines the 0.65-second flight, landing times and
 per-contact reward split. The server schedules each landing independently and
 publishes Skill after each reward; clients only render the matching trajectory.
 Each cycle takes 1.2 seconds; fractional carry preserves the total training rate.
-STOP TRAINING or jumping releases the character and cancels pending contacts.
-The lane must be left before automatic training can restart after stopping.
+Walking, stopping and turning inside the lane preserve the kick sequence.
+Leaving the playable lane ends training and cancels pending contacts; re-entering
+starts another session immediately, including while running.
 Death, respawning, rebirth, and changing worlds also release the training pose.
+Every kick now picks a different safe point across the net's width and height;
+the final hop rises toward that target, and the impact VFX varies in size and
+direction at the actual hit. See `docs/training.md` at the repository root.
+During windup the practice ball follows the moving player; at foot contact its
+trajectory is fixed. The kick overlays the current walk/run pose without erasing it.
 
 `KickAnimation` supports both Motor6D and AnimationConstraint character joints.
 `FlightVisuals` adds a larger ball, a free visible flight trail and marker,
-smooth camera tracking, and a smooth return to the character. Training uses a
-side camera fitted by `TrainingCamera` to the live lane bounds and character.
-The camera looks down at about 21 degrees with minimal framing margins, keeping training
-lower and closer on every lane. Distance adapts to lane length and viewport
-aspect ratio. Existing lane lengths remain progressively larger (34–58 studs).
+smooth camera tracking, and a smooth return to the character. Training keeps
+the normal player-controlled Roblox camera. Existing lane lengths remain
+progressively larger (34–58 studs). The former TrainingCamera helper and its
+historical framing verification are no longer used by the client camera.
 
 `tools/VerifyTrainingBounces.luau` checks contact timing, airborne arcs, reward
 totals with fractional multipliers, increasing lane lengths, and camera framing

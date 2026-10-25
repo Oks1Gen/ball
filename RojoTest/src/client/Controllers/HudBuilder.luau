@@ -24,7 +24,6 @@ export type Refs = {
 	hud: Frame,
 	auto: TextButton,
 	throwButton: TextButton,
-	stopButton: TextButton,
 	levelFill: Frame,
 	levelText: TextLabel,
 	maxText: TextLabel,
@@ -165,23 +164,6 @@ function Builder.build(context: Context): Refs
 			send("Throw")
 		end
 	)
-
-	local stopItem = at("StopTraining")
-	local stopButton = Kit.button(
-		hud,
-		"StopTraining",
-		"STOP TRAINING",
-		stopItem.x,
-		stopItem.y,
-		stopItem.w,
-		stopItem.h,
-		C(251, 65, 77),
-		25,
-		function()
-			send("StopTraining")
-		end
-	)
-	stopButton.Visible = false
 
 	local skillTextItem = at("Skill")
 	local skillText = Kit.text(
@@ -341,7 +323,7 @@ function Builder.build(context: Context): Refs
 	local tutorial = Kit.text(
 		hud,
 		"Hint",
-		"Walk onto a training pad to gain Skill",
+		"Walk or stand on a training lane to gain Skill",
 		hintItem.x,
 		hintItem.y,
 		hintItem.w,
@@ -367,7 +349,6 @@ function Builder.build(context: Context): Refs
 		hud = hud,
 		auto = auto,
 		throwButton = throwButton,
-		stopButton = stopButton,
 		levelFill = levelFill,
 		levelText = levelText,
 		maxText = maxText,

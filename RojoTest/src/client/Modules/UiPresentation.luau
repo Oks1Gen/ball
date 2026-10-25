@@ -9,10 +9,10 @@ end
 
 function Presentation.kickHint(canThrow: boolean, training: boolean): string
 	if training then
-		return "Training! Stop training or jump to leave"
+		return "Training! Leave the lane to stop"
 	end
 	if not canThrow then
-		return "Walk onto a training pad to gain Skill"
+		return "Walk or stand on a training lane to gain Skill"
 	end
 	local action = if Input.PreferredInput == Enum.PreferredInput.Touch
 		then "Tap KICK"

@@ -39,6 +39,7 @@ function Snapshot.build(context: Context, player: Player, notice: string?, force
 		rebirthReady = level >= rebirthRequiredLevel,
 		training = s.lane,
 		trainingStarted = s.trainingStarted,
+		trainingSeed = s.trainingSeed,
 		trainingLevelsGained = s.trainingLevelsGained or 0,
 		shotDistance = Config.shotDistance(d.skill, BallPurchases.power(d), d.world, context.arenaFor(player)),
 		auto = s.auto,

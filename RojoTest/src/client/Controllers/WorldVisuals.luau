@@ -1,39 +1,28 @@
 --!strict
--- World side visuals: the portal beams, the water caustics, the ball stands
--- and the training camera.
+-- World side visuals: the portal beams, the water caustics and the ball stands.
 -- Every value here is written per frame, so the collections are cached and the
 -- transparency and the camera state only change when they really change.
 local CollectionService = game:GetService("CollectionService")
 local BallVisuals = require(game.ReplicatedStorage.Shared.BallVisuals)
-local TrainingCamera = require(game.ReplicatedStorage.Shared.TrainingCamera)
-local FlightVisuals = require(script.Parent.Parent.FlightVisuals)
 
 local World = {}
 
 export type Context = {
-	player: Player,
-	world: () -> number,
-	training: () -> number?,
-	blocked: () -> boolean,
 	effects: () -> boolean,
 }
 
 export type Handle = {
-	frame: (number) -> (),
+	frame: () -> (),
 	lane: (number, number) -> any,
-	captureCamera: () -> (),
-	restoreCamera: () -> (),
 	destroy: () -> (),
 }
 
 function World.mount(context: Context): Handle
-	local player = context.player
 	local portalBeams: { BasePart } = {}
 	local waterTextures: { Texture } = {}
 	local standPreviews: { Instance } = CollectionService:GetTagged("BallStandPreview")
 	local mapCache: { [number]: any } = {}
 	local laneCache: { [string]: { instance: any, found: boolean, retryAt: number } } = {}
-	local trainingCamera: any = nil
 
 	local standAdded = CollectionService:GetInstanceAddedSignal("BallStandPreview"):Connect(function(instance: Instance)
 		table.insert(standPreviews, instance)
@@ -105,23 +94,6 @@ function World.mount(context: Context): Handle
 		return found
 	end
 
-	local function captureCamera()
-		local cam = workspace.CurrentCamera
-		-- The subject is never restored from here: the camera always goes
-		-- back to the character's Humanoid.
-		trainingCamera = { cameraType = cam.CameraType, cframe = cam.CFrame, fov = cam.FieldOfView }
-		FlightVisuals.claimCamera()
-	end
-
-	local function restoreCamera()
-		if not trainingCamera then
-			return
-		end
-		local saved = trainingCamera
-		trainingCamera = nil
-		FlightVisuals.releaseCamera(player, saved, saved.fov)
-	end
-
 	local function updateStands()
 		local camera = workspace.CurrentCamera
 		for _, model in standPreviews do
@@ -145,7 +117,7 @@ function World.mount(context: Context): Handle
 	end
 
 	return {
-		frame = function(dt: number)
+		frame = function()
 			local now = os.clock()
 			local effectsOn = context.effects()
 			for i, beam in portalBeams do
@@ -156,36 +128,14 @@ function World.mount(context: Context): Handle
 				texture.OffsetStudsV = now * 0.25
 			end
 			updateStands()
-			local training = context.training()
-			local root = player.Character and player.Character:FindFirstChild("HumanoidRootPart") :: BasePart?
-			local hum = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
-			if training and root and hum and hum.Health > 0 and not context.blocked() then
-				local cam = workspace.CurrentCamera
-				if not trainingCamera then
-					captureCamera()
-				end
-				cam.CameraType = Enum.CameraType.Scriptable
-				local lane = trainingLane(context.world(), training)
-				if lane then
-					local target = TrainingCamera.pose(lane, root.Position, cam.ViewportSize)
-					local blend = 1 - math.exp(-dt * 7)
-					cam.CFrame = cam.CFrame:Lerp(target, blend)
-					cam.FieldOfView += (TrainingCamera.FieldOfView - cam.FieldOfView) * blend
-				end
-			elseif trainingCamera then
-				restoreCamera()
-			end
 		end,
 		lane = trainingLane,
-		captureCamera = captureCamera,
-		restoreCamera = restoreCamera,
 		destroy = function()
 			standAdded:Disconnect()
 			standRemoved:Disconnect()
 			portalBeams = {}
 			waterTextures = {}
 			standPreviews = {}
-			restoreCamera()
 		end,
 	}
 end

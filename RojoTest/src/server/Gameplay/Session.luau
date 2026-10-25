@@ -106,7 +106,7 @@ function Session.setup(context: Context, player: Player)
 	if character then
 		task.spawn(spawn, character)
 	end
-	context.publish(player, "Train on a pad, then THROW your stone!")
+	context.publish(player, "Train while moving on a lane, then KICK your ball!")
 end
 
 return Session

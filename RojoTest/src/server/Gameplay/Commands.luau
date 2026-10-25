@@ -57,8 +57,11 @@ function Commands.install(context: Context)
 				context.publish(player, "Auto Throw unlocks from the shop")
 			end
 		elseif command == "StopTraining" then
-			context.stopTraining(player, true)
-			s.stopUntil = now + 0.5
+			-- A retry must preserve blockedLane after the first request released the pose.
+			if s.lane then
+				context.stopTraining(player, true)
+				s.stopUntil = now + 0.5
+			end
 			context.publish(player)
 		elseif command == "Rebirth" then
 			context.rebirth(player, false)

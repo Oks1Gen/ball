@@ -1,9 +1,10 @@
 --!strict
 -- The training loop runs ten times a second for every player in the server.
--- The lane models and their starting pads are cached in the player state when
+-- The lane models and their playable strips are cached in the player state when
 -- the player joins, so the tick never builds a lane name and never walks the
 -- arena tree again.
 local TrainingMotion = require(game.ReplicatedStorage.Shared.TrainingMotion)
+local Area = require(game.ReplicatedStorage.Shared.TrainingArea)
 local Data = require(game.ReplicatedStorage.Shared.Core.ProfileData)
 
 local Training = {}
@@ -35,15 +36,9 @@ function Training.run(context: Context)
 					local lanes = s.lanes and s.lanes[s.data.world == 2 and 2 or 1]
 					for i, def in context.Config.Lanes do
 						local entry = lanes and lanes[i]
-						local pad = entry and entry.pad
-						if pad then
-							local point = pad.CFrame:PointToObjectSpace(pos.Position)
-							if
-								math.abs(point.X) <= pad.Size.X / 2 + 1
-								and math.abs(point.Z) <= pad.Size.Z / 2 + 1
-								and point.Y >= 0
-								and point.Y < 9
-							then
+						local strip = entry and entry.strip
+						if strip then
+							if Area.contains(strip, pos.Position) then
 								if s.data.rebirths >= def.rebirths then
 									laneIndex = i
 								else
@@ -57,8 +52,15 @@ function Training.run(context: Context)
 						end
 					end
 				end
-				if not laneIndex then
+				if
+					s.blockedLane
+					and (
+						laneIndex ~= s.blockedLane
+						or (pos and s.blockedPosition and Area.repositioned(s.blockedPosition, pos.Position))
+					)
+				then
 					s.blockedLane = nil
+					s.blockedPosition = nil
 				end
 				if s.lane and laneIndex ~= s.lane then
 					context.stopTraining(player)

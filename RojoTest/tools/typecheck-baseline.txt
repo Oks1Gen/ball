@@ -573,8 +573,6 @@ shared/TrainingCamera.luau|TypeError|Unknown type used in + operation; consider 
 shared/TrainingCamera.luau|TypeError|Unknown type used in + operation; consider adding a type annotation to 'characterPosition'
 shared/TrainingCamera.luau|TypeError|Unknown type used in - operation; consider adding a type annotation to 'characterPosition'
 shared/TrainingCamera.luau|TypeError|Unknown type used in / operation; consider adding a type annotation to 'viewport'
-shared/TrainingMotion.luau|TypeError|Unknown type used in + operation
-shared/TrainingMotion.luau|TypeError|Unknown type used in - operation; consider adding a type annotation to 'phase'
 shared/TrainingMotion.luau|TypeError|Unknown type used in / operation; consider adding a type annotation to 'cycleGain'
 shared/VolcanicEggVisual.luau|TypeError|Function only returns 1 value, but 2 are required here
 shared/VolcanicEggVisual.luau|TypeError|Unknown type used in + operation; consider adding a type annotation to 'anchor'
