@@ -400,7 +400,7 @@ function World.apply(map)
 		local lane = map.TrainingZone:FindFirstChild("TrainingLane" .. i)
 		local def = Config.Lanes[i]
 		lane:SetAttribute("RequiredRebirths", def.rebirths)
-		lane:SetAttribute("SkillGain", def.gain)
+		lane:SetAttribute("TrainingMultiplier", def.multiplier)
 		lane.StartingPad:SetAttribute("LaneIndex", i)
 		for _, d in lane:GetDescendants() do
 			if d:IsA("BillboardGui") then
@@ -408,20 +408,7 @@ function World.apply(map)
 			end
 		end
 		local endX = lane.TrainingStrip.Position.X + lane.TrainingStrip.Size.X / 2 - 3
-		local board =
-			part("LaneBoard" .. i, V(9, 7, 0.5), V(endX, 6, lane.StartingPad.Position.Z), C(26, 39, 45), false)
-		label(
-			"RB "
-				.. def.rebirths
-				.. "\n"
-				.. (def.rebirths == 0 and "UNLOCKED" or "REBIRTHS")
-				.. "\n+"
-				.. Config.format(def.gain)
-				.. " SKILL",
-			board.Position + V(0, 2, 0),
-			15,
-			def.color
-		)
+		part("LaneBoard" .. i, V(9, 7, 0.5), V(endX, 6, lane.StartingPad.Position.Z), C(26, 39, 45), false)
 		local stone = part(
 			"TrainingStone" .. i,
 			V(2.4, 0.8, 1.8),

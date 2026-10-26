@@ -27,7 +27,7 @@ for lane = 1, 7 do
 	end
 	for _, multiplier in { 1, 1.15, 2.75, 10 } do
 		local remainder, total = 0, 0
-		local perCycle = Config.Lanes[lane].gain * multiplier * 7 * Config.TrainingCycle / 0.8
+		local perCycle = Config.Lanes[lane].multiplier * multiplier * 7 * Config.TrainingCycle / 0.8
 		for _ = 1, 100 do
 			for _ = 1, count do
 				local gain, nextRemainder = Motion.reward(perCycle, lane, remainder)

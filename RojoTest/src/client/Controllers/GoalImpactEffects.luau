@@ -28,7 +28,7 @@ function Effects.mount(context: Context)
 	local lastCycle = -1
 	local alive = true
 
-	local function burst(contact: Goal.Contact, seed: number?)
+	local function burst(contact: Goal.Contact, seed: number?, boosted: boolean?)
 		local camera = workspace.CurrentCamera
 		if
 			not alive
@@ -49,7 +49,7 @@ function Effects.mount(context: Context)
 			end
 		end
 		local host = Instance.new("Part")
-		host.Name = "GoalShockwave"
+		host.Name = if boosted then "PurpleGoalShockwave" else "GoalShockwave"
 		host.Anchored = true
 		host.CanCollide, host.CanTouch, host.CanQuery = false, false, false
 		host.CastShadow = false
@@ -57,8 +57,8 @@ function Effects.mount(context: Context)
 		host.Size = Vector3.one * 0.1
 		host.CFrame = CFrame.lookAt(contact.position + contact.normal * 0.06, contact.position + contact.normal)
 		local random = Random.new(((seed or math.random(1, 2147483646)) + 5701) % 2147483647)
-		local radius = contact.radius * random:NextNumber(0.65, 1.3)
-		local duration = random:NextNumber(0.38, 0.62)
+		local radius = contact.radius * random:NextNumber(0.65, 1.3) * (if boosted then 1.18 else 1)
+		local duration = if boosted then random:NextNumber(0.65, 0.78) else random:NextNumber(0.38, 0.62)
 		local rotation = random:NextNumber(0, math.pi * 2)
 		local stretch = Vector2.new(random:NextNumber(0.85, 1.25), random:NextNumber(0.85, 1.2))
 		local incoming = host.CFrame:VectorToObjectSpace(contact.direction)
@@ -90,15 +90,17 @@ function Effects.mount(context: Context)
 		end
 		local function ribbon(a: Attachment, b: Attachment, width: number, tapered: boolean?)
 			local beam = Instance.new("Beam")
-			beam.Name = "WhiteShockRibbon"
+			beam.Name = if boosted then "PurpleShockRibbon" else "WhiteShockRibbon"
 			beam.Attachment0, beam.Attachment1 = a, b
 			beam.FaceCamera = true
 			beam.Segments = 1
 			beam.Width0 = width
 			beam.Width1 = if tapered then 0 else width * 0.65
-			beam.Color = ColorSequence.new(WHITE)
+			beam.Color = if boosted
+				then ColorSequence.new(Color3.fromRGB(215, 130, 255), Color3.fromRGB(145, 45, 245))
+				else ColorSequence.new(WHITE)
 			beam.Transparency = NumberSequence.new(0.08)
-			beam.LightEmission, beam.LightInfluence = 1, 0
+			beam.LightEmission, beam.LightInfluence = if boosted then 0.65 else 1, 0
 			beam.Parent = host
 			table.insert(ribbons, { beam = beam })
 		end
@@ -159,7 +161,8 @@ function Effects.mount(context: Context)
 			elapsed: number,
 			index: number,
 			started: number,
-			seed: number?
+			seed: number?,
+			boosted: boolean?
 		)
 			if not alive then
 				return
@@ -187,7 +190,7 @@ function Effects.mount(context: Context)
 				lastCycle = cycle
 				-- Do not replay an old goal after a stalled frame, late snapshot or streaming.
 				if phase - contact.phase < 0.2 then
-					burst(contact, seed)
+					burst(contact, seed, boosted)
 				end
 			end
 		end,

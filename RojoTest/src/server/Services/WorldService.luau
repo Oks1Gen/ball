@@ -52,6 +52,10 @@ function Service:Start()
 	require(root.MapCleanup).apply(world2)
 	hierarchy.organize(map)
 	hierarchy.organize(world2)
+	require(root.TrainingLaneSigns).apply(map)
+	require(root.TrainingLaneSigns).apply(world2)
+	require(root.EggSigns).apply(map)
+	require(root.EggSigns).apply(world2)
 	self.map, self.world2 = map, world2
 end
 return Service

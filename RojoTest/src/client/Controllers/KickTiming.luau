@@ -12,6 +12,8 @@ local Timing = require(Shared.Core.KickTiming)
 local Style = require(script.Parent.Parent.UiStyle)
 local Insets = require(script.Parent.Parent.Modules.GuiInsets)
 local U = require(script.Parent.Parent.CollectorUI.Components)
+local AccuracyMeter = require(script.Parent.KickAccuracyMeter)
+local PerfectFeedback = require(script.Parent.PerfectKickFeedback)
 local e = React.createElement
 local KickTiming = {}
 
@@ -34,10 +36,19 @@ function KickTiming.mount(context: any)
 	local power, setPower = React.createBinding(0.5)
 	local flash, setFlash = React.createBinding(0)
 	local progress, setProgress = React.createBinding(0)
+	local accuracyHeight, setAccuracyHeight = React.createBinding(0)
+	local accuracyPower, setAccuracyPower = React.createBinding(0.5)
+	local accuracyProgress, setAccuracyProgress = React.createBinding(0)
+	local accuracyMotion = Ripple.createMotion(0, { start = true })
+	local disconnectAccuracy = accuracyMotion:onChange(setAccuracyProgress)
 	local motion = Ripple.createMotion(0, { start = true })
 	local disconnectMotion = motion:onChange(setProgress)
 	local pending: any = nil
 	local waiting = false
+	local advancing = false
+	local accuracy = false
+	local lockedPower = 1
+	local lockedAccuracy = 0.5
 	local submitted = false
 	local shown = false
 	local alive = true
@@ -53,6 +64,13 @@ function KickTiming.mount(context: any)
 		local snapshot = context.snapshot()
 		return not snapshot or snapshot.data.settings.effects ~= false
 	end
+	local perfectFeedback = PerfectFeedback.mount({
+		effects = effects,
+		shake = function()
+			local snapshot = context.snapshot()
+			return not snapshot or snapshot.data.settings.shake ~= false
+		end,
+	})
 	local function color(h: number): Color3
 		return if h >= 0.5
 			then Style.Gold:Lerp(Style.Colors.Green, (h - 0.5) * 2)
@@ -61,15 +79,18 @@ function KickTiming.mount(context: any)
 	local function render()
 		local area = Insets.area(workspace.CurrentCamera.ViewportSize, probe)
 		local factor = math.clamp(area.size.Y / 440, 0.6, 1.1)
+		local compactAccuracy = accuracy and area.size.Y < 440
+		local perfect = if accuracy then lockedAccuracy >= 3 else resultPower >= Timing.multiplier(Timing.PerfectHeight)
 		local hint = if resultVisible
-			then (if resultPower >= Timing.multiplier(Timing.PerfectHeight)
-				then "PERFECT!"
-				elseif resultPower > 1 then "GREAT KICK!"
-				else "KICK!")
-			elseif waiting then "GET READY"
+			then (if perfect then "PERFECT!" elseif resultPower > 1 then "GREAT KICK!" else "KICK!")
+			elseif waiting or advancing then "GET READY"
+			elseif submitted then "KICKING..."
 			elseif Input.PreferredInput == Enum.PreferredInput.Touch then "TAP TO KICK"
 			elseif Input.PreferredInput == Enum.PreferredInput.Gamepad then "A / X TO KICK"
 			else "CLICK / SPACE"
+		local product = if accuracy and (submitted or resultVisible)
+			then string.format("%.2f × %.2f ≈ %.2f", lockedPower, lockedAccuracy, resultPower)
+			else ""
 		root:render(e(React.Fragment, nil, {
 			Flash = e("Frame", {
 				Name = "TimingFlash",
@@ -85,7 +106,10 @@ function KickTiming.mount(context: any)
 				Name = "PowerMeter",
 				Visible = shown,
 				AnchorPoint = Vector2.new(0.5, 0.5),
-				Position = UDim2.fromOffset(area.offset.X + area.size.X * 0.64, area.offset.Y + area.size.Y * 0.40),
+				Position = UDim2.fromOffset(
+					area.offset.X + area.size.X * 0.64,
+					area.offset.Y + area.size.Y * 0.40 - (if compactAccuracy then 4 else 0)
+				),
 				-- Padding keeps the ink border and moving pointer inside the compositor.
 				Size = UDim2.fromOffset(208, 362),
 				GroupTransparency = progress:map(function(value: number)
@@ -126,6 +150,7 @@ function KickTiming.mount(context: any)
 						ZIndex = 5,
 					}),
 					Bar = e("Frame", {
+						Visible = not accuracy,
 						Name = "GradientBar",
 						Position = UDim2.fromOffset(79, 91),
 						Size = UDim2.fromOffset(30, 192),
@@ -220,7 +245,7 @@ function KickTiming.mount(context: any)
 							}, { Stroke = e("UIStroke", { Color = Style.Ink, Thickness = 2 }) }),
 						}),
 					}),
-					Top = e(U.Label, {
+					Top = not accuracy and e(U.Label, {
 						Text = "×2",
 						Position = UDim2.fromOffset(12, 81),
 						Size = UDim2.fromOffset(54, 26),
@@ -228,7 +253,7 @@ function KickTiming.mount(context: any)
 						Color = Style.Colors.Green,
 						ZIndex = 5,
 					}),
-					Middle = e(U.Label, {
+					Middle = not accuracy and e(U.Label, {
 						Text = "×1",
 						Position = UDim2.fromOffset(12, 174),
 						Size = UDim2.fromOffset(54, 26),
@@ -236,7 +261,7 @@ function KickTiming.mount(context: any)
 						Color = Style.Gold,
 						ZIndex = 5,
 					}),
-					Bottom = e(U.Label, {
+					Bottom = not accuracy and e(U.Label, {
 						Text = "×0.5",
 						Position = UDim2.fromOffset(8, 270),
 						Size = UDim2.fromOffset(60, 26),
@@ -246,11 +271,19 @@ function KickTiming.mount(context: any)
 					}),
 					Hint = e(U.Label, {
 						Name = "TimingHint",
-						Text = hint,
-						Position = UDim2.fromOffset(5, 306),
+						Text = if compactAccuracy and product ~= "" then product else hint,
+						Position = UDim2.fromOffset(5, if compactAccuracy then 230 elseif accuracy then 316 else 306),
 						Size = UDim2.fromOffset(166, 25),
-						TextSize = 18,
+						TextSize = if compactAccuracy and product ~= "" then 14 else 18,
 						ZIndex = 5,
+					}),
+					Accuracy = e(AccuracyMeter, {
+						compact = compactAccuracy,
+						visible = accuracy,
+						height = accuracyHeight,
+						multiplier = accuracyPower,
+						progress = accuracyProgress,
+						product = product,
 					}),
 				}),
 			}),
@@ -280,30 +313,43 @@ function KickTiming.mount(context: any)
 		end
 	end
 	local function cancel()
+		perfectFeedback.stop()
 		if pending or waiting or submitted then
 			context.send("KickCancel")
 		end
-		pending, waiting, submitted = nil, false, false
+		pending, waiting, submitted, advancing = nil, false, false, false
 		resultVisible = false
 		resultQuality = 0
 		setFlash(0)
 		show(false)
 	end
 	local function release()
-		if not pending or submitted or Input:GetFocusedTextBox() or GuiService.MenuIsOpen then
+		if not pending or submitted or advancing or Input:GetFocusedTextBox() or GuiService.MenuIsOpen then
 			return
 		end
 		local now = workspace:GetServerTimeNow()
 		if now < pending.startedAt then
 			return
 		end
-		local h = Timing.height(now - pending.startedAt)
-		resultPower = Timing.multiplier(h)
-		setHeight(h)
-		setPower(resultPower)
-		resultQuality = Timing.quality(resultPower)
+		if not accuracy then
+			local h = Timing.height(now - pending.startedAt)
+			lockedPower = Timing.multiplier(h)
+			setHeight(h)
+			setPower(lockedPower)
+			advancing = true
+			startedRequest = os.clock()
+			render()
+			context.send("KickRelease", pending.token, now)
+			return
+		end
+		local h = Timing.accuracyHeight(now - pending.startedAt)
+		lockedAccuracy = Timing.accuracyMultiplier(h)
+		resultPower = Timing.combined(lockedPower, lockedAccuracy)
+		setAccuracyHeight(h)
+		setAccuracyPower(lockedAccuracy)
+		resultQuality = 0
 		resultAt = os.clock()
-		resultVisible = true
+		resultVisible = false
 		submitted = true
 		render()
 		context.send("KickRelease", pending.token, now)
@@ -317,6 +363,8 @@ function KickTiming.mount(context: any)
 			return
 		end
 		waiting = true
+		accuracy = false
+		accuracyMotion:setPosition(0)
 		resultVisible = false
 		startedRequest = os.clock()
 		setHeight(0)
@@ -354,12 +402,19 @@ function KickTiming.mount(context: any)
 		if (pending or waiting or submitted) and not context.canContinue() then
 			cancel()
 		end
-		if pending and not submitted then
-			local h = Timing.height(workspace:GetServerTimeNow() - pending.startedAt)
-			setHeight(h)
-			setPower(Timing.multiplier(h))
+		if pending and not submitted and not advancing then
+			local elapsed = workspace:GetServerTimeNow() - pending.startedAt
+			if accuracy then
+				local h = Timing.accuracyHeight(elapsed)
+				setAccuracyHeight(h)
+				setAccuracyPower(Timing.accuracyMultiplier(h))
+			else
+				local h = Timing.height(elapsed)
+				setHeight(h)
+				setPower(Timing.multiplier(h))
+			end
 		end
-		if waiting and os.clock() - startedRequest > 5 then
+		if (waiting or advancing) and os.clock() - startedRequest > 5 then
 			cancel()
 		end
 		if submitted and os.clock() - resultAt > 5 then
@@ -388,10 +443,34 @@ function KickTiming.mount(context: any)
 			pending = info
 			render()
 		end,
+		accuracyReady = function(info: any)
+			if not pending or not advancing or not context.canContinue() then
+				context.send("KickCancel")
+				return
+			end
+			pending = info
+			lockedPower = info.power
+			if info.perfectPower then
+				perfectFeedback.confirm()
+			end
+			setPower(lockedPower)
+			setAccuracyHeight(0)
+			setAccuracyPower(0.5)
+			accuracy, advancing = true, false
+			render()
+			if effects() then
+				accuracyMotion:tween(1, { duration = Timing.AccuracyLead, easing = "quadOut" })
+			else
+				accuracyMotion:setPosition(1)
+			end
+		end,
 		accepted = function(multiplier: number)
-			pending, waiting, submitted = nil, false, false
+			perfectFeedback.stop()
+			pending, waiting, submitted, advancing = nil, false, false, false
 			if shown then
 				resultPower = multiplier
+				resultQuality = Timing.quality(multiplier)
+				resultAt = os.clock()
 				resultVisible = true
 				setPower(multiplier)
 				render()
@@ -404,12 +483,15 @@ function KickTiming.mount(context: any)
 		end,
 		destroy = function()
 			alive = false
+			perfectFeedback.destroy()
 			Actions:UnbindAction("KickTimingConfirm")
 			began:Disconnect()
 			unfocused:Disconnect()
 			menu:Disconnect()
 			frame:Disconnect()
 			disconnectMotion()
+			disconnectAccuracy()
+			accuracyMotion:destroy()
 			motion:destroy()
 			root:unmount()
 			gui:Destroy()

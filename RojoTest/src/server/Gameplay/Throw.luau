@@ -9,6 +9,8 @@ local ShotMotion = require(game.ReplicatedStorage.Shared.ShotMotion)
 local Data = require(game.ReplicatedStorage.Shared.Core.ProfileData)
 local Zones = require(game.ReplicatedStorage.Shared.Core.ZoneProgression)
 local ShotZones = require(script.Parent.ShotZones)
+local Timing = require(game.ReplicatedStorage.Shared.Core.KickTiming)
+local Perfect = require(game.ReplicatedStorage.Shared.Core.PerfectKick)
 
 local Throw = {}
 
@@ -27,8 +29,8 @@ export type Context = {
 	multiplier: (any) -> number,
 }
 
-function Throw.build(context: Context): (Player, number?, number?) -> ()
-	return function(player: Player, adminDistance: number?, timingMultiplier: number?)
+function Throw.build(context: Context): (Player, number?, number?, number?) -> ()
+	return function(player: Player, adminDistance: number?, timingMultiplier: number?, perfectCount: number?)
 		local s = context.states[player]
 		if not s or os.clock() < s.busyUntil then
 			return
@@ -44,13 +46,17 @@ function Throw.build(context: Context): (Player, number?, number?) -> ()
 		end
 		local distance = adminDistance
 			or Config.shotDistance(d.skill, BallPurchases.power(d), d.world, context.arenaFor(player))
-		local timing = if adminDistance then 1 else math.clamp(timingMultiplier or 1, 0.5, 2)
+		local timing = if adminDistance
+			then 1
+			else math.clamp(timingMultiplier or 1, Timing.MinCombined, Timing.MaxCombined)
 		if timingMultiplier and not adminDistance then
 			-- Keep the flight inside the authored river, including at maximum progression.
 			distance = math.clamp(math.floor(distance * timing), 1, Config.shotLimit(d.world, context.arenaFor(player)))
 		end
 		s.kickTiming = nil
-		local feedback = ShotFeedback.profile(d.skill, BallPurchases.power(d), d.world, timing)
+		local perfect = if adminDistance then 0 else math.clamp(perfectCount or 0, 0, 2)
+		local windup = Perfect.windup(perfect)
+		local feedback = ShotFeedback.profile(d.skill, BallPurchases.power(d), d.world, timing, perfect)
 		local duration = Config.shotDuration(distance, d.world, feedback.intensity)
 		context.stopTraining(player)
 		local root, hum = context.rootFor(player)
@@ -62,8 +68,8 @@ function Throw.build(context: Context): (Player, number?, number?) -> ()
 		local startedAt = workspace:GetServerTimeNow()
 		local shot = {}
 		s.activeShot = shot
-		s.busyUntil = os.clock() + Config.KickWindup + duration + 0.7
-		task.delay(0.9, function()
+		s.busyUntil = os.clock() + windup + duration + 0.7
+		task.delay(windup + 0.48, function()
 			if
 				context.states[player] == s
 				and s.activeShot == shot
@@ -83,6 +89,8 @@ function Throw.build(context: Context): (Player, number?, number?) -> ()
 			distance = distance,
 			duration = duration,
 			feedback = feedback,
+			windup = windup,
+			perfectCount = perfect,
 			timingMultiplier = timing,
 			stone = d.stone,
 			trail = d.trail,
@@ -105,7 +113,7 @@ function Throw.build(context: Context): (Player, number?, number?) -> ()
 		context.effect:FireAllClients("Throw", info)
 		context.publish(player)
 		for contact = 1, ShotMotion.BounceCount do
-			task.delay(ShotMotion.contactTime(contact, duration), function()
+			task.delay(ShotMotion.contactTime(contact, duration, windup), function()
 				if
 					context.states[player] ~= s
 					or s.data ~= d

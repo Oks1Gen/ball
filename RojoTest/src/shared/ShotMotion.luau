@@ -2,8 +2,8 @@
 local Config = require(script.Parent.GameConfig)
 local Motion = {}
 Motion.BounceCount = 7
-function Motion.contactTime(contact, duration)
-	return Config.KickWindup + duration * contact / Motion.BounceCount
+function Motion.contactTime(contact, duration, windup: number?)
+	return (windup or Config.KickWindup) + duration * contact / Motion.BounceCount
 end
 function Motion.position(startPosition, distance, alpha, direction)
 	alpha = math.clamp(alpha, 0, 1)

@@ -17,6 +17,7 @@ end
 -- Keep the character's normal focus and add one temporary focus on the ball, so
 -- the region it flies through stays streamed for everybody who watches it.
 function Streaming.start(player, info, isActive)
+	local windup = info.windup or Config.KickWindup
 	Streaming.stop(player)
 	if not workspace.StreamingEnabled then
 		return
@@ -36,7 +37,7 @@ function Streaming.start(player, info, isActive)
 		-- The focus has to sit on the ball, not ahead of it: the client and the
 		-- shot contacts use the same alpha, so the streamed region is the one
 		-- the ball is really in.
-		local alpha = math.clamp((elapsed - Config.KickWindup) / info.duration, 0, 1)
+		local alpha = math.clamp((elapsed - windup) / info.duration, 0, 1)
 		return Motion.position(info.startPosition, info.distance, alpha, info.direction)
 	end
 	focus.Position = position()
@@ -65,7 +66,7 @@ function Streaming.start(player, info, isActive)
 		if
 			not player.Parent
 			or not isActive()
-			or workspace:GetServerTimeNow() >= info.startedAt + Config.KickWindup + info.duration + 0.65
+			or workspace:GetServerTimeNow() >= info.startedAt + windup + info.duration + 0.65
 		then
 			stop()
 		else

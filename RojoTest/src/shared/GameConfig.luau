@@ -89,13 +89,13 @@ Config.Biomes = {
 	{ name = "Rainbow Paradise", distance = 5250, color = C(238, 124, 230), bank = C(166, 242, 121), kind = "rainbow" },
 }
 Config.Lanes = {
-	{ gain = 1, rebirths = 0, color = C(90, 222, 153) },
-	{ gain = 4, rebirths = 2, color = C(40, 220, 210) },
-	{ gain = 10, rebirths = 4, color = C(175, 108, 245) },
-	{ gain = 25, rebirths = 6, color = C(66, 175, 255) },
-	{ gain = 60, rebirths = 9, color = C(245, 167, 76) },
-	{ gain = 150, rebirths = 12, color = C(255, 220, 44) },
-	{ gain = 400, rebirths = 16, color = C(109, 244, 96) },
+	{ multiplier = 1, rebirths = 0, color = C(90, 222, 153) },
+	{ multiplier = 2, rebirths = 2, color = C(40, 220, 210) },
+	{ multiplier = 4, rebirths = 4, color = C(175, 108, 245) },
+	{ multiplier = 8, rebirths = 6, color = C(66, 175, 255) },
+	{ multiplier = 16, rebirths = 9, color = C(245, 167, 76) },
+	{ multiplier = 32, rebirths = 12, color = C(255, 220, 44) },
+	{ multiplier = 64, rebirths = 16, color = C(109, 244, 96) },
 }
 Config.Trails = {
 	{ id = "None", name = "No Trail", boost = 1, cost = 0, color = C(180, 185, 193) },

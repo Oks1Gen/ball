@@ -3,6 +3,10 @@
 local Timing = {}
 Timing.Cycle = 1.6
 Timing.PerfectHeight = 0.95
+Timing.AccuracyCycle = 2
+Timing.AccuracyLead = 0.18
+Timing.MinCombined = 0.25
+Timing.MaxCombined = 6
 
 function Timing.height(elapsed: number): number
 	local phase = math.max(0, elapsed) / (Timing.Cycle / 2) % 2
@@ -23,6 +27,20 @@ end
 
 function Timing.multiplier(height: number): number
 	return 2 ^ (2 * math.clamp(height, 0, 1) - 1)
+end
+
+-- A contracting/expanding ring, with a short readable perfect window at contact.
+function Timing.accuracyHeight(elapsed: number): number
+	local phase = math.max(0, elapsed) / Timing.AccuracyCycle * 2 * math.pi
+	return math.min(1, (1 - math.cos(phase)) / (2 * Timing.PerfectHeight))
+end
+
+function Timing.accuracyMultiplier(height: number): number
+	return 0.5 + 2.5 * math.clamp(height, 0, 1)
+end
+
+function Timing.combined(power: number, accuracy: number): number
+	return math.clamp(power, 0.5, 2) * math.clamp(accuracy, 0.5, 3)
 end
 
 function Timing.quality(multiplier: number): number

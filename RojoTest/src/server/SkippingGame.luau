@@ -122,6 +122,7 @@ function Game.start(map, world2)
 		s.lane = nil
 		s.trainingStarted = nil
 		s.trainingSeed = nil
+		s.trainingBoostCycle = nil
 		s.trainingLevelsGained = nil
 		s.nextTraining = nil
 		s.trainingHit = nil
@@ -165,6 +166,7 @@ function Game.start(map, world2)
 		s.lane = index
 		s.trainingStarted = workspace:GetServerTimeNow()
 		s.trainingSeed = math.random(1, 2147483646)
+		s.trainingBoostCycle = nil
 		s.trainingLevelsGained = 0
 		s.trainingHit = 1
 		s.trainingCycle = 0
@@ -450,6 +452,8 @@ function Game.start(map, world2)
 	end
 	Commands.install({
 		action = action,
+		effect = effect,
+		rootFor = rootFor,
 		states = states,
 		publish = publish,
 		kickTiming = kickTiming,

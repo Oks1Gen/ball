@@ -67,9 +67,24 @@ function Dividers.apply(map: any)
 	end
 	local root = map:FindFirstChild("ZoneDividers")
 	if root then
+		local updateTint = root:GetAttribute("FieldTintVersion") ~= 2
+		local centerTitles = root:GetAttribute("CenteredTitlesVersion") ~= 1
 		for _, group in root:GetChildren() do
+			local index = tonumber(group.Name:match("^Boundary(%d+)$"))
+			local following = if index then map.SkippingWorld:FindFirstChild("Water_" .. (index + 1)) else nil
+			if updateTint and following and following:IsA("BasePart") then
+				for _, name in { "Wall", "TopEdge", "TitleAnchor" } do
+					local node = group:FindFirstChild(name)
+					if node and node:IsA("BasePart") then
+						node.Color = following.Color
+					end
+				end
+			end
 			local wall = group:FindFirstChild("Wall")
 			if wall and wall:IsA("BasePart") then
+				if updateTint then
+					wall.Transparency = 0.5
+				end
 				local delta = HEIGHT - wall.Size.Y
 				if math.abs(delta) > 0.001 then
 					local shift = wall.CFrame.UpVector * delta
@@ -82,8 +97,18 @@ function Dividers.apply(map: any)
 						end
 					end
 				end
+				if centerTitles then
+					local anchor = group:FindFirstChild("TitleAnchor")
+					if anchor and anchor:IsA("BasePart") then
+						anchor.CFrame = wall.CFrame
+						-- Keep both text faces just outside the translucent wall.
+						anchor.Size = Vector3.new(anchor.Size.X, anchor.Size.Y, wall.Size.Z + 0.04)
+					end
+				end
 			end
 		end
+		root:SetAttribute("FieldTintVersion", 2)
+		root:SetAttribute("CenteredTitlesVersion", 1)
 		return root
 	end
 	root = Instance.new("Folder")
@@ -115,14 +140,16 @@ function Dividers.apply(map: any)
 		group:SetAttribute("FromZone", Config.Biomes[index].name)
 		group:SetAttribute("ToZone", Config.Biomes[index + 1].name)
 		group.Parent = root
-		local color = Config.Biomes[index + 1].bank:Lerp(Color3.new(1, 1, 1), 0.3)
-		part(group, "Wall", Vector3.new(width, HEIGHT, 0.25), boundary * CFrame.new(0, HEIGHT / 2, 0), color, 0.72)
+		local color = following.Color
+		part(group, "Wall", Vector3.new(width, HEIGHT, 0.25), boundary * CFrame.new(0, HEIGHT / 2, 0), color, 0.5)
 		part(group, "TopEdge", Vector3.new(width, 0.22, 0.3), boundary * CFrame.new(0, HEIGHT, 0), color, 0.2)
 		local anchor =
-			part(group, "TitleAnchor", Vector3.new(width, 11, 0.1), boundary * CFrame.new(0, HEIGHT + 6.5, 0), color, 1)
+			part(group, "TitleAnchor", Vector3.new(width, 11, 0.29), boundary * CFrame.new(0, HEIGHT / 2, 0), color, 1)
 		title(anchor, Enum.NormalId.Back, Config.Biomes[index + 1].name)
 		title(anchor, Enum.NormalId.Front, Config.Biomes[index].name)
 	end
+	root:SetAttribute("FieldTintVersion", 2)
+	root:SetAttribute("CenteredTitlesVersion", 1)
 	root.Parent = map
 	return root
 end

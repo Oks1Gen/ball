@@ -10,6 +10,8 @@ local BallVisuals = require(Shared.BallVisuals)
 local ShotFeedback = require(Shared.ShotFeedback)
 local Zones = require(Shared.Core.ZoneProgression)
 local BallEffects = require(script.Parent.BallEffects)
+local Perfect = require(Shared.Core.PerfectKick)
+local PerfectAura = require(script.Parent.PerfectKickAura)
 local Flight = {}
 
 -- Camera handover --------------------------------------------------------
@@ -119,6 +121,9 @@ end
 function Flight.start(info, context)
 	local feedback = info.feedback or ShotFeedback.profile(0, 1, info.world)
 	local timingQuality = feedback.timingQuality or 0
+	local perfect = info.perfectCount or 0
+	local cameraQuality = math.max(timingQuality, if perfect > 0 then 0.85 else 0)
+	local windup = info.windup or Config.KickWindup
 	local ball = BallVisuals.create(info.stone, 2.2)
 	ball.Name = "ThrownBall_" .. info.userId
 	ball.Parent = workspace
@@ -139,6 +144,7 @@ function Flight.start(info, context)
 	local started = info.startedAt or workspace:GetServerTimeNow()
 	local startPosition = info.startPosition
 		or Vector3.new(-116, 1.8, -0.3) + (info.world == 2 and Config.WorldOffset or Vector3.zero)
+	ball:PivotTo(CFrame.new(startPosition))
 	local direction = info.direction or -Vector3.zAxis
 	local right = direction:Cross(Vector3.yAxis).Unit
 	local waterY = info.waterY or 0.82
@@ -149,6 +155,7 @@ function Flight.start(info, context)
 	local zonePulseAt = -math.huge
 	local baseFov = saved.fov
 	local trailEffect = BallEffects.flight(trailId)
+	local perfectAura = PerfectAura.new(perfect, direction)
 	local previousPosition: Vector3? = nil
 	local connection
 	local returnTween
@@ -161,6 +168,7 @@ function Flight.start(info, context)
 		end
 		ball:Destroy()
 		trailEffect.destroy()
+		perfectAura.destroy()
 		if context.me then
 			Flight.releaseCamera(player, saved, saved.fov)
 		end
@@ -170,16 +178,17 @@ function Flight.start(info, context)
 			connection:Disconnect()
 			ball:Destroy()
 			trailEffect.destroy()
+			perfectAura.destroy()
 			return
 		end
 		local elapsed = workspace:GetServerTimeNow() - started
-		local alpha = math.clamp((elapsed - Config.KickWindup) / info.duration, 0, 1)
+		local alpha = math.clamp((elapsed - windup) / info.duration, 0, 1)
 		local position = Motion.position(startPosition, info.distance, alpha, direction)
-		if context.me and elapsed >= Config.KickWindup then
+		if context.me and elapsed >= windup then
 			for _, crossing in zoneCrossings do
 				if crossing.zone > lastZone and alpha >= crossing.alpha then
 					lastZone = crossing.zone
-					local age = elapsed - Config.KickWindup - crossing.alpha * info.duration
+					local age = elapsed - windup - crossing.alpha * info.duration
 					if age < 0.25 then
 						zonePulseAt = elapsed - age
 						if context.zone then
@@ -192,15 +201,16 @@ function Flight.start(info, context)
 		local velocity = previousPosition and (position - previousPosition) / math.max(dt, 1 / 240) or direction
 		previousPosition = position
 		ball:PivotTo(CFrame.new(position) * CFrame.Angles(alpha * 25, alpha * 12, 0))
+		perfectAura.update(position, elapsed, windup, context.effects())
 		trailEffect.update(
 			position,
 			velocity,
-			elapsed >= Config.KickWindup and alpha < 1 and context.effects(),
+			elapsed >= windup and alpha < 1 and context.effects(),
 			feedback.intensity
 		)
-		if elapsed >= Config.KickWindup and not kicked then
+		if elapsed >= windup and not kicked then
 			kicked = true
-			if context.effects() and elapsed - Config.KickWindup < 0.3 then
+			if context.effects() and elapsed - windup < 0.3 then
 				BallEffects.kick(position, direction, color, feedback.intensity, trailId)
 			end
 			if context.me and context.kick then
@@ -212,7 +222,7 @@ function Flight.start(info, context)
 			local landing = Motion.position(startPosition, info.distance, contact / Motion.BounceCount, direction)
 			-- Do not replay old impacts when joining a shot late or after a long frame.
 			-- Alpha is clamped at one, so it cannot measure the age of a finished shot.
-			if elapsed - Motion.contactTime(contact, info.duration) < 0.25 then
+			if elapsed - Motion.contactTime(contact, info.duration, windup) < 0.25 then
 				context.ripple(Vector3.new(landing.X, waterY, landing.Z), color, feedback.rippleScale)
 				if context.effects() then
 					BallEffects.bounce(landing, waterY, contact, feedback.intensity, trailId)
@@ -225,7 +235,7 @@ function Flight.start(info, context)
 		lastContact = contacts
 		if context.me then
 			context.distance(
-				elapsed < Config.KickWindup and "KICK!"
+				elapsed < windup and (if perfect > 0 then "PERFECT!" else "KICK!")
 					or Config.format(info.distance * alpha)
 						.. " m  •  ×"
 						.. string.format("%.1f", Zones.multiplier(lastZone))
@@ -236,37 +246,48 @@ function Flight.start(info, context)
 				+ right * 7
 				- direction * (14 + 6 * feedback.intensity)
 				+ Vector3.new(0, 5.5 - height * 0.35, 0)
-			local sinceKick = elapsed - Config.KickWindup
+			local sinceKick = elapsed - windup
 			local shake = context.shake()
 					and context.effects()
 					and sinceKick >= 0
-					and math.sin(sinceKick * (45 - 25 * timingQuality)) * feedback.shakeAmplitude * math.exp(
-						-sinceKick * (5 - 2.8 * timingQuality)
+					and math.sin(sinceKick * (45 - 25 * cameraQuality)) * feedback.shakeAmplitude * math.exp(
+						-sinceKick * (5 - 2.8 * cameraQuality)
 					)
 				or 0
 			local kickDecay = if sinceKick >= 0 then math.exp(-sinceKick * 2.6) else 0
 			local roll = if context.shake() and context.effects()
-				then math.sin(math.max(0, sinceKick) * 18) * kickDecay * timingQuality * 0.045
+				then math.sin(math.max(0, sinceKick) * 18) * kickDecay * cameraQuality * 0.045
 				else 0
 			local target = CFrame.lookAt(
 				cameraPosition + right * shake * 0.5 + Vector3.new(0, shake, 0),
 				position + Vector3.new(0, 0.4, 0)
 			) * CFrame.Angles(0, 0, roll)
+			if perfect > 0 and elapsed < windup then
+				-- Keep the full slow backswing visible before snapping into ball follow.
+				target = saved.cframe
+					* CFrame.new(0, 0, if context.effects() then -Perfect.charge(elapsed, windup) * 0.75 else 0)
+			end
 			camera.CFrame = camera.CFrame:Lerp(target, blend)
 			local targetFov = if not context.effects()
 				then saved.fov
-				elseif elapsed < Config.KickWindup then 68 - timingQuality * 6
+				elseif elapsed < windup then (if perfect > 0
+					then saved.fov - (7 + perfect * 2) * Perfect.charge(elapsed, windup)
+					else 68 - timingQuality * 6)
 				else feedback.fieldOfView
 			local pulse = context.effects() and Zones.pulse(elapsed - zonePulseAt) or 0
 			local timingPulse = if context.effects() and sinceKick >= 0
 				then timingQuality * 22 * (1 - math.exp(-sinceKick * 14)) * kickDecay
 				else 0
 			baseFov += (targetFov - baseFov) * blend
-			camera.FieldOfView = baseFov + pulse + timingPulse
+			local perfectPulse = if context.effects() then Perfect.impactFov(sinceKick, perfect) else 0
+			camera.FieldOfView = if context.effects()
+				then math.clamp(baseFov + pulse + timingPulse + perfectPulse, 35, 105)
+				else saved.fov
 		end
 		if alpha >= 1 then
 			connection:Disconnect()
 			trailEffect.stop()
+			perfectAura.destroy()
 			Debris:AddItem(ball, 0.6)
 			if context.me then
 				-- The camera flies back to the character, not to the stale

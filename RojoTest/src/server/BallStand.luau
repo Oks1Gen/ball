@@ -3,6 +3,7 @@ local Shared = game:GetService("ReplicatedStorage").Shared
 local Config = require(Shared.GameConfig)
 local Visuals = require(Shared.BallVisuals)
 local Tags = game:GetService("CollectionService")
+local Signs = require(script.Parent.BallStandSigns)
 local Stand = {}
 
 function Stand.apply(map)
@@ -107,13 +108,7 @@ function Stand.apply(map)
 		anchors[item.displaySlot] = anchor
 		gui.Size = UDim2.fromScale(12 * displayScale, 5.4 * displayScale)
 		gui.Enabled = true
-		local title = assert(gui:FindFirstChildWhichIsA("TextLabel", true))
-		title.Text = item.name
-			.. "\n×"
-			.. item.power
-			.. "\n"
-			.. (item.cost == 0 and "FREE" or Config.format(item.cost) .. " Wins")
-		title.TextColor3 = item.color
+		Signs.render(gui, item)
 		anchor.Position =
 			Vector3.new(cf.Position.X, cf.Position.Y + size.Y / 2 + (0.75 + 2.7) * displayScale, cf.Position.Z)
 		anchor:SetAttribute("BallDisplayLabelSlot", item.displaySlot)

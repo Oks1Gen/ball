@@ -1,6 +1,7 @@
 --!strict
 local HttpService = game:GetService("HttpService")
 local Timing = require(game.ReplicatedStorage.Shared.Core.KickTiming)
+local Perfect = require(game.ReplicatedStorage.Shared.Core.PerfectKick)
 local KickTiming = {}
 
 function KickTiming.build(context: any)
@@ -49,6 +50,7 @@ function KickTiming.build(context: any)
 				return
 			end
 			local pending = {
+				stage = "power",
 				token = HttpService:GenerateGUID(false),
 				startedAt = workspace:GetServerTimeNow() + math.clamp(player:GetNetworkPing(), 0.05, 0.25),
 				character = player.Character,
@@ -70,10 +72,25 @@ function KickTiming.build(context: any)
 				cancel(player)
 				return
 			end
+			if pending.stage == "power" then
+				pending.power = Timing.multiplier(Timing.height(pressedAt - pending.startedAt))
+				pending.stage = "accuracy"
+				-- Rotate the one-use token: replaying the first press cannot finish stage two.
+				pending.token = HttpService:GenerateGUID(false)
+				pending.startedAt = now + Timing.AccuracyLead + math.clamp(player:GetNetworkPing(), 0.05, 0.25)
+				context.effect:FireClient(player, "KickAccuracyReady", {
+					token = pending.token,
+					startedAt = pending.startedAt,
+					power = pending.power,
+					perfectPower = Perfect.power(pending.power),
+				})
+				return
+			end
 			-- Consume before throwing: duplicate/replayed releases cannot create a shot.
 			s.kickTiming = nil
-			local height = Timing.height(pressedAt - pending.startedAt)
-			context.throw(player, nil, Timing.multiplier(height))
+			local height = Timing.accuracyHeight(pressedAt - pending.startedAt)
+			local accuracy = Timing.accuracyMultiplier(height)
+			context.throw(player, nil, Timing.combined(pending.power, accuracy), Perfect.count(pending.power, accuracy))
 		end,
 	}
 end

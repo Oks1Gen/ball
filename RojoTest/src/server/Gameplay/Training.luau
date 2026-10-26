@@ -6,6 +6,7 @@
 local TrainingMotion = require(game.ReplicatedStorage.Shared.TrainingMotion)
 local Area = require(game.ReplicatedStorage.Shared.TrainingArea)
 local Data = require(game.ReplicatedStorage.Shared.Core.ProfileData)
+local Boost = require(game.ReplicatedStorage.Shared.Core.TrainingBoost)
 
 local Training = {}
 
@@ -71,18 +72,24 @@ function Training.run(context: Context)
 				local serverNow = workspace:GetServerTimeNow()
 				local contacts = 0
 				while s.lane and s.nextTraining and serverNow >= s.nextTraining and contacts < 8 do
-					local cycleGain = context.Config.Lanes[s.lane].gain
+					local cycleGain = context.Config.Lanes[s.lane].multiplier
 						* context.multiplier(s)
 						* 7
 						* context.Config.TrainingCycle
 						/ 0.8
 					local gain, remainder = TrainingMotion.reward(cycleGain, s.lane, s.gainRemainder)
 					s.gainRemainder = remainder
+					local boosted = s.trainingBoostCycle == s.trainingCycle
+					gain = Boost.reward(gain, s.trainingBoostCycle, s.trainingCycle)
 					local beforeLevel = context.Config.level(s.data.skill, s.data.rebirths)
 					Data.add(s.data, "skill", gain)
 					local gainedLevels = math.max(0, context.Config.level(s.data.skill, s.data.rebirths) - beforeLevel)
 					s.trainingLevelsGained = (s.trainingLevelsGained or 0) + gainedLevels
-					context.effect:FireClient(player, "Train", { gain = gain, lane = s.lane, hit = s.trainingHit })
+					context.effect:FireClient(
+						player,
+						"Train",
+						{ gain = gain, lane = s.lane, hit = s.trainingHit, boosted = boosted }
+					)
 					s.trainingHit += 1
 					contacts += 1
 					s.nextPublish = 0

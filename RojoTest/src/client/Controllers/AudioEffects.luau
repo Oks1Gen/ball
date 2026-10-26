@@ -34,7 +34,7 @@ export type Handle = {
 	playSound: (string, number?, number?) -> (),
 	bounce: (Vector3, string, number, number) -> (),
 	ripple: (Vector3, Color3?, number?) -> (),
-	floatingGain: (number) -> (),
+	floatingGain: (number, boolean?) -> (),
 	zoneTransition: (any) -> (),
 	applyVolumes: (number, number) -> (),
 	destroy: () -> (),
@@ -209,20 +209,20 @@ function Effects.mount(context: Context): Handle
 		Debris:AddItem(p, 0.6)
 	end
 
-	local function floatingGain(gain: number)
+	local function floatingGain(gain: number, boosted: boolean?)
 		if context.panelOpen() then
 			return
 		end
 		local t = Kit.text(
 			canvas,
 			"SkillGain",
-			"+" .. Config.format(gain),
+			"+" .. Config.format(gain) .. (if boosted then " ×2" else ""),
 			560 + math.random(-100, 100),
 			340,
 			160,
 			45,
 			30,
-			yellow
+			if boosted then Color3.fromRGB(213, 166, 255) else yellow
 		)
 		t.ZIndex = 25
 		Kit.icon(t, "Skill", -22, 4, 30, 36)

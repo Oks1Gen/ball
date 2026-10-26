@@ -9,7 +9,7 @@ end
 
 function Presentation.kickHint(canThrow: boolean, training: boolean): string
 	if training then
-		return "Training! Leave the lane to stop"
+		return "Tap the purple target for ×2 Skill • Leave the lane to stop"
 	end
 	if not canThrow then
 		return "Walk or stand on a training lane to gain Skill"

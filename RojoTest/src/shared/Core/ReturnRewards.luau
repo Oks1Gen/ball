@@ -20,7 +20,7 @@ function Rewards.offlineRate(data: any, lanes: any, ballPower: number): number
 	local gain = 1
 	for _, lane in lanes do
 		if data.rebirths >= lane.rebirths then
-			gain = math.max(gain, lane.gain)
+			gain = math.max(gain, lane.multiplier)
 		end
 	end
 	local pets = 1

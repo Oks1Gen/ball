@@ -4,6 +4,33 @@ local function near(a: number, b: number)
 	assert(math.abs(a - b) < 1e-8, string.format("%f ~= %f", a, b))
 end
 return {
+	["accuracy ring contracts and expands with a reachable perfect window"] = function()
+		near(Timing.accuracyHeight(-1), 0)
+		near(Timing.accuracyHeight(0), 0)
+		near(Timing.accuracyHeight(1), 1)
+		near(Timing.accuracyHeight(2), 0)
+		assert(Timing.accuracyHeight(0.9) == 1, "Perfect is a window, not a single frame")
+		assert(Timing.accuracyHeight(1.1) == 1)
+		for i = 0, 2000 do
+			local t = i / 1000
+			local h = Timing.accuracyHeight(t)
+			assert(h >= 0 and h <= 1)
+			near(h, Timing.accuracyHeight(t + Timing.AccuracyCycle * 100))
+			near(h, Timing.accuracyHeight(Timing.AccuracyCycle - t))
+			assert(math.abs(Timing.accuracyHeight(t + 0.0001) - h) < 0.001)
+		end
+	end,
+	["two stage power multiplies including weak shots and maximum six"] = function()
+		near(Timing.accuracyMultiplier(0), 0.5)
+		near(Timing.accuracyMultiplier(1), 3)
+		near(Timing.accuracyMultiplier(-1), 0.5)
+		near(Timing.accuracyMultiplier(2), 3)
+		near(Timing.combined(1.85, 3), 5.55)
+		near(Timing.combined(0.5, 0.5), Timing.MinCombined)
+		near(Timing.combined(2, 3), Timing.MaxCombined)
+		near(Timing.combined(100, 100), 6)
+		near(Timing.combined(-1, -1), 0.25)
+	end,
 	["kick scale has exact endpoints and neutral midpoint"] = function()
 		near(Timing.multiplier(0), 0.5)
 		near(Timing.multiplier(0.5), 1)

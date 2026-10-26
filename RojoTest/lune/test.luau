@@ -1,7 +1,10 @@
 --!strict
 local suites = {
+	require("../tests/PerfectKick.spec"),
+	require("../tests/TrainingBoost.spec"),
 	require("../tests/ReturnRewards.spec"),
 	require("../tests/KickTiming.spec"),
+	require("../tests/KickMotion.spec"),
 	require("../tests/ZoneProgression.spec"),
 	require("../tests/ProfileStorage.spec"),
 	require("../tests/PaidRewards.spec"),

@@ -1,6 +1,28 @@
 --!strict
 local Egg = {}
+-- The authored World1 egg turns once; the client mesh uses this same anchor.
+function Egg.turnLeft(map: any)
+	if map.Name ~= "World1" then
+		return false
+	end
+	local world = map.SkippingWorld
+	local anchor = assert(world:FindFirstChild("HackedAdminEgg")) :: BasePart
+	if anchor:GetAttribute("VolcanicEggLeft45Version") == 1 then
+		return false
+	end
+	anchor.CFrame *= CFrame.Angles(0, math.rad(45), 0)
+	for _, name in { "VolcanicEggFallback", "VolcanicEggVisual" } do
+		local visual = world:FindFirstChild(name)
+		if visual and visual:IsA("BasePart") then
+			visual.CFrame = CFrame.new(visual.Position) * anchor.CFrame.Rotation
+		end
+	end
+	anchor:SetAttribute("VolcanicEggLeft45Version", 1)
+	return true
+end
+
 function Egg.apply(map)
+	Egg.turnLeft(map :: any)
 	local world = map.SkippingWorld
 	local anchor = assert(world:FindFirstChild("HackedAdminEgg"))
 	local old = world:FindFirstChild("VolcanicEggVisual")

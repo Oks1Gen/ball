@@ -29,6 +29,7 @@ function Controller:Start()
 	local AudioEffects = require(clientRoot.Controllers:WaitForChild("AudioEffects"))
 	local LevelUpEffects = require(clientRoot.Controllers:WaitForChild("LevelUpEffects"))
 	local GoalImpactEffects = require(clientRoot.Controllers:WaitForChild("GoalImpactEffects"))
+	local TrainingBoost = require(clientRoot.Controllers:WaitForChild("TrainingBoost"))
 	local BallHolder = require(clientRoot.Controllers:WaitForChild("BallHolder"))
 	local WorldVisuals = require(clientRoot.Controllers:WaitForChild("WorldVisuals"))
 	task.spawn(function()
@@ -430,6 +431,12 @@ function Controller:Start()
 	})
 	local balls = BallHolder.mount()
 	local world = WorldVisuals.mount({
+		ownedBalls = function()
+			return latest and latest.data.stones
+		end,
+		rebirths = function()
+			return latest and latest.data.rebirths
+		end,
 		effects = function()
 			return latest == nil or latest.data.settings.effects
 		end,
@@ -439,6 +446,21 @@ function Controller:Start()
 		enabled = function()
 			return latest == nil or latest.data.settings.effects ~= false
 		end,
+	})
+	local trainingBoost = TrainingBoost.mount({
+		folder = effectsFolder,
+		snapshot = function()
+			return latest
+		end,
+		blocked = function()
+			local hum = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+			return currentPanel ~= nil
+				or flight ~= nil
+				or player:GetAttribute("MapIntroActive") == true
+				or not hum
+				or hum.Health <= 0
+		end,
+		send = send,
 	})
 	kickTiming = require(clientRoot.Controllers.KickTiming).mount({
 		snapshot = function()
@@ -496,7 +518,7 @@ function Controller:Start()
 	})
 
 	local function beginThrow(info: any)
-		KickAnimation.play(info.userId, info.startedAt or workspace:GetServerTimeNow())
+		KickAnimation.play(info.userId, info.startedAt or workspace:GetServerTimeNow(), info.perfectCount)
 		local me = info.userId == player.UserId
 		local token = {}
 		if me then
@@ -554,6 +576,8 @@ function Controller:Start()
 	effect.OnClientEvent:Connect(function(kind: string, info: any)
 		if kind == "KickReady" then
 			kickTiming.ready(info)
+		elseif kind == "KickAccuracyReady" then
+			kickTiming.accuracyReady(info)
 		elseif kind == "KickCancelled" then
 			kickTiming.cancel()
 		elseif kind == "Throw" then
@@ -561,8 +585,10 @@ function Controller:Start()
 		elseif kind == "ShotBounce" then
 			effects.floatingGain(info.gain)
 		elseif kind == "Train" then
-			effects.floatingGain(info.gain)
+			effects.floatingGain(info.gain, info.boosted)
 			balls.setPractice(latest and latest.data.stone or "Pebble")
+		elseif kind == "TrainingBoost" then
+			trainingBoost.confirmed(info)
 		elseif kind == "Result" then
 			notice(
 				"+" .. Config.format(info.wins) .. " WINS • " .. Config.format(info.distance) .. " m",
@@ -740,15 +766,31 @@ function Controller:Start()
 				local shot = trainingShot.shot
 				if shot then
 					local position = TrainingMotion.position(shot.start, shot.finish, phase, latest.training)
-					goalEffects.training(lane, shot.start, shot.finish, elapsed, latest.training, started, shot.seed)
+					local boosted = trainingBoost.frame(trainingShot, elapsed, position)
+					goalEffects.training(
+						lane,
+						shot.start,
+						shot.finish,
+						elapsed,
+						latest.training,
+						started,
+						shot.seed,
+						boosted
+					)
 					local distance = (position - shot.start).Magnitude
 					local facing = shot.finish - shot.start
 					practice:PivotTo(CFrame.lookAt(position, position + facing) * CFrame.Angles(distance / 0.8, 0, 0))
 				end
+				if not shot then
+					trainingBoost.clear()
+				end
 				balls.showPractice(shot ~= nil and phase < 1.15)
+			else
+				trainingBoost.clear()
 			end
 		else
 			trainingShot = nil
+			trainingBoost.clear()
 			goalEffects.clearTraining()
 		end
 		if latest then
@@ -773,6 +815,7 @@ function Controller:Start()
 
 	player.CharacterAdded:Connect(function()
 		kickTiming.cancel()
+		trainingBoost.clear()
 		if flight then
 			local saved = flight.saved
 			flight = nil
@@ -789,6 +832,7 @@ function Controller:Start()
 		input.destroy()
 		levelUp.destroy()
 		goalEffects.destroy()
+		trainingBoost.destroy()
 		followers.destroy()
 		notifications.destroy()
 		effects.destroy()

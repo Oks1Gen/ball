@@ -7,6 +7,7 @@ local Config = require(game.ReplicatedStorage.Shared.GameConfig)
 local BallPurchases = require(game.ReplicatedStorage.Shared.BallPurchases)
 local Data = require(game.ReplicatedStorage.Shared.Core.ProfileData)
 local ReturnRewards = require(game.ReplicatedStorage.Shared.Core.ReturnRewards)
+local TrainingBoost = require(script.Parent.TrainingBoost)
 
 local Commands = {}
 
@@ -21,6 +22,8 @@ export type Context = {
 	equipBest: (any) -> (),
 	stopTraining: (Player, boolean?) -> (),
 	claimPending: (Player) -> (),
+	rootFor: (Player) -> (any, any),
+	effect: RemoteEvent,
 }
 
 function Commands.install(context: Context)
@@ -47,6 +50,8 @@ function Commands.install(context: Context)
 			context.kickTiming.begin(player)
 		elseif command == "KickRelease" then
 			context.kickTiming.release(player, value, extra)
+		elseif command == "TrainingBoost" then
+			TrainingBoost.claim(context, player, value, extra)
 		elseif command == "KickCancel" then
 			context.kickTiming.cancel(player)
 		elseif command == "Auto" then
