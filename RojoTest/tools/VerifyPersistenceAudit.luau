@@ -162,4 +162,30 @@ table.insert(
 	report,
 	{ check = "receipt reservation, reload, delivery and retries", saves = saveCount, hatches = hatchCount }
 )
+-- A paid rebirth must wait for an active shot and execute only once on retry.
+state.adminOriginal = nil
+saveOk = true
+state.data.skill = 500
+state.data.rebirths = 0
+state.lane = 2
+local busy = true
+context.Config.Products.SkipRebirth = { id = 1002 }
+context.rebirth = function(_, skip)
+	assert(skip)
+	if busy then
+		return false
+	end
+	state.lane = nil
+	state.data.skill = 0
+	state.data.rebirths += 1
+	return true
+end
+local rebirthReceipt = { ProductId = 1002, PurchaseId = "audit-rebirth" }
+assert(Receipts.process(context, player, rebirthReceipt) == deferred)
+assert(state.data.skill == 500 and state.data.rebirths == 0 and not state.data.receipts[rebirthReceipt.PurchaseId])
+busy = false
+assert(Receipts.process(context, player, rebirthReceipt) == granted)
+assert(state.data.skill == 0 and state.data.rebirths == 1 and state.lane == nil)
+assert(Receipts.process(context, player, rebirthReceipt) == granted and state.data.rebirths == 1)
+table.insert(report, { check = "paid rebirth waits and retries once" })
 return report

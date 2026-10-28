@@ -1,6 +1,6 @@
 -- Read-only Studio audit. Wedge side rectangles conservatively enclose their triangles.
 -- Ignores fully occluded faces and reports coincident or close parallel exposed faces.
-local root = workspace.Map.World1
+local root = workspace.Map
 local axes = { Vector3.xAxis, Vector3.yAxis, Vector3.zAxis }
 local bins = {}
 local parts = 0
@@ -54,7 +54,35 @@ for _, p in root:GetDescendants() do
 		end
 	end
 end
+local grid, large = {}, {}
+local function cell(p)
+	return math.floor(p.X / 32) .. "," .. math.floor(p.Y / 32) .. "," .. math.floor(p.Z / 32)
+end
+for _, p in solid do
+	local h = p.Size / 2
+	local cf = p.CFrame
+	local e = Vector3.new(
+		math.abs(cf.RightVector.X) * h.X + math.abs(cf.UpVector.X) * h.Y + math.abs(cf.LookVector.X) * h.Z,
+		math.abs(cf.RightVector.Y) * h.X + math.abs(cf.UpVector.Y) * h.Y + math.abs(cf.LookVector.Y) * h.Z,
+		math.abs(cf.RightVector.Z) * h.X + math.abs(cf.UpVector.Z) * h.Y + math.abs(cf.LookVector.Z) * h.Z
+	)
+	local lo, hi = p.Position - e, p.Position + e
+	if (hi.X - lo.X) * (hi.Y - lo.Y) * (hi.Z - lo.Z) > 10000000 then
+		table.insert(large, p)
+	else
+		for x = math.floor(lo.X / 32), math.floor(hi.X / 32) do
+			for y = math.floor(lo.Y / 32), math.floor(hi.Y / 32) do
+				for z = math.floor(lo.Z / 32), math.floor(hi.Z / 32) do
+					local k = x .. "," .. y .. "," .. z
+					grid[k] = grid[k] or {}
+					table.insert(grid[k], p)
+				end
+			end
+		end
+	end
+end
 local hits = {}
+local actual = {}
 local counts = {}
 local function overlap(f, g)
 	for _, axis in { f.u, f.v, g.u, g.v } do
@@ -106,7 +134,11 @@ local function exposed(f, g)
 	for _, q in samples do
 		local point = f.c + f.u * q[1] + f.v * q[2] + f.n * 0.025
 		local hidden = false
-		for _, p in solid do
+		local candidates = table.clone(grid[cell(point)] or {})
+		for _, p in large do
+			table.insert(candidates, p)
+		end
+		for _, p in candidates do
 			if p ~= f.p and p ~= g.p and p.Transparency < 0.5 then
 				local t = p.CFrame:PointToObjectSpace(point)
 				local s = p.Size / 2
@@ -123,20 +155,29 @@ local function exposed(f, g)
 	return false
 end
 
+local binIndex = 0
 for _, faces in bins do
+	binIndex += 1
+	if binIndex % 100 == 0 then
+		task.wait()
+	end
 	table.sort(faces, function(a, b)
 		return a.n:Dot(a.c) < b.n:Dot(b.c)
 	end)
 	for i = 1, #faces do
+		if i % 1000 == 0 then
+			task.wait()
+		end
 		for j = i + 1, #faces do
 			local f, g = faces[i], faces[j]
 			if g.n:Dot(g.c) - f.n:Dot(f.c) > 0.035 then
 				break
 			end
 			if f.p ~= g.p and overlap(f, g) and exposed(f, g) then
+				table.insert(actual, { f = f, g = g })
 				local pair = f.p.Name .. " / " .. g.p.Name .. " axis" .. f.a
 				counts[pair] = (counts[pair] or 0) + 1
-				if #hits < 70 then
+				if #hits < 100 then
 					table.insert(
 						hits,
 						{ a = f.p:GetFullName(), b = g.p:GetFullName(), normal = tostring(f.n), plane = f.n:Dot(f.c) }
@@ -146,4 +187,4 @@ for _, faces in bins do
 		end
 	end
 end
-return { parts = parts, counts = counts, samples = hits, tolerance = 0.035 }
+return { parts = parts, counts = counts, samples = hits, total = #actual, tolerance = 0.035 }

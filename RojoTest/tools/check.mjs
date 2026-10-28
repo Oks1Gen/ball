@@ -9,7 +9,7 @@ import os from 'node:os';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { assertAnalyzerComplete, isProbeDiagnostic } from './typecheck-result.mjs';
+import { assertAnalyzerComplete, isProbeDiagnostic, compareFindingCounts } from './typecheck-result.mjs';
 
 const project = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const repoRoot = path.resolve(project, '..');
@@ -670,20 +670,23 @@ step('luau type check', () => {
   assertAnalyzerComplete(analyzed.status, probeFound, unparsedDiagnostics);
 
   const baselineFile = path.join(project, 'tools', 'typecheck-baseline.txt');
-  const baseline = new Set(fs.existsSync(baselineFile) ? fs.readFileSync(baselineFile, 'utf8').split('\n').filter(Boolean) : []);
+  const baseline = fs.existsSync(baselineFile) ? fs.readFileSync(baselineFile, 'utf8').split('\n').filter(Boolean) : [];
   const seen = new Map();
+  const keys = [];
   for (const finding of findings) {
     const k = findingKey(finding.file, finding.kind, finding.message, finding.block);
+    keys.push(k);
     if (!seen.has(k)) seen.set(k, finding.raw);
   }
   if (process.env.UPDATE_TYPECHECK_BASELINE === '1') {
-    fs.writeFileSync(baselineFile, [...seen.keys()].sort().join('\n') + '\n');
-    process.stdout.write('Type check baseline written: ' + seen.size + ' known errors.\n');
+    fs.writeFileSync(baselineFile, keys.sort().join('\n') + '\n');
+    process.stdout.write('Type check baseline written: ' + keys.length + ' diagnostics.\n');
     return;
   }
-  const regressions = [...seen.entries()].filter(([k]) => !baseline.has(k));
-  const known = [...seen.keys()].filter((k) => baseline.has(k)).length;
-  const stale = [...baseline].filter((k) => !seen.has(k));
+  const comparison = compareFindingCounts(baseline, keys);
+  const regressions = comparison.added.map(({ key, count }) => [key, seen.get(key) + ' (+' + count + ')']);
+  const stale = comparison.removed;
+  const known = keys.length - comparison.added.reduce((sum, entry) => sum + entry.count, 0);
   fs.writeFileSync(path.join(logs, 'typecheck-summary.txt'), [
     'known errors: ' + known,
     'new errors: ' + regressions.length,

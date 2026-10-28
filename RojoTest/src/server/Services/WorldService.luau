@@ -56,6 +56,12 @@ function Service:Start()
 	require(root.TrainingLaneSigns).apply(world2)
 	require(root.EggSigns).apply(map)
 	require(root.EggSigns).apply(world2)
+	require(root.LobbyRankings).style(map)
+	require(root.SurfaceSeparation).apply(map)
+	require(root.SurfaceSeparation).apply(world2)
+	require(root.WorldGeometryPolish).apply(map)
+	require(root.WorldGeometryPolish).apply(world2)
+	require(root.WorldLighting).apply()
 	self.map, self.world2 = map, world2
 end
 return Service

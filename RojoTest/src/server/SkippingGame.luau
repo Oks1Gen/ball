@@ -446,6 +446,7 @@ function Game.start(map, world2)
 		publish = publish,
 		effect = effect,
 		equipBest = equipBest,
+		rebirth = rebirth,
 	}
 	local function claimPending(player: Player)
 		Receipts.claimPending(receiptContext, player)

@@ -5,7 +5,13 @@ import path from 'node:path';
 import os from 'node:os';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
-import { assertAnalyzerComplete, isProbeDiagnostic } from '../tools/typecheck-result.mjs';
+import { assertAnalyzerComplete, isProbeDiagnostic, compareFindingCounts } from '../tools/typecheck-result.mjs';
+
+test('repeated diagnostics are counted independently of line numbers and order', () => {
+  assert.deepEqual(compareFindingCounts(['a', 'b'], ['b', 'a', 'a']).added, [{ key: 'a', count: 1 }]);
+  assert.deepEqual(compareFindingCounts(['a', 'a'], ['a']).removed, [{ key: 'a', count: 1 }]);
+  assert.deepEqual(compareFindingCounts(['a', 'b'], ['b', 'a']), { added: [], removed: [] });
+});
 
 test('a clean project and a project with few errors accept a completed analyzer', () => {
   assert.doesNotThrow(() => assertAnalyzerComplete(1, true));

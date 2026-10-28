@@ -143,6 +143,156 @@ function Rankings.apply(map)
 	return group
 end
 
+-- Restyle only the ranking stands; keep their authored placement and data paths.
+function Rankings.style(map)
+	local group = map:FindFirstChild("LobbyRankings")
+	if not group then
+		return
+	end
+	local accents = { skill = C(37, 177, 255), wins = C(255, 187, 26), best = C(164, 90, 248) }
+	local ink = C(24, 29, 44)
+	local function label(parent, name, value, x, y, width, height, size, color, alignment: Enum.TextXAlignment?)
+		local item = Instance.new("TextLabel")
+		item.Name, item.Text = name, value
+		item.Position, item.Size = UDim2.fromOffset(x, y), UDim2.fromOffset(width, height)
+		item.BackgroundTransparency = 1
+		item.Font, item.TextSize, item.TextColor3 = Enum.Font.GothamBold, size, color
+		item.TextXAlignment = alignment or Enum.TextXAlignment.Left
+		item.TextTruncate = Enum.TextTruncate.AtEnd
+		item.Parent = parent
+		return item
+	end
+	for _, board in group:GetChildren() do
+		local panel = board:FindFirstChild("Panel")
+		if not panel or not panel:IsA("BasePart") or board:GetAttribute("RankingStyle") == 4 then
+			continue
+		end
+		local accent = accents[board.Name] or C(255, 101, 152)
+		local oldGui = panel:FindFirstChild("RankingGui")
+		local title = oldGui and oldGui:FindFirstChild("Title")
+		local titleText = title and title:IsA("TextLabel") and title.Text or "LEADERBOARD"
+		for _, item in board:GetChildren() do
+			if item.Name == "CrownBase" or item.Name == "CrownPoint" or item.Name == "CartoonTrim" then
+				item:Destroy()
+			elseif item:IsA("BasePart") then
+				item.Material = Enum.Material.SmoothPlastic
+				item.Reflectance = 0
+				item.Color = item == panel and C(230, 241, 250) or ink
+			end
+		end
+		local trim = Instance.new("Folder")
+		trim.Name, trim.Parent = "CartoonTrim", board
+		local frame = board:FindFirstChild("Frame")
+		assert(frame and frame:IsA("BasePart"), "Ranking frame missing")
+		local cf = frame.CFrame
+		local function brick(name, size, offset, color, angle: number?)
+			local p = Instance.new("Part")
+			p.Name, p.Size = name, size
+			p.CFrame = cf * CFrame.new(offset) * CFrame.Angles(0, 0, math.rad(angle or 0))
+			p.Anchored, p.CanCollide, p.CanTouch, p.CanQuery = true, false, false, false
+			p.Material, p.Color = Enum.Material.Plastic, color
+			p.TopSurface, p.BottomSurface = Enum.SurfaceType.Studs, Enum.SurfaceType.Smooth
+			p.Parent = trim
+			if color ~= ink then
+				for _, face in { Enum.NormalId.Front, Enum.NormalId.Left, Enum.NormalId.Right } do
+					local studs = Instance.new("Texture")
+					studs.Name, studs.Texture = "Studs", "rbxassetid://88156646156237"
+					studs.Face, studs.Color3 = face, color
+					studs.StudsPerTileU, studs.StudsPerTileV = 8, 8
+					studs.Transparency = 0.15
+					studs.Parent = p
+				end
+			end
+			return p
+		end
+		for _, side in { -1, 1 } do
+			brick("SideRail", V(1.7, 29, 3), V(side * 12.5, 0, -0.1), accent)
+			for _, y in { -13, 11.8 } do
+				brick("CornerOutline", V(2.9, 3.8, 3.4), V(side * 12.2, y, -0.2), ink, 0)
+				brick("CornerCap", V(2.3, 3.2, 3.7), V(side * 12.2, y, -0.3), accent:Lerp(C(255, 255, 255), 0.3), 0)
+			end
+			brick("ShoeOutline", V(7, 1.4, 5.5), V(side * 8, -16.6, 0), ink)
+			brick("Shoe", V(6.2, 1.1, 5), V(side * 8, -16.3, -0.1), accent)
+		end
+		brick("BottomRail", V(24, 1.5, 3), V(0, -14.5, -0.15), accent)
+		local tilt = 0
+		brick("HeaderOutline", V(28, 6.2, 3.8), V(0, 15.3, -0.4), ink, tilt)
+		local header = brick("Header", V(27, 5.2, 4.1), V(0, 15.3, -0.6), accent, tilt)
+		local headerGui = Instance.new("SurfaceGui")
+		headerGui.Name, headerGui.Face = "HeaderGui", Enum.NormalId.Front
+		headerGui.CanvasSize, headerGui.LightInfluence = Vector2.new(675, 130), 0
+		headerGui.Parent = header
+		local headerText =
+			label(headerGui, "Title", titleText, 14, 7, 647, 116, 72, C(255, 255, 255), Enum.TextXAlignment.Center)
+		headerText.Font = Enum.Font.GothamBlack
+		headerText.TextStrokeColor3, headerText.TextStrokeTransparency = ink, 0
+		-- Reuse the game's original icons on a raised round brick.
+		local badgeBack = brick("BadgeOutline", V(1.4, 6.5, 6.5), V(0, 21, -0.2), ink)
+		badgeBack.Shape = Enum.PartType.Cylinder
+		badgeBack.CFrame = cf * CFrame.new(0, 21, -0.2) * CFrame.Angles(0, math.pi / 2, 0)
+		local badge = brick("Badge", V(1.7, 5.7, 5.7), V(0, 21, -0.4), accent)
+		badge.Shape = Enum.PartType.Cylinder
+		badge.CFrame = cf * CFrame.new(0, 21, -0.4) * CFrame.Angles(0, math.pi / 2, 0)
+		local badgeGui = Instance.new("SurfaceGui")
+		badgeGui.Name, badgeGui.Face = "BadgeGui", Enum.NormalId.Right
+		badgeGui.CanvasSize, badgeGui.LightInfluence = Vector2.new(160, 160), 0
+		badgeGui.Parent = badge
+		local icon = Instance.new("ImageLabel")
+		icon.Name, icon.BackgroundTransparency = "CategoryIcon", 1
+		icon.Size, icon.Position = UDim2.fromOffset(136, 136), UDim2.fromOffset(12, 12)
+		icon.Image = ({
+			skill = "rbxassetid://121378767438034",
+			wins = "rbxassetid://114161247280750",
+			best = "rbxassetid://81860763257111",
+		})[board.Name] or "rbxassetid://90468580391337"
+		icon.Parent = badgeGui
+		if oldGui then
+			oldGui:Destroy()
+		end
+		local gui = Instance.new("SurfaceGui")
+		gui.Name = "RankingGui"
+		gui.Face = Enum.NormalId.Front
+		gui.CanvasSize = Vector2.new(620, 745)
+		gui.LightInfluence, gui.Brightness = 0, 1
+		gui.Active = false
+		gui.Parent = panel
+		local stripe = Instance.new("Frame")
+		stripe.Name = "CategoryLine"
+		stripe.Size = UDim2.new(1, 0, 0, 6)
+		stripe.BackgroundColor3, stripe.BorderSizePixel = accent, 0
+		stripe.Parent = gui
+		local heading = label(gui, "Title", titleText, 28, 24, 564, 52, 38, C(239, 237, 228))
+		heading.Visible = false -- The title is on the raised brick above the panel.
+		local scope = label(gui, "Scope", "GLOBAL TOP 10", 30, 80, 560, 30, 22, ink, Enum.TextXAlignment.Center)
+		label(gui, "RankHeading", "#", 30, 129, 44, 26, 18, ink)
+		label(gui, "PlayerHeading", "PLAYER", 91, 129, 300, 26, 18, ink)
+		label(gui, "ValueHeading", "RESULT", 413, 129, 177, 26, 18, ink, Enum.TextXAlignment.Right)
+		for rank = 1, 10 do
+			local row = Instance.new("Frame")
+			row.Name = "Row" .. rank
+			row.Position, row.Size = UDim2.fromOffset(20, 165 + (rank - 1) * 49), UDim2.fromOffset(580, 47)
+			row.BackgroundColor3 = rank % 2 == 0 and C(242, 248, 255) or accent:Lerp(C(255, 255, 255), 0.84)
+			row.BorderSizePixel = 0
+			row.Parent = gui
+			local corner = Instance.new("UICorner")
+			corner.CornerRadius, corner.Parent = UDim.new(0, 9), row
+			local number = label(row, "Rank", tostring(rank), 5, 4, 46, 39, 25, ink, Enum.TextXAlignment.Center)
+			number.BackgroundTransparency = 0
+			number.BackgroundColor3 = ({ C(255, 211, 55), C(199, 218, 237), C(239, 166, 106) })[rank] or accent
+			local badgeCorner = Instance.new("UICorner")
+			badgeCorner.CornerRadius, badgeCorner.Parent = UDim.new(0, 9), number
+			label(row, "Entry", "—", 71, 0, 300, 47, 25, ink)
+			label(row, "Value", "", 393, 0, 177, 47, 25, ink, Enum.TextXAlignment.Right)
+		end
+		local placeholder = board:GetAttribute("LayoutPlaceholder") == true
+		label(gui, "Status", placeholder and "Скоро" or "Waiting for players", 30, 687, 560, 30, 18, ink)
+		if placeholder then
+			scope.Text = "Рейтинг скоро появится"
+		end
+		board:SetAttribute("RankingStyle", 4)
+	end
+end
+
 local function getStore(key)
 	if not stores[key] then
 		stores[key] = DataStoreService:GetOrderedDataStore("StoneSkipping_Top_" .. Config.DataVersion .. "_" .. key)
@@ -201,11 +351,9 @@ function Rankings.render(map, states)
 		gui.Scope.Text = RunService:IsStudio() and "STUDIO • LIVE TOP 10" or "GLOBAL TOP 10"
 		for rank = 1, 10 do
 			local entry = sorted[rank]
-			gui["Row" .. rank].Entry.Text = entry
-					and (rank .. ".  " .. (entry.name or names[entry.userId] or ("User " .. entry.userId)) .. "   " .. Config.format(
-						entry.value
-					) .. (category.suffix or ""))
-				or (rank .. ".   —")
+			local row = gui["Row" .. rank]
+			row.Entry.Text = entry and (entry.name or names[entry.userId] or ("User " .. entry.userId)) or "—"
+			row.Value.Text = entry and (Config.format(entry.value) .. (category.suffix or "")) or ""
 		end
 		gui.Status.Text = #sorted == 0 and "Be the first to reach the top!"
 			or (

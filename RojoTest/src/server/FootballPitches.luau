@@ -47,7 +47,9 @@ function Pitches.apply(map)
 			local p = Instance.new("Part")
 			p.Name = name
 			p.Size = Vector3.new(sx, 0.025, sz)
-			p.CFrame = surface.CFrame * CFrame.new(x, top + (height or 0.03), z)
+			-- Keep each overlapping render layer clear even at distant camera depths.
+			local layers = { Touchline = 0.24, GoalLine = 0.32, HalfwayLine = 0.32, PenaltyAreaSide = 0.40 }
+			p.CFrame = surface.CFrame * CFrame.new(x, top + (height or layers[name] or 0.32), z)
 			p.Anchored = true
 			p.CanCollide, p.CanTouch, p.CanQuery = false, false, false
 			p.CastShadow = false
@@ -68,7 +70,7 @@ function Pitches.apply(map)
 					width,
 					stripeLength,
 					originalColor:Lerp(Color3.new(0, 0, 0), 0.1),
-					0.005
+					0.08
 				)
 			end
 		end
@@ -86,11 +88,12 @@ function Pitches.apply(map)
 			local p1 = Vector3.new(math.cos(a) * radius, 0, math.sin(a) * radius)
 			local p2 = Vector3.new(math.cos(b) * radius, 0, math.sin(b) * radius)
 			local mid = (p1 + p2) / 2
-			local p = part("CentreCircle", mid.X, mid.Z, lineWidth, (p2 - p1).Magnitude + 0.025, WHITE)
+			local height = 0.40 + (segment % 2) * 0.08
+			local p = part("CentreCircle", mid.X, mid.Z, lineWidth, (p2 - p1).Magnitude + 0.025, WHITE, height)
 			p.CFrame = surface.CFrame
-				* CFrame.lookAt(Vector3.new(mid.X, top + 0.03, mid.Z), Vector3.new(p2.X, top + 0.03, p2.Z))
+				* CFrame.lookAt(Vector3.new(mid.X, top + height, mid.Z), Vector3.new(p2.X, top + height, p2.Z))
 		end
-		part("CentreSpot", 0, 0, 0.9, 0.9, WHITE)
+		part("CentreSpot", 0, 0, 0.9, 0.9, WHITE, 0.48)
 		for _, direction in { -1, 1 } do
 			for _, box in { { Width = 58, Depth = 30 }, { Width = 28, Depth = 12 } } do
 				local edge = direction * halfLength

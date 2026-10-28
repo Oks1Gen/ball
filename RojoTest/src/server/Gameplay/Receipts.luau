@@ -17,6 +17,7 @@ export type Context = {
 	publish: (Player, string?) -> (),
 	effect: RemoteEvent,
 	equipBest: (any) -> (),
+	rebirth: (Player, boolean?) -> boolean,
 }
 
 function Receipts.claimPending(context: Context, player: Player): boolean
@@ -64,8 +65,9 @@ function Receipts.process(context: Context, player: Player?, receipt: any): Enum
 	if product.skill then
 		Data.add(s.data, "skill", product.skill)
 	elseif name == "SkipRebirth" then
-		s.data.skill = 0
-		Data.add(s.data, "rebirths", 1)
+		if not context.rebirth(player, true) then
+			return Enum.ProductPurchaseDecision.NotProcessedYet
+		end
 	elseif name == "StarterPack" then
 		Data.add(s.data, "wins", 10000)
 		s.data.perks.DoubleSkill = true

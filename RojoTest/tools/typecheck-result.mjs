@@ -2,6 +2,22 @@
 // many real source files still have type errors.
 import path from 'node:path';
 
+export function compareFindingCounts(baseline, current) {
+  const count = (items) => {
+    const counts = new Map();
+    for (const item of items) counts.set(item, (counts.get(item) ?? 0) + 1);
+    return counts;
+  };
+  const old = count(baseline), now = count(current);
+  const added = [], removed = [];
+  for (const key of new Set([...old.keys(), ...now.keys()])) {
+    const delta = (now.get(key) ?? 0) - (old.get(key) ?? 0);
+    if (delta > 0) added.push({ key, count: delta });
+    if (delta < 0) removed.push({ key, count: -delta });
+  }
+  return { added, removed };
+}
+
 export function isProbeDiagnostic(file, probe, project) {
   const resolved = path.resolve(project, file);
   return process.platform === 'win32'

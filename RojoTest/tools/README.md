@@ -91,6 +91,10 @@ Edit, и в Play (там, где это указано в таблице).
 
 ## Таблица скриптов
 
+`VerifyWorldPolish.luau` — read-only Edit/Server: опора лобби, полей и берегов,
+стыки восьми полей, единая высота и покрытие мощения, отсутствие перекрытия
+новых плит и суммирования эффектов освещения. Подробности: `docs/world-polish.md`.
+
 Колонка «Режим» — требуемый режим Studio. Колонка «Идемпотентен» отвечает на
 вопрос, можно ли запустить скрипт повторно без разбора последствий.
 
@@ -99,7 +103,7 @@ Edit, и в Play (там, где это указано в таблице).
 | `AddLobbyWaterfall.luau` | Добавляет бирюзовый двухступенчатый водопад с прудом, мхом, тростником, цветами и лианами на правые террасы лобби. Модель `ProgressionMap.LobbyWaterfallGarden` | Studio MCP или Command Bar, Edit | Edit | Нет: при повторе `assert` о существующей модели | Да |
 | `ApplyDecoratedEggColors.luau` | Переносит вершинные цвета из одного JSON-источника на меш украшенного яйца через `EditableMesh`; помечает `PendingColorMeshUpload` | Studio MCP или Command Bar, Edit, после загрузки JSON в `_G.EggColorData` | Edit | Нет: цвета накладываются повторно | Да |
 | `ApplyLobbyLayoutTwoAxes.luau` | Применяет `LobbyLayoutTwoAxes.apply` и обновляет `BallStand.apply` на `ProgressionMap` через клоны модулей (обход кэша require) | Studio MCP, Edit | Edit | Да: при `LobbyLayoutVersion = 1` `apply` возвращает текущий layout | Да |
-| `CheckSurfaceOverlaps.luau` | Read-only аудит перекрывающихся открытых граней блоков и клиньев в `ProgressionMap` (допуск 0.035 студ) | Studio MCP или Command Bar, Edit | Edit | Да: только чтение | Нет |
+| `CheckSurfaceOverlaps.luau` | Read-only аудит открытых граней блоков и клиньев обоих миров `Workspace.Map`, пространственный индекс, допуск 0.035 студ | Studio MCP или Command Bar | Edit / Server | Да: только чтение | Нет |
 | `ColorImportedPortals.luau` | Раскрашивает импортированные порталы `portals-v6-no-textures` по шести темам, ставит атрибут `PortalTheme`, копию сохраняет в `ServerStorage.WorldBackups.BeforePortalColoring` | Studio MCP, Edit | Edit | Нет: при повторе `assert` об уже покрашенных порталах | Да |
 | `ColorSakura.luau` | Раскрашивает `sakura-split-colors`: ствол, 4 кроны и 65 лепестков; копия в `WorldBackups.BeforeSplitSakuraColoring` | Studio MCP, Edit | Edit | Нет: при повторе `assert` об уже покрашенной сакуре | Да |
 | `CornerRockGarden.luau` | Добавляет моховой каменный сад в левый угол входа лобби: 8 каменных масс с мхом, 5 кустов, 30 цветов, короткие лианы | Studio MCP, Edit | Edit | Нет: при повторе `assert` о существующем `CornerRockGarden` | Да |
