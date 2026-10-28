@@ -61,6 +61,8 @@ function Service:Start()
 	require(root.SurfaceSeparation).apply(world2)
 	require(root.WorldGeometryPolish).apply(map)
 	require(root.WorldGeometryPolish).apply(world2)
+	require(root.CompactLobbyLayout).apply(map)
+	require(root.TrainingLaneThemes).apply(map)
 	require(root.WorldLighting).apply()
 	self.map, self.world2 = map, world2
 end

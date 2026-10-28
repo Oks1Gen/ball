@@ -55,9 +55,10 @@ for _, world in workspace.Map:GetChildren() do
 	assert(holes == 0, world.Name .. ": collision support holes: " .. holes)
 	assert(maxSeam < 0.002, world.Name .. ": pitch gap")
 	local polish = assert(world:FindFirstChild("GeometryPolish"))
+	local compact = world:FindFirstChild("CompactLobbyLayout")
 	local pieces = {}
 	for _, p in polish:GetChildren() do
-		if p:IsA("BasePart") then
+		if p:IsA("BasePart") and p.Transparency < 1 then
 			assert(not p.CanCollide and not p.CanTouch and not p.CanQuery, "Cosmetic part has physics")
 			assert(p.CFrame.UpVector:Dot(Vector3.yAxis) > 0.99999, "Tilted paving")
 			table.insert(pieces, p)
@@ -65,7 +66,7 @@ for _, world in workspace.Map:GetChildren() do
 	end
 	local samples = 0
 	local layout = world:FindFirstChild("TwoAxesLayout")
-	if layout then
+	if layout and not compact then
 		local top = world.Lobby.ThrowingApron.Position.Y - 0.3 + 0.26
 		for _, p in pieces do
 			assert(math.abs(p.Position.Y + p.Size.Y / 2 - top) < 0.00002, "Uneven paving")
@@ -105,6 +106,7 @@ for _, world in workspace.Map:GetChildren() do
 		maxFieldSeam = maxSeam,
 		pavingPieces = #pieces,
 		pavingSamples = samples,
+		activePaving = compact and "CompactLobbyLayout" or "GeometryPolish",
 	}
 end
 local gradeCount, bloomCount = 0, 0

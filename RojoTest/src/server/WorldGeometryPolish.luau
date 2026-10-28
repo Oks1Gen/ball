@@ -14,7 +14,30 @@ local function hide(part: BasePart)
 	end
 end
 
+function Polish.hideLobbyArrows(map: Instance): number
+	if map.Name ~= "World1" then
+		return 0
+	end
+	local hidden = 0
+	for _, name in { "SkippingWorld", "SurfaceSeparation" } do
+		local section = map:FindFirstChild(name)
+		if section then
+			for _, part in section:GetChildren() do
+				if part:IsA("BasePart") and (part.Name == "ArrowStem" or part.Name == "ArrowArm") then
+					if part.Transparency < 1 then
+						hidden += 1
+					end
+					hide(part)
+				end
+			end
+		end
+	end
+	return hidden
+end
+
 function Polish.apply(map: any)
+	-- Run before the paving guard so an existing authored lobby is not rebuilt.
+	Polish.hideLobbyArrows(map)
 	if map:FindFirstChild("GeometryPolish") then
 		return
 	end

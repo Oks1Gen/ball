@@ -274,7 +274,7 @@ function Layout.apply(map)
 	-- Keep the invisible spawn plate below the continuous walking floor.
 	spawn.CFrame = frame * CF(-106, -0.6, 72)
 	spawn.Transparency = 1
-	-- Existing directional arrows remain useful on the central approach.
+	-- Legacy arrow anchors follow the layout; WorldGeometryPolish hides their visuals.
 	for _, o in ipairs(skip:GetChildren()) do
 		if o:IsA("BasePart") and (o.Name == "ArrowStem" or o.Name == "ArrowArm") then
 			local _q = localPoint(o.Position)
