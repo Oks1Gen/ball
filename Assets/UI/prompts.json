@@ -161,6 +161,11 @@
       "key": "robux",
       "prompt": "Use case: stylized-concept. ONE standalone square game UI icon, transparent background. Subject centered, entire silhouette inside image with 12% empty transparent padding on ALL sides. Bright Roblox simulator cartoon illustration, thick clean near-black outline, simple rounded shapes, flat saturated base colors, only 2 or 3 clean cel-shading tones. Very restrained small highlights. No glow, no bloom, no rim lighting, no glitter, no light rays, no metallic photorealistic reflections, no glossy 3D render, no cast shadow, no text, no grid, no other icons. The white Robux currency symbol: a clean white hexagonal ring with thick black outline, white inner hexagonal face outlined in black and a small black square hole at its center. Flat black and white ONLY, exactly like the user's supplied currency reference; no gold, no orange, no bevel, no shadow, no gloss, no text.",
       "source": "C:\\Users\\dakem\\.codex\\generated_images\\01a16abe-54a1-7f21-90f3-303f63b029af\\exec-8dd28375-ae64-4c9a-af3b-cc9b27fb5258.png"
+    },
+    {
+      "key": "update-log",
+      "prompt": "Use case: stylized-concept. Asset type: ONE standalone Roblox football simulator Update Log HUD icon on a genuinely TRANSPARENT background. Entire silhouette fully inside square canvas with 12% empty transparent padding on EVERY side. Subject: one compact upright news clipboard, bright cyan chunky clipboard backing, golden yellow top clip, a white sheet with three very bold short navy horizontal update lines and three small cyan square bullets. Slight three-quarter tilt. Style: bright vibrant high-contrast cartoon illustration, simple rounded readable shapes, EXTRA THICK solid PURE BLACK outer outline and bold black inner lines. Flat saturated candy colors and two clean cel-shading tones; minimal tiny highlight only. Matte finish. Must read clearly at 28 pixels. No letters, no words, no numerals, no additional objects, no tile, no frame, no background, no shadows, no gradient, no glow, no rays, no watermark. Generate a single square transparent PNG.",
+      "source": "C:\\Users\\dakem\\.codex\\generated_images\\01a186c6-2b00-7582-9a34-20369d2693c8\\exec-624edd32-3b51-49de-baff-e794cf718694.png"
     }
   ]
 }

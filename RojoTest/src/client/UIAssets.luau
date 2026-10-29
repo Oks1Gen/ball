@@ -1,6 +1,7 @@
 --!strict
 -- Individual generated football UI images. Sources and prompts: Assets/UI/.
 local Assets = {
+	Sunburst = "rbxassetid://100836241976168",
 	Burst = "rbxassetid://135516711069753",
 	Images = {
 		Shop = "rbxassetid://104677004413399",
@@ -24,6 +25,7 @@ local Assets = {
 		PurpleTrail = "rbxassetid://73386437552168",
 		RainbowTrail = "rbxassetid://104569410708834",
 		Settings = "rbxassetid://82267402301590",
+		UpdateLog = "rbxassetid://106721086001751",
 		Arrow = "rbxassetid://124139408657162",
 		Plus = "rbxassetid://125108671199271",
 		Check = "rbxassetid://113367733100050",

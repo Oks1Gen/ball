@@ -20,3 +20,13 @@
 
 Игра использует целые изображения, без ImageRectOffset/ImageRectSize.
 Старые атласы в `RojoTest/generated-ui` — история; в новых иконках не используются.
+
+`update-log.png` — отдельная иконка журнала обновлений, созданная встроенным
+ImageGen 29.10.2026: голубой планшет с жёлтым зажимом и листом новостей.
+Сохранён исходный прозрачный PNG 1254×1254, без обрезки; подробности и точный
+промпт — `update-log.asset.json` и `prompts.json`. Roblox Image:
+`106721086001751`. Используется в верхней панели и углу окна Update Log.
+
+`sunburst.png` — исходная текстура пользователя, скопирована без изменений из
+`RobloxGames/Assets/Textures/sunburst.png`; лучи Starter Pack.
+Roblox Image `100836241976168`, источник — `sunburst.asset.json`.

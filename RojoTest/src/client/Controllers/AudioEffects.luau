@@ -5,6 +5,9 @@
 local TweenService = game:GetService("TweenService")
 local Debris = game:GetService("Debris")
 local SoundService = game:GetService("SoundService")
+local TextService = game:GetService("TextService")
+local Ripple = require(game.ReplicatedStorage.Packages.Ripple)
+local Motion = require(game.ReplicatedStorage.Shared.UiMotion)
 local Config = require(game.ReplicatedStorage.Shared.GameConfig)
 local Kit = require(script.Parent.HudKit)
 local ZoneSound = require(game.ReplicatedStorage.Shared.ZoneTransitionSound)
@@ -209,27 +212,123 @@ function Effects.mount(context: Context): Handle
 		Debris:AddItem(p, 0.6)
 	end
 
+	local gains: { CanvasGroup } = {}
+	local gainCleanup: { [CanvasGroup]: () -> () } = {}
+	local function clearGains()
+		while #gains > 0 do
+			gainCleanup[gains[1]]()
+		end
+	end
+	local gui = canvas:FindFirstAncestorOfClass("ScreenGui")
+	local reducedConnection = if gui
+		then gui:GetAttributeChangedSignal("ReducedMotion"):Connect(function()
+			if Motion.reduced(canvas) then
+				clearGains()
+			end
+		end)
+		else nil
+	local canvasConnection = canvas.Destroying:Connect(clearGains)
+
 	local function floatingGain(gain: number, boosted: boolean?)
-		if context.panelOpen() then
+		if not alive or context.panelOpen() then
 			return
 		end
-		local t = Kit.text(
-			canvas,
-			"SkillGain",
-			"+" .. Config.format(gain) .. (if boosted then " ×2" else ""),
-			560 + math.random(-100, 100),
-			340,
-			160,
-			45,
-			30,
+		-- Measure the actual number: centred text in a fixed box left a large
+		-- variable gap after the icon, especially for short rewards.
+		local caption = "+" .. Config.format(gain) .. (if boosted then " ×2" else "")
+		local textWidth = math.ceil(
+			TextService:GetTextSize(caption, 54, Enum.Font.GothamBlack, Vector2.new(2000, 78)).X
+		) + 4
+		local width = 66 + textWidth
+		local group = Instance.new("CanvasGroup")
+		group.Name = "SkillGain"
+		group.AnchorPoint = Vector2.new(0.5, 0.5)
+		local start = UDim2.new(0.5, math.random(-85, 85), 0.52, 0)
+		group.Position = start
+		-- Padding keeps the outline and tilted artwork inside the composited canvas.
+		group.Size = UDim2.fromOffset(width + 64, 142)
+		group.BackgroundTransparency = 1
+		group.Active = false
+		group.Interactable = false
+		group.ZIndex = 25
+		local content = Kit.frame(group, "Content", 32, 32, width, 78)
+		content.BackgroundTransparency = 1
+		Kit.icon(content, "Skill", 0, 3, 72, 72)
+		local label = Kit.text(
+			content,
+			"Amount",
+			caption,
+			66,
+			0,
+			textWidth,
+			78,
+			54,
 			if boosted then Color3.fromRGB(213, 166, 255) else yellow
 		)
-		t.ZIndex = 25
-		Kit.icon(t, "Skill", -22, 4, 30, 36)
-		TweenService
-			:Create(t, TweenInfo.new(0.9), { Position = t.Position - UDim2.fromOffset(0, 70), TextTransparency = 1 })
-			:Play()
-		Debris:AddItem(t, 1)
+		label.TextXAlignment = Enum.TextXAlignment.Left
+		local scale = Instance.new("UIScale")
+		scale.Parent = group
+		local snapshot = context.snapshot()
+		local reduced = Motion.reduced(canvas) or (snapshot ~= nil and snapshot.data.settings.effects == false)
+		scale.Scale = if reduced then 1 else 0.35
+		group.Parent = canvas
+		if #gains >= 8 then
+			gainCleanup[gains[1]]()
+		end
+		table.insert(gains, group)
+		local progress = Ripple.createMotion(0, { start = true })
+		local changed: (() -> ())? = nil
+		local completed: (() -> ())? = nil
+		local destroying: RBXScriptConnection? = nil
+		local cleaned = false
+		local function cleanup()
+			if cleaned then
+				return
+			end
+			cleaned = true
+			if changed then
+				changed()
+			end
+			if completed then
+				completed()
+			end
+			if destroying then
+				destroying:Disconnect()
+			end
+			progress:destroy()
+			gainCleanup[group] = nil
+			local index = table.find(gains, group)
+			if index then
+				table.remove(gains, index)
+			end
+			group:Destroy()
+		end
+		gainCleanup[group] = cleanup
+		destroying = group.Destroying:Connect(cleanup)
+		local direction = if math.random() < 0.5 then -1 else 1
+		changed = progress:onChange(function(value: number)
+			if context.panelOpen() then
+				cleanup()
+				return
+			end
+			if reduced then
+				return -- Keep reward feedback static when effects are disabled.
+			end
+			local elapsed = value * 1.1
+			if elapsed < 0.16 then
+				scale.Scale = 0.35 + 0.83 * (1 - (1 - elapsed / 0.16) ^ 4)
+			else
+				local settle = elapsed - 0.16
+				scale.Scale = 1 + 0.18 * math.exp(-10 * settle) * math.cos(18 * settle)
+			end
+			group.Position = start
+				+ UDim2.fromOffset(direction * 24 * math.sin(value * math.pi / 2), -110 * (1 - (1 - value) ^ 2))
+			group.Rotation = direction * 10 * math.exp(-6 * elapsed) * math.cos(12 * elapsed)
+			-- One opacity for text, UIStroke and energy artwork: nothing lingers.
+			group.GroupTransparency = math.clamp((value - 0.64) / 0.36, 0, 1)
+		end)
+		completed = progress:onComplete(cleanup)
+		progress:tween(1, { duration = if reduced then 0.8 else 1.1, easing = "linear" })
 	end
 
 	local zoneLabel: TextLabel? = nil
@@ -286,6 +385,11 @@ function Effects.mount(context: Context): Handle
 		end,
 		destroy = function()
 			alive = false
+			clearGains()
+			canvasConnection:Disconnect()
+			if reducedConnection then
+				reducedConnection:Disconnect()
+			end
 			if zoneLabel then
 				zoneLabel:Destroy()
 			end

@@ -142,7 +142,7 @@ function Controller:Start()
 			collectorUI:setModalOpen(modal)
 		end
 		if adminUI then
-			adminUI.setLauncherHidden(modal)
+			adminUI.setIndicatorHidden(modal)
 		end
 		local goal = if modal then MotionConfig.Blur.Size else 0
 		if blur:GetAttribute("Goal") ~= goal or reduced then
@@ -371,6 +371,12 @@ function Controller:Start()
 			openCollector("Trails", "Trails")
 		elseif name == "Settings" then
 			panels.open("Settings")
+		elseif name == "UpdateLog" then
+			panels.open("UpdateLog")
+		elseif name == "Dev" then
+			if adminUI then
+				adminUI.open()
+			end
 		elseif name == "Rebirth" then
 			panels.open("Rebirth")
 		elseif name == "Inventory" then
@@ -642,6 +648,7 @@ function Controller:Start()
 		if adminUI then
 			adminUI.update(info)
 		end
+		topbar.setAdmin(info.isAdmin == true)
 		collectorUI:update(info)
 		collectorUI:setHidden(flight ~= nil)
 		local d = info.data

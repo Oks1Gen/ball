@@ -12,6 +12,9 @@ local MotionConfig = require(game.ReplicatedStorage.Shared.UiMotionConfig)
 local GuiInsets = require(script.Parent.Parent.Modules.GuiInsets)
 local Presentation = require(script.Parent.Parent.Modules.UiPresentation)
 local ReturnRewardPanels = require(script.Parent.ReturnRewardPanels)
+local UpdateLog = require(script.Parent.Parent.Modules.UpdateLog)
+local TextService = game:GetService("TextService")
+local Style = require(script.Parent.Parent.UiStyle)
 
 local Panels = {}
 local C = Color3.fromRGB
@@ -216,6 +219,40 @@ function Panels.mount(context: Context): Handle
 		padding.PaddingBottom = UDim.new(0, 4)
 		padding.Parent = s
 		return s
+	end
+
+	local function openUpdateLog()
+		begin("UpdateLog")
+		refresh = nil
+		local modal = shell("Update Log", "UpdateLog", 620, 430)
+		local width = modal.Size.X.Offset - 29
+		local phone = phoneArea()
+		local list = scrolling(modal, phone and 70 or 24, 394)
+		for index, release in UpdateLog do
+			local row = Kit.frame(list, release.id, 0, 0, width, 1, Style.PanelDeep)
+			row.LayoutOrder = index
+			row.BackgroundTransparency = 0.25
+			Kit.corner(row, 9)
+			Kit.stroke(row, 2)
+			local title = Kit.text(row, "Title", release.title, 16, 12, width - 32, 34, phone and 24 or 29)
+			title.TextXAlignment = Enum.TextXAlignment.Left
+			local date = Kit.text(row, "Date", release.date, 16, 48, width - 32, 24, 16, Style.Gold)
+			date.TextXAlignment = Enum.TextXAlignment.Left
+			local y = 84
+			local fontSize = phone and 18 or 22
+			for changeIndex, change in release.changes do
+				local text = "• " .. change
+				local height = math.ceil(
+					TextService:GetTextSize(text, fontSize, Enum.Font.GothamBlack, Vector2.new(width - 40, 10000)).Y
+				) + 6
+				local label = Kit.text(row, "Change" .. changeIndex, text, 16, y, width - 40, height, fontSize)
+				label.TextWrapped = true
+				label.TextXAlignment = Enum.TextXAlignment.Left
+				label.TextYAlignment = Enum.TextYAlignment.Top
+				y += height + 12
+			end
+			row.Size = UDim2.fromOffset(width, y + 4)
+		end
 	end
 
 	local function openSettings()
@@ -702,6 +739,8 @@ function Panels.mount(context: Context): Handle
 			end
 			if name == "Settings" then
 				openSettings()
+			elseif name == "UpdateLog" then
+				openUpdateLog()
 			elseif name == "Rebirth" then
 				openRebirth()
 			elseif name == "Inventory" then

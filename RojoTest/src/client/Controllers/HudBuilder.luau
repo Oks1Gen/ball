@@ -5,6 +5,7 @@
 local Kit = require(script.Parent.HudKit)
 local Layout = require(script.Parent.Parent.Modules.HudLayout)
 local Config = require(game.ReplicatedStorage.Shared.GameConfig)
+local Assets = require(script.Parent.Parent.UIAssets)
 
 local Builder = {}
 local C = Color3.fromRGB
@@ -64,7 +65,7 @@ function Builder.build(context: Context): Refs
 		autoItem.w,
 		autoItem.h,
 		C(204, 37, 62),
-		19,
+		29,
 		function()
 			local snapshot = context.snapshot()
 			if snapshot and snapshot.data.perks.AutoThrow then
@@ -74,12 +75,12 @@ function Builder.build(context: Context): Refs
 			end
 		end
 	)
-	caption(auto).Position = UDim2.fromOffset(3, 7)
-	caption(auto).Size = UDim2.fromOffset(autoItem.w - 6, 25)
-	Kit.icon(auto, "Wins", (autoItem.w - 43) / 2, -15, 43, 31)
-	Kit.text(auto, "Price", "ONLY", 56, 32, 43, 17, 14, yellow)
-	Kit.icon(auto, "Robux", 103, 32, 17, 17)
-	Kit.text(auto, "Amount", "25", 124, 32, 27, 17, 14, yellow)
+	caption(auto).Position = UDim2.fromOffset(3, 5)
+	caption(auto).Size = UDim2.fromOffset(autoItem.w - 6, 32)
+	Kit.icon(auto, "Wins", (autoItem.w - 72) / 2, -28, 72, 72)
+	Kit.text(auto, "Price", "ONLY", 48, 35, 52, 22, 18, yellow)
+	Kit.icon(auto, "Robux", 103, 36, 21, 21)
+	Kit.text(auto, "Amount", "25", 128, 35, 30, 22, 18, yellow)
 
 	local starterItem = at("StarterPack")
 	local starter = Kit.button(
@@ -100,10 +101,15 @@ function Builder.build(context: Context): Refs
 	Kit.hide(starter, "Studs")
 	Kit.hide(starter, "UIStroke")
 	Kit.hide(hud, "StarterPackShadow")
-	Kit.icon(starter, "Pets", 24, 5, 63, 59, C(173, 107, 248))
-	Kit.icon(starter, "Skill", 1, -1, 37, 56)
-	Kit.icon(starter, "Rebirth", 77, -2, 38, 39)
-	Kit.text(starter, "Caption2", "STARTER PACK", 3, 69, 113, 16, 12)
+	local rays = Kit.burst(Kit.visualOf(starter), Assets.Sunburst)
+	rays.Position = UDim2.fromOffset(-38, -53)
+	rays.Size = UDim2.fromOffset(195, 195)
+	rays.ImageTransparency = 0.25
+	rays.ZIndex = 1
+	Kit.icon(starter, "Pets", 8, -10, 104, 104, C(173, 107, 248))
+	Kit.icon(starter, "Skill", -16, -16, 64, 64)
+	Kit.icon(starter, "Rebirth", 76, -20, 58, 58)
+	Kit.text(starter, "Caption2", "STARTER PACK", -5, 74, 129, 20, 13)
 
 	local skillItem = at("DoubleSkill")
 	local skillOffer = Kit.button(
@@ -122,7 +128,7 @@ function Builder.build(context: Context): Refs
 	)
 	caption(skillOffer).Position = UDim2.fromOffset(3, 12)
 	caption(skillOffer).Size = UDim2.fromOffset(119, 25)
-	Kit.icon(skillOffer, "Skill", 50, -13, 39, 37)
+	Kit.icon(skillOffer, "Skill", 25, -27, 76, 76)
 	Kit.text(skillOffer, "Price", "ONLY", 17, 42, 43, 15, 14, yellow)
 	Kit.icon(skillOffer, "Robux", 64, 40, 17, 17)
 	Kit.text(skillOffer, "Amount", "5", 85, 42, 20, 15, 14, yellow)
@@ -144,7 +150,7 @@ function Builder.build(context: Context): Refs
 	)
 	caption(winsOffer).Position = UDim2.fromOffset(3, 9)
 	caption(winsOffer).Size = UDim2.fromOffset(119, 27)
-	Kit.icon(winsOffer, "Wins", 46, -7, 39, 37)
+	Kit.icon(winsOffer, "Wins", 26, -24, 74, 74)
 	Kit.text(winsOffer, "Price", "ONLY", 13, 42, 43, 15, 14, yellow)
 	Kit.icon(winsOffer, "Robux", 60, 40, 17, 17)
 	Kit.text(winsOffer, "Amount", "59", 81, 42, 30, 15, 14, yellow)
@@ -238,10 +244,10 @@ function Builder.build(context: Context): Refs
 		}
 	do
 		local item = at(offer[2])
-		local b = Kit.button(hud, offer[2], offer[1], item.x, item.y, item.w, item.h, offer[3], 30, function()
+		local b = Kit.button(hud, offer[2], offer[1], item.x, item.y, item.w, item.h, offer[3], 36, function()
 			send("Product", offer[2])
 		end)
-		Kit.icon(b, "Skill", 72, -7, 40, 67)
+		Kit.icon(b, "Skill", (item.w - 84) / 2, -12, 84, 84)
 		caption(b).ZIndex = 3
 		Kit.icon(b, "Robux", item.w - 54, 44, 22, 22)
 		Kit.text(b, "Price", tostring(Config.Products[offer[2]].price), item.w - 30, 44, 30, 23, 18, C(142, 255, 51))

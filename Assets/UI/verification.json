@@ -414,5 +414,19 @@
     ],
     "edgePixels": 0,
     "blackFraction": 0.343
+  },
+  {
+    "key": "update-log",
+    "width": 1254,
+    "height": 1254,
+    "bounds": [
+      154,
+      79,
+      1109,
+      1193
+    ],
+    "edgePixels": 0,
+    "blackFraction": 0.19,
+    "transparentPixels": 780719
   }
 ]

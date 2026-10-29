@@ -105,10 +105,10 @@ function Kit.icon(parent: Instance, kind: string, x: number, y: number, w: numbe
 	return box
 end
 
-function Kit.burst(parent: GuiObject): ImageLabel
+function Kit.burst(parent: GuiObject, asset: string?): ImageLabel
 	local image = Instance.new("ImageLabel")
 	image.Name = "RewardBurst"
-	image.Image = Assets.Burst
+	image.Image = asset or Assets.Burst
 	image.BackgroundTransparency = 1
 	image.Size = UDim2.fromScale(1, 1)
 	image.ImageTransparency = 0.55

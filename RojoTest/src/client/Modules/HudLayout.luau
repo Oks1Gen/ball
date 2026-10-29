@@ -5,7 +5,6 @@
 -- buttons at the bottom of the screen, because a scaled board would shrink the
 -- captions below the readable size on a phone.
 local HudLayout = {}
-local Spacing = require(game.ReplicatedStorage.Shared.UiSpacing)
 local MotionConfig = require(game.ReplicatedStorage.Shared.UiMotionConfig)
 local Kit = require(script.Parent.Parent.Controllers.HudKit)
 
@@ -99,11 +98,13 @@ end
 
 -- Landscape: the board as it was authored, one pixel per layout unit.
 function HudLayout.landscape(): Spec
-	local offerWidth, offerGap = Spacing.row(592, 3, 53)
+	-- Keep full simultaneous hover/overshoot clearance without the window-grid padding.
+	local offerGap = math.ceil(592 / 3 * (MotionConfig.Button.MaximumScale - 1)) + 6
+	local offerWidth = math.floor((592 - offerGap * 2) / 3)
 	local elements: { [string]: Entry } = {
 		HUD = entry(0, 0, BOARD_WIDTH, BOARD_HEIGHT),
 		AutoThrow = entry(540, 3, 200, 52),
-		StarterPack = entry(1038.4, 155, 119, 83),
+		StarterPack = entry(1038.4, 133, 119, 83),
 		DoubleSkill = entry(1030, 303, 125, 53),
 		DoubleWins = entry(1030, 401, 125, 53),
 		Throw = entry(577, 406, 126, 51),
@@ -528,24 +529,12 @@ function HudLayout.apply(spec: Spec, roots: { Instance })
 							part.Size = UDim2.fromOffset(partName == "Amount" and 50 or 26, 30)
 						end
 					end
-					if path ~= "AutoThrow" then
-						local icon = visual:FindFirstChild(path == "DoubleSkill" and "SkillIcon" or "WinsIcon")
-						if icon and icon:IsA("GuiObject") then
-							icon.Position = UDim2.fromOffset((item.w - 39) / 2, -6)
-							icon.Size = UDim2.fromOffset(39, 26)
-						end
-					end
 				end
 				if path == "StarterPack" then
 					for _, child in Kit.visualOf(target):GetChildren() do
-						if child:IsA("GuiObject") and child.Name:match("Icon$") then
-							child.Position = UDim2.fromOffset(child.Position.X.Offset, 0)
-							child.Size = UDim2.fromOffset(child.Size.X.Offset, 42)
-						elseif child:IsA("TextLabel") and child.Name == "Caption2" then
-							child.Position = UDim2.fromOffset(0, item.h - 64)
-							child.Size = UDim2.fromOffset(item.w, 64)
-							child.TextWrapped = true
-							child.TextSize = 28
+						if child:IsA("TextLabel") and child.Name == "Caption2" then
+							child.TextScaled = true
+							child.TextWrapped = false
 						end
 					end
 				end

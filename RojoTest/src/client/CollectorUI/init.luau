@@ -289,13 +289,10 @@ function UI.mount(context)
 			local phone = game:GetService("UserInputService").TouchEnabled and area.Y < 520
 			local size = if phone
 				then math.clamp(math.floor(area.Y * 0.1), 44, 88)
-				else math.clamp(math.floor(area.Y * 0.132), 52, 144)
+				else math.clamp(math.floor(area.Y * 0.095), 52, 104)
 			-- Reserve room for both neighbours at full hover during a fast cursor move.
 			local gap = phone and area.Y < 300 and 4
-				or math.max(
-					MotionConfig.Navigation.MinimumGap,
-					math.ceil(size * (MotionConfig.Button.MaximumScale - 1)) + MotionConfig.Navigation.HoverClearance
-				)
+				or math.max(8, math.ceil(size * (MotionConfig.Button.MaximumScale - 1)) + 6)
 			local width = size * 2 + gap
 			local banner = math.max(phone and 44 or 36, math.floor(size * 0.62))
 			local captionHeight = math.max(22, math.floor(size * 0.3))
@@ -312,7 +309,7 @@ function UI.mount(context)
 					Size = UDim2.fromOffset(bw, bh),
 					Color = shop and T.Colors.Gold or Color3.fromRGB(77, 80, 76),
 					Studs = shop,
-					Transparency = 0.3,
+					Transparency = shop and 0 or 0.3,
 					NoShadow = true,
 					OnActivated = function()
 						open(item[1])
@@ -337,8 +334,11 @@ function UI.mount(context)
 						}) or nil,
 						Art = e(U.Icon, {
 							Kind = item[2],
-							Position = UDim2.fromOffset(shop and 2 or 3, shop and -3 or 1),
-							Size = UDim2.fromOffset(shop and banner + 8 or size - 6, shop and banner + 6 or size - 16),
+							Position = UDim2.fromOffset(shop and -2 or -size * 0.04, shop and -5 or -size * 0.1),
+							Size = UDim2.fromOffset(
+								shop and banner + 12 or size * 1.08,
+								shop and banner + 12 or size * 1.08
+							),
 							ZIndex = 30,
 						}),
 						Caption = e(U.Label, {
@@ -357,7 +357,7 @@ function UI.mount(context)
 			end
 			local totalH = banner + 3 * (size + gap)
 			local navY = phone and (area.Y < 300 and 0 or 8)
-				or math.min(math.floor(area.Y * 0.36), math.max(62, area.Y * 0.76 - totalH))
+				or math.max(0, math.floor((area.Y - totalH) / 2 - area.Y * 0.1))
 			children.Navigation = e(Navigation, {
 				Hidden = handle.Hidden or handle.ModalOpen,
 				Reduced = reduced,

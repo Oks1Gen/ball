@@ -110,7 +110,8 @@ function Panels.daily(modal: Frame, context: any): () -> ()
 			end
 		end
 		local badge = Kit.brick(button, "DayBadge", 14, -22, w - 28, 50, C(255, 180, 20), 8)
-		badge.ZIndex = 3
+		-- Keep the opaque badge above the body shade, then shade its own silhouette.
+		badge.ZIndex = 8
 		label(badge, "DayLabel", "DAY " .. day, 0, 0, w - 28, 50, 30)
 		local burst = Kit.burst(face)
 		burst.Position = UDim2.fromOffset(6, if final then 70 else 30)
@@ -140,9 +141,20 @@ function Panels.daily(modal: Frame, context: any): () -> ()
 		shade.BackgroundTransparency = 0.48
 		shade.ZIndex = 7
 		Kit.corner(shade, 7)
+		local badgeShade = Kit.frame(badge, "ClaimedShade", 0, 0, w - 28, 50, C(10, 13, 22))
+		badgeShade.BackgroundTransparency = shade.BackgroundTransparency
+		badgeShade.ZIndex = 7
+		Kit.corner(badgeShade, 8)
 		local check = Kit.icon(button, "Check", (w - 130) / 2, (h - 130) / 2, 130, 130)
-		check.ZIndex = 8
-		table.insert(cards, { button = button, shade = shade, check = check, pulse = pulse, available = false })
+		check.ZIndex = 9
+		table.insert(cards, {
+			button = button,
+			shade = shade,
+			badgeShade = badgeShade,
+			check = check,
+			pulse = pulse,
+			available = false,
+		})
 	end
 	local hint = label(modal, "DailyHint", "CLAIM YOUR REWARD", 20, 493, 780, 43, 32, C(123, 255, 32))
 	local connection = RunService.RenderStepped:Connect(function()
@@ -171,6 +183,7 @@ function Panels.daily(modal: Frame, context: any): () -> ()
 			card.button.Active = not claimed
 			card.button.Interactable = not claimed
 			card.shade.Visible = claimed
+			card.badgeShade.Visible = claimed
 			card.check.Visible = claimed
 		end
 		hint.Text = if sentAt > 0

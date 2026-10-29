@@ -15,15 +15,13 @@ local Kit = require(script.Parent.Controllers.HudKit)
 local Style = require(script.Parent.UiStyle)
 local GuiInsets = require(script.Parent.Modules.GuiInsets)
 local Net = require(game.ReplicatedStorage.Shared.Net)
-local Presentation = require(script.Parent.Modules.UiPresentation)
 
 local Panel = {}
 local C = Color3.fromRGB
 local white = C(255, 255, 255)
 local TIMEOUT = 10
--- The window, the launcher and the test indicator are siblings of the
--- ScreenGui. Their layer is fixed by ZIndex, not by the order they were
--- created in: the window is always above the launcher.
+-- The launcher lives in BallTopbar; this GUI owns the authorized window
+-- and the test-mode indicator. F2 continues to open the same window.
 local LAYER_WINDOW = 20
 
 -- The light of a brick: the gradient multiplies the fill of the plate, so the
@@ -92,18 +90,16 @@ export type Context = {
 
 function Panel.mount(context: Context)
 	local authorized, testing, busy = false, false, false
-	local launcherHidden = false
+	local indicatorHidden = false
 	local window: any = nil
 	local windowGroup: any = nil
 	local windowAnimation: any = nil
 	local windowClosing = false
-	local launcherGroup: Frame? = nil
-	local launcherAnimation: any = nil
+	local indicatorAnimation: any = nil
 	local statusLabel: any = nil
 	local summary: any = nil
 	local modeButton: any = nil
 	local body: any = nil
-	local launcher: any = nil
 	local indicator: any = nil
 	local status: any = {}
 	local rows: any = nil
@@ -166,13 +162,6 @@ function Panel.mount(context: Context)
 		if windowGroup then
 			windowGroup:Destroy()
 			windowGroup = nil
-		end
-		if launcher then
-			launcher.Visible = authorized
-			local shadow = launcherGroup and launcherGroup:FindFirstChild("AdminLauncherShadow")
-			if shadow and shadow:IsA("GuiObject") then
-				shadow.Visible = authorized
-			end
 		end
 	end
 
@@ -802,9 +791,12 @@ function Panel.mount(context: Context)
 			connection:Disconnect()
 		end
 		table.clear(connections)
+		if indicatorAnimation then
+			indicatorAnimation.destroy()
+			indicatorAnimation = nil
+		end
 		window = nil
 		windowGroup = nil
-		launcher = nil
 		indicator = nil
 		probe = nil
 		statusLabel = nil
@@ -833,8 +825,7 @@ function Panel.mount(context: Context)
 		created.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 		created.Parent = Players.LocalPlayer.PlayerGui
 		gui = created
-		-- The probe reports the rectangle the engine granted, so the launcher
-		-- can stand in the part of the screen that the HUD does not use.
+		-- Keep the test-mode indicator inside the granted gameplay area.
 		local area = Instance.new("Frame")
 		area.Name = "SafeArea"
 		area.Size = UDim2.fromScale(1, 1)
@@ -846,94 +837,18 @@ function Panel.mount(context: Context)
 		top.Size = UDim2.fromScale(1, 1)
 		top.BackgroundTransparency = 1
 		top.Parent = area
-		launcherGroup = top
-		launcherAnimation = Motion.slide(top, "Top")
-		launcherAnimation.setHidden(launcherHidden, true)
-		launcher = brickButton(
-			top,
-			"AdminLauncher",
-			"ADMIN · F2",
-			16,
-			112,
-			150,
-			38,
-			Style.Colors.Purple,
-			19,
-			function()
-				open()
-			end
-		)
-		launcher.Visible = false
-		Kit.hide(top, "AdminLauncherShadow")
-		-- The shadow of the launcher is the ink of the style.
-		local launcherShadow = top:FindFirstChild("AdminLauncherShadow")
-		if launcherShadow and launcherShadow:IsA("GuiObject") then
-			Kit.visualOf(launcherShadow).BackgroundColor3 = Style.Ink
-			Kit.visualOf(launcherShadow).BackgroundTransparency = 0.28
-		end
-		-- The HUD owns the top of the screen in portrait: the launcher stands
-		-- in the middle of the left edge, where nothing else is drawn.
-		local function placeLauncher()
-			if not launcher then
-				return
-			end
-			local viewport = workspace.CurrentCamera.ViewportSize
-			local granted = GuiInsets.area(viewport, area)
-			if granted.size.Y > granted.size.X then
-				launcher.AnchorPoint = Vector2.new(0, 0.5)
-				launcher.Position = UDim2.fromOffset(16, granted.offset.Y + granted.size.Y / 2)
-			else
-				launcher.AnchorPoint = Vector2.new(0, 0)
-				local phone = Input.TouchEnabled and granted.size.Y < 520
-				launcher.Position = UDim2.fromOffset(
-					phone and 180 or 16,
-					granted.offset.Y + (if phone then MotionConfig.Navigation.PhoneAdminY else 8)
-				)
-				launcher.Size = UDim2.fromOffset(phone and 110 or 150, phone and 44 or 38)
-				local caption = Kit.captionOf(launcher)
-				if caption then
-					caption.Text = Presentation.keyboard() and "ADMIN · F2" or "ADMIN"
-					caption.Size = UDim2.new(1, -8, 1, -4)
-					local limit = caption:FindFirstChildOfClass("UITextSizeConstraint")
-					if limit then
-						limit.MaxTextSize = phone and 14 or 19
-					end
-				end
-			end
-			-- The shadow of a button is a separate frame: it has to follow the
-			-- button, or it stays behind as a dark plate.
-			local shadow = top:FindFirstChild("AdminLauncherShadow")
-			if shadow and shadow:IsA("GuiObject") then
-				shadow.Size = launcher.Size
-				local anchor = launcher.AnchorPoint
-				local size = launcher.Size
-				shadow.Position = UDim2.new(
-					launcher.Position.X.Scale,
-					launcher.Position.X.Offset - anchor.X * size.X.Offset,
-					launcher.Position.Y.Scale,
-					launcher.Position.Y.Offset - anchor.Y * size.Y.Offset + 4
-				)
-			end
-			if indicator then
-				-- The badge stands in the free left margin: the title of an
-				-- open window floats over the middle of the upper edge and
-				-- must not be covered.
-				indicator.Position = UDim2.fromOffset(16, granted.offset.Y + 6)
-			end
-		end
-		placeLauncher()
-		table.insert(connections, Input:GetPropertyChangedSignal("PreferredInput"):Connect(placeLauncher))
-		table.insert(
-			connections,
-			area:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
-				placeLauncher()
-			end)
-		)
-		indicator = Kit.text(top, "TestIndicator", "● ТЕСТ", 0, 6, 130, 30, 19, Style.Gold)
-		indicator.AnchorPoint = Vector2.new(0, 0)
+		indicatorAnimation = Motion.slide(top, "Top")
+		indicatorAnimation.setHidden(indicatorHidden, true)
+		indicator = Kit.text(top, "TestIndicator", "● ТЕСТ", 16, 6, 130, 30, 19, Style.Gold)
 		indicator.TextXAlignment = Enum.TextXAlignment.Left
 		indicator.Visible = false
-		placeLauncher()
+		local function placeIndicator()
+			local granted = GuiInsets.area(workspace.CurrentCamera.ViewportSize, area)
+			indicator.Position = UDim2.fromOffset(16, granted.offset.Y + 6)
+		end
+		placeIndicator()
+		table.insert(connections, area:GetPropertyChangedSignal("AbsoluteSize"):Connect(placeIndicator))
+
 		table.insert(
 			connections,
 			LogService.MessageOut:Connect(function(message: string, kind: Enum.MessageType)
@@ -980,13 +895,6 @@ function Panel.mount(context: Context)
 		if not gui then
 			return
 		end
-		if launcher then
-			launcher.Visible = authorized
-		end
-		local shadow = launcherGroup and launcherGroup:FindFirstChild("AdminLauncherShadow")
-		if shadow and shadow:IsA("GuiObject") then
-			shadow.Visible = launcher and launcher.Visible or false
-		end
 		if gui then
 			gui:SetAttribute("ReducedMotion", info.data and info.data.settings.effects == false)
 		end
@@ -1006,20 +914,13 @@ function Panel.mount(context: Context)
 		close = close,
 		open = open,
 		update = update,
-		setLauncherHidden = function(value: boolean)
-			if launcherHidden == value then
+		setIndicatorHidden = function(value: boolean)
+			if indicatorHidden == value then
 				return
 			end
-			launcherHidden = value
-			if launcherAnimation then
-				launcherAnimation.setHidden(value)
-			end
-			if launcher then
-				launcher.Visible = authorized
-			end
-			local shadow = launcherGroup and launcherGroup:FindFirstChild("AdminLauncherShadow")
-			if shadow and shadow:IsA("GuiObject") then
-				shadow.Visible = launcher and launcher.Visible or false
+			indicatorHidden = value
+			if indicatorAnimation then
+				indicatorAnimation.setHidden(value)
 			end
 		end,
 		destroy = unmount,

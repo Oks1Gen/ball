@@ -5,6 +5,7 @@ local GuiService = game:GetService("GuiService")
 local Motion = require(game.ReplicatedStorage.Shared.UiMotion)
 local GuiInsets = require(script.Parent.Parent.Modules.GuiInsets)
 local Icons = require(script.Parent.Parent.Icons)
+local Style = require(script.Parent.Parent.UiStyle)
 
 local Controls = {}
 local SIZE, GAP = 44, 12
@@ -34,7 +35,11 @@ function Controls.mount(player: Player, openPanel: (string) -> ())
 	local slide = Motion.slide(row, "Top")
 	local connections: { RBXScriptConnection } = {}
 	local cleanups: { () -> () } = {}
-	for index, name in { "Settings", "Daily" } do
+	local buttons: { TextButton } = {}
+	local names = { "Settings", "UpdateLog", "Dev", "Daily" }
+	local captions =
+		{ Settings = "Settings", UpdateLog = "Update Log", Dev = "Developer tools", Daily = "Daily Rewards" }
+	for index, name in names do
 		local button = Instance.new("TextButton")
 		button.Name = name
 		button.Text = ""
@@ -43,8 +48,10 @@ function Controls.mount(player: Player, openPanel: (string) -> ())
 		button.Size = UDim2.fromOffset(SIZE, SIZE)
 		button.Position = UDim2.fromOffset((index - 1) * (SIZE + GAP), 0)
 		button.SelectionOrder = index
-		button:SetAttribute("AccessibleName", if name == "Daily" then "Daily Rewards" else "Settings")
+		button:SetAttribute("AccessibleName", captions[name])
+		button.Visible = name ~= "Dev"
 		button.Parent = row
+		table.insert(buttons, button)
 		local visual = Instance.new("Frame")
 		visual.Name = "ButtonVisual"
 		visual.Size = UDim2.fromScale(1, 1)
@@ -56,8 +63,20 @@ function Controls.mount(player: Player, openPanel: (string) -> ())
 		local corner = Instance.new("UICorner")
 		corner.CornerRadius = UDim.new(1, 0)
 		corner.Parent = visual
-		local icon = Icons.draw(visual, name, nil)
-		icon.Size = UDim2.fromScale(0.6, 0.6)
+		if name == "Dev" then
+			local caption = Instance.new("TextLabel")
+			caption.Name = "Caption"
+			caption.BackgroundTransparency = 1
+			caption.Size = UDim2.fromScale(1, 1)
+			caption.Font = Enum.Font.GothamBlack
+			caption.Text = "DEV"
+			caption.TextSize = 13
+			caption.TextColor3 = Style.Text
+			caption.Parent = visual
+		else
+			local icon = Icons.draw(visual, name, nil)
+			icon.Size = UDim2.fromScale(0.6, 0.6)
+		end
 		table.insert(cleanups, Motion.button(button, visual))
 		table.insert(
 			connections,
@@ -70,13 +89,21 @@ function Controls.mount(player: Player, openPanel: (string) -> ())
 	end
 
 	local function layout()
+		local count = 0
+		for _, button in buttons do
+			if button.Visible then
+				button.Position = UDim2.fromOffset(count * (SIZE + GAP), 0)
+				count += 1
+			end
+		end
+		local width = count * SIZE + math.max(0, count - 1) * GAP
 		local inset = GuiService:GetInsetArea(Enum.ScreenInsets.TopbarSafeInsets)
 		local origin = root.AbsolutePosition
 		-- Native 44px controls have a 2px bottom margin in the topbar region.
 		-- Keep the same baseline as those controls, rather than the HUD canvas.
 		anchor.Position = UDim2.fromOffset(inset.Min.X - origin.X + GAP, inset.Max.Y - origin.Y - SIZE - 2)
-		anchor.Size = UDim2.fromOffset(SIZE * 2 + GAP, SIZE)
-		anchor.Visible = inset.Height >= SIZE and inset.Width >= SIZE * 2 + GAP * 2
+		anchor.Size = UDim2.fromOffset(width, SIZE)
+		anchor.Visible = inset.Height >= SIZE and inset.Width >= width + GAP
 		slide.refresh()
 	end
 	local function presentation()
@@ -93,6 +120,13 @@ function Controls.mount(player: Player, openPanel: (string) -> ())
 	layout()
 	presentation()
 	return {
+		setAdmin = function(authorized: boolean)
+			local dev = buttons[3]
+			if dev.Visible ~= authorized then
+				dev.Visible = authorized
+				layout()
+			end
+		end,
 		setHidden = function(value: boolean, reduced: boolean?)
 			gui:SetAttribute("ReducedMotion", reduced == true)
 			slide.setHidden(value, reduced)
