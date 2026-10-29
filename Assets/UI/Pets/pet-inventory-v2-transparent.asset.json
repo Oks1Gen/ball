@@ -1,0 +1,15 @@
+{
+  "image": "pet-inventory-v2-transparent.png",
+  "imageId": 86854425517241,
+  "sourceSize": [
+    1254,
+    1254
+  ],
+  "robloxSize": [
+    1024,
+    1024
+  ],
+  "alpha": true,
+  "text": "English live labels from GameConfig, no baked text",
+  "regions": "PetCardArt.luau; individual silhouette bounds, not uniform grid"
+}

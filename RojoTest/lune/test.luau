@@ -1,5 +1,6 @@
 --!strict
 local suites = {
+	require("../tests/Tutorial.spec"),
 	require("../tests/PerfectKick.spec"),
 	require("../tests/TrainingBoost.spec"),
 	require("../tests/ReturnRewards.spec"),

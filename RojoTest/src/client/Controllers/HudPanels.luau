@@ -411,6 +411,22 @@ function Panels.mount(context: Context): Handle
 				end
 			end
 		end
+		local replay = Kit.button(
+			list,
+			"ReplayTutorial",
+			"REPLAY TUTORIAL",
+			7,
+			0,
+			width - 29,
+			48,
+			C(22, 160, 248),
+			22,
+			function()
+				context.send("TutorialRestart")
+				context.closePanel()
+			end
+		)
+		replay.LayoutOrder = 5
 		refresh = function()
 			local snapshot = context.snapshot()
 			if snapshot then

@@ -454,6 +454,8 @@ function Controller:Start()
 		end,
 	})
 	local trainingBoost = TrainingBoost.mount({
+		skillLabel = hudRefs.skillText,
+		playSound = effects.playSound,
 		folder = effectsFolder,
 		snapshot = function()
 			return latest
@@ -521,6 +523,23 @@ function Controller:Start()
 		hatch = function(id: string, count: number)
 			collectorUI:request("Hatch", id, count)
 		end,
+	})
+
+	local tutorial = require(clientRoot.Controllers.Tutorial).mount({
+		snapshot = function()
+			return latest
+		end,
+		panel = function()
+			return currentPanel
+		end,
+		flying = function()
+			return flight ~= nil
+		end,
+		timing = function()
+			return kickTiming.active()
+		end,
+		throwButton = hudRefs.throwButton,
+		autoButton = hudRefs.auto,
 	})
 
 	local function beginThrow(info: any)
@@ -591,7 +610,7 @@ function Controller:Start()
 		elseif kind == "ShotBounce" then
 			effects.floatingGain(info.gain)
 		elseif kind == "Train" then
-			effects.floatingGain(info.gain, info.boosted)
+			effects.floatingGain(info.gain, info.boosted, info.multiplier)
 			balls.setPractice(latest and latest.data.stone or "Pebble")
 		elseif kind == "TrainingBoost" then
 			trainingBoost.confirmed(info)
@@ -818,6 +837,7 @@ function Controller:Start()
 			end
 		end
 		levelUp.frame(dt)
+		tutorial.frame(now)
 	end)
 
 	player.CharacterAdded:Connect(function()
@@ -834,6 +854,7 @@ function Controller:Start()
 	end)
 
 	clientRoot.Destroying:Connect(function()
+		tutorial.destroy()
 		kickTiming.destroy()
 		viewportConnection:Disconnect()
 		input.destroy()

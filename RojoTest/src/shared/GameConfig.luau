@@ -27,15 +27,15 @@ function Config.rebirthProgress(skill, rebirths)
 	return Economy.rebirthProgress(skill, rebirths)
 end
 -- The apron is a live scene anchor; map movement must also move gameplay coordinates.
-function Config.arenaFrame(arena)
+function Config.arenaFrame(arena: any): CFrame
 	return arena.Lobby.ThrowingApron.CFrame * CFrame.new(115, -0.3, -13)
 end
-function Config.apronCharacterPose(arena, root, humanoid, localZ)
+function Config.apronCharacterPose(arena: any, root: BasePart, humanoid: Humanoid, localZ: number): CFrame
 	local apron = arena.Lobby.ThrowingApron
 	local height = root.Size.Y / 2 + (humanoid.RigType == Enum.HumanoidRigType.R6 and 2 or humanoid.HipHeight)
 	return apron.CFrame * CFrame.new(-1, apron.Size.Y / 2 + height + 0.15, localZ)
 end
-function Config.trainingSurface(lane)
+function Config.trainingSurface(lane: any): number
 	local strip = lane.TrainingStrip
 	return strip.Position.Y + strip.Size.Y / 2 + (lane:FindFirstChild("ImportedField") and 0.08 or 0)
 end
@@ -66,7 +66,7 @@ function Config.shotDistance(skill, power, world, arena)
 	local limit = Config.shotLimit(world, arena)
 	return Economy.shotDistance(ratio, limit)
 end
-function Config.shotDuration(distance, world, intensity)
+function Config.shotDuration(distance: number, world: number?, intensity: number?): number
 	local duration = math.clamp(3.2 + distance / 850, 3.2, world == 2 and 10 or 14)
 	return duration / (1 + 0.8 * math.clamp(intensity or 0, 0, 1))
 end
@@ -306,10 +306,10 @@ Config.RainbowPets = {
 }
 -- Descriptor pools without colour or visuals: the egg roll stays engine free.
 local PetPools: { [string]: { Economy.PetDescriptor } } = {
-	Common = Economy.petDescriptors(Config.Pets),
-	Uncommon = Economy.petDescriptors(Config.UncommonPets),
-	Rare = Economy.petDescriptors(Config.RarePets),
-	Rainbow = Economy.petDescriptors(Config.RainbowPets),
+	Common = Economy.petDescriptors(Config.Pets :: any),
+	Uncommon = Economy.petDescriptors(Config.UncommonPets :: any),
+	Rare = Economy.petDescriptors(Config.RarePets :: any),
+	Rainbow = Economy.petDescriptors(Config.RainbowPets :: any),
 }
 function Config.eggPets(eggId)
 	if eggId == "Uncommon" then

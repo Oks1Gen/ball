@@ -2,7 +2,7 @@
 local Assets = require(script.Parent.UIAssets)
 local Icons = {}
 local C = Color3.fromRGB
-function Icons.draw(parent, kind, color)
+function Icons.draw(parent, kind, color: Color3?)
 	local key = kind
 	if kind == "Trails" then
 		if color == C(244, 247, 255) then

@@ -1,207 +1,228 @@
 --!strict
--- One local target follows the current net point. Only a server acknowledgement
--- turns on the boosted trail/impact; pressing the button alone never grants Skill.
+-- Screen-space targets use an independent shared offer clock, not goal projection.
 local Players = game:GetService("Players")
 local Input = game:GetService("UserInputService")
+local GuiService = game:GetService("GuiService")
 local Shared = game.ReplicatedStorage.Shared
-local Config = require(Shared.GameConfig)
-local Motion = require(Shared.TrainingMotion)
 local Area = require(Shared.TrainingArea)
 local Rules = require(Shared.Core.TrainingBoost)
-local Aura = require(script.Parent.TrainingBoostAura)
-local Feedback = require(script.Parent.TrainingBoostFeedback)
 local React = require(game.ReplicatedStorage.Packages.React)
 local ReactRoblox = require(game.ReplicatedStorage.Packages.ReactRoblox)
-local Ripple = require(game.ReplicatedStorage.Packages.Ripple)
+local Insets = require(script.Parent.Parent.Modules.GuiInsets)
+local Assets = require(script.Parent.Parent.UIAssets)
+local Feedback = require(script.Parent.TrainingBoostFeedback)
 local Style = require(script.Parent.Parent.UiStyle)
-local e = React.createElement
 local Boost = {}
-local PURPLE = Style.Colors.Eggs
-local LIGHT = Color3.fromRGB(231, 199, 255)
+local e = React.createElement
 
 function Boost.mount(context: any)
 	local player = Players.LocalPlayer
 	local gui = Instance.new("ScreenGui")
 	gui.Name = "TrainingBoost"
-	gui.IgnoreGuiInset = true
-	gui.ScreenInsets = Enum.ScreenInsets.None
+	Insets.prepare(gui)
 	gui.ResetOnSpawn = false
-	gui.DisplayOrder = 19
+	gui.DisplayOrder = 42
 	gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 	gui.Parent = player:WaitForChild("PlayerGui")
-	local root = ReactRoblox.createRoot(gui)
+	local safe = Instance.new("Frame")
+	safe.Name = "SafeArea"
+	safe.BackgroundTransparency = 1
+	safe.Size = UDim2.fromScale(1, 1)
+	safe.Parent = gui
+	local layer = Instance.new("Frame")
+	layer.Name = "BubbleLayer"
+	layer.Size = UDim2.fromScale(1, 1)
+	layer.BackgroundTransparency = 1
+	layer.Parent = safe
+	local root = ReactRoblox.createRoot(layer)
 	local shown, setShown = React.createBinding(false)
 	local position, setPosition = React.createBinding(UDim2.new())
-	local lastPosition = UDim2.new()
-	local locked, setLocked = React.createBinding(false)
-	local pending, setPending = React.createBinding(false)
-	local pulse, setPulse = React.createBinding(0)
-	local animation = Ripple.createMotion(0, { start = true })
-	local disconnect = animation:onChange(setPulse)
+	local fade, setFade = React.createBinding(1)
+	local remaining, setRemaining = React.createBinding(1)
+	local caption, setCaption = React.createBinding("×2")
+	local color, setColor = React.createBinding(Style.Colors.Eggs)
+	local diameter = if Input.TouchEnabled then 76 else 72
+	local alive = true
 	local current: any = nil
-	local submitted, accepted, visible, alive = false, false, false, true
-	local kickShown, goalShown = false, false
-	local phase = 0
-	local diameter = if Input.TouchEnabled then 60 else 52
-
-	local host = Instance.new("Part")
-	host.Name = "TrainingBoostTrail"
-	host.Anchored = true
-	host.CanCollide, host.CanTouch, host.CanQuery = false, false, false
-	host.CastShadow = false
-	host.Transparency = 1
-	host.Size = Vector3.one * 0.1
-	host.Parent = context.folder
-	local a, b = Instance.new("Attachment"), Instance.new("Attachment")
-	a.Position, b.Position = Vector3.new(0, 0.24, 0), Vector3.new(0, -0.24, 0)
-	a.Parent, b.Parent = host, host
-	local trail = Instance.new("Trail")
-	trail.Name = "PurpleBoostTrail"
-	trail.Attachment0, trail.Attachment1 = a, b
-	trail.Color = ColorSequence.new(LIGHT, PURPLE)
-	trail.Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0.1), NumberSequenceKeypoint.new(1, 1) })
-	trail.Lifetime = 0.22
-	trail.MinLength = 0.05
-	trail.FaceCamera = true
-	trail.LightEmission, trail.LightInfluence = 1, 0
-	trail.Enabled = false
-	trail.Parent = host
-
+	local acceptedCycle: number? = nil
+	local cacheSize = Vector2.zero
+	local lastPosition = Vector2.zero
+	local visible = false
 	local function effects(): boolean
-		local snapshot = context.snapshot()
-		return not snapshot or snapshot.data.settings.effects ~= false
+		local s = context.snapshot()
+		return (not s or s.data.settings.effects ~= false) and not context.blocked()
 	end
-	local aura = Aura.mount({ folder = context.folder, enabled = effects })
-	local feedback = Feedback.create(diameter, effects)
+	local feedback = Feedback.create({
+		parent = safe,
+		skillLabel = context.skillLabel,
+		playSound = context.playSound,
+		effects = effects,
+		blocked = context.blocked,
+	})
+	local function isVisible(node: Instance): boolean
+		local parent: Instance? = node
+		while parent and parent ~= player.PlayerGui do
+			if parent:IsA("GuiObject") and not parent.Visible then
+				return false
+			end
+			if parent:IsA("ScreenGui") and not parent.Enabled then
+				return false
+			end
+			parent = parent.Parent
+		end
+		return parent == player.PlayerGui
+	end
+	local function choose(seed: number, offer: number): Vector2?
+		local size = safe.AbsoluteSize
+		local radius = diameter + 16
+		local travel = if size.Y < 500 then 25 else 42
+		local excluded = {}
+		for _, screen in player.PlayerGui:GetChildren() do
+			if screen.Name == "SkippingHUD" or screen.Name == "CollectorUI" or screen.Name == "BallTopbar" then
+				for _, node in screen:GetDescendants() do
+					if
+						node:IsA("GuiObject")
+						and (node:IsA("GuiButton") or node.Name == "LevelBar" or node.Name == "Skill" or node.Name == "WinsCount" or node.Name == "LevelUpText")
+						and isVisible(node)
+					then
+						local p = node.AbsolutePosition - safe.AbsolutePosition
+						table.insert(excluded, { x = p.X, y = p.Y, w = node.AbsoluteSize.X, h = node.AbsoluteSize.Y })
+					end
+				end
+			end
+		end
+		local minX, maxX = radius + 18, size.X - radius - 18
+		local minY, maxY = radius + 18 + travel, size.Y - radius - 24 - travel
+		local function fits(x: number, y: number): boolean
+			if x < minX or x > maxX or y < minY or y > maxY then
+				return false
+			end
+			for _, rect in excluded do
+				local dx = math.max(rect.x - x, 0, x - rect.x - rect.w)
+				local dy = math.max(rect.y - y - travel, 0, y - travel - rect.y - rect.h)
+				if dx * dx + dy * dy < (diameter + 6) ^ 2 then
+					return false
+				end
+			end
+			return true
+		end
+		for attempt = 1, 180 do
+			local x = minX + Rules.sample(seed, offer, attempt * 2) * math.max(0, maxX - minX)
+			local y = minY + Rules.sample(seed, offer, attempt * 2 + 1) * math.max(0, maxY - minY)
+			if fits(x, y) then
+				return Vector2.new(math.round(x), math.round(y))
+			end
+		end
+		-- Narrow landscape gaps can be missed by random sampling. Test HUD edges too.
+		for _, rect in excluded do
+			for _, x in { rect.x - radius - 1, rect.x + rect.w + radius + 1 } do
+				for step = 0, 12 do
+					local y = minY + (maxY - minY) * step / 12
+					if fits(x, y) then
+						return Vector2.new(math.round(x), math.round(y))
+					end
+				end
+			end
+		end
+		return nil
+	end
 	local function hide()
-		if visible then
-			visible = false
-			setShown(false)
-		end
-		trail.Enabled = false
-		trail:Clear()
-	end
-	local function press()
-		if not alive or not visible or submitted or not current or context.blocked() then
-			return
-		end
-		local elapsed = workspace:GetServerTimeNow() - current.started
-		if
-			math.floor(elapsed / Config.TrainingCycle) ~= current.cycle
-			or elapsed % Config.TrainingCycle >= Config.KickContact
-			or not Rules.available(current.cycle, Config.TrainingCycle, Config.KickContact)
-		then
-			return
-		end
-		submitted = true
-		setPending(true)
-		-- The bubble pops immediately as input feedback. Skill, kick and goal
-		-- effects still require the server acknowledgement for this exact cycle.
 		visible = false
 		setShown(false)
-		feedback.play(lastPosition)
-		if current.shot then
-			aura.emit(current.shot.finish, "Pop")
+	end
+	local function press()
+		if not alive or not visible or not current or current.submitted or context.blocked() then
+			return
 		end
-		context.send("TrainingBoost", current.seed, current.cycle)
+		if not Rules.inWindow(current.started, current.offer, workspace:GetServerTimeNow(), 0) then
+			return
+		end
+		current.submitted = true
+		hide()
+		context.send("TrainingBoost", current.seed, current.offer)
 	end
 	local function round()
-		return e("UICorner", { CornerRadius = UDim.new(0.5, 0) })
+		return e("UICorner", { CornerRadius = UDim.new(1, 0) })
 	end
-	local target = e("TextButton", {
-		Name = "BoostTarget",
-		Text = "",
-		AutoButtonColor = false,
-		BackgroundTransparency = 1,
+	root:render(e("CanvasGroup", {
+		Name = "BoostBubble",
 		AnchorPoint = Vector2.new(0.5, 0.5),
 		Position = position,
-		Size = UDim2.fromOffset(diameter + 12, diameter + 12),
+		Size = UDim2.fromOffset((diameter + 16) * 2, (diameter + 20) * 2),
+		BackgroundTransparency = 1,
+		GroupTransparency = fade,
 		Visible = shown,
-		Selectable = true,
-		ZIndex = 1,
-		[React.Event.InputBegan] = function(_, input: InputObject)
-			if
-				input.UserInputType == Enum.UserInputType.MouseButton1
-				or input.UserInputType == Enum.UserInputType.Touch
-			then
-				press()
-			end
-		end,
-		[React.Event.Activated] = function()
-			press()
-		end,
 	}, {
-		Halo = e("Frame", {
-			AnchorPoint = Vector2.new(0.5, 0.5),
-			Position = UDim2.fromScale(0.5, 0.5),
-			Size = pulse:map(function(value: number)
-				return UDim2.fromOffset(diameter + 8 + math.round(value * 12), diameter + 8 + math.round(value * 12))
-			end),
+		Target = e("TextButton", {
+			Name = "BoostTarget",
+			Text = "",
+			AutoButtonColor = false,
 			BackgroundTransparency = 1,
-			ZIndex = 2,
+			Size = UDim2.fromOffset(diameter + 16, diameter + 16),
+			Selectable = true,
+			[React.Event.Activated] = press,
 		}, {
-			Round = round(),
-			Ring = e("UIStroke", {
-				Color = LIGHT,
-				Thickness = 1.5,
-				Transparency = pulse:map(function(value: number)
-					return 0.25 + value * 0.65
-				end),
-			}),
-		}),
-		Shadow = e("Frame", {
-			AnchorPoint = Vector2.new(0.5, 0.5),
-			Position = UDim2.new(0.5, 0, 0.5, 3),
-			Size = UDim2.fromOffset(diameter, diameter),
-			BackgroundColor3 = Style.Ink,
-			BackgroundTransparency = 0.15,
-			BorderSizePixel = 0,
-			ZIndex = 3,
-		}, { Round = round() }),
-		Core = e("Frame", {
-			AnchorPoint = Vector2.new(0.5, 0.5),
-			Position = UDim2.fromScale(0.5, 0.5),
-			Size = UDim2.fromOffset(diameter, diameter),
-			BackgroundColor3 = locked:map(function(value: boolean)
-				return if value then PURPLE:Lerp(LIGHT, 0.35) else PURPLE
-			end),
-			BackgroundTransparency = 0.12,
-			BorderSizePixel = 0,
-			ZIndex = 4,
-		}, {
-			Round = round(),
-			Border = e("UIStroke", { Color = Color3.fromRGB(62, 18, 104), Thickness = 2.5 }),
-			Shading = e("UIGradient", {
-				Rotation = 90,
-				Color = ColorSequence.new(Color3.new(1, 1, 1), Color3.fromRGB(118, 65, 175)),
-			}),
-			Inner = e("Frame", {
-				Position = UDim2.fromOffset(4, 4),
-				Size = UDim2.new(1, -8, 1, -8),
-				BackgroundTransparency = 1,
-				ZIndex = 5,
+			Scale = e("UIScale", { Scale = 2 }),
+			Shadow = e("Frame", {
+				Position = UDim2.fromOffset(8, 11),
+				Size = UDim2.fromOffset(diameter, diameter),
+				BackgroundColor3 = Style.Ink,
+				BorderSizePixel = 0,
+				ZIndex = 1,
+			}, { Round = round() }),
+			Core = e("Frame", {
+				Position = UDim2.fromOffset(8, 7),
+				Size = UDim2.fromOffset(diameter, diameter),
+				BackgroundColor3 = color,
+				BorderSizePixel = 0,
+				ZIndex = 2,
 			}, {
 				Round = round(),
-				Ring = e("UIStroke", { Color = LIGHT, Thickness = 1.5, Transparency = 0.1 }),
+				Border = e("UIStroke", { Color = Style.Ink, Thickness = 2.5 }),
+				Shade = e("UIGradient", {
+					Rotation = 90,
+					Color = ColorSequence.new(Color3.fromRGB(255, 255, 255), Color3.fromRGB(140, 115, 160)),
+				}),
+				Shine = e("Frame", {
+					Position = UDim2.fromOffset(14, 9),
+					Size = UDim2.fromOffset(22, 5),
+					BackgroundColor3 = Color3.new(1, 1, 1),
+					BackgroundTransparency = 0.2,
+					BorderSizePixel = 0,
+					ZIndex = 3,
+				}, { Round = round() }),
+				Lightning = e("ImageLabel", {
+					Image = Assets.Images.Skill,
+					Position = UDim2.new(0.5, -11, 0, 9),
+					Size = UDim2.fromOffset(22, 22),
+					BackgroundTransparency = 1,
+					ZIndex = 4,
+				}),
+				Label = e("TextLabel", {
+					Name = "Multiplier",
+					Text = caption,
+					Position = UDim2.fromOffset(0, 28),
+					Size = UDim2.new(1, 0, 0, 34),
+					Font = Enum.Font.GothamBlack,
+					TextSize = 26,
+					TextColor3 = Style.Text,
+					TextStrokeColor3 = Style.Ink,
+					TextStrokeTransparency = 0,
+					BackgroundTransparency = 1,
+					ZIndex = 4,
+				}),
 			}),
-			Label = e("TextLabel", {
-				Size = UDim2.fromScale(1, 1),
-				BackgroundTransparency = 1,
-				Text = "×2",
-				Font = Enum.Font.GothamBlack,
-				TextSize = 23,
-				TextColor3 = Style.Text,
-				TextTransparency = pending:map(function(value: boolean)
-					return if value then 0.35 else 0
+			Timer = e("Frame", {
+				Position = UDim2.fromOffset(13, diameter + 13),
+				Size = remaining:map(function(v: number)
+					return UDim2.fromOffset(math.max(1, math.round((diameter - 10) * v)), 3)
 				end),
-				TextStrokeColor3 = Color3.fromRGB(62, 18, 104),
-				TextStrokeTransparency = 0,
-				ZIndex = 6,
-			}),
+				BackgroundColor3 = Color3.fromRGB(238, 195, 255),
+				BorderSizePixel = 0,
+				ZIndex = 5,
+			}, { Round = round() }),
 		}),
-	})
-	root:render(e(React.Fragment, nil, { Target = target, Feedback = feedback.element }))
-
+	}))
 	return {
 		confirmed = function(info: any)
 			if
@@ -209,121 +230,87 @@ function Boost.mount(context: any)
 				or not current
 				or info.seed ~= current.seed
 				or info.started ~= current.started
-				or info.cycle ~= current.cycle
+				or info.offer ~= current.offer
+				or not current.submitted
 			then
 				return
 			end
-			accepted = true
-			setLocked(true)
-			setPending(false)
-			if effects() then
-				animation:setPosition(0)
-				animation:tween(1, { duration = 0.2 })
-			end
+			acceptedCycle = info.cycle
+			feedback.play(lastPosition, info.multiplier)
 		end,
-		frame = function(state: any, elapsed: number, ballPosition: Vector3): boolean
+		frame = function(state: any, elapsed: number, _ballPosition: Vector3): boolean
 			if not alive then
 				return false
 			end
-			if
-				not current
-				or state.started ~= current.started
-				or state.seed ~= current.seed
-				or state.cycle ~= current.cycle
-			then
-				current = state
-				submitted, accepted = false, false
-				kickShown, goalShown = false, false
-				setLocked(false)
-				setPending(false)
-				trail.Enabled = false
-				trail:Clear()
-				animation:setPosition(0)
-				if effects() then
-					animation:tween(1, { duration = Config.KickContact })
-				end
+			if current and (current.seed ~= state.seed or current.started ~= state.started) then
+				current = nil
+				acceptedCycle = nil
+				feedback.clear()
 			end
-			phase = elapsed % Config.TrainingCycle
-			local camera = workspace.CurrentCamera
-			local shot = state.shot
+			local index = Rules.index(elapsed)
 			local character = player.Character
-			local characterRoot = character and character:FindFirstChild("HumanoidRootPart") :: BasePart?
-			local strip = state.lane:FindFirstChild("TrainingStrip") :: BasePart?
+			local characterRoot = character and character:FindFirstChild("HumanoidRootPart")
+			local strip = state.lane:FindFirstChild("TrainingStrip")
 			if
-				not camera
-				or not shot
-				or context.blocked()
+				index < 0
 				or not characterRoot
+				or not characterRoot:IsA("BasePart")
 				or not strip
+				or not strip:IsA("BasePart")
 				or not Area.contains(strip, characterRoot.Position)
+				or context.blocked()
+				or GuiService.MenuIsOpen
 			then
 				hide()
-				aura.clear()
 				feedback.clear()
 				return false
 			end
-			local point, onScreen = camera:WorldToViewportPoint(shot.finish)
-			local edge = diameter / 2 + 10
-			local canShow = onScreen
-				and point.Z > 0
-				and point.X >= edge
-				and point.X <= camera.ViewportSize.X - edge
-				and point.Y >= edge + 36
-				and point.Y <= camera.ViewportSize.Y - edge
-				and Rules.available(state.cycle, Config.TrainingCycle, Config.KickContact)
-				and not submitted
-				and phase < Config.KickContact
-			if visible ~= canShow then
-				visible = canShow
-				setShown(canShow)
+			if not current or current.offer ~= index then
+				current = {
+					seed = state.seed,
+					started = state.started,
+					offer = index,
+					submitted = false,
+					goal = choose(state.seed, index),
+				}
+				local multiplier = Rules.multiplier(state.seed, index)
+				setCaption("×" .. tostring(multiplier))
+				setColor(if multiplier >= 4 then Color3.fromRGB(255, 212, 67) else Style.Colors.Eggs)
+				cacheSize = safe.AbsoluteSize
 			end
-			if visible then
-				lastPosition = UDim2.fromOffset(math.round(point.X), math.round(point.Y))
-				setPosition(lastPosition)
+			if cacheSize ~= safe.AbsoluteSize then
+				current.goal = choose(state.seed, index)
+				cacheSize = safe.AbsoluteSize
 			end
-			host.Position = ballPosition
-			if accepted and not kickShown and phase >= Config.KickContact then
-				kickShown = true
-				if phase - Config.KickContact < 0.2 then
-					aura.emit(ballPosition, "Kick")
-				end
+			local age = Rules.age(state.started, index, workspace:GetServerTimeNow())
+			if age < 0 or age > Rules.Lifetime or current.submitted or not current.goal then
+				hide()
+				return acceptedCycle == state.cycle
 			end
-			local contact = Config.KickContact + Motion.FlightTime
-			if accepted and not goalShown and phase >= contact then
-				goalShown = true
-				if phase - contact < 0.2 then
-					aura.emit(shot.finish, "Goal")
-				end
-			end
-			trail.Enabled = accepted
-				and effects()
-				and phase >= Config.KickContact
-				and phase < Config.KickContact + Motion.FlightTime
-			if not effects() then
-				trail:Clear()
-				aura.clear()
-			end
-			return accepted
+			local travel = if safe.AbsoluteSize.Y < 500 then 25 else 42
+			local direction = if Rules.sample(state.seed, index, 99) < 0.5 then -1 else 1
+			local progress = math.clamp(age / Rules.TravelTime, 0, 1)
+			local offset = if effects() then direction * travel * (1 - progress) ^ 3 else 0
+			lastPosition = current.goal + Vector2.new(0, math.round(offset))
+			setPosition(UDim2.fromOffset(lastPosition.X, lastPosition.Y))
+			setFade(if effects() then math.clamp(1 - age / 0.18, 0, 1) else 0)
+			setRemaining(math.clamp((Rules.Lifetime - age) / Rules.Lifetime, 0, 1))
+			visible = true
+			setShown(true)
+			return acceptedCycle == state.cycle
 		end,
 		clear = function()
 			current = nil
-			submitted, accepted = false, false
-			kickShown, goalShown = false, false
+			acceptedCycle = nil
 			hide()
-			aura.clear()
 			feedback.clear()
 		end,
 		destroy = function()
 			alive = false
-			disconnect()
-			animation:destroy()
-			aura.destroy()
 			feedback.destroy()
 			root:unmount()
 			gui:Destroy()
-			host:Destroy()
 		end,
 	}
 end
-
 return Boost

@@ -17,6 +17,7 @@ local AdminService = require(script.Parent.AdminService)
 local FlightStreaming = require(script.Parent.FlightStreaming)
 local Profiles = require(script.Parent.Services.ProfileService)
 local ProfileData = require(ReplicatedStorage.Shared.Core.ProfileData)
+local Tutorial = require(ReplicatedStorage.Shared.Core.Tutorial)
 local Snapshot = require(script.Parent.Gameplay.Snapshot)
 local Commands = require(script.Parent.Gameplay.Commands)
 local Receipts = require(script.Parent.Gameplay.Receipts)
@@ -123,6 +124,8 @@ function Game.start(map, world2)
 		s.trainingStarted = nil
 		s.trainingSeed = nil
 		s.trainingBoostCycle = nil
+		s.trainingBoostOffer = nil
+		s.trainingBoostMultiplier = nil
 		s.trainingLevelsGained = nil
 		s.nextTraining = nil
 		s.trainingHit = nil
@@ -167,6 +170,8 @@ function Game.start(map, world2)
 		s.trainingStarted = workspace:GetServerTimeNow()
 		s.trainingSeed = math.random(1, 2147483646)
 		s.trainingBoostCycle = nil
+		s.trainingBoostOffer = nil
+		s.trainingBoostMultiplier = nil
 		s.trainingLevelsGained = 0
 		s.trainingHit = 1
 		s.trainingCycle = 0
@@ -374,6 +379,7 @@ function Game.start(map, world2)
 			table.insert(hatched, pet)
 		end
 		equipBest(s)
+		Tutorial.hatched(d)
 		effect:FireClient(player, "Hatch", hatched)
 		publish(player)
 	end

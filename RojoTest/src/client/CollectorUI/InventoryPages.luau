@@ -6,6 +6,7 @@ local Spacing = require(game.ReplicatedStorage.Shared.UiSpacing)
 local U = require(script.Parent.Components)
 local T = require(script.Parent.Theme)
 local Art = require(script.Parent.Art)
+local PetCardArt = require(script.Parent.Parent.Modules.PetCardArt)
 local e = React.createElement
 local C = Color3.fromRGB
 local Pages = {}
@@ -148,6 +149,7 @@ function Pages.Balls(p: any): any
 	local equipped = p.Data.stone == selected.id
 	local has = p.Data.stones[selected.id] == true
 	local afford = p.Data.wins >= selected.cost
+	local tutorialContinue = p.Data.tutorialStage == 2 and selected.id ~= "Pebble" and equipped
 	local detail: any = {
 		Name = label(selected.name, 6, 6, detailW - 12, p.Phone and 30 or 46, p.Phone and 19 or 26),
 		Portrait = e(BallView, {
@@ -167,7 +169,7 @@ function Pages.Balls(p: any): any
 		),
 		Equip = button(
 			"EquipBall",
-			equipped and "Equipped" or has and "Equip" or "Buy",
+			tutorialContinue and "Continue" or equipped and "Equipped" or has and "Equip" or "Buy",
 			8,
 			panelH - 40,
 			detailW - 16,
@@ -176,14 +178,14 @@ function Pages.Balls(p: any): any
 				p.Request("Stone", selected.id)
 			end,
 			T.Colors.Green,
-			p.Busy or equipped or (not has and not afford)
+			p.Busy or (equipped and not tutorialContinue) or (not has and not afford)
 		),
 	}
 	-- All actions retain a 44 px touch target.
 	if p.Phone then
 		detail.Equip = button(
 			"EquipBall",
-			equipped and "Equipped" or has and "Equip" or "Buy",
+			tutorialContinue and "Continue" or equipped and "Equipped" or has and "Equip" or "Buy",
 			4,
 			panelH - 44,
 			detailW - 8,
@@ -192,7 +194,7 @@ function Pages.Balls(p: any): any
 				p.Request("Stone", selected.id)
 			end,
 			T.Colors.Green,
-			p.Busy or equipped or (not has and not afford)
+			p.Busy or (equipped and not tutorialContinue) or (not has and not afford)
 		)
 	end
 	return frame("BallsInventory", {
@@ -225,6 +227,57 @@ function Pages.Balls(p: any): any
 			}),
 		}),
 	}, w, h)
+end
+
+local function PetCardImage(p: any): any
+	local image = PetCardArt.image(p.Id)
+	local ref: any = React.useRef(nil)
+	React.useEffect(function()
+		if ref.current then
+			Art.bind(ref.current)
+		end
+	end, { p.Id })
+	if not image then
+		return e(U.PetView, p)
+	end
+	return e("Frame", {
+		Name = "PetIllustration",
+		BackgroundTransparency = 1,
+		Position = p.Position,
+		Size = p.Size,
+		ZIndex = 15,
+	}, {
+		Image = e("ImageLabel", {
+			ref = ref,
+			Name = "PetCardArt",
+			Image = image,
+			BackgroundTransparency = 1,
+			Position = UDim2.fromOffset(0, 14),
+			Size = UDim2.new(1, 0, 1, -30),
+			ScaleType = Enum.ScaleType.Fit,
+			ZIndex = 15,
+			Active = false,
+		}),
+		Rarity = e(U.Label, {
+			Text = p.Def.rarity,
+			Position = UDim2.fromOffset(0, 0),
+			Size = UDim2.new(1, 0, 0, 14),
+			TextSize = 14,
+			Scaled = true,
+			MinTextSize = 9,
+			Color = T.Rarity[p.Def.rarity],
+			ZIndex = 16,
+		}),
+		Name = e(U.Label, {
+			Text = p.Def.name,
+			Position = UDim2.new(0, 0, 1, -16),
+			Size = UDim2.new(1, 0, 0, 16),
+			TextSize = 14,
+			Scaled = true,
+			MinTextSize = 8,
+			ZIndex = 16,
+		}),
+	})
 end
 
 function Pages.Pets(p: any): any
@@ -302,7 +355,9 @@ function Pages.Pets(p: any): any
 	local detailH = h - header
 	local cols = p.Phone and (gridW >= 300 and 3 or 2) or 4
 	local cardW, gap = Spacing.row(gridW - 32, cols, 92)
-	local cardH = p.Phone and math.min(cardW, math.max(64, gridH - 32)) or cardW
+	local paddingY = p.Phone and 8 or 16
+	local cardH = if p.Phone then math.min(cardW + 28, math.max(72, gridH - paddingY * 2)) else cardW + 28
+	local artworkSize = math.min(cardW - 6, cardH - 30)
 	local visibleRows = math.ceil(gridH / (cardH + gap))
 	local cards: any = {}
 	for i, item in pets do
@@ -312,7 +367,7 @@ function Pages.Pets(p: any): any
 		local def = Config.pet(item.id)
 		cards[item.uid] = e(U.Tile, {
 			Name = "Pet_" .. item.uid,
-			Position = UDim2.fromOffset(16 + (i - 1) % cols * (cardW + gap), 16 + row * (cardH + gap)),
+			Position = UDim2.fromOffset(16 + (i - 1) % cols * (cardW + gap), paddingY + row * (cardH + gap)),
 			Size = UDim2.fromOffset(cardW, cardH),
 			Color = color:Lerp(T.Outline, 0.2),
 			BorderColor = color:Lerp(Color3.new(1, 1, 1), 0.5),
@@ -325,13 +380,14 @@ function Pages.Pets(p: any): any
 				setConfirm(false)
 			end,
 			Children = {
-				Preview = def and row >= firstRow - 1 and row <= firstRow + visibleRows and e(U.PetView, {
+				Preview = def and row >= firstRow - 1 and row <= firstRow + visibleRows and e(PetCardImage, {
+					Id = item.id,
 					Def = def,
 					Key = item.uid,
 					FitToView = true,
 					ReducedMotion = true,
-					Position = UDim2.fromOffset(3, 3),
-					Size = UDim2.fromOffset(cardW - 6, cardH - 18),
+					Position = UDim2.fromOffset((cardW - artworkSize) / 2, 3),
+					Size = UDim2.fromOffset(artworkSize, artworkSize),
 				}) or nil,
 				Power = power(item.boost, cardW, cardH - 29, p.Phone and 17 or 22),
 				Check = isEquipped and checkMark(cardW) or nil,
@@ -340,27 +396,29 @@ function Pages.Pets(p: any): any
 	end
 	local isEquipped = table.find(equipped, pet.uid) ~= nil
 	local full = not isEquipped and #equipped >= 3
-	local previewY = p.Phone and 28 or 48
+	local illustrated = PetCardArt.image(pet.id) ~= nil
+	local previewY = if illustrated then 4 else p.Phone and 28 or 48
 	local details: any = {
-		Rays = e("ImageLabel", {
-			Name = "SelectionRays",
-			Image = Art.Burst,
-			Size = UDim2.fromScale(1, 1),
-			BackgroundTransparency = 1,
-			ImageTransparency = 0.7,
-			ZIndex = 1,
-		}),
-		Name = label(pet.name, 6, 4, detailW - 12, p.Phone and 24 or 40, p.Phone and 18 or 26),
-		Preview = e(U.PetView, {
+
+		Name = not illustrated and label(pet.name, 6, 4, detailW - 12, p.Phone and 24 or 40, p.Phone and 18 or 26)
+			or nil,
+		Preview = e(PetCardImage, {
+			Id = pet.id,
 			Def = Config.pet(pet.id),
 			Key = pet.uid,
 			Position = UDim2.fromOffset(5, previewY),
-			Size = UDim2.fromOffset(detailW - 10, math.max(28, detailH - previewY - (p.Phone and 100 or 128))),
+			Size = UDim2.fromOffset(
+				detailW - 10,
+				math.max(
+					28,
+					detailH - previewY - (if illustrated then (p.Phone and 80 or 100) else (p.Phone and 100 or 128))
+				)
+			),
 			FitToView = true,
 			ReducedMotion = p.Reduced,
 			Animated = true,
 		}),
-		Rarity = label(
+		Rarity = not illustrated and label(
 			pet.rarity,
 			4,
 			detailH - (p.Phone and 98 or 124),
@@ -368,7 +426,7 @@ function Pages.Pets(p: any): any
 			p.Phone and 22 or 26,
 			p.Phone and 17 or 22,
 			T.Rarity[pet.rarity]
-		),
+		) or nil,
 		Power = power(pet.boost, detailW, detailH - (p.Phone and 75 or 92), p.Phone and 21 or 29),
 		Equip = button(
 			"EquipSelected",
@@ -403,7 +461,7 @@ function Pages.Pets(p: any): any
 			Scroll = e(U.Scroll, {
 				Name = "PetGrid",
 				Size = UDim2.fromScale(1, 1),
-				Height = 32 + math.ceil(#pets / cols) * (cardH + gap) - gap,
+				Height = paddingY * 2 + math.ceil(#pets / cols) * (cardH + gap) - gap,
 				BarColor = CYAN,
 				OnCanvasPosition = function(y: number)
 					setFirstRow(math.floor(y / (cardH + gap)))

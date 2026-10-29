@@ -1,9 +1,6 @@
--- Isolated server handler checks. No profile reads/writes or actual player rewards.
+-- Isolated real server-handler checks: no profile reads/writes or player rewards.
 local Shared = game.ReplicatedStorage.Shared
-local Config = require(Shared.GameConfig)
-local Motion = require(Shared.TrainingMotion)
 local Rules = require(Shared.Core.TrainingBoost)
-local Goal = require(Shared.TrainingGoal)
 local Handler = require(game.ServerScriptService.Server.Gameplay.TrainingBoost)
 local player = game.Players:GetPlayers()[1]
 assert(player, "Run in Play with one player")
@@ -18,68 +15,71 @@ for world = 1, 2 do
 	for index = 1, 7 do
 		local lane = zone and zone:FindFirstChild("TrainingLane" .. index)
 		local strip = lane and lane:FindFirstChild("TrainingStrip")
-		if not strip or not Goal.net(lane) then
+		if not strip then
 			continue
 		end
 		lanes += 1
 		local s = {
 			lane = index,
-			trainingStarted = workspace:GetServerTimeNow() - 0.1,
+			trainingStarted = workspace:GetServerTimeNow() - Rules.Delay - 1,
 			trainingSeed = 73123,
-			trainingCycle = 0,
-			trainingHit = 1,
+			trainingCycle = 7,
+			trainingHit = 2,
 			busyUntil = 0,
 			data = { world = world, rebirths = 16 },
 			lanes = { [world] = { [index] = { lane = lane, strip = strip } } },
 		}
 		local root, hum = { Position = strip.Position + Vector3.new(0, 3, 0) }, { Health = 100 }
-		local acknowledgements = 0
+		local acknowledgements, payload = 0, nil
 		local context = {
 			states = { [player] = s },
 			rootFor = function()
 				return root, hum
 			end,
 			effect = {
-				FireClient = function(_, recipient, kind, payload)
+				FireClient = function(_, recipient, kind, info)
 					check(recipient == player and kind == "TrainingBoost", "Ack belongs to owner")
-					check(payload.cycle == 0 and payload.seed == s.trainingSeed, "Ack identifies kick")
+					payload = info
 					acknowledgements += 1
 				end,
 			},
 		}
 		check(not Handler.claim(context, player, 73122, 0), "Old session rejected")
-		check(not Handler.claim(context, player, 73123, 1), "Future kick rejected")
-		check(Handler.claim(context, player, 73123, 0), "Current windup accepted")
-		check(not Handler.claim(context, player, 73123, 0), "Duplicate click rejected")
+		check(not Handler.claim(context, player, 73123, 1), "Future offer rejected")
+		check(Handler.claim(context, player, 73123, 0), "Screen offer accepted between contacts")
+		check(not Handler.claim(context, player, 73123, 0), "Duplicate rejected")
 		check(acknowledgements == 1, "Exactly one acknowledgement")
-		local base, boosted, remainder = 0, 0, 0
-		for _ = 1, Motion.hitCount(index) do
-			local gain
-			gain, remainder =
-				Motion.reward(Config.Lanes[index].multiplier * 7 * Config.TrainingCycle / 0.8, index, remainder)
-			base += gain
-			boosted += Rules.reward(gain, s.trainingBoostCycle, 0)
-		end
-		check(boosted == base * 2, "Complete kick pays exactly twice normal")
-		check(Rules.reward(17, s.trainingBoostCycle, 1) == 17, "Next kick has no bonus")
-		s.trainingBoostCycle = nil
-		s.trainingCycle = 1
-		s.trainingStarted = workspace:GetServerTimeNow() - Config.TrainingCycle - 0.1
-		check(not Handler.claim(context, player, 73123, 1), "Intervening kick has no target or bonus")
-		s.trainingCycle = 0
-		s.trainingStarted = workspace:GetServerTimeNow() - 0.8
-		check(not Handler.claim(context, player, 73123, 0), "Late click rejected")
-		s.trainingStarted = workspace:GetServerTimeNow() - 0.1
+		check(payload.cycle == 8 and payload.offer == 0 and payload.seed == s.trainingSeed, "Next unpaid kick reserved")
+		check(payload.multiplier == Rules.multiplier(s.trainingSeed, 0), "Server chooses multiplier")
+		check(Rules.reward(25, s.trainingBoostCycle, 7, s.trainingBoostMultiplier) == 25, "Part-paid kick unchanged")
+		check(
+			Rules.reward(25, s.trainingBoostCycle, 8, s.trainingBoostMultiplier) == math.floor(25 * payload.multiplier),
+			"Reserved kick multiplied"
+		)
+		check(Rules.reward(25, s.trainingBoostCycle, 9, s.trainingBoostMultiplier) == 25, "Following kick unchanged")
+		s.trainingBoostOffer = nil
+		s.trainingHit = 1
+		check(
+			Handler.claim(context, player, 73123, 0) and s.trainingBoostCycle == 7,
+			"Unpaid current kick can receive bonus"
+		)
+		s.trainingBoostOffer = nil
+		s.trainingStarted = workspace:GetServerTimeNow() - Rules.Delay - Rules.Lifetime - 0.3
+		check(not Handler.claim(context, player, 73123, 0), "Expired offer rejected")
+		s.trainingStarted = workspace:GetServerTimeNow() - Rules.Delay - 1
 		root.Position += Vector3.new(1000, 0, 0)
 		check(not Handler.claim(context, player, 73123, 0), "Leaving strip rejects click")
 		root.Position = strip.Position + Vector3.new(0, 3, 0)
 		hum.Health = 0
 		check(not Handler.claim(context, player, 73123, 0), "Death rejects click")
 		hum.Health = 100
+		s.busyUntil = os.clock() + 2
+		check(not Handler.claim(context, player, 73123, 0), "Busy player rejected")
+		s.busyUntil = 0
 		s.lane = nil
-		check(not Handler.claim(context, player, 73123, 0), "Stopped training rejects click")
+		check(not Handler.claim(context, player, 73123, 0), "Stopped training rejected")
 		task.wait()
 	end
 end
-check(lanes > 0, "At least one real goal tested")
+check(lanes > 0, "At least one lane tested")
 return { checks = checks, lanes = lanes }

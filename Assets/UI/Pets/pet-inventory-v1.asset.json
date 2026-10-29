@@ -1,0 +1,23 @@
+{
+  "image": "pet-inventory-v1.png",
+  "imageId": 123833931134956,
+  "source": "Built-in ImageGen preview approved by user in this chat",
+  "originalPath": "C:\\Users\\userr\\.codex\\generated_images\\01a18901-c08d-7f01-bbb4-f3c76d989509\\exec-c3da9f19-b9e3-49f5-bc1f-e4987694a7bd.png",
+  "sourceSize": [
+    1254,
+    1254
+  ],
+  "robloxSize": [
+    1024,
+    1024
+  ],
+  "layout": [
+    4,
+    4
+  ],
+  "cellSize": [
+    256,
+    256
+  ],
+  "usage": "Full approved cards including baked Russian names and rarity; live boost shown separately. PetCardArt maps ids to cells. Existing 3D previews remain for legacy pets."
+}

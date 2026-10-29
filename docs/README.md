@@ -1,5 +1,8 @@
 # Документация Ball
 
+- [direction-guide.md](direction-guide.md): отдельный переносимый модуль стрелок и его API.
+- [tutorial.md](tutorial.md): последовательное обучение в обычной игре, стрелки, покупки и сохранение этапов.
+
 - [architecture.md](architecture.md): стек, структура, запуск и синхронизация.
 - [ui-style.md](ui-style.md): единый стиль интерфейса — палитра, форма, типографика, окно и движение.
 - [persistence.md](persistence.md): ProfileStore, перенос прогресса, покупки и изоляция тестов.

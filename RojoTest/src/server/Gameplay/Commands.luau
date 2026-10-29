@@ -9,6 +9,8 @@ local Data = require(game.ReplicatedStorage.Shared.Core.ProfileData)
 local ReturnRewards = require(game.ReplicatedStorage.Shared.Core.ReturnRewards)
 local TrainingBoost = require(script.Parent.TrainingBoost)
 
+local Tutorial = require(game.ReplicatedStorage.Shared.Core.Tutorial)
+
 local Commands = {}
 
 export type Context = {
@@ -48,6 +50,9 @@ function Commands.install(context: Context)
 			context.publish(player, nil, true)
 		elseif command == "Throw" then
 			context.kickTiming.begin(player)
+		elseif command == "TutorialRestart" then
+			Tutorial.restart(s.data)
+			context.publish(player)
 		elseif command == "KickRelease" then
 			context.kickTiming.release(player, value, extra)
 		elseif command == "TrainingBoost" then
@@ -74,7 +79,10 @@ function Commands.install(context: Context)
 			if now < s.busyUntil then
 				context.publish(player, "Wait for your throw to finish")
 			else
-				local _, message = BallPurchases.buyOrEquip(s.data, value)
+				local success, message = BallPurchases.buyOrEquip(s.data, value)
+				if success then
+					Tutorial.ball(s.data, value)
+				end
 				context.publish(player, message)
 			end
 		elseif command == "Trail" and type(value) == "string" then
@@ -83,6 +91,7 @@ function Commands.install(context: Context)
 			context.hatch(player, value, extra)
 		elseif command == "EquipBest" then
 			context.equipBest(s)
+			Tutorial.equipped(s.data)
 			context.publish(player)
 		elseif command == "UnequipAll" then
 			s.data.equipped = {}
@@ -114,6 +123,9 @@ function Commands.install(context: Context)
 					return
 				end
 				s.inventoryVersion += 1
+				if command == "Pet" and table.find(s.data.equipped, value) then
+					Tutorial.equipped(s.data)
+				end
 				if command == "DeletePet" then
 					context.claimPending(player)
 				end

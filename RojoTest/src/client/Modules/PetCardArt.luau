@@ -1,0 +1,27 @@
+--!strict
+-- One complete independently generated PNG per pet. No atlas or crop regions.
+local Art = {}
+local images: { [string]: string } = {
+	ScarletMushroom = "rbxassetid://118541048196711",
+	Shark = "rbxassetid://120200439801791",
+	CloudBird = "rbxassetid://89338250082952",
+	AngelCat = "rbxassetid://96995369763986",
+	StrawberryCake = "rbxassetid://140368963386117",
+	Butterfly = "rbxassetid://80307587501283",
+	MoonCat = "rbxassetid://115924204400763",
+	Frog = "rbxassetid://88321909962907",
+	FlameCat = "rbxassetid://110547470385684",
+	IceCat = "rbxassetid://110033499959062",
+	Cactus = "rbxassetid://132144291249569",
+	AutumnCat = "rbxassetid://129160188188121",
+	Watermelon = "rbxassetid://140497142590882",
+	CrystalCat = "rbxassetid://101146087874246",
+	GalaxyCat = "rbxassetid://88964920339814",
+	GreenDragon = "rbxassetid://126449903487007",
+}
+
+function Art.image(id: string): string?
+	return images[id]
+end
+
+return Art

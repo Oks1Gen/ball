@@ -62,7 +62,7 @@ function Visuals.follower(id)
 	return Visuals.create(id, math.max(size.X, size.Y, size.Z) * Visuals.FollowerBodyWidth / 1.8)
 end
 
-function Visuals.preview(parent, id, x, y, width, height)
+function Visuals.preview(parent, id, x, y, width, height): ViewportFrame?
 	local model = Visuals.create(id, 2.8)
 	if not model then
 		return nil

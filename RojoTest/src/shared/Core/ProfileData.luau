@@ -23,6 +23,8 @@ function Data.fresh(): any
 		wins = 0,
 		rebirths = 0,
 		best = 0,
+		tutorialStage = 0,
+		tutorialSkill = 0,
 		stone = "Pebble",
 		stones = { Pebble = true },
 		trail = "None",
@@ -71,6 +73,8 @@ function Data.normalize(input: any, catalog: any): any
 		data[key] = bounded(input[key], 0, Data.MaxProgress)
 	end
 	data.dailyCount = bounded(input.dailyCount, if data.daily > 0 then 1 else 0, 7)
+	data.tutorialStage = bounded(input.tutorialStage, 0, 5)
+	data.tutorialSkill = bounded(input.tutorialSkill, 0, 30)
 	data.offlineRate = if Data.finite(input.offlineRate) then math.clamp(input.offlineRate, 0, Data.MaxProgress) else 0
 	data.stones = flags(input.stones)
 	data.trails = flags(input.trails)

@@ -11,6 +11,7 @@ local Zones = require(game.ReplicatedStorage.Shared.Core.ZoneProgression)
 local ShotZones = require(script.Parent.ShotZones)
 local Timing = require(game.ReplicatedStorage.Shared.Core.KickTiming)
 local Perfect = require(game.ReplicatedStorage.Shared.Core.PerfectKick)
+local Tutorial = require(game.ReplicatedStorage.Shared.Core.Tutorial)
 
 local Throw = {}
 
@@ -136,6 +137,7 @@ function Throw.build(context: Context): (Player, number?, number?, number?) -> (
 					local zoneMultiplier = Zones.multiplier(zone)
 					local finalAward = Zones.award(award, zone)
 					Data.add(d, "wins", finalAward)
+					Tutorial.shot(d, timingMultiplier ~= nil and adminDistance == nil)
 					d.best = Data.bound(math.max(d.best, distance))
 					context.effect:FireClient(player, "Result", {
 						wins = finalAward,
