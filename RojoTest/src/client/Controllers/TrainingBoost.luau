@@ -1,316 +1,264 @@
 --!strict
--- Screen-space targets use an independent shared offer clock, not goal projection.
+-- Falling screen-space offers. Rewards wait for the server acknowledgement.
 local Players = game:GetService("Players")
-local Input = game:GetService("UserInputService")
 local GuiService = game:GetService("GuiService")
+local Input = game:GetService("UserInputService")
 local Shared = game.ReplicatedStorage.Shared
-local Area = require(Shared.TrainingArea)
 local Rules = require(Shared.Core.TrainingBoost)
+local Config = require(Shared.GameConfig)
+local Area = require(Shared.TrainingArea)
 local React = require(game.ReplicatedStorage.Packages.React)
 local ReactRoblox = require(game.ReplicatedStorage.Packages.ReactRoblox)
-local Insets = require(script.Parent.Parent.Modules.GuiInsets)
-local Assets = require(script.Parent.Parent.UIAssets)
+local Ripple = require(game.ReplicatedStorage.Packages.Ripple)
+local Bubble = require(script.Parent.TrainingBoostBubble)
 local Feedback = require(script.Parent.TrainingBoostFeedback)
-local Style = require(script.Parent.Parent.UiStyle)
+local Collect = require(script.Parent.TrainingBoostCollect)
+local Placement = require(script.Parent.TrainingBoostPlacement)
 local Boost = {}
-local e = React.createElement
 
 function Boost.mount(context: any)
-	local player = Players.LocalPlayer
 	local gui = Instance.new("ScreenGui")
 	gui.Name = "TrainingBoost"
-	Insets.prepare(gui)
+	gui.IgnoreGuiInset = true
+	gui.ScreenInsets = Enum.ScreenInsets.None
 	gui.ResetOnSpawn = false
-	gui.DisplayOrder = 42
+	-- SkillGain lives in the gameplay HUD at DisplayOrder 20.
+	gui.DisplayOrder = 21
 	gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-	gui.Parent = player:WaitForChild("PlayerGui")
-	local safe = Instance.new("Frame")
-	safe.Name = "SafeArea"
-	safe.BackgroundTransparency = 1
-	safe.Size = UDim2.fromScale(1, 1)
-	safe.Parent = gui
+	gui.Parent = Players.LocalPlayer:WaitForChild("PlayerGui")
 	local layer = Instance.new("Frame")
 	layer.Name = "BubbleLayer"
 	layer.Size = UDim2.fromScale(1, 1)
 	layer.BackgroundTransparency = 1
-	layer.Parent = safe
+	layer.Parent = gui
+	local collectLayer = Instance.new("Frame")
+	collectLayer.Name = "CollectLayer"
+	collectLayer.Size = UDim2.fromScale(1, 1)
+	collectLayer.BackgroundTransparency = 1
+	collectLayer.Active, collectLayer.Interactable = false, false
+	collectLayer.ZIndex = 2
+	collectLayer.Parent = gui
 	local root = ReactRoblox.createRoot(layer)
 	local shown, setShown = React.createBinding(false)
+	local ready, setReady = React.createBinding(false)
 	local position, setPosition = React.createBinding(UDim2.new())
-	local fade, setFade = React.createBinding(1)
-	local remaining, setRemaining = React.createBinding(1)
-	local caption, setCaption = React.createBinding("×2")
-	local color, setColor = React.createBinding(Style.Colors.Eggs)
-	local diameter = if Input.TouchEnabled then 76 else 72
-	local alive = true
+	local diameter, setDiameter = React.createBinding(144)
+	local definition, setDefinition = React.createBinding(Rules.offer(1, 0))
+	local fall = Ripple.createMotion(0, { start = true })
+	local fallValue = 0
+	local changed = fall:onChange(function(value: number)
+		fallValue = value
+	end)
 	local current: any = nil
-	local acceptedCycle: number? = nil
-	local cacheSize = Vector2.zero
-	local lastPosition = Vector2.zero
+	local offer = -1
+	local consumed = false
+	local alive = true
 	local visible = false
+	local lastPosition = UDim2.new()
+	local acceptedCycle: number? = nil
+	local size = 144
+	local goal: Vector2? = nil
+	local placementReady = false
+	local placementViewport = Vector2.zero
 	local function effects(): boolean
-		local s = context.snapshot()
-		return (not s or s.data.settings.effects ~= false) and not context.blocked()
+		local snapshot = context.snapshot()
+		return not snapshot or snapshot.data.settings.effects ~= false
 	end
-	local feedback = Feedback.create({
-		parent = safe,
+	local feedback = Feedback.create(diameter, effects, Config.StudTexture)
+	local collect = Collect.mount({
+		parent = collectLayer,
 		skillLabel = context.skillLabel,
 		playSound = context.playSound,
-		effects = effects,
-		blocked = context.blocked,
+		enabled = effects,
+		blocked = function()
+			return context.blocked() or GuiService.MenuIsOpen
+		end,
 	})
-	local function isVisible(node: Instance): boolean
-		local parent: Instance? = node
-		while parent and parent ~= player.PlayerGui do
-			if parent:IsA("GuiObject") and not parent.Visible then
-				return false
-			end
-			if parent:IsA("ScreenGui") and not parent.Enabled then
-				return false
-			end
-			parent = parent.Parent
-		end
-		return parent == player.PlayerGui
-	end
-	local function choose(seed: number, offer: number): Vector2?
-		local size = safe.AbsoluteSize
-		local radius = diameter + 16
-		local travel = if size.Y < 500 then 25 else 42
-		local excluded = {}
-		for _, screen in player.PlayerGui:GetChildren() do
-			if screen.Name == "SkippingHUD" or screen.Name == "CollectorUI" or screen.Name == "BallTopbar" then
-				for _, node in screen:GetDescendants() do
-					if
-						node:IsA("GuiObject")
-						and (node:IsA("GuiButton") or node.Name == "LevelBar" or node.Name == "Skill" or node.Name == "WinsCount" or node.Name == "LevelUpText")
-						and isVisible(node)
-					then
-						local p = node.AbsolutePosition - safe.AbsolutePosition
-						table.insert(excluded, { x = p.X, y = p.Y, w = node.AbsoluteSize.X, h = node.AbsoluteSize.Y })
-					end
-				end
-			end
-		end
-		local minX, maxX = radius + 18, size.X - radius - 18
-		local minY, maxY = radius + 18 + travel, size.Y - radius - 24 - travel
-		local function fits(x: number, y: number): boolean
-			if x < minX or x > maxX or y < minY or y > maxY then
-				return false
-			end
-			for _, rect in excluded do
-				local dx = math.max(rect.x - x, 0, x - rect.x - rect.w)
-				local dy = math.max(rect.y - y - travel, 0, y - travel - rect.y - rect.h)
-				if dx * dx + dy * dy < (diameter + 6) ^ 2 then
-					return false
-				end
-			end
-			return true
-		end
-		for attempt = 1, 180 do
-			local x = minX + Rules.sample(seed, offer, attempt * 2) * math.max(0, maxX - minX)
-			local y = minY + Rules.sample(seed, offer, attempt * 2 + 1) * math.max(0, maxY - minY)
-			if fits(x, y) then
-				return Vector2.new(math.round(x), math.round(y))
-			end
-		end
-		-- Narrow landscape gaps can be missed by random sampling. Test HUD edges too.
-		for _, rect in excluded do
-			for _, x in { rect.x - radius - 1, rect.x + rect.w + radius + 1 } do
-				for step = 0, 12 do
-					local y = minY + (maxY - minY) * step / 12
-					if fits(x, y) then
-						return Vector2.new(math.round(x), math.round(y))
-					end
-				end
-			end
-		end
-		return nil
-	end
 	local function hide()
 		visible = false
 		setShown(false)
+		setReady(false)
 	end
 	local function press()
-		if not alive or not visible or not current or current.submitted or context.blocked() then
+		if not alive or not visible or consumed or not current or context.blocked() then
 			return
 		end
-		if not Rules.inWindow(current.started, current.offer, workspace:GetServerTimeNow(), 0) then
+		local now = workspace:GetServerTimeNow()
+		if not Rules.inWindow(current.started, offer, now, 0) then
 			return
 		end
-		current.submitted = true
+		local def = Rules.offer(current.seed, offer)
+		consumed = true
 		hide()
-		context.send("TrainingBoost", current.seed, current.offer)
+		-- Release is handled by the shared button motion. The separate pop keeps
+		-- a squash, overshoot and confetti visible after the hitbox disappears.
+		feedback.play(lastPosition, def, def.product ~= nil)
+		if context.pop then
+			context.pop(def.product ~= nil)
+		end
+		if def.product then
+			context.send("Product", def.product)
+		else
+			context.send("TrainingBoost", current.seed, offer)
+		end
 	end
-	local function round()
-		return e("UICorner", { CornerRadius = UDim.new(1, 0) })
-	end
-	root:render(e("CanvasGroup", {
-		Name = "BoostBubble",
-		AnchorPoint = Vector2.new(0.5, 0.5),
-		Position = position,
-		Size = UDim2.fromOffset((diameter + 16) * 2, (diameter + 20) * 2),
-		BackgroundTransparency = 1,
-		GroupTransparency = fade,
-		Visible = shown,
-	}, {
-		Target = e("TextButton", {
-			Name = "BoostTarget",
-			Text = "",
-			AutoButtonColor = false,
-			BackgroundTransparency = 1,
-			Size = UDim2.fromOffset(diameter + 16, diameter + 16),
-			Selectable = true,
-			[React.Event.Activated] = press,
-		}, {
-			Scale = e("UIScale", { Scale = 2 }),
-			Shadow = e("Frame", {
-				Position = UDim2.fromOffset(8, 11),
-				Size = UDim2.fromOffset(diameter, diameter),
-				BackgroundColor3 = Style.Ink,
-				BorderSizePixel = 0,
-				ZIndex = 1,
-			}, { Round = round() }),
-			Core = e("Frame", {
-				Position = UDim2.fromOffset(8, 7),
-				Size = UDim2.fromOffset(diameter, diameter),
-				BackgroundColor3 = color,
-				BorderSizePixel = 0,
-				ZIndex = 2,
-			}, {
-				Round = round(),
-				Border = e("UIStroke", { Color = Style.Ink, Thickness = 2.5 }),
-				Shade = e("UIGradient", {
-					Rotation = 90,
-					Color = ColorSequence.new(Color3.fromRGB(255, 255, 255), Color3.fromRGB(140, 115, 160)),
-				}),
-				Shine = e("Frame", {
-					Position = UDim2.fromOffset(14, 9),
-					Size = UDim2.fromOffset(22, 5),
-					BackgroundColor3 = Color3.new(1, 1, 1),
-					BackgroundTransparency = 0.2,
-					BorderSizePixel = 0,
-					ZIndex = 3,
-				}, { Round = round() }),
-				Lightning = e("ImageLabel", {
-					Image = Assets.Images.Skill,
-					Position = UDim2.new(0.5, -11, 0, 9),
-					Size = UDim2.fromOffset(22, 22),
-					BackgroundTransparency = 1,
-					ZIndex = 4,
-				}),
-				Label = e("TextLabel", {
-					Name = "Multiplier",
-					Text = caption,
-					Position = UDim2.fromOffset(0, 28),
-					Size = UDim2.new(1, 0, 0, 34),
-					Font = Enum.Font.GothamBlack,
-					TextSize = 26,
-					TextColor3 = Style.Text,
-					TextStrokeColor3 = Style.Ink,
-					TextStrokeTransparency = 0,
-					BackgroundTransparency = 1,
-					ZIndex = 4,
-				}),
-			}),
-			Timer = e("Frame", {
-				Position = UDim2.fromOffset(13, diameter + 13),
-				Size = remaining:map(function(v: number)
-					return UDim2.fromOffset(math.max(1, math.round((diameter - 10) * v)), 3)
-				end),
-				BackgroundColor3 = Color3.fromRGB(238, 195, 255),
-				BorderSizePixel = 0,
-				ZIndex = 5,
-			}, { Round = round() }),
+	root:render(React.createElement(React.Fragment, nil, {
+		Target = React.createElement(Bubble.Button, {
+			shown = shown,
+			ready = ready,
+			position = position,
+			diameter = diameter,
+			definition = definition,
+			studs = Config.StudTexture,
+			press = press,
 		}),
+		Feedback = feedback.element,
 	}))
 	return {
 		confirmed = function(info: any)
-			if
-				not alive
-				or not current
-				or info.seed ~= current.seed
-				or info.started ~= current.started
-				or info.offer ~= current.offer
-				or not current.submitted
-			then
+			if not alive or not current or info.seed ~= current.seed or info.started ~= current.started then
 				return
 			end
 			acceptedCycle = info.cycle
-			feedback.play(lastPosition, info.multiplier)
+			if info.offer == offer then
+				consumed = true
+				hide()
+			end
+			feedback.confirm(info.multiplier)
+			if lastPosition.X.Offset > 0 then
+				collect.play(Vector2.new(lastPosition.X.Offset, lastPosition.Y.Offset), info.multiplier)
+			end
 		end,
 		frame = function(state: any, elapsed: number, _ballPosition: Vector3): boolean
 			if not alive then
 				return false
 			end
-			if current and (current.seed ~= state.seed or current.started ~= state.started) then
-				current = nil
+			local reset = not current or current.started ~= state.started or current.seed ~= state.seed
+			if reset then
+				offer = -1
 				acceptedCycle = nil
+				consumed = false
 				feedback.clear()
+				collect.clear()
+				placementReady = false
 			end
-			local index = Rules.index(elapsed)
-			local character = player.Character
+			current = state
+			local camera = workspace.CurrentCamera
+			local character = Players.LocalPlayer.Character
 			local characterRoot = character and character:FindFirstChild("HumanoidRootPart")
-			local strip = state.lane:FindFirstChild("TrainingStrip")
+			local strip = state.lane and state.lane:FindFirstChild("TrainingStrip")
 			if
-				index < 0
+				not camera
+				or context.blocked()
+				or GuiService.MenuIsOpen
 				or not characterRoot
 				or not characterRoot:IsA("BasePart")
 				or not strip
 				or not strip:IsA("BasePart")
 				or not Area.contains(strip, characterRoot.Position)
-				or context.blocked()
-				or GuiService.MenuIsOpen
 			then
 				hide()
 				feedback.clear()
-				return false
+				collect.clear()
+				placementReady = false
+				return acceptedCycle == state.cycle
 			end
-			if not current or current.offer ~= index then
-				current = {
-					seed = state.seed,
-					started = state.started,
-					offer = index,
-					submitted = false,
-					goal = choose(state.seed, index),
-				}
-				local multiplier = Rules.multiplier(state.seed, index)
-				setCaption("×" .. tostring(multiplier))
-				setColor(if multiplier >= 4 then Color3.fromRGB(255, 212, 67) else Style.Colors.Eggs)
-				cacheSize = safe.AbsoluteSize
+			local viewport = camera.ViewportSize
+			local small = Input.TouchEnabled or viewport.Y < 600
+			local nextSize = if small
+				then math.clamp(viewport.Y * 0.27, 88, 110)
+				else math.clamp(viewport.Y * 0.19, 132, 174)
+			if math.abs(nextSize - size) > 0.1 then
+				size = nextSize
+				setDiameter(size)
 			end
-			if cacheSize ~= safe.AbsoluteSize then
-				current.goal = choose(state.seed, index)
-				cacheSize = safe.AbsoluteSize
-			end
-			local age = Rules.age(state.started, index, workspace:GetServerTimeNow())
-			if age < 0 or age > Rules.Lifetime or current.submitted or not current.goal then
+			local nextOffer = Rules.index(elapsed)
+			local age = Rules.age(state.started, nextOffer, workspace:GetServerTimeNow())
+			if nextOffer < 0 or age < 0 or age >= Rules.Lifetime then
 				hide()
 				return acceptedCycle == state.cycle
 			end
-			local travel = if safe.AbsoluteSize.Y < 500 then 25 else 42
-			local direction = if Rules.sample(state.seed, index, 99) < 0.5 then -1 else 1
-			local progress = math.clamp(age / Rules.TravelTime, 0, 1)
-			local offset = if effects() then direction * travel * (1 - progress) ^ 3 else 0
-			lastPosition = current.goal + Vector2.new(0, math.round(offset))
-			setPosition(UDim2.fromOffset(lastPosition.X, lastPosition.Y))
-			setFade(if effects() then math.clamp(1 - age / 0.18, 0, 1) else 0)
-			setRemaining(math.clamp((Rules.Lifetime - age) / Rules.Lifetime, 0, 1))
+			if nextOffer ~= offer then
+				offer = nextOffer
+				placementReady = false
+				consumed = false
+				setDefinition(Rules.offer(state.seed, offer))
+				fall:setPosition(if effects() then 1 - (1 - math.clamp(age / Rules.TravelTime, 0, 1)) ^ 4 else 1)
+				if effects() and age < Rules.TravelTime then
+					fall:tween(1, { duration = Rules.TravelTime - age, easing = "quartOut" })
+				end
+			end
+			gui:SetAttribute("ReducedMotion", not effects())
+			if not effects() then
+				fall:setPosition(1)
+				feedback.reduce()
+			end
+			if consumed then
+				hide()
+				return acceptedCycle == state.cycle
+			end
+			local safe = GuiService:GetInsetArea(Enum.ScreenInsets.DeviceSafeInsets)
+			local margin = size * 0.62 + 8
+			local left = math.max(margin, safe.Min.X + margin)
+			local right = math.min(viewport.X - margin, safe.Max.X - margin)
+			local x = math.clamp(
+				viewport.X * (0.36 + Rules.sample(state.seed, offer, 19) * 0.28),
+				left,
+				math.max(left, right)
+			)
+			local landing = math.clamp(
+				viewport.Y
+					* (
+						if small
+							then 0.48 + Rules.sample(state.seed, offer, 23) * 0.05
+							else 0.31 + Rules.sample(state.seed, offer, 23) * 0.12
+					),
+				safe.Min.Y + margin + 38,
+				viewport.Y - margin
+			)
+			if not placementReady or placementViewport ~= viewport then
+				goal = Placement.choose(layer, Vector2.new(x, landing), size, state.seed, offer)
+				placementReady = true
+				placementViewport = viewport
+			end
+			if not goal then
+				hide()
+				return acceptedCycle == state.cycle
+			end
+			x = goal.X
+			local y = -size + (goal.Y + size) * fallValue
+			if effects() and age > Rules.TravelTime then
+				y += math.sin((age - Rules.TravelTime) * 2.8) * 3
+			end
+			lastPosition = UDim2.fromOffset(math.round(x), math.round(y))
+			setPosition(lastPosition)
 			visible = true
 			setShown(true)
+			setReady(age >= Rules.TravelTime)
+			gui:SetAttribute("Offer", offer)
+			gui:SetAttribute("Multiplier", Rules.offer(state.seed, offer).multiplier)
 			return acceptedCycle == state.cycle
 		end,
 		clear = function()
 			current = nil
 			acceptedCycle = nil
+			offer = -1
+			consumed = false
 			hide()
 			feedback.clear()
+			collect.clear()
+			placementReady = false
 		end,
 		destroy = function()
 			alive = false
+			changed()
+			fall:destroy()
 			feedback.destroy()
+			collect.destroy()
 			root:unmount()
 			gui:Destroy()
 		end,
 	}
 end
+
 return Boost

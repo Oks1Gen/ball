@@ -16,16 +16,22 @@ function Repair.apply(map: any)
 			continue
 		end
 		local parents: { Instance } = { map }
+		local optedOut = false
 		for i = 2, #record[1] do
 			local matches = {}
 			for _, parent in parents do
 				for _, child in parent:GetChildren() do
 					if child.Name == record[1][i] then
 						table.insert(matches, child)
+						optedOut = optedOut or child:GetAttribute("SurfaceSeparationSkip") == true
 					end
 				end
 			end
 			parents = matches
+		end
+		-- Restyled owners (the ball stand) opt out as a whole and draw their own parts.
+		if optedOut then
+			continue
 		end
 		local target: BasePart? = nil
 		local already = false

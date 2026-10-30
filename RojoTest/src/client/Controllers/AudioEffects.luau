@@ -37,7 +37,7 @@ export type Handle = {
 	playSound: (string, number?, number?) -> (),
 	bounce: (Vector3, string, number, number) -> (),
 	ripple: (Vector3, Color3?, number?) -> (),
-	floatingGain: (number, boolean?, number?) -> (),
+	floatingGain: (number, number?) -> (),
 	zoneTransition: (any) -> (),
 	applyVolumes: (number, number) -> (),
 	destroy: () -> (),
@@ -229,13 +229,13 @@ function Effects.mount(context: Context): Handle
 		else nil
 	local canvasConnection = canvas.Destroying:Connect(clearGains)
 
-	local function floatingGain(gain: number, boosted: boolean?, boostMultiplier: number?)
+	local function floatingGain(gain: number, boosted: number?)
 		if not alive or context.panelOpen() then
 			return
 		end
 		-- Measure the actual number: centred text in a fixed box left a large
 		-- variable gap after the icon, especially for short rewards.
-		local caption = "+" .. Config.format(gain) .. (if boosted then " ×" .. tostring(boostMultiplier or 2) else "")
+		local caption = "+" .. Config.format(gain) .. (if boosted then " ×" .. tostring(boosted) else "")
 		local textWidth = math.ceil(
 			TextService:GetTextSize(caption, 54, Enum.Font.GothamBlack, Vector2.new(2000, 78)).X
 		) + 4

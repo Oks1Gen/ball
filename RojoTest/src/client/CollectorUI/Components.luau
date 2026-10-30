@@ -485,6 +485,10 @@ function U.PetView(p)
 		BackgroundTransparency = 1,
 		Size = p.Size or UDim2.fromScale(1, 1),
 		Position = p.Position,
+		AnchorPoint = p.AnchorPoint,
+		Visible = p.Visible,
+		-- Black turns the pet into a silhouette (hatch roulette).
+		ImageColor3 = p.ImageColor3,
 		ZIndex = p.ZIndex or 15,
 		Ambient = C(210, 216, 235),
 		LightColor = C(255, 245, 225),

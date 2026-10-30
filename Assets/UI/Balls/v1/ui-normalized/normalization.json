@@ -1,0 +1,227 @@
+{
+    "targetBodyDiameter":  660,
+    "method":  "largest inscribed alpha circle (exact Euclidean distance transform), common body diameter, preserve all decorations",
+    "items":  [
+                  {
+                      "diameter":  941.69634171531106,
+                      "source":  "C:\\Users\\dakem\\Documents\\RobloxGames\\ball\\Assets\\UI\\Balls\\v1\\final\\Ball_01_Rubber.png",
+                      "measuredCenter":  [
+                                             512,
+                                             511
+                                         ],
+                      "name":  "Ball_01_Rubber",
+                      "measuredBodyDiameter":  659.3208627064671,
+                      "normalizedBodyDiameter":  660,
+                      "normalized":  "Ball_01_Rubber.png",
+                      "alphaBounds":  [
+                                          147,
+                                          144,
+                                          1105,
+                                          1114
+                                      ],
+                      "center":  [
+                                     629,
+                                     630
+                                 ]
+                  },
+                  {
+                      "diameter":  992.87864313822365,
+                      "source":  "C:\\Users\\dakem\\Documents\\RobloxGames\\ball\\Assets\\UI\\Balls\\v1\\final\\Ball_02_Classic.png",
+                      "measuredCenter":  [
+                                             512,
+                                             512
+                                         ],
+                      "name":  "Ball_02_Classic",
+                      "measuredBodyDiameter":  660.47558622556221,
+                      "normalizedBodyDiameter":  660,
+                      "normalized":  "Ball_02_Classic.png",
+                      "alphaBounds":  [
+                                          113,
+                                          93,
+                                          1139,
+                                          1153
+                                      ],
+                      "center":  [
+                                     623,
+                                     626
+                                 ]
+                  },
+                  {
+                      "diameter":  1005.6420834471875,
+                      "source":  "C:\\Users\\dakem\\Documents\\RobloxGames\\ball\\Assets\\UI\\Balls\\v1\\final\\Ball_03_Beach.png",
+                      "measuredCenter":  [
+                                             514,
+                                             509
+                                         ],
+                      "name":  "Ball_03_Beach",
+                      "measuredBodyDiameter":  659.99393936611261,
+                      "normalizedBodyDiameter":  660,
+                      "normalized":  "Ball_03_Beach.png",
+                      "alphaBounds":  [
+                                          110,
+                                          105,
+                                          1141,
+                                          1163
+                                      ],
+                      "center":  [
+                                     624,
+                                     643
+                                 ]
+                  },
+                  {
+                      "diameter":  1000.2099779546293,
+                      "source":  "C:\\Users\\dakem\\Documents\\RobloxGames\\ball\\Assets\\UI\\Balls\\v1\\final\\Ball_04_Basketball.png",
+                      "measuredCenter":  [
+                                             521,
+                                             521
+                                         ],
+                      "name":  "Ball_04_Basketball",
+                      "measuredBodyDiameter":  660.38776487757559,
+                      "normalizedBodyDiameter":  660,
+                      "normalized":  "Ball_04_Basketball.png",
+                      "alphaBounds":  [
+                                          112,
+                                          86,
+                                          1155,
+                                          1152
+                                      ],
+                      "center":  [
+                                     625,
+                                     620
+                                 ]
+                  },
+                  {
+                      "diameter":  988.83770154661886,
+                      "source":  "C:\\Users\\dakem\\Documents\\RobloxGames\\ball\\Assets\\UI\\Balls\\v1\\final\\Ball_05_Leather.png",
+                      "measuredCenter":  [
+                                             512,
+                                             512
+                                         ],
+                      "name":  "Ball_05_Leather",
+                      "measuredBodyDiameter":  660.13634955212092,
+                      "normalizedBodyDiameter":  660,
+                      "normalized":  "Ball_05_Leather.png",
+                      "alphaBounds":  [
+                                          106,
+                                          65,
+                                          1160,
+                                          1178
+                                      ],
+                      "center":  [
+                                     636,
+                                     629
+                                 ]
+                  },
+                  {
+                      "diameter":  1025.5398578309864,
+                      "source":  "C:\\Users\\dakem\\Documents\\RobloxGames\\ball\\Assets\\UI\\Balls\\v1\\final\\Ball_06_Steel.png",
+                      "measuredCenter":  [
+                                             512,
+                                             513
+                                         ],
+                      "name":  "Ball_06_Steel",
+                      "measuredBodyDiameter":  660.112111690128,
+                      "normalizedBodyDiameter":  660,
+                      "normalized":  "Ball_06_Steel.png",
+                      "alphaBounds":  [
+                                          100,
+                                          54,
+                                          1158,
+                                          1233
+                                      ],
+                      "center":  [
+                                     630,
+                                     655
+                                 ]
+                  },
+                  {
+                      "diameter":  1018,
+                      "source":  "C:\\Users\\dakem\\Documents\\RobloxGames\\ball\\Assets\\UI\\Balls\\v1\\final\\Ball_07_Gold.png",
+                      "measuredCenter":  [
+                                             514,
+                                             516
+                                         ],
+                      "name":  "Ball_07_Gold",
+                      "measuredBodyDiameter":  659.60291084864082,
+                      "normalizedBodyDiameter":  660,
+                      "normalized":  "Ball_07_Gold.png",
+                      "alphaBounds":  [
+                                          89,
+                                          65,
+                                          1168,
+                                          1180
+                                      ],
+                      "center":  [
+                                     628,
+                                     622
+                                 ]
+                  },
+                  {
+                      "diameter":  992.29028010960587,
+                      "source":  "C:\\Users\\dakem\\Documents\\RobloxGames\\ball\\Assets\\UI\\Balls\\v1\\final\\Ball_08_Storm.png",
+                      "measuredCenter":  [
+                                             512,
+                                             512
+                                         ],
+                      "name":  "Ball_08_Storm",
+                      "measuredBodyDiameter":  660.112111690128,
+                      "normalizedBodyDiameter":  660,
+                      "normalized":  "Ball_08_Storm.png",
+                      "alphaBounds":  [
+                                          108,
+                                          86,
+                                          1145,
+                                          1170
+                                      ],
+                      "center":  [
+                                     627,
+                                     645
+                                 ]
+                  },
+                  {
+                      "diameter":  925.06864610146636,
+                      "source":  "C:\\Users\\dakem\\Documents\\RobloxGames\\ball\\Assets\\UI\\Balls\\v1\\final\\Ball_09_Volcano.png",
+                      "measuredCenter":  [
+                                             512,
+                                             512
+                                         ],
+                      "name":  "Ball_09_Volcano",
+                      "measuredBodyDiameter":  660.63000234624519,
+                      "normalizedBodyDiameter":  660,
+                      "normalized":  "Ball_09_Volcano.png",
+                      "alphaBounds":  [
+                                          98,
+                                          45,
+                                          1171,
+                                          1200
+                                      ],
+                      "center":  [
+                                     638,
+                                     631
+                                 ]
+                  },
+                  {
+                      "diameter":  888.97469030338539,
+                      "source":  "C:\\Users\\dakem\\Documents\\RobloxGames\\ball\\Assets\\UI\\Balls\\v1\\final\\Ball_10_Sun.png",
+                      "measuredCenter":  [
+                                             512,
+                                             512
+                                         ],
+                      "name":  "Ball_10_Sun",
+                      "measuredBodyDiameter":  660,
+                      "normalizedBodyDiameter":  660,
+                      "normalized":  "Ball_10_Sun.png",
+                      "alphaBounds":  [
+                                          13,
+                                          48,
+                                          1241,
+                                          1186
+                                      ],
+                      "center":  [
+                                     632,
+                                     643
+                                 ]
+                  }
+              ],
+    "canvas":  1024
+}

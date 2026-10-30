@@ -1,0 +1,99 @@
+{
+  "source_blend": "C:\\Users\\dakem\\Documents\\RobloxGames\\ball\\Assets\\Balls\\LowPolyV2\\ball-pack-low-poly-v2.blend",
+  "azimuth": 45,
+  "elevation": 45,
+  "renders": [
+    {
+      "name": "Ball_01_Rubber",
+      "path": "C:\\Users\\dakem\\Documents\\RobloxGames\\ball\\Assets\\UI\\Balls\\v1\\source-renders\\Ball_01_Rubber.png",
+      "parts": [
+        "Ball_01_Rubber_Body",
+        "Ball_01_Rubber_Groove"
+      ]
+    },
+    {
+      "name": "Ball_02_Classic",
+      "path": "C:\\Users\\dakem\\Documents\\RobloxGames\\ball\\Assets\\UI\\Balls\\v1\\source-renders\\Ball_02_Classic.png",
+      "parts": [
+        "Ball_02_Classic_Panels",
+        "Ball_02_Classic_Seams"
+      ]
+    },
+    {
+      "name": "Ball_03_Beach",
+      "path": "C:\\Users\\dakem\\Documents\\RobloxGames\\ball\\Assets\\UI\\Balls\\v1\\source-renders\\Ball_03_Beach.png",
+      "parts": [
+        "Ball_03_Beach_Body",
+        "Ball_03_Beach_Valve"
+      ]
+    },
+    {
+      "name": "Ball_04_Basketball",
+      "path": "C:\\Users\\dakem\\Documents\\RobloxGames\\ball\\Assets\\UI\\Balls\\v1\\source-renders\\Ball_04_Basketball.png",
+      "parts": [
+        "Ball_04_Basketball_Body",
+        "Ball_04_Basketball_Channels"
+      ]
+    },
+    {
+      "name": "Ball_05_Leather",
+      "path": "C:\\Users\\dakem\\Documents\\RobloxGames\\ball\\Assets\\UI\\Balls\\v1\\source-renders\\Ball_05_Leather.png",
+      "parts": [
+        "Ball_05_Leather_Panels",
+        "Ball_05_Leather_Seams",
+        "Ball_05_Leather_Stitches"
+      ]
+    },
+    {
+      "name": "Ball_06_Steel",
+      "path": "C:\\Users\\dakem\\Documents\\RobloxGames\\ball\\Assets\\UI\\Balls\\v1\\source-renders\\Ball_06_Steel.png",
+      "parts": [
+        "Ball_06_Steel_Bolts",
+        "Ball_06_Steel_Panels",
+        "Ball_06_Steel_Seams"
+      ]
+    },
+    {
+      "name": "Ball_07_Gold",
+      "path": "C:\\Users\\dakem\\Documents\\RobloxGames\\ball\\Assets\\UI\\Balls\\v1\\source-renders\\Ball_07_Gold.png",
+      "parts": [
+        "Ball_07_Gold_Panels",
+        "Ball_07_Gold_Seams",
+        "Ball_07_Gold_Sparkle"
+      ]
+    },
+    {
+      "name": "Ball_08_Storm",
+      "path": "C:\\Users\\dakem\\Documents\\RobloxGames\\ball\\Assets\\UI\\Balls\\v1\\source-renders\\Ball_08_Storm.png",
+      "parts": [
+        "Ball_08_Storm_Band",
+        "Ball_08_Storm_Body",
+        "Ball_08_Storm_Bolts",
+        "Ball_08_Storm_Curls",
+        "Ball_08_Storm_Gems"
+      ]
+    },
+    {
+      "name": "Ball_09_Volcano",
+      "path": "C:\\Users\\dakem\\Documents\\RobloxGames\\ball\\Assets\\UI\\Balls\\v1\\source-renders\\Ball_09_Volcano.png",
+      "parts": [
+        "Ball_09_Volcano_Droplets",
+        "Ball_09_Volcano_Lava",
+        "Ball_09_Volcano_Rocks",
+        "Ball_09_Volcano_Spikes"
+      ]
+    },
+    {
+      "name": "Ball_10_Sun",
+      "path": "C:\\Users\\dakem\\Documents\\RobloxGames\\ball\\Assets\\UI\\Balls\\v1\\source-renders\\Ball_10_Sun.png",
+      "parts": [
+        "Ball_10_Sun_Core",
+        "Ball_10_Sun_Panels",
+        "Ball_10_Sun_Ring",
+        "Ball_10_Sun_Stars"
+      ]
+    }
+  ],
+  "errors": [],
+  "done": true
+}

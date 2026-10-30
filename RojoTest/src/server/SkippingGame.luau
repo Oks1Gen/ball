@@ -18,6 +18,7 @@ local FlightStreaming = require(script.Parent.FlightStreaming)
 local Profiles = require(script.Parent.Services.ProfileService)
 local ProfileData = require(ReplicatedStorage.Shared.Core.ProfileData)
 local Tutorial = require(ReplicatedStorage.Shared.Core.Tutorial)
+local PetNews = require(ReplicatedStorage.Shared.Core.PetNews)
 local Snapshot = require(script.Parent.Gameplay.Snapshot)
 local Commands = require(script.Parent.Gameplay.Commands)
 local Receipts = require(script.Parent.Gameplay.Receipts)
@@ -332,7 +333,7 @@ function Game.start(map, world2)
 		end
 		local amount = count == 3 and 3 or 1
 		if testing then
-			assert(s.adminOriginal, "Test hatching requires an admin test session")
+			assert(require(script.Parent.AdminAccess).isAuthorized(player.UserId), "Admin hatch requires authorization")
 		end
 		if os.clock() < s.busyUntil then
 			publish(player, "Wait for your throw to finish")
@@ -380,7 +381,7 @@ function Game.start(map, world2)
 		end
 		equipBest(s)
 		Tutorial.hatched(d)
-		effect:FireClient(player, "Hatch", hatched)
+		effect:FireClient(player, "Hatch", PetNews.mark(d.pets, hatched :: { any }))
 		publish(player)
 	end
 	local function purchaseItem(player: Player, list: any, ownedKey: string, equippedKey: string, id: string)
@@ -515,6 +516,7 @@ function Game.start(map, world2)
 		Session.setup(sessionContext, player)
 	end
 	admin = AdminService.new({
+		save = save,
 		states = states,
 		map = map,
 		remotes = remote,

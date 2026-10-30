@@ -180,13 +180,6 @@ function Commands.install(context: Context)
 			end
 			context.publish(player)
 		elseif command == "Product" and type(value) == "string" then
-			if s.adminOriginal then
-				context.publish(
-					player,
-					"Заверши тестовый режим перед покупкой за Robux."
-				)
-				return
-			end
 			local product = Config.Products[value]
 			if not product then
 				context.publish(player, "Unknown product")

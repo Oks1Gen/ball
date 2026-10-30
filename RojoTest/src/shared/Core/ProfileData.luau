@@ -35,6 +35,7 @@ function Data.fresh(): any
 		unlockedWorld2 = false,
 		perks = {},
 		receipts = {},
+		trainingBoosts = { ["67"] = 0, ["69"] = 0, ["144"] = 0 },
 		settings = { sound = 100, music = 100, shake = true, effects = true },
 		daily = 0,
 		dailyCount = 0,
@@ -86,6 +87,11 @@ function Data.normalize(input: any, catalog: any): any
 		data.trail = input.trail
 	end
 	data.perks, data.receipts = flags(input.perks), flags(input.receipts)
+	if type(input.trainingBoosts) == "table" then
+		for key in data.trainingBoosts do
+			data.trainingBoosts[key] = bounded(input.trainingBoosts[key], 0, 1000000)
+		end
+	end
 	data.world = if input.world == 2 then 2 else 1
 	data.unlockedWorld2 = input.unlockedWorld2 == true or data.world == 2
 	local seen = {}

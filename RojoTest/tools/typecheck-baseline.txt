@@ -2,7 +2,6 @@ client/AdminPanel.luau|TypeError|<type-expression>
 client/AdminPanel.luau|TypeError|<type-expression>
 client/AdminPanel.luau|TypeError|<type-expression>
 client/AdminPanel.luau|TypeError|<type-expression>
-client/AdminPanel.luau|TypeError|<type-expression>
 client/AdminPanel.luau|TypeError|Expected this to be exactly but got caused by: Property 'value' is not compatible. Expected this to be exactly 'number', but got 'string'
 client/CollectorUI/Components.luau|TypeError|Expected this to be 'Color3', but got 'boolean'
 client/CollectorUI/Components.luau|TypeError|Expected this to be 'Color3', but got 'boolean'
@@ -11,6 +10,8 @@ client/CollectorUI/Components.luau|TypeError|Expected this to be 'Color3', but g
 client/CollectorUI/Components.luau|TypeError|Expected this to be 'Color3', but got 'boolean'
 client/CollectorUI/Components.luau|TypeError|Expected this to be 'Color3', but got 'boolean'
 client/CollectorUI/Components.luau|TypeError|Expected this to be 'Color3', but got 'boolean'
+client/CollectorUI/Components.luau|TypeError|Expected this to be 'Color3', but got 'boolean'
+client/CollectorUI/Components.luau|TypeError|Expected this to be exactly but got caused by: Property 'createSpring' is not compatible. Expected this to be exactly but got caused by: Argument #2 type is not compatible. Expected this to be exactly but got caused by: None of the union options are compatible. For example: Expected this to be exactly but got caused by: Property 'dampingRatio' is not compatible. Expected this to be exactly 'number?', but got 'T' caused by: None of the union options are compatible. For example: Expected this to be exactly 'number', but got 'T'
 client/CollectorUI/Components.luau|TypeError|Expected this to be exactly but got caused by: Property 'createSpring' is not compatible. Expected this to be exactly but got caused by: Argument #2 type is not compatible. Expected this to be exactly but got caused by: None of the union options are compatible. For example: Expected this to be exactly but got caused by: Property 'dampingRatio' is not compatible. Expected this to be exactly 'number?', but got 'T' caused by: None of the union options are compatible. For example: Expected this to be exactly 'number', but got 'T'
 client/CollectorUI/Components.luau|TypeError|Expected this to be exactly but got caused by: Property 'createSpring' is not compatible. Expected this to be exactly but got caused by: Argument #2 type is not compatible. Expected this to be exactly but got caused by: None of the union options are compatible. For example: Expected this to be exactly but got caused by: Property 'dampingRatio' is not compatible. Expected this to be exactly 'number?', but got 'T' caused by: None of the union options are compatible. For example: Expected this to be exactly 'number', but got 'T'
 client/CollectorUI/Components.luau|TypeError|Expected this to be exactly but got caused by: Property 'createSpring' is not compatible. Expected this to be exactly but got caused by: Argument #2 type is not compatible. Expected this to be exactly but got caused by: None of the union options are compatible. For example: Expected this to be exactly but got caused by: Property 'dampingRatio' is not compatible. Expected this to be exactly 'number?', but got 'T' caused by: None of the union options are compatible. For example: Expected this to be exactly 'number', but got 'T'
@@ -25,6 +26,7 @@ client/CollectorUI/Components.luau|TypeError|Expected this to be exactly but got
 client/CollectorUI/Components.luau|TypeError|Expected this to be exactly but got caused by: Property 'useState' is not compatible. Expected this to be exactly but got caused by: Return #1 type is not compatible. Expected this to be exactly 'T', but got 'nil'
 client/CollectorUI/Components.luau|TypeError|Expected this to be exactly but got caused by: Property 'useState' is not compatible. Expected this to be exactly but got caused by: Return #1 type is not compatible. Expected this to be exactly 'T', but got 'nil'
 client/CollectorUI/Components.luau|TypeError|Expected this to be exactly but got caused by: Property 'useState' is not compatible. Expected this to be exactly but got caused by: Return #1 type is not compatible. Expected this to be exactly 'T', but got 'nil'
+client/CollectorUI/Components.luau|TypeError|Expected this to be exactly but got caused by: Property 'useState' is not compatible. Expected this to be exactly but got caused by: Return #1 type is not compatible. Expected this to be exactly 'T', but got 'nil'
 client/CollectorUI/Components.luau|TypeError|Expected type table, got 'nil' instead
 client/CollectorUI/Components.luau|TypeError|Expected type table, got 'nil' instead
 client/CollectorUI/Components.luau|TypeError|Expected type table, got 'nil' instead
@@ -32,6 +34,9 @@ client/CollectorUI/Components.luau|TypeError|Expected type table, got 'nil' inst
 client/CollectorUI/Components.luau|TypeError|Expected type table, got 'nil' instead
 client/CollectorUI/Components.luau|TypeError|Expected type table, got 'nil' instead
 client/CollectorUI/Components.luau|TypeError|Expected type table, got 'nil' instead
+client/CollectorUI/Components.luau|TypeError|Expected type table, got 'nil' instead
+client/CollectorUI/Components.luau|TypeError|Unknown type used in * operation; consider adding a type annotation to 't'
+client/CollectorUI/Components.luau|TypeError|Unknown type used in * operation; consider adding a type annotation to 't'
 client/CollectorUI/Components.luau|TypeError|Unknown type used in * operation; consider adding a type annotation to 't'
 client/CollectorUI/Components.luau|TypeError|Unknown type used in * operation; consider adding a type annotation to 't'
 client/CollectorUI/Components.luau|TypeError|Unknown type used in * operation; consider adding a type annotation to 't'
@@ -157,6 +162,8 @@ client/CollectorUI/createHooks.luau|TypeError|Expected this to be 'nil', but got
 client/CollectorUI/createHooks.luau|TypeError|Expected this to be 'nil', but got 'T'
 client/CollectorUI/createHooks.luau|TypeError|Expected this to be 'nil', but got 'T'
 client/CollectorUI/createHooks.luau|TypeError|Expected this to be 'nil', but got 'T'
+client/CollectorUI/createHooks.luau|TypeError|Expected this to be 'nil', but got 'T'
+client/CollectorUI/createHooks.luau|TypeError|Expected this to be 'nil', but got 'string'
 client/CollectorUI/createHooks.luau|TypeError|Expected this to be 'nil', but got 'string'
 client/CollectorUI/createHooks.luau|TypeError|Expected this to be 'nil', but got 'string'
 client/CollectorUI/createHooks.luau|TypeError|Expected this to be 'nil', but got 'string'
@@ -173,6 +180,8 @@ client/CollectorUI/createHooks.luau|TypeError|Not all codepaths in this function
 client/CollectorUI/createHooks.luau|TypeError|Not all codepaths in this function return '() -> ()'.
 client/CollectorUI/createHooks.luau|TypeError|Not all codepaths in this function return '() -> ()'.
 client/CollectorUI/createHooks.luau|TypeError|Not all codepaths in this function return '() -> ()'.
+client/CollectorUI/createHooks.luau|TypeError|Not all codepaths in this function return '() -> ()'.
+client/CollectorUI/createHooks.luau|TypeError|Type 'nil' does not have key 'destroy'
 client/CollectorUI/createHooks.luau|TypeError|Type 'nil' does not have key 'destroy'
 client/CollectorUI/createHooks.luau|TypeError|Type 'nil' does not have key 'destroy'
 client/CollectorUI/createHooks.luau|TypeError|Type 'nil' does not have key 'destroy'
@@ -189,6 +198,7 @@ client/CollectorUI/createHooks.luau|TypeError|Type 'nil' does not have key 'onCh
 client/CollectorUI/createHooks.luau|TypeError|Type 'nil' does not have key 'onChange'
 client/CollectorUI/createHooks.luau|TypeError|Type 'nil' does not have key 'onChange'
 client/CollectorUI/createHooks.luau|TypeError|Type 'nil' does not have key 'onChange'
+client/CollectorUI/createHooks.luau|TypeError|Type 'nil' does not have key 'onChange'
 client/CollectorUI/createHooks.luau|TypeError|Type 'nil' does not have key 'onComplete'
 client/CollectorUI/createHooks.luau|TypeError|Type 'nil' does not have key 'onComplete'
 client/CollectorUI/createHooks.luau|TypeError|Type 'nil' does not have key 'onComplete'
@@ -197,6 +207,8 @@ client/CollectorUI/createHooks.luau|TypeError|Type 'nil' does not have key 'onCo
 client/CollectorUI/createHooks.luau|TypeError|Type 'nil' does not have key 'onComplete'
 client/CollectorUI/createHooks.luau|TypeError|Type 'nil' does not have key 'onComplete'
 client/CollectorUI/createHooks.luau|TypeError|Type 'nil' does not have key 'onComplete'
+client/CollectorUI/createHooks.luau|TypeError|Type 'nil' does not have key 'onComplete'
+client/CollectorUI/createHooks.luau|TypeError|Type 'nil' does not have key 'setGoal'
 client/CollectorUI/createHooks.luau|TypeError|Type 'nil' does not have key 'setGoal'
 client/CollectorUI/createHooks.luau|TypeError|Type 'nil' does not have key 'setGoal'
 client/CollectorUI/createHooks.luau|TypeError|Type 'nil' does not have key 'setGoal'
@@ -307,74 +319,48 @@ client/NativeIcons.luau|TypeError|Unknown type used in / operation; consider add
 loading/init.client.luau|TypeError|Function only returns 1 value, but 2 are required here
 server/AdminDiagnostics.luau|TypeError|Expected this to be 'Instance', but got '<type>' caused by: Property 'FindFirstChild' is not compatible. Expected this to be but got caused by: Return type is not compatible. Expected this to be '<type>', but got 'Instance?' caused by: Not all union options are compatible. Key 'Position' not found in external type 'Instance'
 server/AdminDiagnostics.luau|TypeError|Expected this to be 'Instance', but got '<type>' caused by: Property 'FindFirstChild' is not compatible. Expected this to be but got caused by: Return type is not compatible. Expected this to be '<type>', but got 'Instance?' caused by: Not all union options are compatible. Key 'Position' not found in external type 'Instance'
-server/AdminDiagnostics.luau|TypeError|Expected this to be 'Instance', but got '<type>' caused by: Property 'FindFirstChild' is not compatible. Expected this to be but got caused by: Return type is not compatible. Expected this to be '<type>', but got 'Instance?' caused by: Not all union options are compatible. Key 'Position' not found in external type 'Instance'
 server/AdminDiagnostics.luau|TypeError|Type 'unknown' does not have key 'id'
 server/AdminDiagnostics.luau|TypeError|Type 'unknown' does not have key 'id'
-server/AdminDiagnostics.luau|TypeError|Type 'unknown' does not have key 'id'
-server/AdminDiagnostics.luau|TypeError|Unknown type used in - operation; consider adding a type annotation to 'front'
 server/AdminDiagnostics.luau|TypeError|Unknown type used in - operation; consider adding a type annotation to 'front'
 server/AdminDiagnostics.luau|TypeError|Unknown type used in - operation; consider adding a type annotation to 'front'
 server/AdminDiagnostics.luau|TypeError|Unknown type used in - operation; consider adding a type annotation to 'p'
 server/AdminDiagnostics.luau|TypeError|Unknown type used in - operation; consider adding a type annotation to 'p'
 server/AdminDiagnostics.luau|TypeError|Unknown type used in - operation; consider adding a type annotation to 'p'
 server/AdminDiagnostics.luau|TypeError|Unknown type used in - operation; consider adding a type annotation to 'p'
-server/AdminDiagnostics.luau|TypeError|Unknown type used in - operation; consider adding a type annotation to 'p'
-server/AdminDiagnostics.luau|TypeError|Unknown type used in - operation; consider adding a type annotation to 'p'
-server/AdminService.luau|TypeError|Expected this to be 'nil', but got '<type>'
 server/AdminService.luau|TypeError|Expected this to be 'nil', but got '<type>'
 server/AdminService.luau|TypeError|Expected this to be 'nil', but got '<type>'
 server/AdminService.luau|TypeError|Expected this to be 'number', but got 'never | T where T = {+ amount: any, count: never | T, egg: string, key: any, pet: any +}' caused by: Not all union options are compatible. Expected this to be 'number', but got '<type>'
 server/AdminService.luau|TypeError|Expected this to be 'number', but got 'never | T where T = {+ amount: any, count: never | T, egg: string, key: any, pet: any +}' caused by: Not all union options are compatible. Expected this to be 'number', but got '<type>'
-server/AdminService.luau|TypeError|Expected this to be 'number', but got 'never | T where T = {+ amount: any, count: never | T, egg: string, key: any, pet: any +}' caused by: Not all union options are compatible. Expected this to be 'number', but got '<type>'
-server/AdminService.luau|TypeError|Expected this to be exactly '<type>', but got 'self' caused by: Property 'context' is not compatible.
-server/AdminService.luau|TypeError|Expected this to be exactly '<type>', but got 'self' caused by: Property 'context' is not compatible.
 server/AdminService.luau|TypeError|Expected this to be exactly '<type>', but got 'self' caused by: Property 'context' is not compatible.
 server/AdminService.luau|TypeError|Expected this to be exactly '<type>', but got 'self' caused by: Property 'context' is not compatible.
 server/AdminService.luau|TypeError|Expected this to be exactly '<type>', but got 'self' caused by: Property 'context' is not compatible.
 server/AdminService.luau|TypeError|Expected this to be exactly '<type>', but got 'self' caused by: Property 'context' is not compatible.
 server/AdminService.luau|TypeError|Expected this to be exactly '<type>', but got 'self' caused by: Property 'logs' is not compatible. Expected this to be exactly but got caused by: Property '[indexer value]' is not compatible. Expected this to be exactly but got caused by: Property 'kind' is not compatible. Expected this to be exactly 'T', but got 'string'
 server/AdminService.luau|TypeError|Expected this to be exactly '<type>', but got 'self' caused by: Property 'logs' is not compatible. Expected this to be exactly but got caused by: Property '[indexer value]' is not compatible. Expected this to be exactly but got caused by: Property 'kind' is not compatible. Expected this to be exactly 'T', but got 'string'
-server/AdminService.luau|TypeError|Expected this to be exactly '<type>', but got 'self' caused by: Property 'logs' is not compatible. Expected this to be exactly but got caused by: Property '[indexer value]' is not compatible. Expected this to be exactly but got caused by: Property 'kind' is not compatible. Expected this to be exactly 'T', but got 'string'
-server/AdminService.luau|TypeError|Function only returns 2 values, but 3 are required here
 server/AdminService.luau|TypeError|Function only returns 2 values, but 3 are required here
 server/AdminService.luau|TypeError|Function only returns 2 values, but 3 are required here
 server/AdminService.luau|TypeError|Key 'publish' not found in table '<type>'
 server/AdminService.luau|TypeError|Key 'publish' not found in table '<type>'
-server/AdminService.luau|TypeError|Key 'publish' not found in table '<type>'
-server/AdminService.luau|TypeError|Type T where T = never | {- amount: 'a, count: T, egg: string, key: 'b, pet: 'c -} cannot be compared with number
 server/AdminService.luau|TypeError|Type T where T = never | {- amount: 'a, count: T, egg: string, key: 'b, pet: 'c -} cannot be compared with number
 server/AdminService.luau|TypeError|Type T where T = never | {- amount: 'a, count: T, egg: string, key: 'b, pet: 'c -} cannot be compared with number
 server/AdminService.luau|TypeError|Type T where T = {- amount: any, count: never | T, egg: string, key: any, pet: any -} cannot be compared with "Lobby"
 server/AdminService.luau|TypeError|Type T where T = {- amount: any, count: never | T, egg: string, key: any, pet: any -} cannot be compared with "Lobby"
-server/AdminService.luau|TypeError|Type T where T = {- amount: any, count: never | T, egg: string, key: any, pet: any -} cannot be compared with "Lobby"
 server/AdminService.luau|TypeError|Type T where T = {- amount: any, count: never | T, egg: string, key: any, pet: any -} cannot be compared with "Sakura"
 server/AdminService.luau|TypeError|Type T where T = {- amount: any, count: never | T, egg: string, key: any, pet: any -} cannot be compared with "Sakura"
-server/AdminService.luau|TypeError|Type T where T = {- amount: any, count: never | T, egg: string, key: any, pet: any -} cannot be compared with "Sakura"
 server/AdminService.luau|TypeError|Type T where T = {- amount: any, count: never | T, egg: string, key: any, pet: any -} cannot be compared with "World1"
 server/AdminService.luau|TypeError|Type T where T = {- amount: any, count: never | T, egg: string, key: any, pet: any -} cannot be compared with "World1"
 server/AdminService.luau|TypeError|Type T where T = {- amount: any, count: never | T, egg: string, key: any, pet: any -} cannot be compared with "World1"
 server/AdminService.luau|TypeError|Type T where T = {- amount: any, count: never | T, egg: string, key: any, pet: any -} cannot be compared with "World1"
-server/AdminService.luau|TypeError|Type T where T = {- amount: any, count: never | T, egg: string, key: any, pet: any -} cannot be compared with "World1"
-server/AdminService.luau|TypeError|Type T where T = {- amount: any, count: never | T, egg: string, key: any, pet: any -} cannot be compared with "World1"
-server/AdminService.luau|TypeError|Type T where T = {- amount: any, count: never | T, egg: string, key: any, pet: any -} cannot be compared with "World2"
-server/AdminService.luau|TypeError|Type T where T = {- amount: any, count: never | T, egg: string, key: any, pet: any -} cannot be compared with "World2"
 server/AdminService.luau|TypeError|Type T where T = {- amount: any, count: never | T, egg: string, key: any, pet: any -} cannot be compared with "World2"
 server/AdminService.luau|TypeError|Type T where T = {- amount: any, count: never | T, egg: string, key: any, pet: any -} cannot be compared with "World2"
 server/AdminService.luau|TypeError|Type T where T = {- amount: any, count: never | T, egg: string, key: any, pet: any -} cannot be compared with "World2"
 server/AdminService.luau|TypeError|Type T where T = {- amount: any, count: never | T, egg: string, key: any, pet: any -} cannot be compared with "World2"
 server/AdminService.luau|TypeError|Type T where T = {- amount: any, count: never | T, egg: string, key: any, pet: any -} cannot be compared with "max"
 server/AdminService.luau|TypeError|Type T where T = {- amount: any, count: never | T, egg: string, key: any, pet: any -} cannot be compared with "max"
-server/AdminService.luau|TypeError|Type T where T = {- amount: any, count: never | T, egg: string, key: any, pet: any -} cannot be compared with "max"
-server/AdminService.luau|TypeError|Type never | T where T = {- amount: 'a, count: never | T, egg: string, key: 'b, pet: 'c -} cannot be compared with number
 server/AdminService.luau|TypeError|Type never | T where T = {- amount: 'a, count: never | T, egg: string, key: 'b, pet: 'c -} cannot be compared with number
 server/AdminService.luau|TypeError|Type never | T where T = {- amount: 'a, count: never | T, egg: string, key: 'b, pet: 'c -} cannot be compared with number
 server/AdminService.luau|TypeError|Unknown type used in .. operation; consider adding a type annotation to 'l'
 server/AdminService.luau|TypeError|Unknown type used in .. operation; consider adding a type annotation to 'l'
-server/AdminService.luau|TypeError|Unknown type used in .. operation; consider adding a type annotation to 'l'
-server/BallStand.luau|TypeError|Expected this to be '<type>', but got 'Part' caused by: Property 'GetChildren' is not compatible. Expected this to be but got caused by: Argument #1 type is not compatible. Key 'Color' not found in external type 'Instance'
-server/BallStand.luau|TypeError|Expected this to be '<type>', but got 'Part' caused by: Property 'GetChildren' is not compatible. Expected this to be but got caused by: Argument #1 type is not compatible. Key 'Color' not found in external type 'Instance'
-server/BallStand.luau|TypeError|Expected this to be 'Instance?', but got '<type>' caused by: None of the union options are compatible. For example: Key 'CFrame' not found in external type 'Instance'
-server/BallStand.luau|TypeError|Expected this to be 'Instance?', but got '<type>' caused by: None of the union options are compatible. For example: Key 'CFrame' not found in external type 'Instance'
 server/BallStand.luau|TypeError|Expected type table, got 'nil' instead
 server/BallStand.luau|TypeError|Expected type table, got 'nil' instead
 server/BallStand.luau|TypeError|Expected type table, got 'nil' instead
@@ -391,93 +377,6 @@ server/BallStand.luau|TypeError|Expected type table, got 'nil' instead
 server/BallStand.luau|TypeError|Expected type table, got 'nil' instead
 server/BallStand.luau|TypeError|Expected type table, got 'nil' instead
 server/BallStand.luau|TypeError|Expected type table, got 'nil' instead
-server/BallStandStyle.luau|TypeError|Argument count mismatch. Function 'part' expects 5 arguments, but only 4 are specified
-server/BallStandStyle.luau|TypeError|Argument count mismatch. Function 'part' expects 5 arguments, but only 4 are specified
-server/BallStandStyle.luau|TypeError|Argument count mismatch. Function 'part' expects 5 arguments, but only 4 are specified
-server/BallStandStyle.luau|TypeError|Argument count mismatch. Function 'part' expects 5 arguments, but only 4 are specified
-server/BallStandStyle.luau|TypeError|Argument count mismatch. Function 'part' expects 5 arguments, but only 4 are specified
-server/BallStandStyle.luau|TypeError|Argument count mismatch. Function 'part' expects 5 arguments, but only 4 are specified
-server/BallStandStyle.luau|TypeError|Argument count mismatch. Function 'part' expects 5 arguments, but only 4 are specified
-server/BallStandStyle.luau|TypeError|Argument count mismatch. Function 'part' expects 5 arguments, but only 4 are specified
-server/BallStandStyle.luau|TypeError|Argument count mismatch. Function 'part' expects 5 arguments, but only 4 are specified
-server/BallStandStyle.luau|TypeError|Argument count mismatch. Function 'part' expects 5 arguments, but only 4 are specified
-server/BallStandStyle.luau|TypeError|Argument count mismatch. Function 'part' expects 5 arguments, but only 4 are specified
-server/BallStandStyle.luau|TypeError|Argument count mismatch. Function 'part' expects 5 arguments, but only 4 are specified
-server/BallStandStyle.luau|TypeError|Argument count mismatch. Function 'part' expects 5 arguments, but only 4 are specified
-server/BallStandStyle.luau|TypeError|Argument count mismatch. Function 'part' expects 5 arguments, but only 4 are specified
-server/BallStandStyle.luau|TypeError|Argument count mismatch. Function 'part' expects 5 arguments, but only 4 are specified
-server/BallStandStyle.luau|TypeError|Argument count mismatch. Function 'part' expects 5 arguments, but only 4 are specified
-server/BallStandStyle.luau|TypeError|Argument count mismatch. Function 'part' expects 5 arguments, but only 4 are specified
-server/BallStandStyle.luau|TypeError|Argument count mismatch. Function 'part' expects 5 arguments, but only 4 are specified
-server/BallStandStyle.luau|TypeError|Argument count mismatch. Function 'part' expects 5 arguments, but only 4 are specified
-server/BallStandStyle.luau|TypeError|Argument count mismatch. Function 'part' expects 5 arguments, but only 4 are specified
-server/BallStandStyle.luau|TypeError|Argument count mismatch. Function 'part' expects 5 arguments, but only 4 are specified
-server/BallStandStyle.luau|TypeError|Argument count mismatch. Function 'part' expects 5 arguments, but only 4 are specified
-server/BallStandStyle.luau|TypeError|Argument count mismatch. Function 'part' expects 5 arguments, but only 4 are specified
-server/BallStandStyle.luau|TypeError|Argument count mismatch. Function 'part' expects 5 arguments, but only 4 are specified
-server/BallStandStyle.luau|TypeError|Argument count mismatch. Function 'sign' expects 4 arguments, but only 3 are specified
-server/BallStandStyle.luau|TypeError|Argument count mismatch. Function 'sign' expects 4 arguments, but only 3 are specified
-server/BallStandStyle.luau|TypeError|Argument count mismatch. Function 'sign' expects 4 arguments, but only 3 are specified
-server/BallStandStyle.luau|TypeError|Argument count mismatch. Function 'sign' expects 4 arguments, but only 3 are specified
-server/BallStandStyle.luau|TypeError|Argument count mismatch. Function 'sign' expects 4 arguments, but only 3 are specified
-server/BallStandStyle.luau|TypeError|Argument count mismatch. Function 'sign' expects 4 arguments, but only 3 are specified
-server/BallStandStyle.luau|TypeError|Expected this to be 'Instance?', but got '<type>' caused by: None of the union options are compatible. For example: Expected this to be 'Instance', but got '<type>' caused by: Property 'FindFirstChild' is not compatible. Expected this to be but got caused by: Return type is not compatible. Expected this to be '<type>', but got 'Instance?' caused by: Not all union options are compatible. Key 'Color' not found in external type 'Instance'
-server/BallStandStyle.luau|TypeError|Expected this to be 'Instance?', but got '<type>' caused by: None of the union options are compatible. For example: Expected this to be 'Instance', but got '<type>' caused by: Property 'FindFirstChild' is not compatible. Expected this to be but got caused by: Return type is not compatible. Expected this to be '<type>', but got 'Instance?' caused by: Not all union options are compatible. Key 'Color' not found in external type 'Instance'
-server/BallStandStyle.luau|TypeError|Expected this to be 'Instance?', but got '<type>' caused by: None of the union options are compatible. For example: Expected this to be 'Instance', but got '<type>' caused by: Property 'FindFirstChild' is not compatible. Expected this to be but got caused by: Return type is not compatible. Expected this to be '<type>', but got 'Instance?' caused by: Not all union options are compatible. Key 'Color' not found in external type 'Instance'
-server/BallStandStyle.luau|TypeError|Expected this to be 'number', but got 'number?'
-server/BallStandStyle.luau|TypeError|Expected this to be 'number', but got 'number?'
-server/BallStandStyle.luau|TypeError|Expected this to be 'number', but got 'number?'
-server/BallStandStyle.luau|TypeError|Expected this to be 'number', but got 'number?'
-server/BallStandStyle.luau|TypeError|Expected this to be 'number', but got 'number?'
-server/BallStandStyle.luau|TypeError|Expected this to be 'number', but got 'number?'
-server/BallStandStyle.luau|TypeError|Expected this to be 'number', but got 'number?'
-server/BallStandStyle.luau|TypeError|Expected this to be 'number', but got 'number?'
-server/BallStandStyle.luau|TypeError|Expected this to be 'number', but got 'number?'
-server/BallStandStyle.luau|TypeError|Expected this to be 'number', but got 'number?'
-server/BallStandStyle.luau|TypeError|Expected this to be 'number', but got 'number?'
-server/BallStandStyle.luau|TypeError|Expected this to be 'number', but got 'number?'
-server/BallStandStyle.luau|TypeError|Unknown type used in + operation; consider adding a type annotation to 'p'
-server/BallStandStyle.luau|TypeError|Unknown type used in + operation; consider adding a type annotation to 'p'
-server/BallStandStyle.luau|TypeError|Unknown type used in + operation; consider adding a type annotation to 'p'
-server/BallStandStyle.luau|TypeError|Unknown type used in + operation; consider adding a type annotation to 'top'
-server/BallStandStyle.luau|TypeError|Unknown type used in + operation; consider adding a type annotation to 'top'
-server/BallStandStyle.luau|TypeError|Unknown type used in + operation; consider adding a type annotation to 'top'
-server/BallStandStyle.luau|TypeError|Unknown type used in - operation; consider adding a type annotation to 'p'
-server/BallStandStyle.luau|TypeError|Unknown type used in - operation; consider adding a type annotation to 'p'
-server/BallStandStyle.luau|TypeError|Unknown type used in - operation; consider adding a type annotation to 'p'
-server/BallStandStyle.luau|TypeError|Unknown type used in - operation; consider adding a type annotation to 'p'
-server/BallStandStyle.luau|TypeError|Unknown type used in - operation; consider adding a type annotation to 'p'
-server/BallStandStyle.luau|TypeError|Unknown type used in - operation; consider adding a type annotation to 'p'
-server/BallStandStyle.luau|TypeError|Unknown type used in - operation; consider adding a type annotation to 'p'
-server/BallStandStyle.luau|TypeError|Unknown type used in - operation; consider adding a type annotation to 'p'
-server/BallStandStyle.luau|TypeError|Unknown type used in - operation; consider adding a type annotation to 'p'
-server/BallStandStyle.luau|TypeError|Unknown type used in .. operation; consider adding a type annotation to 'p'
-server/BallStandStyle.luau|TypeError|Unknown type used in .. operation; consider adding a type annotation to 'p'
-server/BallStandStyle.luau|TypeError|Unknown type used in .. operation; consider adding a type annotation to 'p'
-server/BallStandStyle.luau|TypeError|Unknown type used in .. operation; consider adding a type annotation to 'p'
-server/BallStandStyle.luau|TypeError|Unknown type used in .. operation; consider adding a type annotation to 'p'
-server/BallStandStyle.luau|TypeError|Unknown type used in .. operation; consider adding a type annotation to 'p'
-server/BallStandStyle.luau|TypeError|Unknown type used in .. operation; consider adding a type annotation to 'p'
-server/BallStandStyle.luau|TypeError|Unknown type used in .. operation; consider adding a type annotation to 'p'
-server/BallStandStyle.luau|TypeError|Unknown type used in .. operation; consider adding a type annotation to 'p'
-server/BallStandStyle.luau|TypeError|Unknown type used in / operation; consider adding a type annotation to 'p'
-server/BallStandStyle.luau|TypeError|Unknown type used in / operation; consider adding a type annotation to 'p'
-server/BallStandStyle.luau|TypeError|Unknown type used in / operation; consider adding a type annotation to 'p'
-server/BallStandStyle.luau|TypeError|Unknown type used in / operation; consider adding a type annotation to 'p'
-server/BallStandStyle.luau|TypeError|Unknown type used in / operation; consider adding a type annotation to 'p'
-server/BallStandStyle.luau|TypeError|Unknown type used in / operation; consider adding a type annotation to 'p'
-server/BallStandStyle.luau|TypeError|Unknown type used in / operation; consider adding a type annotation to 'p'
-server/BallStandStyle.luau|TypeError|Unknown type used in / operation; consider adding a type annotation to 'p'
-server/BallStandStyle.luau|TypeError|Unknown type used in / operation; consider adding a type annotation to 'p'
-server/BallStandStyle.luau|TypeError|Unknown type used in / operation; consider adding a type annotation to 'p'
-server/BallStandStyle.luau|TypeError|Unknown type used in / operation; consider adding a type annotation to 'p'
-server/BallStandStyle.luau|TypeError|Unknown type used in / operation; consider adding a type annotation to 'p'
-server/BallStandStyle.luau|TypeError|Unknown type used in / operation; consider adding a type annotation to 'top'
-server/BallStandStyle.luau|TypeError|Unknown type used in / operation; consider adding a type annotation to 'top'
-server/BallStandStyle.luau|TypeError|Unknown type used in / operation; consider adding a type annotation to 'top'
-server/BallStandStyle.luau|TypeError|Unknown type used in / operation; consider adding a type annotation to 'upper'
-server/BallStandStyle.luau|TypeError|Unknown type used in / operation; consider adding a type annotation to 'upper'
-server/BallStandStyle.luau|TypeError|Unknown type used in / operation; consider adding a type annotation to 'upper'
 server/BiomeLengthExpansion.luau|TypeError|<type-expression>
 server/BiomeLengthExpansion.luau|TypeError|<type-expression>
 server/BiomeLengthExpansion.luau|TypeError|<type-expression>
@@ -4028,19 +3927,11 @@ shared/BallVisuals.luau|TypeError|Unknown type used in % operation; consider add
 shared/BallVisuals.luau|TypeError|Unknown type used in % operation; consider adding a type annotation to 'time'
 shared/BallVisuals.luau|TypeError|Unknown type used in % operation; consider adding a type annotation to 'time'
 shared/BallVisuals.luau|TypeError|Unknown type used in % operation; consider adding a type annotation to 'time'
-shared/BallVisuals.luau|TypeError|Unknown type used in % operation; consider adding a type annotation to 'time'
-shared/BallVisuals.luau|TypeError|Unknown type used in % operation; consider adding a type annotation to 'time'
-shared/BallVisuals.luau|TypeError|Unknown type used in % operation; consider adding a type annotation to 'time'
-shared/BallVisuals.luau|TypeError|Unknown type used in % operation; consider adding a type annotation to 'time'
 shared/BallVisuals.luau|TypeError|Unknown type used in + operation; consider adding a type annotation to 'base'
 shared/BallVisuals.luau|TypeError|Unknown type used in + operation; consider adding a type annotation to 'base'
 shared/BallVisuals.luau|TypeError|Unknown type used in + operation; consider adding a type annotation to 'base'
 shared/BallVisuals.luau|TypeError|Unknown type used in + operation; consider adding a type annotation to 'base'
 shared/BallVisuals.luau|TypeError|Unknown type used in + operation; consider adding a type annotation to 'base'
-shared/BallVisuals.luau|TypeError|Unknown type used in + operation; consider adding a type annotation to 'base'
-shared/BallVisuals.luau|TypeError|Unknown type used in + operation; consider adding a type annotation to 'base'
-shared/Net.luau|TypeError|Expected this to be 'string', but got 'unknown'
-shared/Net.luau|TypeError|Expected this to be 'string', but got 'unknown'
 shared/Net.luau|TypeError|Expected this to be 'string', but got 'unknown'
 shared/Net.luau|TypeError|Expected this to be 'string', but got 'unknown'
 shared/Net.luau|TypeError|Expected this to be 'string', but got 'unknown'
@@ -4064,14 +3955,6 @@ shared/TrainingCamera.luau|TypeError|Unknown type used in + operation; consider 
 shared/TrainingCamera.luau|TypeError|Unknown type used in + operation; consider adding a type annotation to 'characterPosition'
 shared/TrainingCamera.luau|TypeError|Unknown type used in - operation; consider adding a type annotation to 'characterPosition'
 shared/TrainingCamera.luau|TypeError|Unknown type used in / operation; consider adding a type annotation to 'viewport'
-shared/TrainingMotion.luau|TypeError|Unknown type used in / operation; consider adding a type annotation to 'cycleGain'
-shared/TrainingMotion.luau|TypeError|Unknown type used in / operation; consider adding a type annotation to 'cycleGain'
-shared/TrainingMotion.luau|TypeError|Unknown type used in / operation; consider adding a type annotation to 'cycleGain'
-shared/TrainingMotion.luau|TypeError|Unknown type used in / operation; consider adding a type annotation to 'cycleGain'
-shared/TrainingMotion.luau|TypeError|Unknown type used in / operation; consider adding a type annotation to 'cycleGain'
-shared/TrainingMotion.luau|TypeError|Unknown type used in / operation; consider adding a type annotation to 'cycleGain'
-shared/TrainingMotion.luau|TypeError|Unknown type used in / operation; consider adding a type annotation to 'cycleGain'
-shared/TrainingMotion.luau|TypeError|Unknown type used in / operation; consider adding a type annotation to 'cycleGain'
 shared/VolcanicEggVisual.luau|TypeError|Function only returns 1 value, but 2 are required here
 shared/VolcanicEggVisual.luau|TypeError|Function only returns 1 value, but 2 are required here
 shared/VolcanicEggVisual.luau|TypeError|Unknown type used in + operation; consider adding a type annotation to 'anchor'

@@ -1,7 +1,12 @@
--- Isolated real server-handler checks: no profile reads/writes or player rewards.
+-- Isolated checks: no real remotes, profile writes, or Marketplace prompts.
 local Shared = game.ReplicatedStorage.Shared
+local Config = require(Shared.GameConfig)
+local Motion = require(Shared.TrainingMotion)
 local Rules = require(Shared.Core.TrainingBoost)
+local Data = require(Shared.Core.ProfileData)
+local Goal = require(Shared.TrainingGoal)
 local Handler = require(game.ServerScriptService.Server.Gameplay.TrainingBoost)
+local Receipts = require(game.ServerScriptService.Server.Gameplay.Receipts)
 local player = game.Players:GetPlayers()[1]
 assert(player, "Run in Play with one player")
 local checks, lanes = 0, 0
@@ -15,71 +20,109 @@ for world = 1, 2 do
 	for index = 1, 7 do
 		local lane = zone and zone:FindFirstChild("TrainingLane" .. index)
 		local strip = lane and lane:FindFirstChild("TrainingStrip")
-		if not strip then
+		if not strip or not Goal.net(lane) then
 			continue
 		end
 		lanes += 1
+		local age = Rules.Delay + Rules.TravelTime + 1
 		local s = {
 			lane = index,
-			trainingStarted = workspace:GetServerTimeNow() - Rules.Delay - 1,
+			trainingStarted = workspace:GetServerTimeNow() - age,
 			trainingSeed = 73123,
-			trainingCycle = 7,
-			trainingHit = 2,
+			trainingCycle = math.floor(age / Config.TrainingCycle),
+			trainingHit = 1,
 			busyUntil = 0,
 			data = { world = world, rebirths = 16 },
 			lanes = { [world] = { [index] = { lane = lane, strip = strip } } },
 		}
 		local root, hum = { Position = strip.Position + Vector3.new(0, 3, 0) }, { Health = 100 }
-		local acknowledgements, payload = 0, nil
+		local acknowledgements = 0
 		local context = {
 			states = { [player] = s },
 			rootFor = function()
 				return root, hum
 			end,
 			effect = {
-				FireClient = function(_, recipient, kind, info)
+				FireClient = function(_, recipient, kind, payload)
 					check(recipient == player and kind == "TrainingBoost", "Ack belongs to owner")
-					payload = info
+					check(payload.offer == 0 and payload.seed == s.trainingSeed, "Ack identifies offer/session")
+					check(payload.multiplier == Rules.offer(s.trainingSeed, 0).multiplier, "Value is server-selected")
 					acknowledgements += 1
 				end,
 			},
 		}
 		check(not Handler.claim(context, player, 73122, 0), "Old session rejected")
 		check(not Handler.claim(context, player, 73123, 1), "Future offer rejected")
-		check(Handler.claim(context, player, 73123, 0), "Screen offer accepted between contacts")
-		check(not Handler.claim(context, player, 73123, 0), "Duplicate rejected")
+		check(Handler.claim(context, player, 73123, 0), "Landed bubble accepted")
+		check(not Handler.claim(context, player, 73123, 0), "Duplicate click rejected")
 		check(acknowledgements == 1, "Exactly one acknowledgement")
-		check(payload.cycle == 8 and payload.offer == 0 and payload.seed == s.trainingSeed, "Next unpaid kick reserved")
-		check(payload.multiplier == Rules.multiplier(s.trainingSeed, 0), "Server chooses multiplier")
-		check(Rules.reward(25, s.trainingBoostCycle, 7, s.trainingBoostMultiplier) == 25, "Part-paid kick unchanged")
+		local cycle = s.trainingBoostCycle
 		check(
-			Rules.reward(25, s.trainingBoostCycle, 8, s.trainingBoostMultiplier) == math.floor(25 * payload.multiplier),
-			"Reserved kick multiplied"
+			s.trainingStarted + cycle * Config.TrainingCycle + Config.KickContact > workspace:GetServerTimeNow(),
+			"Bonus starts at a future contact"
 		)
-		check(Rules.reward(25, s.trainingBoostCycle, 9, s.trainingBoostMultiplier) == 25, "Following kick unchanged")
+		for _ = 1, Motion.hitCount(index) do
+			check(
+				Rules.reward(100, cycle, cycle, s.trainingBoostMultiplier)
+					== math.floor(100 * s.trainingBoostMultiplier),
+				"Every bounce uses displayed multiplier"
+			)
+			check(Rules.reward(100, cycle, cycle + 1, s.trainingBoostMultiplier) == 100, "Following kick is normal")
+		end
 		s.trainingBoostOffer = nil
-		s.trainingHit = 1
-		check(
-			Handler.claim(context, player, 73123, 0) and s.trainingBoostCycle == 7,
-			"Unpaid current kick can receive bonus"
-		)
-		s.trainingBoostOffer = nil
-		s.trainingStarted = workspace:GetServerTimeNow() - Rules.Delay - Rules.Lifetime - 0.3
-		check(not Handler.claim(context, player, 73123, 0), "Expired offer rejected")
-		s.trainingStarted = workspace:GetServerTimeNow() - Rules.Delay - 1
+		s.trainingStarted = workspace:GetServerTimeNow() - Rules.Delay - Rules.Lifetime - 1
+		check(not Handler.claim(context, player, 73123, 0), "Expired bubble rejected")
+		s.trainingStarted = workspace:GetServerTimeNow() - Rules.Delay - 0.1
+		check(not Handler.claim(context, player, 73123, 0), "Falling bubble cannot claim early")
+		s.trainingStarted = workspace:GetServerTimeNow() - Rules.Delay - Rules.Interval * 4 - 2
+		check(not Handler.claim(context, player, 73123, 4), "Rainbow cannot use free claim")
+		s.trainingStarted = workspace:GetServerTimeNow() - age
 		root.Position += Vector3.new(1000, 0, 0)
-		check(not Handler.claim(context, player, 73123, 0), "Leaving strip rejects click")
+		check(not Handler.claim(context, player, 73123, 0), "Off-strip click rejected")
 		root.Position = strip.Position + Vector3.new(0, 3, 0)
 		hum.Health = 0
 		check(not Handler.claim(context, player, 73123, 0), "Death rejects click")
 		hum.Health = 100
-		s.busyUntil = os.clock() + 2
-		check(not Handler.claim(context, player, 73123, 0), "Busy player rejected")
-		s.busyUntil = 0
 		s.lane = nil
-		check(not Handler.claim(context, player, 73123, 0), "Stopped training rejected")
+		check(not Handler.claim(context, player, 73123, 0), "Stopped training rejects click")
 		task.wait()
 	end
 end
-check(lanes > 0, "At least one lane tested")
-return { checks = checks, lanes = lanes }
+check(lanes > 0, "At least one real lane tested")
+-- Exercise the real receipt processor with an isolated product catalog and save stub.
+for _, multiplier in Rules.Paid do
+	local s = { data = Data.fresh() }
+	local saved, saves = false, 0
+	local context = {
+		states = { [player] = s },
+		Config = { Products = { TestBoost = { id = 111, trainingBoost = multiplier } } },
+		save = function()
+			saves += 1
+			return saved
+		end,
+		publish = function() end,
+	}
+	local receipt = { ProductId = 111, PurchaseId = "isolated-boost-" .. multiplier }
+	check(
+		Receipts.process(context, player, receipt) == Enum.ProductPurchaseDecision.NotProcessedYet,
+		"Unconfirmed save retries"
+	)
+	check(s.data.trainingBoosts[tostring(multiplier)] == 1, "Receipt reserves one charge")
+	saved = true
+	check(
+		Receipts.process(context, player, receipt) == Enum.ProductPurchaseDecision.PurchaseGranted,
+		"Saved receipt granted"
+	)
+	check(s.data.trainingBoosts[tostring(multiplier)] == 1 and saves == 2, "Receipt retry never doubles charge")
+	local clean = Data.normalize(s.data, { stones = { Pebble = true }, trails = { None = true }, pets = {} })
+	check(
+		Rules.takeCharge(clean) == multiplier and Rules.takeCharge(clean) == nil,
+		"Reload preserves exactly one consumable"
+	)
+	check(
+		Receipts.process(context, player, { ProductId = 999, PurchaseId = "unknown" })
+			== Enum.ProductPurchaseDecision.NotProcessedYet,
+		"Unknown product never grants"
+	)
+end
+return { checks = checks, lanes = lanes, paidProducts = #Rules.Paid }

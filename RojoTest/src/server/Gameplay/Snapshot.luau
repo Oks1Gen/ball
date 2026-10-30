@@ -50,7 +50,6 @@ function Snapshot.build(context: Context, player: Player, notice: string?, force
 		nextLevel = Config.threshold(math.min(level + 1, Config.MaxLevel), d.rebirths),
 		levelStart = Config.threshold(level, d.rebirths),
 		isAdmin = AdminAccess.isAuthorized(player.UserId),
-		adminTest = s.adminOriginal ~= nil,
 	}
 	-- The inventory travels only when it changed. A forced snapshot sends it
 	-- anyway, so a client that lost its cache can ask for the pets again.

@@ -6,7 +6,6 @@ local T = require(script.Parent.Theme)
 local Spacing = require(game.ReplicatedStorage.Shared.UiSpacing)
 local MotionConfig = require(game.ReplicatedStorage.Shared.UiMotionConfig)
 local EggCardLayout = require(script.Parent.EggCardLayout)
-local HatchStage = require(script.Parent.HatchStage)
 local Presentation = require(script.Parent.Parent.Modules.UiPresentation)
 local e = React.createElement
 local S = {}
@@ -810,9 +809,5 @@ function S.Shop(p)
 		U.Scroll,
 		{ Name = "ShopOffers", Size = UDim2.fromOffset(w, h), Height = bottom + 96, Children = children }
 	)
-end
-
-function S.Hatch(p)
-	return e(HatchStage, p)
 end
 return S

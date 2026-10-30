@@ -5,6 +5,9 @@ local Visuals = require(Shared.BallVisuals)
 local Tags = game:GetService("CollectionService")
 local Signs = require(script.Parent.BallStandSigns)
 local Stand = {}
+local DISPLAY_FILL = 0.405
+-- Rest height above the pad: the standPose bob (0.45) plus clear air at its lowest point.
+local BOB = 0.45
 
 function Stand.apply(map)
 	require(script.Parent.BallStandStyle).apply(map)
@@ -39,6 +42,8 @@ function Stand.apply(map)
 	end
 	for _, item in Config.Stones do
 		local top = assert(stand:FindFirstChild("DisplayTop" .. item.displaySlot))
+		-- The ball body fills under half of its pad, like the items on the reference stands.
+		local diameter = DISPLAY_FILL * math.min(top.Size.X, top.Size.Z)
 		local model
 		for _, candidate in container:GetChildren() do
 			if
@@ -49,18 +54,29 @@ function Stand.apply(map)
 				break
 			end
 		end
+		-- Rebuild when the size or the template fit rule changed since the model was placed.
+		local fit = Visuals.fitKey(item.id)
+		if model and (model:GetAttribute("DisplayDiameter") ~= diameter or model:GetAttribute("DisplayFit") ~= fit) then
+			model:Destroy()
+			model = nil
+		end
 		if not model then
-			model = Visuals.create(item.id, 6 * displayScale)
-			model:PivotTo(CFrame.Angles(0, -math.pi / 2, 0))
+			model = Visuals.create(item.id, diameter)
+			-- Face the purchase side of the pad, where players walk up.
+			local front = top.CFrame.RightVector
+			model:PivotTo(CFrame.lookAt(Vector3.zero, Vector3.new(front.X, 0, front.Z)))
+			model:SetAttribute("DisplayDiameter", diameter)
+			model:SetAttribute("DisplayFit", fit)
 			model.Parent = container
 		end
 		-- Recompute placement when the stand moves, including the animation origin.
 		do
 			local cf, size = model:GetBoundingBox()
 			model.WorldPivot = cf
+			-- Float above the pad; even at the bottom of the bob the ball keeps visible air below it.
 			local center = Vector3.new(
 				top.Position.X,
-				top.Position.Y + top.Size.Y / 2 + size.Y / 2 + 0.9 * displayScale,
+				top.Position.Y + top.Size.Y / 2 + size.Y / 2 + BOB + 0.75 * displayScale,
 				top.Position.Z
 			)
 			model:PivotTo(model:GetPivot() + (center - cf.Position))
@@ -110,7 +126,7 @@ function Stand.apply(map)
 		gui.Enabled = true
 		Signs.render(gui, item)
 		anchor.Position =
-			Vector3.new(cf.Position.X, cf.Position.Y + size.Y / 2 + (0.75 + 2.7) * displayScale, cf.Position.Z)
+			Vector3.new(cf.Position.X, cf.Position.Y + size.Y / 2 + (1.6 + 2.7) * displayScale, cf.Position.Z)
 		anchor:SetAttribute("BallDisplayLabelSlot", item.displaySlot)
 		model:SetAttribute("DisplayLabelBase", anchor.Position)
 		local link = model:FindFirstChild("DisplayLabel") or Instance.new("ObjectValue")

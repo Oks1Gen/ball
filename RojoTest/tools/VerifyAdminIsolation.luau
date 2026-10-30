@@ -1,6 +1,6 @@
 -- Run in Edit. Uses plain mock state; never touches player saves or currency.
 local source = game.ServerScriptService.Server.AdminService:Clone()
-source.Name = "AdminIsolationCheck"
+source.Name = "AdminPersistenceCheck"
 source.Parent = game.ServerScriptService.Server
 local Service = require(source)
 source:Destroy()
@@ -34,7 +34,16 @@ local state = {
 	inventoryVersion = 0,
 }
 local states = { [owner] = state }
+local saves = 0
 local context = {
+	save = function(player)
+		assert(states[player].data == original, "Grants must keep the persistent data table")
+		saves += 1
+		return true
+	end,
+	equipBest = function(s)
+		s.inventoryVersion += 1
+	end,
 	states = states,
 	stopTraining = function() end,
 	rootFor = function()
@@ -62,29 +71,31 @@ assert(
 	service.counters[owner] and service.counters[owner].count == 1,
 	"The rate limiter must count the command of the player"
 )
-assert(not service:handle({ UserId = 1234 }, "Begin").ok)
-assert(not pcall(service.dispatch, service, owner, "SetStat", { key = "wins", amount = 99 }))
-service:dispatch(owner, "Begin")
-assert(state.data ~= original and state.gifts ~= gifts)
+assert(not service:handle({ UserId = 1234 }, "SetStat", { key = "wins", amount = 99 }).ok)
+assert(H:JSONEncode(original) == before and saves == 0)
 service:dispatch(owner, "SetStat", { key = "wins", amount = 1000000 })
-assert(state.data.wins == 1000000 and original.wins == 17)
-state.data.receipts.fakeReceipt = true
-state.gifts[1] = true
-local persisted, sessionOnly = Service.persistence(state)
-assert(persisted == original and sessionOnly == false, "Live saves must refresh the original lease, not test data")
+assert(state.data == original and original.wins == 1000000 and saves == 1)
+service:dispatch(owner, "GivePet", require(game.ReplicatedStorage.Shared.GameConfig).AdminPet.id)
+assert(#original.pets == 1 and saves == 2 and state.inventoryVersion == 1)
+service:dispatch(owner, "Stone", "Pebble")
+service:dispatch(owner, "Trail", "None")
+assert(saves == 4 and original.stones.Pebble and original.trails.None)
+original.receipts.fakeReceipt = true
+for _, command in { "Begin", "End", "Reset" } do
+	assert(not pcall(service.dispatch, service, owner, command), "Retired test commands must be rejected")
+end
+assert(original.receipts.fakeReceipt and saves == 4)
 assert(not pcall(service.dispatch, service, owner, "SetStat", { key = "wins", amount = math.huge }))
 assert(not pcall(service.dispatch, service, owner, "SetStat", { key = "wins", amount = 0 / 0 }))
 assert(not pcall(service.dispatch, service, owner, "SetStat", { key = "wins", amount = -1 }))
 assert(not pcall(service.dispatch, service, owner, "SetStat", { key = "adminOriginal", amount = 1 }))
-service:restore(owner, false)
-assert(state.data == original and state.gifts == gifts and state.joined == 12 and state.sessionOnly == false)
-assert(not state.adminOriginal and not state.data.receipts.fakeReceipt and not state.gifts[1])
-assert(H:JSONEncode(original) == before)
+assert(state.data == original and state.gifts == gifts and state.joined == 12)
+assert(saves == 4, "Rejected commands must not save")
 return {
 	unauthorizedDenied = true,
-	authorisedStatus = true,
-	mutationRequiresSandbox = true,
+	directPersistentGrants = true,
+	immediateSave = true,
 	invalidStatsDenied = true,
-	originalPersistence = true,
-	rollback = true,
+	retiredCommandsDenied = true,
+	receiptsPreserved = true,
 }

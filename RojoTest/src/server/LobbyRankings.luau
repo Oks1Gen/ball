@@ -331,7 +331,7 @@ function Rankings.render(map, states)
 			entries[entry.userId] = table.clone(entry)
 		end
 		for player, state in states do
-			local data = state.adminOriginal and state.adminOriginal.data or state.data
+			local data = state.data
 			if player.Parent then
 				entries[player.UserId] =
 					{ userId = player.UserId, name = player.DisplayName, value = math.floor(data[category.key] or 0) }

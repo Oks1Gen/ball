@@ -89,7 +89,7 @@ export type Context = {
 }
 
 function Panel.mount(context: Context)
-	local authorized, testing, busy = false, false, false
+	local authorized, busy = false, false
 	local indicatorHidden = false
 	local window: any = nil
 	local windowGroup: any = nil
@@ -98,7 +98,6 @@ function Panel.mount(context: Context)
 	local indicatorAnimation: any = nil
 	local statusLabel: any = nil
 	local summary: any = nil
-	local modeButton: any = nil
 	local body: any = nil
 	local indicator: any = nil
 	local status: any = {}
@@ -166,20 +165,12 @@ function Panel.mount(context: Context)
 	end
 
 	local function refreshSummary()
-		if indicator then
-			indicator.Visible = authorized and testing
-		end
 		if not window then
 			return
 		end
-		local modeCaption = Kit.captionOf(modeButton)
-		if modeCaption then
-			modeCaption.Text = testing and "Завершить тест" or "Начать тест"
-		end
 		local mode = window:FindFirstChild("Mode")
 		if mode and mode:IsA("TextLabel") then
-			mode.Text = testing and "Тестовая копия прогресса"
-				or "Основной прогресс защищён"
+			mode.Text = "Изменения сохраняются в прогресс"
 		end
 		summary.Text = string.format(
 			"Мир %s · Wins %s · Skill %s · RB %s · Петов %s/60",
@@ -194,7 +185,6 @@ function Panel.mount(context: Context)
 	local function applyResult(result: any, command: string)
 		if result.status then
 			status = result.status
-			testing = status.testing
 		end
 		if result.rows then
 			rows = result.rows
@@ -330,8 +320,8 @@ function Panel.mount(context: Context)
 				rows = {
 					{
 						ok = true,
-						title = "Проверяй изменения в тестовой копии",
-						detail = "Включи тестовый режим. Валюта, питомцы, открытия и результаты бросков вернутся к исходным после завершения теста.",
+						title = "Выдача сохраняется в профиль",
+						detail = "Валюта, питомцы, мячи, трейлы и открытия изменяют текущий прогресс и сохраняются между входами.",
 					},
 					{
 						ok = true,
@@ -427,7 +417,6 @@ function Panel.mount(context: Context)
 				{ label = "Skill: 1M", command = "SetStat", value = { key = "skill", amount = 1000000 } },
 				{ label = "Rebirths: 16", command = "SetStat", value = { key = "rebirths", amount = 16 } },
 				{ label = "Открыть всё", command = "Unlock", color = Style.Colors.Green },
-				{ label = "Сбросить тест", command = "Reset", color = Style.Colors.Purple },
 			}, y, 170, 42)
 			y = label("Проверка броска", y + 8)
 			y = grid({
@@ -504,13 +493,13 @@ function Panel.mount(context: Context)
 			y = grid({
 				{ label = "Открыть яйцо", command = "Egg", value = egg.id },
 				{
-					label = "Тест: 1 яйцо",
+					label = "Выдать из 1 яйца",
 					command = "Hatch",
 					value = { egg = egg.id, count = 1 },
 					color = Style.Colors.Green,
 				},
 				{
-					label = "Тест: 3 яйца",
+					label = "Выдать из 3 яиц",
 					command = "Hatch",
 					value = { egg = egg.id, count = 3 },
 					color = Style.Colors.Green,
@@ -564,7 +553,7 @@ function Panel.mount(context: Context)
 			end
 			y = grid(lanes, y, 125, 40)
 		elseif tab == "Мячи / трейлы" then
-			y = label("Экипировать тестовый мяч", y)
+			y = label("Выдать и экипировать мяч", y)
 			local items = {}
 			for _, ball in Config.Stones do
 				table.insert(
@@ -573,7 +562,7 @@ function Panel.mount(context: Context)
 				)
 			end
 			y = grid(items, y, 210, 42)
-			y = label("Экипировать тестовый трейл", y + 8)
+			y = label("Выдать и экипировать трейл", y + 8)
 			items = {}
 			for _, trail in Config.Trails do
 				table.insert(
@@ -675,23 +664,9 @@ function Panel.mount(context: Context)
 		Kit.text(window, "Mode", "", 16, 24, width - 32, 27, 21, Style.Gold).TextXAlignment = Enum.TextXAlignment.Left
 		summary = Kit.text(window, "Summary", "", 16, 55, width - 32, 24, 16, Style.Muted)
 		summary.TextXAlignment = Enum.TextXAlignment.Left
-		modeButton = brickButton(
-			window,
-			"TestMode",
-			"Начать тест",
-			16,
-			88,
-			math.min(300, width - 32),
-			36,
-			Style.Colors.Green,
-			20,
-			function()
-				request(testing and "End" or "Begin")
-			end
-		)
 		local tabs = Instance.new("ScrollingFrame")
 		tabs.Name = "Tabs"
-		tabs.Position = UDim2.fromOffset(16, 140)
+		tabs.Position = UDim2.fromOffset(16, 94)
 		tabs.Size = UDim2.fromOffset(width - 32, 46)
 		tabs.BackgroundTransparency = 1
 		tabs.BorderSizePixel = 0
@@ -730,8 +705,8 @@ function Panel.mount(context: Context)
 		end
 		body = Instance.new("ScrollingFrame")
 		body.Name = "Body"
-		body.Position = UDim2.fromOffset(16, 200)
-		body.Size = UDim2.fromOffset(width - 32, height - 252)
+		body.Position = UDim2.fromOffset(16, 154)
+		body.Size = UDim2.fromOffset(width - 32, height - 206)
 		body.BackgroundTransparency = 1
 		body.BorderSizePixel = 0
 		body.ScrollBarThickness = 5
@@ -740,7 +715,7 @@ function Panel.mount(context: Context)
 		statusLabel = Kit.text(
 			window,
 			"Status",
-			"Тестовые изменения можно отменить кнопкой «Завершить тест».",
+			"Выдача и изменения прогресса сохраняются автоматически.",
 			16,
 			height - 48,
 			width - 32,
@@ -801,7 +776,6 @@ function Panel.mount(context: Context)
 		probe = nil
 		statusLabel = nil
 		summary = nil
-		modeButton = nil
 		body = nil
 		pending = nil
 		busy = false
@@ -886,7 +860,6 @@ function Panel.mount(context: Context)
 
 	local function update(info: any)
 		authorized = info.isAdmin == true
-		testing = info.adminTest == true
 		if authorized then
 			mount()
 		elseif gui then

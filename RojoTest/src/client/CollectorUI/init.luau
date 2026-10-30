@@ -13,6 +13,7 @@ local Presentation = require(script.Parent.Modules.UiPresentation)
 local InventoryTabs = require(script.InventoryTabs)
 local InventoryWindow = require(script.InventoryWindow)
 local InventoryPages = require(script.InventoryPages)
+local HatchScreen = require(script.HatchScreen)
 local e = React.createElement
 local UI = {}
 -- ReactRoblox mounts the children of an element in the hash order of the
@@ -90,7 +91,7 @@ local function Window(p: WindowProps)
 		Icon = e(U.Icon, {
 			-- The corner icon of the reference panels: it hangs over the top
 			-- left corner of the plate.
-			Kind = (p.Kind == "Eggs" or p.Kind == "Hatch") and "Egg" or p.Kind,
+			Kind = p.Kind == "Eggs" and "Egg" or p.Kind,
 			Position = UDim2.fromOffset(WINDOW_MARGIN, WINDOW_MARGIN),
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			Size = UDim2.fromOffset(iconSize, iconSize),
@@ -164,15 +165,15 @@ local function Window(p: WindowProps)
 					Position = UDim2.fromOffset(margin, margin),
 					Size = UDim2.fromOffset(w, h),
 					BackgroundColor3 = T.Body,
-					BackgroundTransparency = p.Kind == "Hatch" and 1 or 0.3,
+					BackgroundTransparency = 0.3,
 					BorderSizePixel = 0,
 					ZIndex = 1,
 				}, {
-					Edge = p.Kind ~= "Hatch" and e("UIStroke", {
+					Edge = e("UIStroke", {
 						Thickness = T.WindowStroke,
 						Color = T.Outline,
 						ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
-					}) or nil,
+					}),
 					Content = e("Frame", {
 						Name = "ScreenContent",
 						Position = UDim2.fromOffset(12, p.Phone and 28 or 68),
@@ -373,6 +374,8 @@ function UI.mount(context)
 		if activeView then
 			views[activeView.Serial] = activeView
 		end
+		-- The reveal is not a window: it covers the whole screen, top bar included.
+		local hatchScreen = nil
 		for _, windowView in views do
 			local view = windowView
 			if data and area.X > 120 and area.Y > 160 then
@@ -428,7 +431,7 @@ function UI.mount(context)
 					Hatched = view.Hatched,
 				}
 				local kind = view.Kind
-				local title = kind == "Hatch" and "Your new pets!" or kind == "Pets" and "My Pets" or kind
+				local title = kind == "Pets" and "My Pets" or kind
 				local serial = view.Serial
 				-- The blocker lives only while a screen is open: a modal dim that
 				-- outlives the close would swallow every click of the game.
@@ -448,7 +451,29 @@ function UI.mount(context)
 						Modal = true,
 					})
 				end
+				local function settled()
+					if handle.View == view and handle.Active == nil then
+						handle.View = nil
+					elseif handle.View ~= view then
+						handle.Exiting[serial] = nil
+					end
+					render()
+				end
 				local page = collection and (InventoryPages[view.Tab] or Screens[view.Tab]) or Screens[kind]
+				if kind == "Hatch" then
+					hatchScreen = e(HatchScreen, {
+						key = kind .. serial,
+						Area = area,
+						Inset = inset,
+						Phone = phone,
+						Visible = handle.Active ~= nil and handle.View == view,
+						Reduced = props.Reduced,
+						Stage = props,
+						Close = context.close,
+						Settled = settled,
+					})
+					continue
+				end
 				children["Window" .. serial] = e(collection and InventoryWindow or Window, {
 					key = kind .. serial,
 					Kind = kind,
@@ -469,14 +494,7 @@ function UI.mount(context)
 					Visible = handle.Active ~= nil and handle.View == view,
 					Reduced = props.Reduced,
 					Close = context.close,
-					Settled = function()
-						if handle.View == view and handle.Active == nil then
-							handle.View = nil
-						elseif handle.View ~= view then
-							handle.Exiting[serial] = nil
-						end
-						render()
-					end,
+					Settled = settled,
 					Children = {
 						Screen = contentHeight > baseH and e(U.Scroll, {
 							Name = "CompactScreenScroll",
@@ -506,7 +524,9 @@ function UI.mount(context)
 					Position = UDim2.fromOffset(inset.X, inset.Y),
 					Size = UDim2.fromOffset(math.max(1, area.X), math.max(1, area.Y)),
 					BackgroundTransparency = 1,
+					ZIndex = 1,
 				}, children),
+				Hatch = hatchScreen,
 			}),
 		})
 	end

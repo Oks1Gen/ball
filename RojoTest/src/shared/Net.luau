@@ -7,7 +7,7 @@
 -- KickReady starts power; KickAccuracyReady carries a fresh token/clock and locked power.
 -- The second release consumes the token and multiplies power by accuracy. KickCancel has no payload.
 -- Result.zone/zoneMultiplier: server-selected furthest zone and Wins factor; no client reward inputs.
--- TrainingBoost(seed, offer): catch a screen bubble; server owns its clock, multiplier and kick.
+-- TrainingBoost(seed, offer): claim a scheduled UI bubble; server owns its value/window.
 -- Admin: client -> server RemoteFunction, command:string/value?; authorized and rate-limited server-side.
 local Net = {}
 Net.Folder = "SkippingRemotes"

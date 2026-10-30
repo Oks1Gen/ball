@@ -83,7 +83,7 @@ assert(Config.shotDistance(1e15, 10, 2) == Config.shotLimit(2))
 assert(Config.shotDuration(limit, 1) > 13)
 assert(Config.shotDuration(Config.shotLimit(2), 2) == 10)
 local frame = Config.arenaFrame(map)
-local start = frame:PointToWorldSpace(Vector3.new(-115.35, 1.8, -0.3))
+local start = frame:PointToWorldSpace(Config.ShotStartLocal)
 local finish = start + frame.LookVector * (limit / Config.DistancePerStud)
 assert(finish.Z > back and finish.Z < back + 270, "Maximum flight must finish in Sakura")
 assert(

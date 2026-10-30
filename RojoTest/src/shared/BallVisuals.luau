@@ -10,9 +10,17 @@ function Visuals.create(id, diameter)
 	local model = template:Clone()
 	model.Name = "Ball_" .. id
 	model:SetAttribute("BallId", id)
-	local cf, size = model:GetBoundingBox()
-	model.WorldPivot = cf
-	model:ScaleTo(model:GetScale() * diameter / math.max(size.X, size.Y, size.Z))
+	-- Templates carry their largest outer dimension (rings, sparks and spikes included) and keep the
+	-- ball centred on the template origin, so every ball fills the same size and spins about its centre.
+	local fit = model:GetAttribute("FitSize")
+	if typeof(fit) == "number" and fit > 0 then
+		model.WorldPivot = CFrame.new()
+		model:ScaleTo(model:GetScale() * diameter / fit)
+	else
+		local cf, size = model:GetBoundingBox()
+		model.WorldPivot = cf
+		model:ScaleTo(model:GetScale() * diameter / math.max(size.X, size.Y, size.Z))
+	end
 	model:PivotTo(CFrame.new())
 	for _, part in model:GetDescendants() do
 		if part:IsA("BasePart") then
@@ -23,6 +31,13 @@ function Visuals.create(id, diameter)
 		end
 	end
 	return model
+end
+
+-- Changes whenever a template's fit size changes, so placed display copies know to rebuild.
+function Visuals.fitKey(id): string
+	local templates = Shared:WaitForChild("BallTemplates")
+	local template = templates:FindFirstChild(id) or templates:FindFirstChild("Pebble")
+	return tostring(template and template:GetAttribute("FitSize"))
 end
 
 function Visuals.visible(model, visible)

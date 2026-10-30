@@ -1,8 +1,9 @@
 --!strict
--- The ball in the player's hand and the practice ball on the training lane.
+-- The ball in the player's hand and the practice ball on the training lane, both the same size.
 -- Both are rebuilt only when the equipped stone changes, and their
 -- transparency is written only when the visibility actually changes.
 local BallVisuals = require(game.ReplicatedStorage.Shared.BallVisuals)
+local DIAMETER = require(game.ReplicatedStorage.Shared.GameConfig).BallDiameter
 
 local Holder = {}
 
@@ -17,7 +18,7 @@ export type Handle = {
 }
 
 function Holder.mount(): Handle
-	local held = BallVisuals.create("Pebble", 1.1)
+	local held = BallVisuals.create("Pebble", DIAMETER)
 	held.Name = "HeldBall"
 	held.Parent = workspace
 	local heldId = "Pebble"
@@ -47,7 +48,7 @@ function Holder.mount(): Handle
 				return
 			end
 			held:Destroy()
-			held = BallVisuals.create(id, 1.1)
+			held = BallVisuals.create(id, DIAMETER)
 			held.Name = "HeldBall"
 			held.Parent = workspace
 			heldId = id
@@ -68,7 +69,7 @@ function Holder.mount(): Handle
 			if practice then
 				practice:Destroy()
 			end
-			practice = BallVisuals.create(id, 1.6)
+			practice = BallVisuals.create(id, DIAMETER)
 			practice.Name = "PracticeBall"
 			practice.Parent = workspace
 			practiceVisible = nil

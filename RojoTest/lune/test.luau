@@ -14,6 +14,8 @@ local suites = {
 	require("../tests/Economy.spec"),
 	require("../tests/Net.spec"),
 	require("../tests/FlamePath.spec"),
+	require("../tests/HatchSequence.spec"),
+	require("../tests/PetNews.spec"),
 }
 local count, failed = 0, 0
 for _, suite in suites do

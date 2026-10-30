@@ -21,6 +21,15 @@ function Presentation.kickHint(canThrow: boolean, training: boolean): string
 	return action .. " • Train to increase hit distance"
 end
 
+function Presentation.hatchHint(): string
+	if Input.PreferredInput == Enum.PreferredInput.Touch then
+		return "Tap the egg to crack it!"
+	elseif Input.PreferredInput == Enum.PreferredInput.Gamepad then
+		return "Press A to crack the egg!"
+	end
+	return "Click or press E to crack the egg!"
+end
+
 function Presentation.readyGifts(snapshot: any): number
 	local count = 0
 	if snapshot then

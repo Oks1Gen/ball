@@ -6,7 +6,6 @@ local Data = require(game.ReplicatedStorage.Shared.Core.ProfileData)
 local Config = require(game.ReplicatedStorage.Shared.GameConfig)
 local BallPurchases = require(game.ReplicatedStorage.Shared.BallPurchases)
 local ReturnRewards = require(game.ReplicatedStorage.Shared.Core.ReturnRewards)
-local AdminService = require(script.Parent.Parent.AdminService)
 local Log = require(script.Parent.Parent.ProfileLog)
 local Storage = require(script.Parent.Parent.ProfileStorage)
 local Service: any = { profiles = {}, loading = {} }
@@ -171,7 +170,7 @@ end
 function Service:Attach(player: Player, state: any, onLost: () -> ())
 	local profile = assert(self.profiles[player], "Profile session is missing")
 	local function sync()
-		local original = AdminService.persistence(state)
+		local original = state.data
 		original.lastSeen = os.time()
 		original.offlineRate = ReturnRewards.offlineRate(original, Config.Lanes, BallPurchases.power(original))
 		profile.Data.progress = original
@@ -194,7 +193,7 @@ function Service:Save(player: Player, state: any, receiptId: string?): boolean
 	if not profile or not profile:IsActive() or state.saving then
 		return false
 	end
-	profile.Data.progress = AdminService.persistence(state)
+	profile.Data.progress = state.data
 	if receiptId and profile.LastSavedData.progress.receipts[receiptId] then
 		return true
 	end
@@ -228,7 +227,7 @@ function Service:Release(player: Player, state: any)
 	if not profile then
 		return
 	end
-	profile.Data.progress = AdminService.persistence(state)
+	profile.Data.progress = state.data
 	profile.Data.progress.lastSeen = os.time()
 	profile.Data.progress.offlineRate =
 		ReturnRewards.offlineRate(profile.Data.progress, Config.Lanes, BallPurchases.power(profile.Data.progress))

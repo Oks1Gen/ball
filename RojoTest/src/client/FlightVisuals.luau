@@ -124,7 +124,7 @@ function Flight.start(info, context)
 	local perfect = info.perfectCount or 0
 	local cameraQuality = math.max(timingQuality, if perfect > 0 then 0.85 else 0)
 	local windup = info.windup or Config.KickWindup
-	local ball = BallVisuals.create(info.stone, 2.2)
+	local ball = BallVisuals.create(info.stone, Config.BallDiameter)
 	ball.Name = "ThrownBall_" .. info.userId
 	ball.Parent = workspace
 	local trailDef = Config.find(Config.Trails, info.trail)

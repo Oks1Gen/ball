@@ -11,6 +11,10 @@ Config.KickContact = 0.42
 -- The training contact and the shot windup are the same moment of the kick.
 Config.KickWindup = Config.KickContact
 Config.DistancePerStud = 750 / 180
+-- One ball size for the hand, the training lane and the kick.
+Config.BallDiameter = 1.1
+-- Arena-frame rest point of the kick ball: on the apron, just ahead of the right foot's toe.
+Config.ShotStartLocal = Vector3.new(-115.6, 1.27, 0.3)
 Config.WorldShotProgression = {
 	[1] = { requiredPower = 1000000, routeStuds = 2160 },
 	[2] = { requiredPower = 100000000, routeStuds = 1440 },
@@ -47,7 +51,7 @@ function Config.shotLimit(world, arena)
 	local water = scenery and scenery:FindFirstChild("Water_8")
 	if water then
 		local frame = Config.arenaFrame(arena)
-		local start = frame:PointToWorldSpace(Vector3.new(-115.35, 1.8, -0.3))
+		local start = frame:PointToWorldSpace(Config.ShotStartLocal)
 		local finale = scenery:FindFirstChild("SakuraJapaneseFinale")
 		local gate = finale and finale:FindFirstChild("SakuraGatewayFrame")
 		local goal = gate and gate:GetPivot().Position or water.Position + frame.LookVector * (water.Size.Z / 2 - 7)
@@ -106,30 +110,17 @@ Config.Trails = {
 	{ id = "Rainbow", name = "Rainbow Trail", boost = 2.5, cost = 100000000, color = C(255, 184, 62) },
 }
 Config.Stones = {
-	{ id = "Pebble", name = "Rubber Rookie", power = 1, cost = 0, color = C(233, 91, 31), displaySlot = 5 },
-	{ id = "Smooth", name = "Steel Impact", power = 1.15, cost = 250, color = C(223, 232, 243), displaySlot = 4 },
-	{ id = "Golden", name = "Crystal Ice", power = 1.35, cost = 2500, color = C(78, 209, 255), displaySlot = 3 },
-	{ id = "Ruby", name = "Volcano Heart", power = 1.6, cost = 15000, color = C(255, 115, 41), displaySlot = 2 },
-	{
-		id = "Emerald",
-		name = "Mechanical Reactor",
-		power = 1.9,
-		cost = 75000,
-		color = C(44, 209, 236),
-		displaySlot = 1,
-	},
-	{ id = "Galaxy", name = "Plasma Satellite", power = 2.5, cost = 350000, color = C(174, 91, 255), displaySlot = 10 },
-	{ id = "Rainbow", name = "Thunder Split", power = 3.5, cost = 2000000, color = C(255, 218, 63), displaySlot = 9 },
-	{ id = "DragonSun", name = "Dragon Sun", power = 5, cost = 8000000, color = C(255, 169, 46), displaySlot = 8 },
-	{ id = "BlackHole", name = "Black Hole", power = 7.5, cost = 25000000, color = C(171, 104, 255), displaySlot = 7 },
-	{
-		id = "WorldCreator",
-		name = "World Creator",
-		power = 10,
-		cost = 75000000,
-		color = C(79, 195, 255),
-		displaySlot = 6,
-	},
+	-- Ids stay for saved inventories; names and colours follow the Low Poly V2 meshes.
+	{ id = "Pebble", name = "Rubber Ball", power = 1, cost = 0, color = C(235, 52, 72), displaySlot = 5 },
+	{ id = "Smooth", name = "Classic Ball", power = 1.15, cost = 250, color = C(223, 232, 243), displaySlot = 4 },
+	{ id = "Golden", name = "Beach Ball", power = 1.35, cost = 2500, color = C(78, 209, 255), displaySlot = 3 },
+	{ id = "Ruby", name = "Basketball", power = 1.6, cost = 15000, color = C(255, 128, 36), displaySlot = 2 },
+	{ id = "Emerald", name = "Leather Ball", power = 1.9, cost = 75000, color = C(214, 120, 62), displaySlot = 1 },
+	{ id = "Galaxy", name = "Steel Ball", power = 2.5, cost = 350000, color = C(160, 170, 240), displaySlot = 10 },
+	{ id = "Rainbow", name = "Gold Ball", power = 3.5, cost = 2000000, color = C(255, 214, 46), displaySlot = 9 },
+	{ id = "DragonSun", name = "Storm Ball", power = 5, cost = 8000000, color = C(120, 108, 245), displaySlot = 8 },
+	{ id = "BlackHole", name = "Volcano Ball", power = 7.5, cost = 25000000, color = C(255, 110, 36), displaySlot = 7 },
+	{ id = "WorldCreator", name = "Sun Ball", power = 10, cost = 75000000, color = C(255, 196, 52), displaySlot = 6 },
 }
 -- Keep retired red-egg IDs valid for existing saved inventories.
 Config.LegacyPets = {
@@ -351,6 +342,9 @@ Config.Gifts = {
 }
 -- Set actual IDs after creating products in this experience's Creator Dashboard.
 Config.Products = {
+	TrainingBoost67 = { id = 0, trainingBoost = 67 },
+	TrainingBoost69 = { id = 0, trainingBoost = 69 },
+	TrainingBoost144 = { id = 0, trainingBoost = 144 },
 	AutoThrow = { id = 0, price = 25 },
 	DoubleSkill = { id = 0, price = 5 },
 	DoubleWins = { id = 0, price = 59 },

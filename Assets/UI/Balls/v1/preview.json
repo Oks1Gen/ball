@@ -1,0 +1,72 @@
+[
+    {
+        "width":  1254,
+        "name":  "Ball_01_Rubber.png",
+        "cornerAlpha":  0,
+        "height":  1254,
+        "centerAlpha":  253
+    },
+    {
+        "width":  1254,
+        "name":  "Ball_02_Classic.png",
+        "cornerAlpha":  0,
+        "height":  1254,
+        "centerAlpha":  253
+    },
+    {
+        "width":  1254,
+        "name":  "Ball_03_Beach.png",
+        "cornerAlpha":  0,
+        "height":  1254,
+        "centerAlpha":  253
+    },
+    {
+        "width":  1254,
+        "name":  "Ball_04_Basketball.png",
+        "cornerAlpha":  0,
+        "height":  1254,
+        "centerAlpha":  253
+    },
+    {
+        "width":  1254,
+        "name":  "Ball_05_Leather.png",
+        "cornerAlpha":  0,
+        "height":  1254,
+        "centerAlpha":  253
+    },
+    {
+        "width":  1254,
+        "name":  "Ball_06_Steel.png",
+        "cornerAlpha":  0,
+        "height":  1254,
+        "centerAlpha":  254
+    },
+    {
+        "width":  1254,
+        "name":  "Ball_07_Gold.png",
+        "cornerAlpha":  0,
+        "height":  1254,
+        "centerAlpha":  254
+    },
+    {
+        "width":  1254,
+        "name":  "Ball_08_Storm.png",
+        "cornerAlpha":  0,
+        "height":  1254,
+        "centerAlpha":  251
+    },
+    {
+        "width":  1254,
+        "name":  "Ball_09_Volcano.png",
+        "cornerAlpha":  0,
+        "height":  1254,
+        "centerAlpha":  253
+    },
+    {
+        "width":  1254,
+        "name":  "Ball_10_Sun.png",
+        "cornerAlpha":  0,
+        "height":  1254,
+        "centerAlpha":  254
+    }
+]

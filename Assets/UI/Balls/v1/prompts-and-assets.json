@@ -1,0 +1,132 @@
+{
+  "generator": "built-in image_gen",
+  "sourceBlend": "Assets/Balls/LowPolyV2/ball-pack-low-poly-v2.blend",
+  "camera": {
+    "azimuthDegrees": 45,
+    "elevationDegrees": 45,
+    "projection": "orthographic"
+  },
+  "background": "transparent alpha",
+  "resolution": [
+    1254,
+    1254
+  ],
+  "outline": {
+    "color": "#000000",
+    "requestedWidthPx": 30,
+    "note": "Generated contour; visually matched as a set, not a pixel-exact vector stroke."
+  },
+  "prompts": {
+    "initial": "Edit the supplied Blender model render into ONE polished Roblox simulator inventory UI icon. Preserve this EXACT user-made ball model: same geometry, silhouette, components, panel layout, colors and 45 degree elevated three-quarter camera angle. Do not redesign or invent details. Keep visible low poly facets and sculptural depth, vivid saturated colors, clean cartoon cel shaded 3D illustration. Add a VERY THICK solid pure BLACK outer contour, about 14 pixels at 1024 square, plus thinner clean black internal separation lines where useful. Consistent bold sticker icon aesthetic. Center and enlarge the full object to fill about 78 percent of square canvas, keep at least 10 percent transparent padding on all sides INCLUDING existing protrusions, rings and sparkles. Preserve any attached or detached decorative components visible in reference. GENUINELY TRANSPARENT BACKGROUND with alpha, NO BACKGROUND. No floor, cast shadow, backdrop, white sticker border, checkerboard pattern, text, labels, frame or new effects. Only the exact referenced ball, outlined, isolated. Bright readable attractive game UI art, no photorealism, no texture noise. Preserve white and bright yellow parts as opaque colored object surfaces, only empty space is transparent.",
+    "outline": "Precise outline-only edit of this existing Roblox inventory ball icon. Keep the EXACT same ball geometry, colors, low poly shading, camera angle and all details. Make outer BLACK silhouette contour consistently EXTRA THICK, heavy bold cartoon stroke 30 px on a 1254 px square canvas (2.4 percent canvas width), uniform width everywhere and around all existing decorative pieces. Important: outer border must be MUCH BOLDER than the current thin outline. Interior detail lines stay thin to preserve readability. Black contour must be smooth solid opaque pure black with round joins, no tapered strokes. Standardize composition: square canvas, whole object including existing ring or sparkles centered, maximum full artwork extent 76 percent of canvas leaving 12 percent empty transparent margin on each side. Do not add or remove parts, effects, sparkle or text. GENUINELY TRANSPARENT BACKGROUND, alpha zero in empty areas, NO BACKGROUND, no shadow, no white sticker rim, no checkerboard texture. Only change to the artwork is the bold uniform outer outline; rescale composition for consistent margins. This is one icon in a ten-icon set: use exactly the specified same 30px outer stroke weight.",
+    "volcanoRevision": "Create ONE vibrant Roblox inventory UI icon from IMAGE 1, which is the ACTUAL Blender model and strict geometry source. IMAGE 2 is ONLY a reference for thick black outline style; its simplified shape must NOT override image 1. Reproduce the actual model's exact 45-degree elevated three-quarter viewpoint, round volume, specific irregular chunky faceted dark basalt stone pieces, pointed spikes around silhouette, broad exposed molten lava surface and the three small orange polygonal lava droplets in their exact visible positions. Preserve the number, shapes, relative scale, overlap and layout of the actual visible rocks; don't invent a different volcano ball or a star shaped lava emblem. Make colors richer and JUICIER: deep charcoal with plum blue shadow faces on rocks, saturated fiery coral-orange lava edges, brilliant sunny yellow molten center, bright orange faceted droplets, strong warm reflected rim light on stone edges. Clean bold low poly cel shading, strong sculptural depth, high contrast, no photorealism, no noise. Match the set's uniform EXTRA THICK pure black outer silhouette stroke about 30px at 1254 square; thinner black interior lines. Whole object centered at 76 percent canvas extent with transparent padding all around. GENUINELY TRANSPARENT BACKGROUND, NO BACKGROUND, no cast shadow, no text, no labels, no orbit, no extra effects, no new floating sparks. Final should immediately match the actual user's model in image 1, with more appealing vibrant colors and a crisp thick outlined UI illustration finish."
+  },
+  "assets": [
+    {
+      "key": "Ball_01_Rubber",
+      "file": "final/Ball_01_Rubber.png",
+      "sourceRender": "source-renders/Ball_01_Rubber.png",
+      "sourceObject": "Ball_01_Rubber",
+      "generatedFile": "C:\\Users\\dakem\\.codex\\generated_images\\01a18e9e-3c77-7270-acf7-b91e6a88bb8f\\exec-cd054054-51b3-47fc-b660-c95a13c6b6de.png",
+      "robloxImageId": "rbxassetid://137848046238083",
+      "revision": "v1 outline pass",
+      "runtimeFile": "ui-normalized/Ball_01_Rubber.png"
+    },
+    {
+      "key": "Ball_02_Classic",
+      "file": "final/Ball_02_Classic.png",
+      "sourceRender": "source-renders/Ball_02_Classic.png",
+      "sourceObject": "Ball_02_Classic",
+      "generatedFile": "C:\\Users\\dakem\\.codex\\generated_images\\01a18e9e-3c77-7270-acf7-b91e6a88bb8f\\exec-44bfa06f-4478-4789-ae1f-02ff38672eaa.png",
+      "robloxImageId": "rbxassetid://130456623916416",
+      "revision": "v1 outline pass",
+      "runtimeFile": "ui-normalized/Ball_02_Classic.png"
+    },
+    {
+      "key": "Ball_03_Beach",
+      "file": "final/Ball_03_Beach.png",
+      "sourceRender": "source-renders/Ball_03_Beach.png",
+      "sourceObject": "Ball_03_Beach",
+      "generatedFile": "C:\\Users\\dakem\\.codex\\generated_images\\01a18e9e-3c77-7270-acf7-b91e6a88bb8f\\exec-d54cf175-c4c3-4d55-b8d8-4b5745bd8feb.png",
+      "robloxImageId": "rbxassetid://138798892323387",
+      "revision": "v1 outline pass",
+      "runtimeFile": "ui-normalized/Ball_03_Beach.png"
+    },
+    {
+      "key": "Ball_04_Basketball",
+      "file": "final/Ball_04_Basketball.png",
+      "sourceRender": "source-renders/Ball_04_Basketball.png",
+      "sourceObject": "Ball_04_Basketball",
+      "generatedFile": "C:\\Users\\dakem\\.codex\\generated_images\\01a18e9e-3c77-7270-acf7-b91e6a88bb8f\\exec-e1d9a854-e5e2-4e36-a655-1fcb857145c6.png",
+      "robloxImageId": "rbxassetid://75061821961654",
+      "revision": "v1 outline pass",
+      "runtimeFile": "ui-normalized/Ball_04_Basketball.png"
+    },
+    {
+      "key": "Ball_05_Leather",
+      "file": "final/Ball_05_Leather.png",
+      "sourceRender": "source-renders/Ball_05_Leather.png",
+      "sourceObject": "Ball_05_Leather",
+      "generatedFile": "C:\\Users\\dakem\\.codex\\generated_images\\01a18e9e-3c77-7270-acf7-b91e6a88bb8f\\exec-811cb037-6255-467c-8e37-df0ff5217c33.png",
+      "robloxImageId": "rbxassetid://110480672818112",
+      "revision": "v1 outline pass",
+      "runtimeFile": "ui-normalized/Ball_05_Leather.png"
+    },
+    {
+      "key": "Ball_06_Steel",
+      "file": "final/Ball_06_Steel.png",
+      "sourceRender": "source-renders/Ball_06_Steel.png",
+      "sourceObject": "Ball_06_Steel",
+      "generatedFile": "C:\\Users\\dakem\\.codex\\generated_images\\01a18e9e-3c77-7270-acf7-b91e6a88bb8f\\exec-002154be-5ae1-43b5-8d71-cb7b4cfcc51a.png",
+      "robloxImageId": "rbxassetid://128146623637570",
+      "revision": "v1 outline pass",
+      "runtimeFile": "ui-normalized/Ball_06_Steel.png"
+    },
+    {
+      "key": "Ball_07_Gold",
+      "file": "final/Ball_07_Gold.png",
+      "sourceRender": "source-renders/Ball_07_Gold.png",
+      "sourceObject": "Ball_07_Gold",
+      "generatedFile": "C:\\Users\\dakem\\.codex\\generated_images\\01a18e9e-3c77-7270-acf7-b91e6a88bb8f\\exec-e7b9d455-e146-40f8-a66d-c4924a6b5f3a.png",
+      "robloxImageId": "rbxassetid://137267685038826",
+      "revision": "v1 outline pass",
+      "runtimeFile": "ui-normalized/Ball_07_Gold.png"
+    },
+    {
+      "key": "Ball_08_Storm",
+      "file": "final/Ball_08_Storm.png",
+      "sourceRender": "source-renders/Ball_08_Storm.png",
+      "sourceObject": "Ball_08_Storm",
+      "generatedFile": "C:\\Users\\dakem\\.codex\\generated_images\\01a18e9e-3c77-7270-acf7-b91e6a88bb8f\\exec-13a7326c-e290-472b-bf2e-ad39016a2cb7.png",
+      "robloxImageId": "rbxassetid://70485750646082",
+      "revision": "v1 outline pass",
+      "runtimeFile": "ui-normalized/Ball_08_Storm.png"
+    },
+    {
+      "key": "Ball_09_Volcano",
+      "file": "final/Ball_09_Volcano.png",
+      "sourceRender": "source-renders/Ball_09_Volcano.png",
+      "sourceObject": "Ball_09_Volcano",
+      "generatedFile": "C:\\Users\\dakem\\.codex\\generated_images\\01a18e9e-3c77-7270-acf7-b91e6a88bb8f\\exec-d3c50e69-43e7-43a9-a993-65d67fbb6d78.png",
+      "robloxImageId": "rbxassetid://97406813561808",
+      "revision": "v2 saturated model fidelity",
+      "runtimeFile": "ui-normalized/Ball_09_Volcano.png"
+    },
+    {
+      "key": "Ball_10_Sun",
+      "file": "final/Ball_10_Sun.png",
+      "sourceRender": "source-renders/Ball_10_Sun.png",
+      "sourceObject": "Ball_10_Sun",
+      "generatedFile": "C:\\Users\\dakem\\.codex\\generated_images\\01a18e9e-3c77-7270-acf7-b91e6a88bb8f\\exec-1c74bd55-2926-4942-9628-9240fc8ef392.png",
+      "robloxImageId": "rbxassetid://81900835885471",
+      "revision": "v1 outline pass",
+      "runtimeFile": "ui-normalized/Ball_10_Sun.png"
+    }
+  ],
+  "runtime": {
+    "directory": "ui-normalized",
+    "canvas": 1024,
+    "bodyDiameter": 660,
+    "manifest": "roblox-assets.json"
+  }
+}

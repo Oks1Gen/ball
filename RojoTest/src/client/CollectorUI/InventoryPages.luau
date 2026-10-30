@@ -1,7 +1,7 @@
 --!strict
 local React = require(game.ReplicatedStorage.Packages.React)
 local Config = require(game.ReplicatedStorage.Shared.GameConfig)
-local BallVisuals = require(game.ReplicatedStorage.Shared.BallVisuals)
+local BallCardArt = require(script.Parent.Parent.Modules.BallCardArt)
 local Spacing = require(game.ReplicatedStorage.Shared.UiSpacing)
 local U = require(script.Parent.Components)
 local T = require(script.Parent.Theme)
@@ -81,19 +81,19 @@ end
 local function BallView(p: any): any
 	local ref: any = React.useRef(nil)
 	React.useEffect(function()
-		local viewport = BallVisuals.preview(ref.current, p.Id)
-		viewport.Position = UDim2.fromScale(0, 0)
-		viewport.Size = UDim2.fromScale(1, 1)
-		return function()
-			viewport:Destroy()
+		if ref.current then
+			Art.bind(ref.current)
 		end
 	end, { p.Id })
-	return e("Frame", {
+	return e("ImageLabel", {
 		ref = ref,
 		Name = "BallPortrait",
+		Image = BallCardArt.image(p.Id),
+		ScaleType = Enum.ScaleType.Fit,
 		Position = p.Position,
 		Size = p.Size,
 		BackgroundTransparency = 1,
+		Active = false,
 		ZIndex = 15,
 	})
 end

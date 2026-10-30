@@ -469,6 +469,9 @@ function Controller:Start()
 				or hum.Health <= 0
 		end,
 		send = send,
+		pop = function(paid: boolean)
+			effects.playSound("rbxasset://sounds/volume_slider.ogg", 0.26, if paid then 1.65 else 1.3)
+		end,
 	})
 	kickTiming = require(clientRoot.Controllers.KickTiming).mount({
 		snapshot = function()
@@ -586,6 +589,10 @@ function Controller:Start()
 
 	local function hatchAnimation(pets: any)
 		if hatchBusy then
+			-- Open again on the hatch screen: the new pets replace the shown ones.
+			if currentPanel == "Hatch" then
+				collectorUI:hatch(pets)
+			end
 			return
 		end
 		closePanel(true)
@@ -610,7 +617,7 @@ function Controller:Start()
 		elseif kind == "ShotBounce" then
 			effects.floatingGain(info.gain)
 		elseif kind == "Train" then
-			effects.floatingGain(info.gain, info.boosted, info.multiplier)
+			effects.floatingGain(info.gain, info.boostMultiplier)
 			balls.setPractice(latest and latest.data.stone or "Pebble")
 		elseif kind == "TrainingBoost" then
 			trainingBoost.confirmed(info)

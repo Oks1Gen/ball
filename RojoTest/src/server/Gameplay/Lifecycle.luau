@@ -25,7 +25,6 @@ function Lifecycle.install(context: Context)
 	Players.PlayerRemoving:Connect(function(p)
 		context.FlightStreaming.stop(p)
 		context.stopTraining(p)
-		context.admin:restore(p, false)
 		context.admin.last[p] = nil
 		context.admin.counters[p] = nil
 		local s = context.states[p]
@@ -66,7 +65,6 @@ function Lifecycle.install(context: Context)
 				while s.saving do
 					task.wait(0.1)
 				end
-				context.admin:restore(p, false)
 				context.save(p, true)
 				pending -= 1
 			end)

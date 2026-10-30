@@ -39,7 +39,7 @@ for world = 1, 2 do
 	local b = Config.shotDistance(definition.requiredPower * 0.1, 1, world, map)
 	check(b / a > 2.5 and b / a < 3, "Tenfold growth remains noticeable")
 	local frame = Config.arenaFrame(map)
-	local start = frame:PointToWorldSpace(Vector3.new(-115.35, 1.8, -0.3))
+	local start = frame:PointToWorldSpace(Config.ShotStartLocal)
 	local finish = start + frame.LookVector * (limit / Config.DistancePerStud)
 	local last = map.SkippingWorld.Water_8
 	local finale = map.SkippingWorld:FindFirstChild("SakuraJapaneseFinale")

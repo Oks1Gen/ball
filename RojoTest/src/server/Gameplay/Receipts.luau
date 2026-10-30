@@ -7,6 +7,7 @@ local MarketplaceService = game:GetService("MarketplaceService")
 local HttpService = game:GetService("HttpService")
 local Data = require(game.ReplicatedStorage.Shared.Core.ProfileData)
 local PaidRewards = require(game.ReplicatedStorage.Shared.Core.PaidRewards)
+local PetNews = require(game.ReplicatedStorage.Shared.Core.PetNews)
 
 local Receipts = {}
 
@@ -22,7 +23,7 @@ export type Context = {
 
 function Receipts.claimPending(context: Context, player: Player): boolean
 	local s = context.states[player]
-	if not s or s.adminOriginal or not s.data.perks.AdminEggPending or #s.data.pets >= 60 then
+	if not s or not s.data.perks.AdminEggPending or #s.data.pets >= 60 then
 		return false
 	end
 	local pet = PaidRewards.claim(s.data, context.Config.AdminPet, HttpService:GenerateGUID(false))
@@ -30,7 +31,7 @@ function Receipts.claimPending(context: Context, player: Player): boolean
 		return false
 	end
 	context.equipBest(s)
-	context.effect:FireClient(player, "Hatch", { pet })
+	context.effect:FireClient(player, "Hatch", PetNews.mark(s.data.pets, { pet }))
 	context.publish(player, "Your reserved Admin Egg has arrived!")
 	context.save(player, false)
 	return true
@@ -40,7 +41,7 @@ end
 -- a test callback into the real MarketplaceService.
 function Receipts.process(context: Context, player: Player?, receipt: any): Enum.ProductPurchaseDecision
 	local s = player and context.states[player]
-	if not player or not s or s.adminOriginal then
+	if not player or not s then
 		return Enum.ProductPurchaseDecision.NotProcessedYet
 	end
 	if s.data.receipts[receipt.PurchaseId] then
@@ -62,7 +63,10 @@ function Receipts.process(context: Context, player: Player?, receipt: any): Enum
 	-- the save below can wait for the receipt and the pet list may change.
 	local granted: any = nil
 	local notice: string? = nil
-	if product.skill then
+	if product.trainingBoost then
+		local key = tostring(product.trainingBoost)
+		s.data.trainingBoosts[key] = (s.data.trainingBoosts[key] or 0) + 1
+	elseif product.skill then
 		Data.add(s.data, "skill", product.skill)
 	elseif name == "SkipRebirth" then
 		if not context.rebirth(player, true) then
@@ -97,7 +101,7 @@ function Receipts.process(context: Context, player: Player?, receipt: any): Enum
 		return Enum.ProductPurchaseDecision.NotProcessedYet
 	end
 	if granted then
-		context.effect:FireClient(player, "Hatch", { granted })
+		context.effect:FireClient(player, "Hatch", PetNews.mark(s.data.pets, { granted }))
 	end
 	-- A later notice replaces the one on the client, so the generic text is
 	-- only sent when the purchase had no notice of its own.

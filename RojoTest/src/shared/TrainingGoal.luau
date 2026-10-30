@@ -3,6 +3,9 @@
 local Config = require(script.Parent.GameConfig)
 local Motion = require(script.Parent.TrainingMotion)
 local Goal = {}
+local BALL_RADIUS = Config.BallDiameter / 2
+-- Root-to-toe reach of the right foot in the kick stance, so the ball rests just ahead of the toe.
+local TOE_REACH = 1.25
 
 export type Contact = {
 	phase: number,
@@ -35,7 +38,7 @@ function Goal.shot(lane: Instance, rootPosition: Vector3, seed: number, cycle: n
 	end
 	local shotSeed = (math.floor(seed) + math.floor(cycle) * 104729) % 2147483647
 	local random = Random.new(shotSeed)
-	local ballRadius = 0.8
+	local ballRadius = BALL_RADIUS
 	local margin = ballRadius + 0.18
 	local width = math.max(0, net.Size.X / 2 - margin)
 	local height = math.max(0, net.Size.Y / 2 - margin)
@@ -53,7 +56,7 @@ function Goal.shot(lane: Instance, rootPosition: Vector3, seed: number, cycle: n
 	local toward = Vector3.new(finish.X - rootPosition.X, 0, finish.Z - rootPosition.Z)
 	local forward = if toward.Magnitude > 0.01 then toward.Unit else -normal
 	local right = forward:Cross(Vector3.yAxis)
-	local step = math.min(1.6, toward.Magnitude * 0.2)
+	local step = math.min(TOE_REACH + ballRadius, toward.Magnitude * 0.2)
 	local start = Vector3.new(rootPosition.X, surface + ballRadius, rootPosition.Z) + forward * step + right * 0.45
 	-- Very close to/inside the net, keep the ball on the player's side of its plane.
 	local startLocal = net.CFrame:PointToObjectSpace(start)
@@ -71,7 +74,7 @@ function Goal.contact(net: BasePart, start: Vector3, finish: Vector3, lane: numb
 		return nil
 	end
 	local sign = if delta.Z > 0 then 1 else -1
-	local ballRadius = 0.8
+	local ballRadius = BALL_RADIUS
 	local front = -sign * (net.Size.Z / 2 + ballRadius)
 	local alpha = (front - from.Z) / delta.Z
 	if alpha < -0.0001 or alpha > 1.0001 then

@@ -3,6 +3,7 @@ local Shared = game.ReplicatedStorage.Shared
 local Rules = require(Shared.Core.TrainingBoost)
 local Config = require(Shared.GameConfig)
 local Area = require(Shared.TrainingArea)
+local Goal = require(Shared.TrainingGoal)
 local Boost = {}
 
 function Boost.claim(context: any, player: Player, seed: number, offer: number): boolean
@@ -13,7 +14,7 @@ function Boost.claim(context: any, player: Player, seed: number, offer: number):
 		or not s.lane
 		or not s.trainingStarted
 		or seed ~= s.trainingSeed
-		or s.trainingBoostOffer == offer
+		or (s.trainingBoostOffer or -1) >= offer
 		or not root
 		or not hum
 		or hum.Health <= 0
@@ -21,28 +22,40 @@ function Boost.claim(context: any, player: Player, seed: number, offer: number):
 	then
 		return false
 	end
+	local definition = Rules.offer(seed, offer)
+	local now = workspace:GetServerTimeNow()
 	local set = s.lanes and s.lanes[s.data.world == 2 and 2 or 1]
 	local entry = set and set[s.lane]
 	if
-		not entry
+		definition.product
+		or not entry
 		or not Area.contains(entry.strip, root.Position)
 		or s.data.rebirths < Config.Lanes[s.lane].rebirths
-		or not Rules.inWindow(s.trainingStarted, offer, workspace:GetServerTimeNow(), player:GetNetworkPing() + 0.04)
+		or not Goal.net(entry.lane)
+		or not Rules.inWindow(s.trainingStarted, offer, now, player:GetNetworkPing() + 0.04)
 	then
 		return false
 	end
-	-- Consume this offer once; the next kick that has not paid any contact owns it.
+	-- Start with the next complete kick, never only the remaining bounces.
+	local cycle = math.max(s.trainingCycle, math.floor((now - s.trainingStarted) / Config.TrainingCycle))
+	if
+		now >= s.trainingStarted + cycle * Config.TrainingCycle + Config.KickContact
+		or (cycle == s.trainingCycle and s.trainingHit > 1)
+	then
+		cycle += 1
+	end
 	s.trainingBoostOffer = offer
-	s.trainingBoostCycle = s.trainingCycle + (if s.trainingHit > 1 then 1 else 0)
-	s.trainingBoostMultiplier = Rules.multiplier(seed, offer)
+	s.trainingBoostCycle = cycle
+	s.trainingBoostMultiplier = definition.multiplier
 	context.effect:FireClient(player, "TrainingBoost", {
 		seed = seed,
+		cycle = cycle,
 		offer = offer,
-		cycle = s.trainingBoostCycle,
+		multiplier = definition.multiplier,
 		started = s.trainingStarted,
 		lane = s.lane,
-		multiplier = s.trainingBoostMultiplier,
 	})
 	return true
 end
+
 return Boost

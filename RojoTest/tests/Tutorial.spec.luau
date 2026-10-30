@@ -1,8 +1,22 @@
 --!strict
 local Tutorial = require("../src/shared/Core/Tutorial")
 local Data = require("../src/shared/Core/ProfileData")
+local Boost = require("../src/shared/Core/TrainingBoost")
 local catalog = { stones = { Pebble = true }, trails = { None = true }, pets = {} }
 return {
+	["tutorial progress coexists with bubble rewards and saved paid charges"] = function()
+		local data = Data.fresh()
+		data.trainingBoosts["144"] = 2
+		local gain = Boost.reward(3, 7, 7, 10.1)
+		Data.add(data, "skill", gain)
+		Tutorial.train(data, gain)
+		local loaded = Data.normalize(data, catalog)
+		assert(loaded.skill == 30 and loaded.tutorialStage == 1 and loaded.tutorialSkill == 30)
+		assert(loaded.trainingBoosts["144"] == 2)
+		Tutorial.restart(loaded)
+		assert(loaded.tutorialStage == 0 and loaded.skill == 30)
+		assert(Boost.takeCharge(loaded) == 144 and loaded.trainingBoosts["144"] == 1)
+	end,
 	["replay keeps all objectives even with existing inventory"] = function()
 		local d = Data.fresh()
 		d.stones.Smooth = true

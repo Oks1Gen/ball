@@ -1,0 +1,42 @@
+{
+  "Pebble": {
+    "file": "ui-normalized/Ball_01_Rubber.png",
+    "image": "rbxassetid://137848046238083"
+  },
+  "Smooth": {
+    "file": "ui-normalized/Ball_02_Classic.png",
+    "image": "rbxassetid://130456623916416"
+  },
+  "Golden": {
+    "file": "ui-normalized/Ball_03_Beach.png",
+    "image": "rbxassetid://138798892323387"
+  },
+  "Ruby": {
+    "file": "ui-normalized/Ball_04_Basketball.png",
+    "image": "rbxassetid://75061821961654"
+  },
+  "Emerald": {
+    "file": "ui-normalized/Ball_05_Leather.png",
+    "image": "rbxassetid://110480672818112"
+  },
+  "Galaxy": {
+    "file": "ui-normalized/Ball_06_Steel.png",
+    "image": "rbxassetid://128146623637570"
+  },
+  "Rainbow": {
+    "file": "ui-normalized/Ball_07_Gold.png",
+    "image": "rbxassetid://137267685038826"
+  },
+  "DragonSun": {
+    "file": "ui-normalized/Ball_08_Storm.png",
+    "image": "rbxassetid://70485750646082"
+  },
+  "BlackHole": {
+    "file": "ui-normalized/Ball_09_Volcano.png",
+    "image": "rbxassetid://97406813561808"
+  },
+  "WorldCreator": {
+    "file": "ui-normalized/Ball_10_Sun.png",
+    "image": "rbxassetid://81900835885471"
+  }
+}

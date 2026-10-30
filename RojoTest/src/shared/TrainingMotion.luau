@@ -4,11 +4,11 @@ local Config = require(script.Parent.GameConfig)
 local Motion = {}
 Motion.FlightTime = 0.65
 
-function Motion.hitCount(laneIndex)
+function Motion.hitCount(laneIndex: number): number
 	return laneIndex <= 3 and 3 or 4
 end
 
-function Motion.hitTime(laneIndex, hit)
+function Motion.hitTime(laneIndex: number, hit: number): number
 	return Config.KickContact + Motion.FlightTime * hit / Motion.hitCount(laneIndex)
 end
 
@@ -26,7 +26,7 @@ function Motion.position(start: Vector3, finish: Vector3, phase: number, laneInd
 end
 
 -- Fractional carry keeps small rewards and multipliers exact across contacts.
-function Motion.reward(cycleGain, laneIndex, remainder)
+function Motion.reward(cycleGain: number, laneIndex: number, remainder: number?): (number, number)
 	local raw = cycleGain / Motion.hitCount(laneIndex) + (remainder or 0)
 	local gain = math.floor(raw + 1e-9)
 	return gain, math.max(0, raw - gain)

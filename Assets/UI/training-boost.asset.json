@@ -1,0 +1,15 @@
+{
+  "key": "training-boost-bubbles",
+  "format": "native Roblox UI / React Luau",
+  "source": "../../RojoTest/src/client/Controllers/TrainingBoostBubble.luau",
+  "reference": "User-provided circular x10.1 bubble, October 30, 2026",
+  "textures": {
+    "studs": "rbxassetid://138746650062134",
+    "robux": "rbxassetid://90468580391337"
+  },
+  "variants": ["cyan-blue", "pink-purple", "lime-green", "yellow-orange", "lavender-indigo", "rainbow"],
+  "freeMultipliers": { "min": 5, "max": 15, "step": 0.1 },
+  "paidMultipliers": [67, 69, 144],
+  "productConfig": "../../RojoTest/src/shared/GameConfig.luau",
+  "notes": "Native circle, UIGradient, tiled existing studs and outlined live text. No generated bitmap is used. Paid products remain unavailable until real product IDs are configured."
+}

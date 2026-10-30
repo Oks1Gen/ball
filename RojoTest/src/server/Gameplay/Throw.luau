@@ -13,6 +13,8 @@ local Timing = require(game.ReplicatedStorage.Shared.Core.KickTiming)
 local Perfect = require(game.ReplicatedStorage.Shared.Core.PerfectKick)
 local Tutorial = require(game.ReplicatedStorage.Shared.Core.Tutorial)
 
+local Access = require(script.Parent.Parent.AdminAccess)
+
 local Throw = {}
 
 export type Context = {
@@ -43,7 +45,7 @@ function Throw.build(context: Context): (Player, number?, number?, number?) -> (
 		local d = s.data
 		local trail = Config.find(Config.Trails, d.trail)
 		if adminDistance then
-			assert(s.adminOriginal, "Test throw requires an admin test session")
+			assert(Access.isAuthorized(player.UserId), "Admin throw requires authorization")
 		end
 		local distance = adminDistance
 			or Config.shotDistance(d.skill, BallPurchases.power(d), d.world, context.arenaFor(player))
@@ -97,7 +99,7 @@ function Throw.build(context: Context): (Player, number?, number?, number?) -> (
 			trail = d.trail,
 			world = d.world,
 			startedAt = startedAt,
-			startPosition = frame:PointToWorldSpace(Vector3.new(-115.35, 1.8, -0.3)),
+			startPosition = frame:PointToWorldSpace(Config.ShotStartLocal),
 			direction = frame.LookVector,
 			waterY = frame:PointToWorldSpace(Vector3.new(-116, 0.82, 0)).Y,
 		}

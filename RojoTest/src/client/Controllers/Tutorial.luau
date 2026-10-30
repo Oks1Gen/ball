@@ -230,9 +230,10 @@ function Guide.mount(context: any)
 					end
 				else
 					key = "Ball"
+					local ballName = Config.find(Config.Stones, "Smooth").name
 					title.Text = if d.stones.Smooth
-						then "Open Balls and select Steel Impact to continue"
-						else "Buy Steel Impact for " .. Config.format(cost) .. " Wins to train faster"
+						then "Open Balls and select " .. ballName .. " to continue"
+						else "Buy " .. ballName .. " for " .. Config.format(cost) .. " Wins to train faster"
 					if panel == "Inventory" then
 						key = ""
 						local selected = false
@@ -278,7 +279,9 @@ function Guide.mount(context: any)
 			elseif stage == 4 then
 				title.Text = "Open Pets and Equip Best to boost your training"
 				button = findButton(
-					if panel == "Pets" then { "HatchContinue", "EquipBest" } else { "HatchContinue", "NavPets" },
+					if panel == "Pets"
+						then { "HatchTap", "HatchContinue", "EquipBest" }
+						else { "HatchTap", "HatchContinue", "NavPets" },
 					now
 				)
 			end

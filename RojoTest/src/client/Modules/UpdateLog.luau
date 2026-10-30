@@ -9,6 +9,80 @@ export type Release = {
 
 local releases: { Release } = {
 	{
+		id = "2026-10-31-ball-portraits",
+		date = "October 31, 2026",
+		title = "New ball portraits",
+		changes = {
+			"The Balls inventory now shows bright outlined portraits of each ball instead of 3D previews.",
+			"Ball portraits keep a consistent size when browsing or selecting a ball, including Sun and its ring.",
+		},
+	},
+	{
+		id = "2026-10-31-new-balls",
+		date = "October 31, 2026",
+		title = "Brand new balls",
+		changes = {
+			"All ten balls have new low-poly models with bright colours, on the stands, in your hands and in flight.",
+			"The balls are now Rubber, Classic, Beach, Basketball, Leather, Steel, Gold, Storm, Volcano and Sun. Power and prices stay the same.",
+			"The ball stand has a clean new look: soft lavender steps, studded pads, and smaller, same-size balls that hover above their pads with captions floating above.",
+			"The ball in your hand, on the training lane and in your kick is now the same smaller size, and it waits just ahead of your foot so the kick no longer passes through it.",
+		},
+	},
+	{
+		id = "2026-10-31-dev-persistence",
+		date = "October 31, 2026",
+		title = "Dev panel saves progress",
+		changes = {
+			"Dev panel grants and progress changes now save to your profile immediately without starting a test session.",
+		},
+	},
+	{
+		id = "2026-10-31-hatch-again",
+		date = "October 31, 2026",
+		title = "Hatch again!",
+		changes = {
+			"A NEW! badge marks a pet you did not have before.",
+			"A duplicate shows how many of that pet you now own.",
+			"Open again next to Continue opens the same egg right away when you have the Wins and room.",
+		},
+	},
+	{
+		id = "2026-10-31-egg-drama",
+		date = "October 31, 2026",
+		title = "Bigger egg moments",
+		changes = {
+			"Every landing knocks the screen, and upgrades and the burst hit harder.",
+			"Each upgrade washes the sky and lamps in its colour, and the pedestal rim keeps it.",
+			"The egg freezes for a beat at its biggest, then bursts.",
+			"Legendary and Mythic eggs turn the garden to night with light pillars and a deep boom.",
+		},
+	},
+	{
+		id = "2026-10-30-egg-cracking",
+		date = "October 30, 2026",
+		title = "Crack your eggs open!",
+		changes = {
+			"Eggs now open full screen on a big pedestal in a sunset garden.",
+			"Click or tap the egg five times: it jumps, spins and cracks a little more each time.",
+			"Every landing can upgrade the light behind the egg from white to green, purple, gold and red.",
+			"After the last click the egg shakes, grows, glows white and bursts open.",
+			"Black pet silhouettes spin past and stop on your new pet, which lands on the pedestal in colour.",
+			"Effects off still shows your new pets right away.",
+		},
+	},
+	{
+		id = "2026-10-30-training-bubbles",
+		date = "October 30, 2026",
+		title = "Pop a training boost!",
+		changes = {
+			"Catch colorful studded bubbles as they float down during training.",
+			"Pop a 5.0x–15.0x boost for your next complete kick.",
+			"Enjoy bouncy hover, a crunchy pop and colorful confetti.",
+			"Boost bubbles stay in front of skill reward pop-ups.",
+			"Lightning from popped boosts flies into your Skill counter.",
+		},
+	},
+	{
 		id = "2026-10-30-lightning-bubbles",
 		date = "October 30, 2026",
 		title = "Catch lightning boosts",

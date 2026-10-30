@@ -13,9 +13,6 @@ Service.CommandWindow = 60
 -- The messages of this game carry this prefix. It is a mark and not a
 -- filter: a script error arrives as "<path>:<line>: <text>".
 Service.LogPrefix = "[Ball"
-local function copy(value)
-	return H:JSONDecode(H:JSONEncode(value))
-end
 
 -- Only the identifiers of this game are secret: the user id of a player and
 -- the key of his profile. Every other number is a detail of the log and stays
@@ -26,13 +23,6 @@ local function redact(text, secrets)
 		masked = masked:gsub(id, "*")
 	end
 	return masked
-end
-
-function Service.persistence(state)
-	if state.adminOriginal then
-		return state.adminOriginal.data, state.adminOriginal.sessionOnly
-	end
-	return state.data, state.sessionOnly
 end
 
 function Service.new(context)
@@ -108,7 +98,6 @@ function Service:status(player)
 		end
 	end
 	return {
-		testing = s.adminOriginal ~= nil,
 		wins = d.wins,
 		skill = d.skill,
 		rebirths = d.rebirths,
@@ -124,37 +113,6 @@ function Service:status(player)
 		studio = game:GetService("RunService"):IsStudio(),
 		errors = errors,
 	}
-end
-
-function Service:restore(player, move)
-	local c = self.context
-	local s: any = c.states[player]
-	if not s or not s.adminOriginal then
-		return
-	end
-	c.stopTraining(player)
-	local old = s.adminOriginal
-	s.data = old.data
-	s.gifts = old.gifts
-	s.joined = old.joined
-	s.sessionOnly = old.sessionOnly
-	s.adminOriginal = nil
-	s.auto = false
-	s.busyUntil = 0
-	s.blockedLane = nil
-	s.stopUntil = os.clock() + 0.6
-	-- The original pets come back, so the client needs the inventory again.
-	s.inventoryVersion += 1
-	if move then
-		c.effect:FireClient(player, "AdminResetView")
-		local root, hum = c.rootFor(player)
-		if root and hum and hum.Health > 0 then
-			root.CFrame = old.pose or Config.apronCharacterPose(c.arenaFor(player), root, hum, 3)
-			root.AssemblyLinearVelocity = Vector3.zero
-			root.AssemblyAngularVelocity = Vector3.zero
-		end
-	end
-	c.publish(player, "Тест завершён. Исходный прогресс восстановлен.")
 end
 
 function Service:move(player, target)
@@ -200,31 +158,7 @@ function Service:dispatch(player, command, value)
 			}
 		end
 		return "Журнал сервера.", rows
-	elseif command == "Begin" then
-		assert(not s.adminOriginal, "Тест уже запущен")
-		assert(not s.saving, "Идёт сохранение. Повтори через секунду.")
-		assert(os.clock() >= s.busyUntil, "Дождись окончания броска.")
-		c.stopTraining(player)
-		local root = c.rootFor(player)
-		s.adminOriginal = {
-			data = s.data,
-			gifts = s.gifts,
-			joined = s.joined,
-			sessionOnly = s.sessionOnly,
-			pose = root and root.CFrame,
-		}
-		s.data = copy(s.data)
-		s.gifts = table.clone(s.gifts)
-		s.sessionOnly = true
-		s.auto = false
-		s.busyUntil = 0
-		s.stopUntil = os.clock() + 0.6
-		return "Тестовый режим включён. Изменения не попадут в основной прогресс."
-	elseif command == "End" then
-		self:restore(player, true)
-		return "Исходный прогресс восстановлен."
 	end
-	assert(s.adminOriginal, "Сначала включи тестовый режим.")
 	local d = s.data
 	if command == "SetStat" then
 		assert(
@@ -250,19 +184,6 @@ function Service:dispatch(player, command, value)
 		d.perks.AutoThrow = true
 		d.perks.DoubleSkill = true
 		d.perks.DoubleWins = true
-	elseif command == "Reset" then
-		c.stopTraining(player)
-		s.data = c.fresh()
-		s.gifts = {}
-		s.joined = os.clock()
-		s.auto = false
-		s.busyUntil = 0
-		-- A fresh profile has no pets at all.
-		s.inventoryVersion += 1
-		local root, hum = c.rootFor(player)
-		if root and hum then
-			self:move(player, Config.apronCharacterPose(c.map, root, hum, 3))
-		end
 	elseif command == "GivePet" or command == "GiveEggPets" or command == "GreenPets" then
 		local pets, egg
 		if command == "GiveEggPets" or command == "GreenPets" then
@@ -377,7 +298,8 @@ function Service:dispatch(player, command, value)
 	else
 		error("Неизвестная команда")
 	end
-	return "Готово. Изменена только тестовая сессия."
+	c.save(player)
+	return "Готово. Изменения внесены в сохраняемый прогресс."
 end
 
 function Service:handle(player, command, value)

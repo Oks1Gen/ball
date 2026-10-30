@@ -4,7 +4,8 @@
 -- sizes and scrolls vertically inside the same window chrome.
 local Kit = require(script.Parent.HudKit)
 local Config = require(game.ReplicatedStorage.Shared.GameConfig)
-local BallVisuals = require(game.ReplicatedStorage.Shared.BallVisuals)
+local BallCardArt = require(script.Parent.Parent.Modules.BallCardArt)
+local UIAssets = require(script.Parent.Parent.UIAssets)
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local Motion = require(game.ReplicatedStorage.Shared.UiMotion)
@@ -566,7 +567,16 @@ function Panels.mount(context: Context): Handle
 		for i, item in Config.Stones do
 			local row = Kit.brick(scroll, item.id, 0, 0, width - 30, 92, item.color)
 			row.LayoutOrder = i
-			BallVisuals.preview(row, item.id)
+			local portrait = Instance.new("ImageLabel")
+			portrait.Name = "BallPortrait"
+			portrait.BackgroundTransparency = 1
+			portrait.Image = BallCardArt.image(item.id)
+			portrait.ScaleType = Enum.ScaleType.Fit
+			portrait.Position = UDim2.fromOffset(5, 2)
+			portrait.Size = UDim2.fromOffset(100, 88)
+			portrait.ZIndex = LAYER_PANEL + 2
+			portrait.Parent = Kit.visualOf(row)
+			UIAssets.bind(portrait)
 			Kit.text(row, "Name", item.name, 115, 7, phone and width - 286 or 300, 38, phone and 18 or 29).TextXAlignment =
 				Enum.TextXAlignment.Left
 			Kit.text(

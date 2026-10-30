@@ -1,6 +1,62 @@
 # Ball display
 
-## Current Studio stand placement
+## Current balls: Low Poly V2 (2026-10-31)
+
+The game uses the Low Poly V2 pack from `Assets/Balls/LowPolyV2/` (Blender sources, not in Git).
+Everything below this section describes the replaced first-generation models and is history.
+
+- Stone ids, power and prices are unchanged; names and sign colours follow the new meshes:
+  Pebble = Rubber Ball, Smooth = Classic Ball, Golden = Beach Ball, Ruby = Basketball,
+  Emerald = Leather Ball, Galaxy = Steel Ball, Rainbow = Gold Ball, DragonSun = Storm Ball,
+  BlackHole = Volcano Ball, WorldCreator = Sun Ball.
+- Each ball is a single MeshPart: no vertex colours. Its UVs point into a shared 1024 px colour atlas
+  (16 px flat tiles; face shading and glow are baked into the tile colour). It uses SmoothPlastic
+  and a white Color.
+- Roblox assets, all on account 11789507527:
+  - Model `72414326263846` (all ten meshes).
+  - Image `125793810196493` (the atlas).
+  - Universe `10770268214` has been granted Use through the Open Cloud asset-permissions API. Without that grant, Studio answers "User is not authorized to access Asset", because the place belongs to 11792184677.
+  - The MeshIds inside the Model are listed in `Assets/Balls/LowPolyV2/make_templates.py`.
+- Pipeline:
+  1. `export_roblox.py` in Blender writes `roblox/balls.glb`, `atlas.png` and `manifest.json`.
+  2. Open Cloud upload: the glb as Model, the atlas as Image.
+  3. `game:GetObjects` returns the inner MeshIds.
+  4. `make_templates.py` writes `src/shared/BallTemplates.rbxmx`.
+- Roblox's glTF importer turns the scene 180° about Y. The templates turn each part back, so the ball centre sits at the template origin and the front (the Blender front view) faces -Z.
+- Each template Model carries `FitSize`, its largest outer dimension with accessories included.
+  - `BallVisuals.create` scales that dimension to the requested diameter, so all ten balls take up the same size: the user asked for this.
+  - Balls with a ring, spark or spikes therefore have a slightly smaller body.
+  - The pivot stays at the ball centre.
+- `Visuals.fitKey` lets the stand rebuild placed copies once the templates change.
+- Stands:
+  - Ten display models were created in Edit:
+    - World1: in `Workspace.AllBalls_NoTextures`, display diameter 4.
+    - World2: in `EmptyItemStand.DisplayBalls`, diameter 6.
+  - They have the same slots, BallId/DisplaySlot attributes and label links. Their front faces the purchase side of each DisplayTop (+X).
+  - The previous models are in `ServerStorage.WorldBackups.BeforeLowPolyV2Balls`.
+  - Save the place to keep this scene edit.
+
+### Minimal stand (2026-10-31)
+
+The look follows the user's reference: a lavender stepped platform with studs, and items on square pads.
+
+- **`BallStandStyle.apply`:**
+  - Removes the old navy `BallShopDecor`: the header, posts, neon rims, corners and badge.
+  - Paints the tiers lavender `C(196,196,244)` with studs on top and on the sides.
+  - Paints each `EmptyPedestal` as a cream frame `C(244,232,226)`.
+  - Makes each `DisplayTop` a raised periwinkle pad `C(172,188,240)` with studs. The pad's height is 1.5 times the frame's and is recomputed from the frame, so the pass is idempotent.
+- **SurfaceSeparation:**
+  - It used to keep offset copies of the stand parts and hide the originals.
+  - The style deletes the stand's copies, restores the originals' transparency and sets `SurfaceSeparationSkip` on the `EmptyItemStand` folder.
+  - `SurfaceSeparation.apply` now skips every record that goes through such a folder.
+- **`BallStand`:**
+  - The ball body's diameter is `0.45 × min(pad X, Z)`: 2.7 in World1 and 4.05 in World2.
+  - A model with a different `DisplayDiameter` is rebuilt from its template, facing the purchase side of the pad.
+  - The ball sits `0.5 + 0.2 × scale` above the pad, which covers the bob.
+  - The caption hangs `(1.6 + 2.7) × scale` above the ball.
+- **Backup:** the previous stand parts and decor are in `ServerStorage.WorldBackups.BeforeMinimalBallStand`.
+
+## Previous Studio stand placement
 
 The active game now uses the ten true ball names in tier order, increasing
 multipliers from ×1 through ×10, and Crowns prices. Labels follow the levitation.

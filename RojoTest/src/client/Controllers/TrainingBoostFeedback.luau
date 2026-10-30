@@ -1,179 +1,153 @@
 --!strict
--- A single acknowledged pop scatters existing Skill icons, then gathers them to HUD.
-local Run = game:GetService("RunService")
-local Assets = require(script.Parent.Parent.UIAssets)
-local CameraCue = require(script.Parent.PerfectKickFeedback)
+-- A bounded, non-interactive screen burst with no rings or speed lines.
+local React = require(game.ReplicatedStorage.Packages.React)
+local Ripple = require(game.ReplicatedStorage.Packages.Ripple)
+local Bubble = require(script.Parent.TrainingBoostBubble)
+local e = React.createElement
 local Feedback = {}
-local PURPLE = Color3.fromRGB(188, 92, 255)
 
-function Feedback.create(context: any)
-	local groups: { any } = {}
+function Feedback.create(diameter: any, effects: () -> boolean, studs: string)
+	local shown, setShown = React.createBinding(false)
+	local position, setPosition = React.createBinding(UDim2.new())
+	local progress, setProgress = React.createBinding(1)
+	local definition, setDefinition = React.createBinding({ multiplier = 5, color = 1 })
+	local reduced, setReduced = React.createBinding(false)
+	local caption, setCaption = React.createBinding("")
+	local motion = Ripple.createMotion(1, { start = true })
+	local changed = motion:onChange(setProgress)
 	local alive = true
-	local camera = CameraCue.mount({
-		effects = context.effects,
-		shake = function()
-			return false
-		end,
-	})
-	local function clear()
-		for _, group in groups do
-			group.host:Destroy()
-		end
-		table.clear(groups)
-		camera.stop()
-	end
-	local function play(at: Vector2, multiplier: number)
-		if not alive then
-			return
-		end
-		clear()
-		local host = Instance.new("Frame")
-		host.Name = "LightningCollect"
-		host.Size = UDim2.fromScale(1, 1)
-		host.BackgroundTransparency = 1
-		host.ZIndex = 70
-		host.Parent = context.parent
-		local ring = Instance.new("Frame")
-		ring.Name = "PopRing"
-		ring.AnchorPoint = Vector2.new(0.5, 0.5)
-		ring.Position = UDim2.fromOffset(at.X, at.Y)
-		ring.BackgroundTransparency = 1
-		ring.ZIndex = 71
-		ring.Parent = host
-		local corner = Instance.new("UICorner")
-		corner.CornerRadius = UDim.new(1, 0)
-		corner.Parent = ring
-		local stroke = Instance.new("UIStroke")
-		stroke.Color = PURPLE
-		stroke.Thickness = 3
-		stroke.Parent = ring
-		local text = Instance.new("TextLabel")
-		text.Name = "BoostConfirmed"
-		text.AnchorPoint = Vector2.new(0.5, 0.5)
-		text.BackgroundTransparency = 1
-		text.Size = UDim2.fromOffset(190, 36)
-		text.Position = UDim2.fromOffset(at.X, at.Y)
-		text.Font = Enum.Font.GothamBlack
-		text.TextSize = 23
-		text.TextColor3 = Color3.fromRGB(245, 218, 255)
-		text.TextStrokeColor3 = Color3.fromRGB(45, 16, 66)
-		text.TextStrokeTransparency = 0
-		text.Text = "×" .. tostring(multiplier) .. " SKILL!"
-		text.ZIndex = 75
-		text.Parent = host
-		local icons = {}
-		local count = if context.effects() then (if multiplier >= 4 then 10 else 8) else 0
-		for _ = 1, count do
-			local icon = Instance.new("ImageLabel")
-			icon.Name = "SkillLightning"
-			icon.AnchorPoint = Vector2.new(0.5, 0.5)
-			icon.BackgroundTransparency = 1
-			icon.Image = Assets.Images.Skill
-			icon.Size = UDim2.fromOffset(50, 50)
-			icon.ZIndex = 74
-			icon.Parent = host
-			Assets.bind(icon)
-			table.insert(icons, icon)
-		end
-		local dots = {}
-		for i = 1, (if context.effects() then 8 else 0) do
-			local dot = Instance.new("Frame")
-			dot.Name = "PurpleSpark"
-			dot.AnchorPoint = Vector2.new(0.5, 0.5)
-			dot.Size = UDim2.fromOffset(6 + i % 3, 6 + i % 3)
-			dot.BorderSizePixel = 0
-			dot.BackgroundColor3 = if i % 2 == 0 then PURPLE else Color3.fromRGB(235, 192, 255)
-			dot.ZIndex = 72
-			dot.Parent = host
-			local round = Instance.new("UICorner")
-			round.CornerRadius = UDim.new(1, 0)
-			round.Parent = dot
-			table.insert(dots, dot)
-		end
-		table.insert(groups, {
-			host = host,
-			ring = ring,
-			stroke = stroke,
-			text = text,
-			icons = icons,
-			dots = dots,
-			at = at,
-			started = os.clock(),
-			sound = false,
-		})
-		camera.confirm()
-		context.playSound("rbxasset://sounds/volume_slider.ogg", 0.25, 1.3)
-	end
-	local connection = Run.RenderStepped:Connect(function()
-		if context.blocked() then
-			clear()
-			return
-		end
-		for i = #groups, 1, -1 do
-			local g = groups[i]
-			local age = os.clock() - g.started
-			if age > 1.2 then
-				g.host:Destroy()
-				table.remove(groups, i)
-				continue
-			end
-			local reduced = not context.effects()
-			local radius = 48 + age * 90
-			g.ring.Visible = not reduced and age < 0.42
-			g.ring.Size = UDim2.fromOffset(radius * 2, radius * 2)
-			g.stroke.Transparency = math.clamp(age / 0.42, 0, 1)
-			g.text.Position = UDim2.fromOffset(g.at.X, g.at.Y - 18 - math.round(age * 22))
-			g.text.TextTransparency = math.clamp((age - 0.4) / 0.5, 0, 1)
-			g.text.TextStrokeTransparency = g.text.TextTransparency
-			local label = context.skillLabel
-			local target = label.AbsolutePosition
-				+ Vector2.new(label.AbsoluteSize.X * 0.25, label.AbsoluteSize.Y * 0.5)
-				- context.parent.AbsolutePosition
-			for j, icon in g.icons do
-				local angle = j / #g.icons * math.pi * 2
-				local spread = Vector2.new(math.cos(angle) * 64, math.sin(angle) * 52)
-				local elapsed = age - (j - 1) * 0.025
-				local pos = g.at
-				if elapsed < 0.18 then
-					pos = g.at + spread * math.clamp(elapsed / 0.18, 0, 1)
-				else
-					local t = math.clamp((elapsed - 0.18) / 0.65, 0, 1)
-					local eased = t * t * (3 - 2 * t)
-					local begin = g.at + spread
-					local control = (begin + target) / 2 + Vector2.new(math.sin(angle) * 80, -60)
-					pos = begin * (1 - eased) ^ 2 + control * (2 * (1 - eased) * eased) + target * eased ^ 2
-					icon.ImageTransparency = if t >= 1 then 1 else 0
-				end
-				icon.Position = UDim2.fromOffset(math.round(pos.X), math.round(pos.Y))
-				icon.Rotation = math.sin(angle + age * 5) * 18
-				icon.Visible = not reduced and elapsed >= 0
-			end
-			for j, dot in g.dots do
-				local angle = j / #g.dots * math.pi * 2
-				dot.Position = UDim2.fromOffset(
-					g.at.X + math.cos(angle) * (25 + age * 115),
-					g.at.Y + math.sin(angle) * (25 + age * 115) + age * age * 65
-				)
-				dot.BackgroundTransparency = math.clamp(age / 0.5, 0, 1)
-				dot.Visible = not reduced
-			end
-			if age > 0.92 and not g.sound then
-				g.sound = true
-				if not reduced then
-					context.playSound("rbxasset://sounds/volume_slider.ogg", 0.1, 1.8)
-				end
-			end
+	local completed = motion:onComplete(function()
+		if alive then
+			setShown(false)
 		end
 	end)
+	local children: any = {
+		Pop = e("CanvasGroup", {
+			Name = "Pop",
+			AnchorPoint = Vector2.new(0.5, 0.5),
+			Position = UDim2.fromScale(0.5, 0.5),
+			Size = diameter:map(function(d: number)
+				return UDim2.fromOffset(d, d)
+			end),
+			BackgroundTransparency = 1,
+			ZIndex = 4,
+			GroupTransparency = progress:map(function(t: number)
+				return math.clamp((t - 0.28) / 0.36, 0, 1)
+			end),
+		}, {
+			Scale = e("UIScale", {
+				Scale = React.joinBindings({ progress, reduced }):map(function(v: any)
+					local t = v[1]
+					if v[2] then
+						return 1
+					end
+					if t < 0.12 then
+						return 1 - t / 0.12 * 0.18
+					end
+					if t < 0.3 then
+						return 0.82 + (t - 0.12) / 0.18 * 0.38
+					end
+					return 1.2 - math.clamp((t - 0.3) / 0.34, 0, 1) * 0.95
+				end),
+			}),
+			Face = Bubble.face({ diameter = diameter, definition = definition, studs = studs }),
+		}),
+		Reward = e("TextLabel", {
+			Name = "BoostCaption",
+			AnchorPoint = Vector2.new(0.5, 0.5),
+			Position = React.joinBindings({ progress, reduced }):map(function(v: any)
+				return UDim2.new(0.5, 0, 0.5, if v[2] then -55 else -35 - v[1] * 65)
+			end),
+			Size = UDim2.fromOffset(270, 45),
+			BackgroundTransparency = 1,
+			Text = caption,
+			Font = Enum.Font.GothamBlack,
+			TextSize = 24,
+			TextColor3 = Color3.new(1, 1, 1),
+			TextTransparency = progress:map(function(t: number)
+				return math.clamp((t - 0.65) / 0.35, 0, 1)
+			end),
+			ZIndex = 6,
+		}, {
+			Outline = e("UIStroke", {
+				Color = Color3.new(),
+				Thickness = 2.5,
+				Transparency = progress:map(function(t: number)
+					return math.clamp((t - 0.65) / 0.35, 0, 1)
+				end),
+			}),
+		}),
+	}
+	for i = 1, 16 do
+		local angle = i / 16 * math.pi * 2 + 0.12
+		local distance = 62 + (i % 4) * 13
+		children["Confetti" .. i] = e("Frame", {
+			Name = "Confetti" .. i,
+			AnchorPoint = Vector2.new(0.5, 0.5),
+			Position = progress:map(function(t: number)
+				local reach = math.sin(math.min(t / 0.75, 1) * math.pi / 2) * distance
+				return UDim2.new(0.5, math.cos(angle) * reach, 0.5, math.sin(angle) * reach + 56 * t * t)
+			end),
+			Size = UDim2.fromOffset(6 + i % 3 * 2, 6 + i % 3 * 2),
+			BackgroundColor3 = Color3.fromHSV(i / 16, 0.65, 1),
+			BackgroundTransparency = progress:map(function(t: number)
+				return math.clamp((t - 0.45) / 0.55, 0, 1)
+			end),
+			BorderSizePixel = 0,
+			Rotation = progress:map(function(t: number)
+				return i * 27 + t * 210
+			end),
+			Visible = reduced:map(function(value: boolean)
+				return not value
+			end),
+			ZIndex = 3,
+		}, { Corner = e("UICorner", { CornerRadius = UDim.new(0.28, 0) }) })
+	end
 	return {
-		play = play,
-		clear = clear,
+		element = e("Frame", {
+			Name = "BoostHitFeedback",
+			AnchorPoint = Vector2.new(0.5, 0.5),
+			Position = position,
+			Size = UDim2.fromOffset(360, 360),
+			BackgroundTransparency = 1,
+			Visible = shown,
+			Active = false,
+			Interactable = false,
+			ZIndex = 10,
+		}, children),
+		play = function(at: UDim2, def: any, paid: boolean)
+			if not alive then
+				return
+			end
+			setPosition(at)
+			setDefinition(def)
+			setReduced(not effects())
+			setCaption(if paid then "ROBUX BOOST" else "")
+			motion:setPosition(0)
+			setShown(true)
+			motion:tween(1, { duration = if effects() then 0.7 else 0.18 })
+		end,
+		confirm = function(multiplier: number)
+			if alive then
+				setCaption(string.format("BOOST x%s!", tostring(multiplier)))
+			end
+		end,
+		reduce = function()
+			setReduced(true)
+			motion:setPosition(1)
+			setShown(false)
+		end,
+		clear = function()
+			setShown(false)
+			motion:setPosition(1)
+		end,
 		destroy = function()
 			alive = false
-			clear()
-			connection:Disconnect()
-			camera.destroy()
+			changed()
+			completed()
+			motion:destroy()
 		end,
 	}
 end
+
 return Feedback

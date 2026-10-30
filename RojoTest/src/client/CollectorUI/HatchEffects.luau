@@ -1,14 +1,15 @@
 --!strict
+-- Shell burst of the clicked reveal, tinted with the final tier.
 -- Screen-space layers share the stage clock; no extra frame connections or uploaded assets.
 local React = require(game.ReplicatedStorage.Packages.React)
 local e = React.createElement
-local GOLD = Color3.fromRGB(255, 211, 80)
 local WHITE = Color3.fromRGB(255, 250, 222)
 type Props = {
 	At: ((number) -> any) -> any,
 	Center: Vector2,
 	Size: number,
-	RevealAt: number,
+	-- Seconds since the shell burst; negative before it.
+	Age: (number) -> number,
 	ShellColor: Color3,
 	Color: Color3,
 }
@@ -21,30 +22,12 @@ return function(p: Props)
 	local x, y = p.Center.X, p.Center.Y
 	local children = {}
 	local function age(t: number): number
-		return t - p.RevealAt
+		return p.Age(t)
 	end
 	local function opacity(t: number): number
 		local a = age(t)
 		return a < 0 and 1 or clamp((a - 0.1) / 0.85)
 	end
-	children.Aura = e("ImageLabel", {
-		Name = "HatchAura",
-		BackgroundTransparency = 1,
-		AnchorPoint = Vector2.new(0.5, 0.5),
-		Position = UDim2.fromOffset(x, y),
-		Image = "rbxasset://textures/particles/smoke_main.dds",
-		ImageColor3 = GOLD,
-		Size = at(function(t)
-			local charge = clamp((t - p.RevealAt + 1.1) / 1.1)
-			local s = size * (0.9 + charge * 0.35 + math.sin(t * 9) * 0.02)
-			return UDim2.fromOffset(s, s)
-		end),
-		ImageTransparency = at(function(t)
-			local a = age(t)
-			return a < 0 and 1 - clamp((a + 1.1) / 1.1) * 0.45 or 0.55 + clamp(a / 0.9) * 0.45
-		end),
-		ZIndex = 10,
-	})
 	for k = 1, 16 do
 		children["Ray" .. k] = e("Frame", {
 			Name = "HatchLightRay",
@@ -63,7 +46,7 @@ return function(p: Props)
 				)
 			end),
 			Rotation = k * 22.5 + 11,
-			BackgroundColor3 = k % 3 == 0 and WHITE or GOLD,
+			BackgroundColor3 = k % 3 == 0 and WHITE or p.Color,
 			BackgroundTransparency = at(opacity),
 			BorderSizePixel = 0,
 			ZIndex = 11,
@@ -93,7 +76,7 @@ return function(p: Props)
 		}, {
 			Corner = e("UICorner", { CornerRadius = UDim.new(1, 0) }),
 			Edge = e("UIStroke", {
-				Color = k == 1 and WHITE or GOLD,
+				Color = k == 1 and WHITE or p.Color,
 				Thickness = k == 1 and 3 or 2,
 				Transparency = at(function(t)
 					local a = age(t) - (k - 1) * 0.07
@@ -110,7 +93,7 @@ return function(p: Props)
 			BackgroundTransparency = 1,
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			Image = "rbxasset://textures/particles/sparkles_main.dds",
-			ImageColor3 = k % 3 == 0 and WHITE or GOLD,
+			ImageColor3 = k % 3 == 0 and WHITE or p.Color,
 			Size = UDim2.fromOffset(starSize, starSize),
 			Position = at(function(t)
 				local q = clamp((age(t) - 0.02) / 1.05)
@@ -194,7 +177,7 @@ return function(p: Props)
 		Position = UDim2.fromOffset(x, y),
 		Size = UDim2.fromOffset(size * 1.1, size * 1.1),
 		Image = "rbxasset://textures/particles/smoke_main.dds",
-		ImageColor3 = p.Color:Lerp(GOLD, 0.45),
+		ImageColor3 = p.Color,
 		ImageTransparency = at(function(t)
 			local a = age(t)
 			return a < 0.12 and 1 or 0.78 + clamp((a - 0.12) / 0.9) * 0.22
@@ -203,7 +186,7 @@ return function(p: Props)
 	})
 	return e(
 		"Frame",
-		{ Name = "HatchReferenceEffects", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1) },
+		{ Name = "HatchReferenceEffects", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), ZIndex = 2 },
 		children
 	)
 end

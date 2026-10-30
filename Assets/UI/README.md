@@ -63,3 +63,10 @@ ImageGen. Каждый PNG в `Assets/UI/Pets/individual-v3/` — самосто
 Каждый PetId получает свой Image ID через PetCardArt.image. Английские подписи
 остаются живым текстом интерфейса. Декоративные лучи SelectionRays удалены
 из предпросмотра, чтобы за питомцем не было полос/текстуры.
+
+## Training Boost bubbles
+
+`training-boost.asset.json` documents the native Roblox UI asset. Its reusable
+React component is `RojoTest/src/client/Controllers/TrainingBoostBubble.luau`.
+It uses the existing studs and Robux textures, five gradients and a rainbow
+gradient with live outlined text. No new bitmap or Image asset upload is needed.
