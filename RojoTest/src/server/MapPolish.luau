@@ -69,7 +69,7 @@ function MapPolish.apply(root)
 		return root
 	end
 	assert(not root:FindFirstChild("EnvironmentPolish"), "Existing visual pass needs review before replacement")
-	for _, name in { "Lobby", "WaterCorridor", "TrainingZone", "PerimeterWalls", "EmptyItemStand", "CorridorBarriers" } do
+	for _, name in { "Lobby", "FieldCorridor", "TrainingZone", "PerimeterWalls", "EmptyItemStand", "CorridorBarriers" } do
 		assert(root:FindFirstChild(name), "Missing map group: " .. name)
 	end
 	local protected = {}

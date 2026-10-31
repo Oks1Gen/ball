@@ -38,14 +38,14 @@ for _, world in workspace.Map:GetChildren() do
 	end
 	local maxSeam = 0
 	for i = 1, 8 do
-		local p = world.SkippingWorld["Water_" .. i]
+		local p = world.SkippingWorld["Field_" .. i]
 		for z = p.Position.Z - p.Size.Z / 2 + 0.1, p.Position.Z + p.Size.Z / 2 - 0.1, 4 do
 			for _, dx in { -54, -27, 0, 27, 54 } do
 				probe(p.Position.X + dx, z, p.Position.Y + p.Size.Y / 2)
 			end
 		end
 		if i < 8 then
-			local nextPitch = world.SkippingWorld["Water_" .. (i + 1)]
+			local nextPitch = world.SkippingWorld["Field_" .. (i + 1)]
 			maxSeam = math.max(
 				maxSeam,
 				math.abs((p.Position.Z - p.Size.Z / 2) - (nextPitch.Position.Z + nextPitch.Size.Z / 2))

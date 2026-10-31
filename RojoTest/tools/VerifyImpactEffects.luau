@@ -56,26 +56,33 @@ local ok, result = pcall(function()
 	ground.CFrame = CFrame.new(origin)
 	ground.Anchored = true
 	ground.Parent = host
-	for _, mode in { "Dust", "Water" } do
-		local position = origin + (mode == "Dust" and Vector3.yAxis * 0.5 or Vector3.new(50, 0, 0))
+	-- The ball only ever lands on the pitch: over a part or, past its edge, on
+	-- the shot's ground plane. Both kick up turf, never a splash.
+	for _, mode in { "Part", "Plane" } do
+		local position = origin + (mode == "Part" and Vector3.yAxis * 0.5 or Vector3.new(50, 0, 0))
 		local before = {}
 		for _, item in workspace:GetChildren() do
 			before[item] = true
 		end
-		Effects.bounce(position, position.Y - 1, 1, 0.7, "Rainbow")
-		local found = false
+		local surface, normal, strength = Effects.bounce(position, position.Y - 1, 1, 0.7, "Rainbow", 1)
+		local groundY = if mode == "Part" then origin.Y + 0.5 else position.Y - 1
+		check(math.abs(surface.Y - groundY) < 0.01, "Contact point " .. mode)
+		check(normal:FuzzyEq(Vector3.yAxis, 1e-3), "Pitch normal " .. mode)
+		local slow = select(3, Effects.bounce(position, position.Y - 1, 1, 0.7, "None", 0))
+		check(strength > slow * 1.4, "Fast shots get a bigger ground impact")
+		local found = 0
 		for _, item in workspace:GetChildren() do
 			if not before[item] and item.Name == "BallEffectBurst" then
-				check(item:GetAttribute("Surface") == mode, "Correct surface " .. mode)
-				check(item:FindFirstChild("RainbowImpact") ~= nil, "Theme and surface both exist")
-				if mode == "Dust" then
-					check(item:FindFirstChild("ToonDustPuff", true) ~= nil, "Dust preserved")
+				check(item:GetAttribute("Surface") == "Field", "Pitch surface " .. mode)
+				check(item:FindFirstChild("ToonDustPuff", true) ~= nil, "Turf puffs " .. mode)
+				if item:GetAttribute("TrailStyle") == "Rainbow" then
+					check(item:FindFirstChild("RainbowImpact") ~= nil, "Theme and surface both exist")
 				end
-				found = true
+				found += 1
 				item:Destroy()
 			end
 		end
-		check(found, "Surface burst created")
+		check(found == 2, "Surface bursts created")
 		task.wait()
 	end
 	return { assertions = assertions, families = 5, surfaces = 2 }

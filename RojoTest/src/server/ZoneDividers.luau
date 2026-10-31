@@ -71,7 +71,7 @@ function Dividers.apply(map: any)
 		local centerTitles = root:GetAttribute("CenteredTitlesVersion") ~= 1
 		for _, group in root:GetChildren() do
 			local index = tonumber(group.Name:match("^Boundary(%d+)$"))
-			local following = if index then map.SkippingWorld:FindFirstChild("Water_" .. (index + 1)) else nil
+			local following = if index then map.SkippingWorld:FindFirstChild("Field_" .. (index + 1)) else nil
 			if updateTint and following and following:IsA("BasePart") then
 				for _, name in { "Wall", "TopEdge", "TitleAnchor" } do
 					local node = group:FindFirstChild(name)
@@ -115,8 +115,8 @@ function Dividers.apply(map: any)
 	root.Name = "ZoneDividers"
 	local world = map.SkippingWorld
 	for index = 1, #Config.Biomes - 1 do
-		local current = world["Water_" .. index]
-		local following = world["Water_" .. (index + 1)]
+		local current = world["Field_" .. index]
+		local following = world["Field_" .. (index + 1)]
 		local back = current.CFrame * CFrame.new(0, current.Size.Y / 2, -current.Size.Z / 2)
 		local front = following.CFrame * CFrame.new(0, following.Size.Y / 2, following.Size.Z / 2)
 		local boundary = back:Lerp(front, 0.5)

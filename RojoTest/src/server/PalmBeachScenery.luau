@@ -1,7 +1,7 @@
 --!strict
 local Scenery = {}
 function Scenery.apply(map)
-	local zone = map.WaterCorridor:FindFirstChild("01_ЛУГА")
+	local zone = map.FieldCorridor:FindFirstChild("01_ЛУГА")
 	assert(zone, "First biome missing")
 	if zone:FindFirstChild("TropicalLanding") then
 		return

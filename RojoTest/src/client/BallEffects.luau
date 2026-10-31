@@ -110,7 +110,17 @@ function Effects.kick(position: Vector3, direction: Vector3, color: Color3, inte
 	TweenService:Create(flash, TweenInfo.new(0.18), { Size = Vector3.one * 4, Transparency = 1 }):Play()
 end
 
-function Effects.bounce(position: Vector3, waterY: number, contact: number, intensity: number, trailId: string)
+-- The ground half of a bounce: stays on the pitch where the ball touched it.
+-- Returns the contact point, its normal and the burst strength so the flight
+-- can add the half the ball carries away.
+function Effects.bounce(
+	position: Vector3,
+	groundY: number,
+	contact: number,
+	intensity: number,
+	trailId: string,
+	pace: number?
+): (Vector3, Vector3, number)
 	-- Probe scenery, excluding characters and the decorative balls/effects.
 	local params = RaycastParams.new()
 	params.RespectCanCollide = true
@@ -122,31 +132,28 @@ function Effects.bounce(position: Vector3, waterY: number, contact: number, inte
 	end
 	params.FilterDescendantsInstances = excluded
 	local hit = workspace:Raycast(position + Vector3.yAxis * 1.5, -Vector3.yAxis * 7, params)
-	local water = hit == nil or hit.Material == Enum.Material.Water
-	local surface = hit and hit.Position or Vector3.new(position.X, waterY, position.Z)
+	local surface = hit and hit.Position or Vector3.new(position.X, groundY, position.Z)
 	local normal = hit and hit.Normal or Vector3.yAxis
+	-- A fast ball spends less time near each impact, so the impact grows instead.
+	local strength = math.clamp((1 - (contact - 1) / 8) * (0.75 + intensity * 0.4), 0.25, 1.2)
+		* (1 + 0.45 * (pace or 0))
 	local part = anchor(surface + normal * 0.12)
 	if not part then
-		return
+		return surface, normal, strength
 	end
-	local strength = math.clamp((1 - (contact - 1) / 8) * (0.75 + intensity * 0.4), 0.25, 1.2)
 	part:SetAttribute("TrailStyle", trailId)
 	BallImpactEffects.bounce(part, surface, normal, trailId, strength)
 	local attachment = Instance.new("Attachment")
 	attachment.CFrame = CFrame.lookAt(Vector3.zero, normal) * CFrame.Angles(-math.pi / 2, 0, 0)
 	attachment.Parent = part
-	local color = Color3.fromRGB(225, 246, 255)
-	if not water then
-		color = Color3.fromRGB(199, 183, 153)
-		if hit and hit.Instance:IsA("BasePart") then
-			color = hit.Instance.Color:Lerp(Color3.fromRGB(224, 211, 188), 0.65)
-		end
+	-- Turf kicked up from the pitch, tinted with the biome colour under the ball.
+	local color = Color3.fromRGB(199, 183, 153)
+	if hit and hit.Instance:IsA("BasePart") then
+		color = hit.Instance.Color:Lerp(Color3.fromRGB(224, 211, 188), 0.65)
 	end
-	part:SetAttribute("Surface", water and "Water" or "Dust")
+	part:SetAttribute("Surface", "Field")
 	Shapes.ring(part, surface + normal * 0.15, normal, color, 2.5 * strength)
-	if not water then
-		Shapes.puffs(part, surface + normal * 0.3, normal, color, strength)
-	end
+	Shapes.puffs(part, surface + normal * 0.3, normal, color, strength)
 	local cloud = emitter(attachment, "rbxasset://textures/particles/smoke_main.dds", color)
 	cloud.EmissionDirection = Enum.NormalId.Top
 	cloud.SpreadAngle = Vector2.new(75, 75)
@@ -167,17 +174,14 @@ function Effects.bounce(position: Vector3, waterY: number, contact: number, inte
 		NumberSequenceKeypoint.new(1, 3.6 * strength),
 	})
 	cloud:Emit(math.round(8 + strength * 7))
-	if water then
-		local drops = emitter(attachment, "rbxasset://textures/particles/sparkles_main.dds", color)
-		drops.Speed = NumberRange.new(5 * strength, 13 * strength)
-		drops.Acceleration = Vector3.new(0, -30, 0)
-		drops.Size = NumberSequence.new(0.2 * strength, 0)
-		drops:Emit(math.round(7 + strength * 5))
-	end
+	return surface, normal, strength
 end
 
 export type FlightHandle = {
-	update: (Vector3, Vector3, boolean, number) -> (),
+	-- position, velocity, visible, intensity, pace (0 slow .. 1 fastest shots)
+	update: (Vector3, Vector3, boolean, number, number?) -> (),
+	-- surface, normal, strength, pace: the bounce half the ball carries away
+	contact: (Vector3, Vector3, number, number) -> (),
 	stop: () -> (),
 	destroy: () -> (),
 }
@@ -194,6 +198,9 @@ function Effects.flight(trailId: string): FlightHandle
 	local tailRoots: { Attachment } = {}
 	local light: PointLight? = nil
 	local aura: Part? = nil
+	local speedLayer: TrailEffects.Speed? = nil
+	local fill: TrailEffects.Filler? = nil
+	local fillFrom: Vector3? = nil
 	local stopped = false
 	local destroyed = false
 	local wasVisible = false
@@ -236,7 +243,8 @@ function Effects.flight(trailId: string): FlightHandle
 			beam.Width0 = 2.8 * (1 - (i - 1) / TAIL_SEGMENTS) ^ 0.75
 			beam.Width1 = 2.8 * (1 - i / TAIL_SEGMENTS) ^ 0.75
 			beam.Color = i == 1 and ColorSequence.new(GOLD, FIRE) or ColorSequence.new(FIRE, Color3.fromRGB(175, 32, 6))
-			beam.LightEmission = 0.9
+			-- Mostly painted, not added: additive orange turns white on the bright pitch.
+			beam.LightEmission = 0.4
 			beam.Transparency = NumberSequence.new({
 				NumberSequenceKeypoint.new(0, 0.18 + (i - 1) * 0.1),
 				NumberSequenceKeypoint.new(1, i == TAIL_SEGMENTS and 1 or 0.18 + i * 0.1),
@@ -261,7 +269,7 @@ function Effects.flight(trailId: string): FlightHandle
 		fire.Speed = NumberRange.new(4, 9)
 		fire.SpreadAngle = Vector2.new(14, 14)
 		fire.Lifetime = NumberRange.new(0.15, 0.3)
-		fire.LightEmission = 0.65
+		fire.LightEmission = 0.45
 		fire.Size = NumberSequence.new({
 			NumberSequenceKeypoint.new(0, 1.65),
 			NumberSequenceKeypoint.new(0.3, 2.3),
@@ -299,7 +307,7 @@ function Effects.flight(trailId: string): FlightHandle
 			tail.EmissionDirection = Enum.NormalId.Back
 			tail.Speed = NumberRange.new(1, 3)
 			tail.Lifetime = NumberRange.new(0.25, 0.4)
-			tail.LightEmission = 1
+			tail.LightEmission = 0.55
 			tail.Brightness = 2
 			tail.Transparency = NumberSequence.new({
 				NumberSequenceKeypoint.new(0, 0.05),
@@ -315,15 +323,34 @@ function Effects.flight(trailId: string): FlightHandle
 			})
 			tongues[i] = tail
 		end
-		local smoke = emitter(headSource, "rbxasset://textures/particles/smoke_main.dds", Color3.fromRGB(123, 91, 77))
-		smoke.Name = "WarmSmoke"
-		smoke.Rate = 7
+		-- Volcanic ash and dripping lava (VfxForgeUltra library textures).
+		local smoke = emitter(headSource, "rbxassetid://16955854038", Color3.fromRGB(64, 46, 40))
+		smoke.Name = "VolcanicAsh"
+		smoke.FlipbookLayout = Enum.ParticleFlipbookLayout.Grid4x4
+		smoke.FlipbookMode = Enum.ParticleFlipbookMode.OneShot
+		smoke.Rate = 9
 		smoke.EmissionDirection = Enum.NormalId.Back
 		smoke.Speed = NumberRange.new(2, 4)
-		smoke.Lifetime = NumberRange.new(0.25, 0.4)
-		smoke.Size = NumberSequence.new(0.7, 2)
-		smoke.Transparency = NumberSequence.new(0.8, 1)
-		flames = { fire, embers, smoke }
+		smoke.Lifetime = NumberRange.new(0.45, 0.7)
+		smoke.Size = NumberSequence.new(0.8, 2.6)
+		smoke.Transparency = NumberSequence.new(0.35, 1)
+		smoke.LightInfluence = 0
+		local drips = emitter(headSource, "rbxassetid://11187840108", GOLD)
+		drips.Name = "LavaDrips"
+		drips.Color = ColorSequence.new(CREAM, FIRE)
+		drips.Rate = 14
+		drips.EmissionDirection = Enum.NormalId.Back
+		drips.Speed = NumberRange.new(1, 3)
+		drips.SpreadAngle = Vector2.new(35, 35)
+		drips.Lifetime = NumberRange.new(0.4, 0.7)
+		drips.Acceleration = Vector3.new(0, -30, 0)
+		drips.LightEmission = 1
+		drips.Brightness = 2
+		drips.Size = NumberSequence.new(0.32, 0.05)
+		drips.Transparency = NumberSequence.new(0, 0.6)
+		flames = { fire, embers, smoke, drips }
+		-- Ash stays time-based: filled in, its dark puffs read as dirt on the pitch.
+		fill = TrailEffects.filler(headSource, { fire, embers, drips })
 		for _, tongue in tongues do
 			table.insert(flames, tongue)
 		end
@@ -361,6 +388,7 @@ function Effects.flight(trailId: string): FlightHandle
 		shell.Size = Vector3.one * 2.35
 		shell.Transparency = 0.97
 		aura = shell
+		speedLayer = TrailEffects.speed(root, "Red")
 	end
 	local function enabled(value: boolean)
 		if value == wasVisible then
@@ -390,7 +418,7 @@ function Effects.flight(trailId: string): FlightHandle
 		end
 	end
 	return {
-		update = function(position: Vector3, velocity: Vector3, show: boolean, intensity: number)
+		update = function(position: Vector3, velocity: Vector3, show: boolean, intensity: number, pace: number?)
 			if destroyed or stopped then
 				return
 			end
@@ -404,14 +432,20 @@ function Effects.flight(trailId: string): FlightHandle
 				return
 			end
 			enabled(visible)
+			local from = fillFrom
+			fillFrom = if visible then position else nil
 			if not visible then
 				path.clear()
+				if speedLayer then
+					speedLayer.update(position, -Vector3.zAxis, 1, 0)
+				end
 				return
 			end
 			local speed = velocity.Magnitude
 			local direction = speed > 0.05 and velocity.Unit or -Vector3.zAxis
 			local now = os.clock()
-			local blend = 1 - math.exp(-math.min(now - previousTime, 0.1) * 24)
+			local dt = math.min(now - previousTime, 0.1)
+			local blend = 1 - math.exp(-dt * 24)
 			previousTime = now
 			local previous = smoothedDirection
 			if previous and previous:Dot(direction) > -0.8 then
@@ -419,6 +453,12 @@ function Effects.flight(trailId: string): FlightHandle
 			end
 			smoothedDirection = direction
 			root.CFrame = CFrame.lookAt(position, position + direction)
+			if speedLayer then
+				speedLayer.update(position, direction, math.max(speed, 1), pace or 0)
+			end
+			if fill and from and (pace or 0) > 0 then
+				fill(from, position, dt)
+			end
 			if aura then
 				aura.CFrame = root.CFrame
 				aura.Size = Vector3.one * (2.32 + math.sin(now * 8) * 0.035)
@@ -449,11 +489,19 @@ function Effects.flight(trailId: string): FlightHandle
 			end
 			trails[1].Lifetime = math.clamp(10 / math.max(speed, 1), 0.08, 0.4)
 		end,
+		contact = function(surface: Vector3, normal: Vector3, strength: number, pace: number)
+			if speedLayer and wasVisible and not stopped and not destroyed then
+				speedLayer.contact(surface, normal, strength, pace)
+			end
+		end,
 		stop = function()
 			if stopped or destroyed then
 				return
 			end
 			stopped = true
+			if speedLayer then
+				speedLayer.stop()
+			end
 			-- Stop emission, but let existing embers and ribbons finish naturally.
 			for _, particles in flames do
 				particles.Enabled = false

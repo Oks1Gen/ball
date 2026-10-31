@@ -34,9 +34,9 @@ function Streaming.start(player, info, isActive)
 	focus.Archivable = false
 	local function position()
 		local elapsed = workspace:GetServerTimeNow() - info.startedAt
-		-- The focus has to sit on the ball, not ahead of it: the client and the
-		-- shot contacts use the same alpha, so the streamed region is the one
-		-- the ball is really in.
+		-- The focus has to sit on the ball, not ahead of it: the shot contacts
+		-- use this alpha, and the client's bounce hang (FlightPace) only lags
+		-- it by ~2% of the shot, well inside the streamed region.
 		local alpha = math.clamp((elapsed - windup) / info.duration, 0, 1)
 		return Motion.position(info.startPosition, info.distance, alpha, info.direction)
 	end

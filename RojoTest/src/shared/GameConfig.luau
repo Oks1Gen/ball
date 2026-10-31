@@ -48,13 +48,13 @@ function Config.shotLimit(world, arena)
 	arena = arena
 		or (workspace:FindFirstChild("Map") and workspace.Map:FindFirstChild(world == 2 and "World2" or "World1"))
 	local scenery = arena and arena:FindFirstChild("SkippingWorld")
-	local water = scenery and scenery:FindFirstChild("Water_8")
-	if water then
+	local field = scenery and scenery:FindFirstChild("Field_8")
+	if field then
 		local frame = Config.arenaFrame(arena)
 		local start = frame:PointToWorldSpace(Config.ShotStartLocal)
 		local finale = scenery:FindFirstChild("SakuraJapaneseFinale")
 		local gate = finale and finale:FindFirstChild("SakuraGatewayFrame")
-		local goal = gate and gate:GetPivot().Position or water.Position + frame.LookVector * (water.Size.Z / 2 - 7)
+		local goal = gate and gate:GetPivot().Position or field.Position + frame.LookVector * (field.Size.Z / 2 - 7)
 		return math.max(
 			Economy.ShotDistanceFloor,
 			math.floor((goal - start):Dot(frame.LookVector) * Config.DistancePerStud)
@@ -79,7 +79,6 @@ function Config.shotBounceGain(multiplier)
 end
 Config.StudTexture = "rbxassetid://138746650062134"
 Config.Music = "rbxassetid://1836105470"
-Config.WaterTexture = "rbxassetid://6757160733"
 Config.RiverX = -116
 Config.WorldOffset = Vector3.new(2000, 0, 0)
 Config.Biomes = {
@@ -103,11 +102,17 @@ Config.Lanes = {
 }
 Config.Trails = {
 	{ id = "None", name = "No Trail", boost = 1, cost = 0, color = C(180, 185, 193) },
-	{ id = "White", name = "White Trail", boost = 1.2, cost = 10000, color = C(244, 247, 255) },
-	{ id = "Red", name = "Red Trail", boost = 1.3, cost = 750000, color = C(255, 48, 84) },
-	{ id = "Blue", name = "Blue Trail", boost = 1.5, cost = 5000000, color = C(30, 191, 255) },
-	{ id = "Purple", name = "Purple Trail", boost = 1.8, cost = 25000000, color = C(181, 75, 255) },
+	-- Ids are saved in profiles: the first five keep their old ids under themed names.
+	{ id = "White", name = "Gale Trail", boost = 1.2, cost = 10000, color = C(244, 247, 255) },
+	{ id = "Tidal", name = "Tidal Trail", boost = 1.25, cost = 150000, color = C(40, 160, 255) },
+	{ id = "Red", name = "Volcanic Trail", boost = 1.3, cost = 750000, color = C(255, 48, 84) },
+	{ id = "Electric", name = "Electric Trail", boost = 1.4, cost = 2000000, color = C(255, 214, 40) },
+	{ id = "Blue", name = "Frost Trail", boost = 1.5, cost = 5000000, color = C(30, 191, 255) },
+	{ id = "Earthquake", name = "Earthquake Trail", boost = 1.65, cost = 12000000, color = C(201, 138, 62) },
+	{ id = "Purple", name = "Void Trail", boost = 1.8, cost = 25000000, color = C(181, 75, 255) },
+	{ id = "Cosmic", name = "Cosmic Trail", boost = 2.1, cost = 50000000, color = C(122, 96, 255) },
 	{ id = "Rainbow", name = "Rainbow Trail", boost = 2.5, cost = 100000000, color = C(255, 184, 62) },
+	{ id = "Divine", name = "Divine Trail", boost = 3, cost = 250000000, color = C(255, 205, 60) },
 }
 Config.Stones = {
 	-- Ids stay for saved inventories; names and colours follow the Low Poly V2 meshes.

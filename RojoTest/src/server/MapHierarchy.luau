@@ -56,6 +56,27 @@ function Hierarchy.organize(world: Instance)
 	end
 end
 
+-- The route is a football pitch; its parts kept StoneSkipping's water names
+-- (Water_1..8, WaterCorridor) until 31.10.2026. Places saved before that are
+-- renamed here, before any module looks the parts up.
+local function renameLegacyPitch(world: Instance)
+	local corridor = world:FindFirstChild("WaterCorridor")
+	if corridor then
+		assert(not world:FindFirstChild("FieldCorridor"), "Both WaterCorridor and FieldCorridor exist")
+		corridor.Name = "FieldCorridor"
+	end
+	local scenery = world:FindFirstChild("SkippingWorld")
+	if scenery then
+		for index = 1, 8 do
+			local floor = scenery:FindFirstChild("Water_" .. index)
+			if floor then
+				assert(not scenery:FindFirstChild("Field_" .. index), "Both Water_ and Field_ pitch parts exist")
+				floor.Name = "Field_" .. index
+			end
+		end
+	end
+end
+
 function Hierarchy.migrate()
 	local maps = Hierarchy.container()
 	for index, legacyName in { "ProgressionMap", "World2Map" } do
@@ -67,6 +88,7 @@ function Hierarchy.migrate()
 			world = folderFrom(world)
 			world.Name = name
 			world.Parent = maps
+			renameLegacyPitch(world)
 		end
 	end
 end

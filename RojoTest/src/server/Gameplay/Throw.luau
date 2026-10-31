@@ -101,7 +101,7 @@ function Throw.build(context: Context): (Player, number?, number?, number?) -> (
 			startedAt = startedAt,
 			startPosition = frame:PointToWorldSpace(Config.ShotStartLocal),
 			direction = frame.LookVector,
-			waterY = frame:PointToWorldSpace(Vector3.new(-116, 0.82, 0)).Y,
+			groundY = frame:PointToWorldSpace(Vector3.new(-116, 0.82, 0)).Y,
 		}
 		local character = player.Character
 		info.zoneCrossings = ShotZones.crossings(context.arenaFor(player), info)

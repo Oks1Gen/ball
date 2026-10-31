@@ -32,7 +32,7 @@ function Surface.apply(map: any)
 	local world = map.SkippingWorld
 	local markings = world:FindFirstChild("FootballPitchMarkings")
 	for index = 1, 8 do
-		local floor = world["Water_" .. index]
+		local floor = world["Field_" .. index]
 		style(floor, floor)
 		local pitch = markings and markings:FindFirstChild("Pitch" .. index)
 		if pitch then

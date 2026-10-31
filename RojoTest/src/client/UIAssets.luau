@@ -19,11 +19,16 @@ local Assets = {
 		Egg = "rbxassetid://134171391259810",
 		Items = "rbxassetid://133556621296720",
 		Relic = "rbxassetid://71988075139344",
-		WhiteTrail = "rbxassetid://87843827315556",
-		RedTrail = "rbxassetid://137645592170260",
-		BlueTrail = "rbxassetid://114339554508731",
-		PurpleTrail = "rbxassetid://73386437552168",
-		RainbowTrail = "rbxassetid://104569410708834",
+		WhiteTrail = "rbxassetid://72365524147857",
+		TidalTrail = "rbxassetid://119956239283378",
+		RedTrail = "rbxassetid://74867274888134",
+		ElectricTrail = "rbxassetid://105877511187844",
+		BlueTrail = "rbxassetid://115302468923657",
+		EarthquakeTrail = "rbxassetid://118671828745841",
+		PurpleTrail = "rbxassetid://89586944742983",
+		CosmicTrail = "rbxassetid://107194974560371",
+		RainbowTrail = "rbxassetid://136846019817393",
+		DivineTrail = "rbxassetid://139670655988105",
 		Settings = "rbxassetid://82267402301590",
 		UpdateLog = "rbxassetid://106721086001751",
 		Arrow = "rbxassetid://124139408657162",
@@ -39,7 +44,10 @@ local Assets = {
 		Robux = "rbxassetid://90468580391337",
 	},
 }
-local Aliases: { [string]: string } = { Stone = "Ball", Eggs = "Egg" }
+local Aliases: { [string]: string } = {
+	Stone = "Ball",
+	Eggs = "Egg",
+}
 function Assets.resolve(kind: string): (string, Vector2, Vector2)
 	local name = Aliases[kind] or kind
 	return Assets.Images[name] or "", Vector2.zero, Vector2.zero

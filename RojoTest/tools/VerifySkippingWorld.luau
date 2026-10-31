@@ -45,11 +45,11 @@ for i = 1, 7 do
 	assert(lane:GetAttribute("RequiredRebirths") ~= nil, "Missing lane requirement")
 	lanes += 1
 end
-local water = 0
+local fields = 0
 for i = 1, 8 do
-	local p = assert(world:FindFirstChild("Water_" .. i))
-	assert(not p.CanCollide and not p.CanTouch and not p.CanQuery, "Water visual blocks gameplay")
-	water += 1
+	local p = assert(world:FindFirstChild("Field_" .. i))
+	assert(not p.CanCollide and not p.CanTouch and not p.CanQuery, "Pitch visual blocks gameplay")
+	fields += 1
 end
 local prompt = assert(world.World2Portal.PortalField:FindFirstChildWhichIsA("ProximityPrompt", true))
 assert(
@@ -94,7 +94,7 @@ return game:GetService("HttpService"):JSONEncode({
 	originalVolumesChecked = checked,
 	volumeChanges = #changes,
 	lanes = lanes,
-	biomes = water,
+	biomes = fields,
 	throwFloorSamples = samples,
 	portalHeight = prompt.Parent.WorldPosition.Y,
 	advancedFloorSamples = advancedSamples,

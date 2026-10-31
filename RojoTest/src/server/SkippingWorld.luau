@@ -58,22 +58,13 @@ function World.finish(map)
 	terrain.WaterWaveSize = 0.09
 	terrain.WaterColor = C(16, 194, 226)
 	for i = 1, 8 do
-		local water = map.SkippingWorld:FindFirstChild("Water_" .. i)
-		if water then
-			water.Position = V(water.Position.X, 0.7, water.Position.Z)
-			water.Transparency = 0.08
-			water.Material = Enum.Material.SmoothPlastic
-			water.Reflectance = 0
-			water.Color = Config.Biomes[i].color
-			local t = water:FindFirstChild("WaterCaustics") or Instance.new("Texture")
-			t.Name = "WaterCaustics"
-			t.Texture = Config.WaterTexture
-			t.Face = Enum.NormalId.Top
-			t.StudsPerTileU = 28
-			t.StudsPerTileV = 28
-			t.Transparency = 0.55
-			t.Color3 = water.Color:Lerp(C(255, 255, 255), 0.5)
-			t.Parent = water
+		local field = map.SkippingWorld:FindFirstChild("Field_" .. i)
+		if field then
+			field.Position = V(field.Position.X, 0.7, field.Position.Z)
+			field.Transparency = 0.08
+			field.Material = Enum.Material.SmoothPlastic
+			field.Reflectance = 0
+			field.Color = Config.Biomes[i].color
 		end
 	end
 	local apron = map.Lobby.ThrowingApron
@@ -443,7 +434,7 @@ function World.apply(map)
 		studs(pad)
 	end
 	-- The reference uses open horizons and short, terraced banks.
-	for _, d in map.WaterCorridor:GetDescendants() do
+	for _, d in map.FieldCorridor:GetDescendants() do
 		if d:IsA("BasePart") and (d.Name:find("Gateway") or d.Name == "UIAnchor") then
 			hide(d)
 		end
@@ -451,11 +442,11 @@ function World.apply(map)
 	for i, biome in Config.Biomes do
 		local startZ = -(i - 1) * 180
 		local centerZ = startZ - 90
-		local water =
-			part("Water_" .. i, V(111.6, 0.08, 180), V(-116, 0.035, centerZ), biome.color, false, Enum.Material.Glass)
-		water.Transparency = 0.43
-		water.Reflectance = 0.08
-		water.CastShadow = false
+		local field =
+			part("Field_" .. i, V(111.6, 0.08, 180), V(-116, 0.035, centerZ), biome.color, false, Enum.Material.Glass)
+		field.Transparency = 0.43
+		field.Reflectance = 0.08
+		field.CastShadow = false
 		for _, side in { -1, 1 } do
 			for tier = 1, 2 do
 				local x = -116 + side * (if tier == 1 then 67 else 91)

@@ -1,0 +1,76 @@
+{
+  "date": "2026-10-31",
+  "placeId": "106456161057435",
+  "assets": [
+    {
+      "order": 1,
+      "name": "gale",
+      "file": "01-gale-trail.png",
+      "legacyId": "White",
+      "image": "rbxassetid://72365524147857"
+    },
+    {
+      "order": 2,
+      "name": "tidal",
+      "file": "02-tidal-trail.png",
+      "legacyId": "Tidal",
+      "image": "rbxassetid://119956239283378"
+    },
+    {
+      "order": 3,
+      "name": "volcanic",
+      "file": "03-volcanic-trail.png",
+      "legacyId": "Red",
+      "image": "rbxassetid://74867274888134"
+    },
+    {
+      "order": 4,
+      "name": "electric",
+      "file": "04-electric-trail.png",
+      "legacyId": "Electric",
+      "image": "rbxassetid://105877511187844"
+    },
+    {
+      "order": 5,
+      "name": "frost",
+      "file": "05-frost-trail.png",
+      "legacyId": "Blue",
+      "image": "rbxassetid://115302468923657"
+    },
+    {
+      "order": 6,
+      "name": "earthquake",
+      "file": "06-earthquake-trail.png",
+      "legacyId": "Earthquake",
+      "image": "rbxassetid://118671828745841"
+    },
+    {
+      "order": 7,
+      "name": "void",
+      "file": "07-void-trail.png",
+      "legacyId": "Purple",
+      "image": "rbxassetid://89586944742983"
+    },
+    {
+      "order": 8,
+      "name": "cosmic",
+      "file": "08-cosmic-trail.png",
+      "legacyId": "Cosmic",
+      "image": "rbxassetid://107194974560371"
+    },
+    {
+      "order": 9,
+      "name": "rainbow",
+      "file": "09-rainbow-trail.png",
+      "legacyId": "Rainbow",
+      "image": "rbxassetid://136846019817393"
+    },
+    {
+      "order": 10,
+      "name": "divine",
+      "file": "10-divine-trail.png",
+      "legacyId": "Divine",
+      "image": "rbxassetid://139670655988105"
+    }
+  ]
+}

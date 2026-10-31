@@ -7,6 +7,7 @@ local Spacing = require(game.ReplicatedStorage.Shared.UiSpacing)
 local MotionConfig = require(game.ReplicatedStorage.Shared.UiMotionConfig)
 local EggCardLayout = require(script.Parent.EggCardLayout)
 local Presentation = require(script.Parent.Parent.Modules.UiPresentation)
+local TextService = game:GetService("TextService")
 local e = React.createElement
 local S = {}
 type InventoryPet = { uid: string, id: string, name: string, rarity: string, boost: number }
@@ -526,11 +527,23 @@ function S.Trails(p)
 	local w: number = p.Width
 	local h: number = p.Height
 	local cards = {}
-	local rowH = p.Phone and 112 or 155
+	local rowH = p.Phone and 112 or 180
+	local artSize = p.Phone and 132 or 232
+	local textX = p.Phone and 116 or 234
+	local textWidth = w - (p.Phone and 150 or 268)
+	local boostSize = p.Phone and 17 or 27
+	local trophySize = p.Phone and 24 or 37
+	local boostGap = p.Phone and 3 or 5
 	for i = 2, #Config.Trails do
 		local item = Config.Trails[i]
 		local owned, equipped = p.Data.trails[item.id], p.Data.trail == item.id
 		local ink = item.id == "White" and Color3.fromRGB(208, 213, 222) or item.color
+		local boostText = "×" .. item.boost .. " Wins Boost"
+		local boostWidth = math.ceil(
+			TextService:GetTextSize(boostText, boostSize, Enum.Font.GothamBlack, Vector2.new(1000, 100)).X
+		) + 4
+		local boostX = textX + (textWidth - trophySize - boostGap - boostWidth) / 2
+		local boostY = p.Phone and 38 or 74
 		cards[item.id] = e(U.Surface, {
 			Name = "TrailCard" .. item.id,
 			Position = UDim2.fromOffset(6, 6 + (i - 2) * (rowH + 18)),
@@ -541,31 +554,31 @@ function S.Trails(p)
 			Children = {
 				Art = e(U.Icon, {
 					Kind = item.id .. "Trail",
-					Position = UDim2.fromOffset(12, 4),
-					Size = UDim2.fromOffset(p.Phone and 96 or 210, rowH - 8),
+					Position = UDim2.fromOffset(p.Phone and -6 or -4, (rowH - artSize) / 2),
+					Size = UDim2.fromOffset(artSize, artSize),
 				}),
 				Name = label(
 					item.name,
-					p.Phone and 116 or 234,
-					9,
-					w - (p.Phone and 150 or 268),
+					textX,
+					p.Phone and 9 or 16,
+					textWidth,
 					p.Phone and 28 or 46,
 					p.Phone and 23 or 39
 				),
 				Trophy = e(U.Icon, {
 					Kind = "Wins",
-					Position = UDim2.fromOffset(p.Phone and 116 or 234, p.Phone and 44 or 58),
-					Size = UDim2.fromOffset(p.Phone and 24 or 37, p.Phone and 24 or 36),
+					Position = UDim2.fromOffset(boostX, boostY - (trophySize - boostSize) / 2),
+					Size = UDim2.fromOffset(trophySize, trophySize),
 				}),
-				Boost = label(
-					"×" .. item.boost .. " Wins Boost",
-					p.Phone and 146 or 274,
-					p.Phone and 38 or 58,
-					w - (p.Phone and 180 or 308),
-					p.Phone and 20 or 28,
-					p.Phone and 17 or 27,
-					T.Gold
-				),
+				Boost = e(U.Label, {
+					Name = "TrailBoost",
+					Text = boostText,
+					Position = UDim2.fromOffset(boostX + trophySize + boostGap, boostY),
+					Size = UDim2.fromOffset(boostWidth, boostSize + 4),
+					TextSize = boostSize,
+					Color = T.Gold,
+					Align = Enum.TextXAlignment.Left,
+				}),
 				Action = button(
 					"TrailAction" .. item.id,
 					p.Busy and "Please wait…"
@@ -573,7 +586,7 @@ function S.Trails(p)
 						or owned and "Equip"
 						or Config.format(item.cost) .. " Wins",
 					w - 290,
-					p.Phone and 64 or 102,
+					p.Phone and 64 or rowH - 52,
 					250,
 					44,
 					function()

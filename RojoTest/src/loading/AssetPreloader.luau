@@ -65,7 +65,6 @@ function Preloader.collect(player: Player, icon: string, cancelled: Cancelled): 
 	add("ImageLabel", "Image", assets.Burst)
 	add("ImageLabel", "Image", icon)
 	add("ImageLabel", "Image", config.StudTexture)
-	add("ImageLabel", "Image", config.WaterTexture)
 	add("Sound", "SoundId", config.Music)
 	local notificationModule = Preloader.waitFor(shared, "NotificationSounds", cancelled)
 	local zoneModule = Preloader.waitFor(shared, "ZoneTransitionSound", cancelled)

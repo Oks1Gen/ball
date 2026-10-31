@@ -9,6 +9,41 @@ export type Release = {
 
 local releases: { Release } = {
 	{
+		id = "2026-10-31-trail-icons",
+		date = "October 31, 2026",
+		title = "New trail icons",
+		changes = {
+			"All ten trails now have their own matching football icons in the trail shop, from Gale's wind ribbons to Divine's feathers and halo.",
+			"Trail icons are larger, and each trophy sits right beside its Wins Boost text.",
+		},
+	},
+	{
+		id = "2026-10-31-fast-shots",
+		date = "October 31, 2026",
+		title = "Faster shots look faster",
+		changes = {
+			"On strong shots the camera swings out to the side, so you watch the ball fly across the pitch instead of chasing it from behind.",
+			"A fast ball now lingers for a moment after each bounce, so the bounce stays on screen. Distance and timing are unchanged.",
+			"Speed lines in your trail colour rush past the screen on strong shots.",
+			"Fast balls carry a comet tail and part of each bounce burst with them and leave a short glowing skid on the pitch.",
+			"Trails stay just as dense at top speed instead of thinning out into dots, and their ribbons get wider.",
+			"Volcanic flames are easier to see on the bright pitch.",
+		},
+	},
+	{
+		id = "2026-10-31-themed-trails",
+		date = "October 31, 2026",
+		title = "Themed trails",
+		changes = {
+			"Every trail now has its own theme in flight, on the kick and on each bounce, instead of a plain colour.",
+			"Old trails got new looks and names: Gale (white), Volcanic (red), Frost (blue) and Void (purple). Boosts you already own stay the same.",
+			"Five new trails in the shop: Tidal, Electric, Earthquake, Cosmic and Divine.",
+			"Bounces hit harder: splashes, lightning, lava cracks, ice spikes, flying rocks, star bursts and pillars of light, each with its own sound.",
+			"Earthquake bounces shake your camera when Camera Shake is on.",
+			"Trail ribbons keep their colour over the bright pitch.",
+		},
+	},
+	{
 		id = "2026-10-31-ball-portraits",
 		date = "October 31, 2026",
 		title = "New ball portraits",

@@ -28,7 +28,7 @@ function Cleanup.reason(part: BasePart, map: Instance): string?
 	end
 	if section.Name == "SurfaceRepairs" then
 		return "retired surface overlay"
-	elseif section.Name == "EnvironmentPolish" or section.Name == "WaterCorridor" then
+	elseif section.Name == "EnvironmentPolish" or section.Name == "FieldCorridor" then
 		return "retired environment decoration"
 	elseif section.Name == "NativeEnvironment" then
 		if part:GetAttribute("FinaleVisualHidden") or part:GetAttribute("PolarTreeHidden") then

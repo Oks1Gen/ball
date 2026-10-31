@@ -1,5 +1,5 @@
 --!strict
--- World side visuals: the portal beams, the water caustics and the ball stands.
+-- World side visuals: the portal beams and the ball stands.
 -- Every value here is written per frame, so the collections are cached and the
 -- transparency and the camera state only change when they really change.
 local CollectionService = game:GetService("CollectionService")
@@ -21,7 +21,6 @@ export type Handle = {
 
 function World.mount(context: Context): Handle
 	local portalBeams: { BasePart } = {}
-	local waterTextures: { Texture } = {}
 	local standPreviews: { Instance } = CollectionService:GetTagged("BallStandPreview")
 	local mapCache: { [number]: any } = {}
 	local laneCache: { [string]: { instance: any, found: boolean, retryAt: number } } = {}
@@ -114,12 +113,6 @@ function World.mount(context: Context): Handle
 					table.insert(portalBeams, part)
 				end
 			end
-			for _, part in world:GetChildren() do
-				local texture = part:FindFirstChild("WaterCaustics")
-				if texture and texture:IsA("Texture") and not part:GetAttribute("FootballPitch") then
-					table.insert(waterTextures, texture)
-				end
-			end
 		end
 	end)
 
@@ -200,10 +193,6 @@ function World.mount(context: Context): Handle
 			for i, beam in portalBeams do
 				beam.Transparency = effectsOn and (0.2 + 0.5 * (0.5 + 0.5 * math.sin(now * 4 + i))) or 0.7
 			end
-			for _, texture in waterTextures do
-				texture.OffsetStudsU = now * 0.45
-				texture.OffsetStudsV = now * 0.25
-			end
 			updateStands()
 		end,
 		lane = trainingLane,
@@ -218,7 +207,6 @@ function World.mount(context: Context): Handle
 				removeSign(gui)
 			end
 			portalBeams = {}
-			waterTextures = {}
 			standPreviews = {}
 		end,
 	}

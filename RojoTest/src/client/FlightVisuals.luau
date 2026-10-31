@@ -11,7 +11,9 @@ local ShotFeedback = require(Shared.ShotFeedback)
 local Zones = require(Shared.Core.ZoneProgression)
 local BallEffects = require(script.Parent.BallEffects)
 local Perfect = require(Shared.Core.PerfectKick)
+local Pace = require(Shared.Core.FlightPace)
 local PerfectAura = require(script.Parent.PerfectKickAura)
+local SpeedLines = require(script.Parent.SpeedLines)
 local Flight = {}
 
 -- Camera handover --------------------------------------------------------
@@ -147,12 +149,19 @@ function Flight.start(info, context)
 	ball:PivotTo(CFrame.new(startPosition))
 	local direction = info.direction or -Vector3.zAxis
 	local right = direction:Cross(Vector3.yAxis).Unit
-	local waterY = info.waterY or 0.82
+	local groundY = info.groundY or 0.82
+	-- Fast shots linger at each bounce, pull the camera out to the side and
+	-- draw speed lines; slow shots (pace 0) look exactly as before.
+	local distance: number, duration: number = info.distance, info.duration
+	local pace = Pace.factor(distance / Config.DistancePerStud / math.max(duration, 0.1))
+	local speedLines = if context.me and pace > 0 then SpeedLines.new(color) else nil
 	local lastContact = 0
 	local kicked = false
 	local lastZone = 1
 	local zoneCrossings: { any } = info.zoneCrossings or {}
 	local zonePulseAt = -math.huge
+	-- Earthquake bounces jolt the owner's camera; weaker with every bounce.
+	local quakeAt, quakeAmplitude = -math.huge, 0
 	local baseFov = saved.fov
 	local trailEffect = BallEffects.flight(trailId)
 	local perfectAura = PerfectAura.new(perfect, direction)
@@ -169,6 +178,9 @@ function Flight.start(info, context)
 		ball:Destroy()
 		trailEffect.destroy()
 		perfectAura.destroy()
+		if speedLines then
+			speedLines.destroy()
+		end
 		if context.me then
 			Flight.releaseCamera(player, saved, saved.fov)
 		end
@@ -179,10 +191,15 @@ function Flight.start(info, context)
 			ball:Destroy()
 			trailEffect.destroy()
 			perfectAura.destroy()
+			if speedLines then
+				speedLines.destroy()
+			end
 			return
 		end
 		local elapsed = workspace:GetServerTimeNow() - started
-		local alpha = math.clamp((elapsed - windup) / info.duration, 0, 1)
+		local progress = math.clamp((elapsed - windup) / info.duration, 0, 1)
+		-- Visual progress only: contacts and the finish keep the server's times.
+		local alpha = Pace.hang(progress, pace, Motion.BounceCount)
 		local position = Motion.position(startPosition, info.distance, alpha, direction)
 		if context.me and elapsed >= windup then
 			for _, crossing in zoneCrossings do
@@ -206,7 +223,8 @@ function Flight.start(info, context)
 			position,
 			velocity,
 			elapsed >= windup and alpha < 1 and context.effects(),
-			feedback.intensity
+			feedback.intensity,
+			pace
 		)
 		if elapsed >= windup and not kicked then
 			kicked = true
@@ -217,15 +235,22 @@ function Flight.start(info, context)
 				context.kick(feedback)
 			end
 		end
-		local contacts = math.min(Motion.BounceCount, math.floor(alpha * Motion.BounceCount + 1e-6))
+		local contacts = math.min(Motion.BounceCount, math.floor(progress * Motion.BounceCount + 1e-6))
 		for contact = lastContact + 1, contacts do
 			local landing = Motion.position(startPosition, info.distance, contact / Motion.BounceCount, direction)
 			-- Do not replay old impacts when joining a shot late or after a long frame.
 			-- Alpha is clamped at one, so it cannot measure the age of a finished shot.
 			if elapsed - Motion.contactTime(contact, info.duration, windup) < 0.25 then
-				context.ripple(Vector3.new(landing.X, waterY, landing.Z), color, feedback.rippleScale)
+				context.ripple(Vector3.new(landing.X, groundY, landing.Z), color, feedback.rippleScale)
 				if context.effects() then
-					BallEffects.bounce(landing, waterY, contact, feedback.intensity, trailId)
+					local surface, normal, strength =
+						BallEffects.bounce(landing, groundY, contact, feedback.intensity, trailId, pace)
+					-- The part of the bounce that travels with the ball stays in the frame.
+					trailEffect.contact(surface, normal, strength, pace)
+					if trailId == "Earthquake" then
+						quakeAt = elapsed
+						quakeAmplitude = 0.42 * math.max(0.25, 1 - (contact - 1) / 7)
+					end
 				end
 				if context.bounce then
 					context.bounce(landing, trailId, contact, feedback.intensity)
@@ -242,10 +267,12 @@ function Flight.start(info, context)
 			)
 			local blend = 1 - math.exp(-dt * (9 + 5 * feedback.intensity))
 			local height = position.Y - startPosition.Y
+			-- A fast ball is watched from three quarters: impacts slide across the
+			-- frame instead of flashing past the lens, and the trail shows its side.
 			local cameraPosition = position
-				+ right * 7
-				- direction * (14 + 6 * feedback.intensity)
-				+ Vector3.new(0, 5.5 - height * 0.35, 0)
+				+ right * (7 + 9 * pace)
+				- direction * (14 + 6 * feedback.intensity - 3 * pace)
+				+ Vector3.new(0, 5.5 + 3 * pace - height * 0.35, 0)
 			local sinceKick = elapsed - windup
 			local shake = context.shake()
 					and context.effects()
@@ -254,6 +281,10 @@ function Flight.start(info, context)
 						-sinceKick * (5 - 2.8 * cameraQuality)
 					)
 				or 0
+			local sinceQuake = elapsed - quakeAt
+			if context.shake() and context.effects() and sinceQuake < 0.6 then
+				shake += math.sin(sinceQuake * 58) * quakeAmplitude * math.exp(-sinceQuake * 8)
+			end
 			local kickDecay = if sinceKick >= 0 then math.exp(-sinceKick * 2.6) else 0
 			local roll = if context.shake() and context.effects()
 				then math.sin(math.max(0, sinceKick) * 18) * kickDecay * cameraQuality * 0.045
@@ -268,12 +299,18 @@ function Flight.start(info, context)
 					* CFrame.new(0, 0, if context.effects() then -Perfect.charge(elapsed, windup) * 0.75 else 0)
 			end
 			camera.CFrame = camera.CFrame:Lerp(target, blend)
+			if speedLines then
+				speedLines.update(
+					camera.CFrame,
+					if context.effects() and elapsed >= windup and alpha < 1 then pace else 0
+				)
+			end
 			local targetFov = if not context.effects()
 				then saved.fov
 				elseif elapsed < windup then (if perfect > 0
 					then saved.fov - (7 + perfect * 2) * Perfect.charge(elapsed, windup)
 					else 68 - timingQuality * 6)
-				else feedback.fieldOfView
+				else feedback.fieldOfView + 6 * pace
 			local pulse = context.effects() and Zones.pulse(elapsed - zonePulseAt) or 0
 			local timingPulse = if context.effects() and sinceKick >= 0
 				then timingQuality * 22 * (1 - math.exp(-sinceKick * 14)) * kickDecay
@@ -288,6 +325,9 @@ function Flight.start(info, context)
 			connection:Disconnect()
 			trailEffect.stop()
 			perfectAura.destroy()
+			if speedLines then
+				speedLines.destroy()
+			end
 			Debris:AddItem(ball, 0.6)
 			if context.me then
 				-- The camera flies back to the character, not to the stale

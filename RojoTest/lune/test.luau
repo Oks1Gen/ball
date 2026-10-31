@@ -14,6 +14,7 @@ local suites = {
 	require("../tests/Economy.spec"),
 	require("../tests/Net.spec"),
 	require("../tests/FlamePath.spec"),
+	require("../tests/FlightPace.spec"),
 	require("../tests/HatchSequence.spec"),
 	require("../tests/PetNews.spec"),
 }

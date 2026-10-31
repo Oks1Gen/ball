@@ -7,7 +7,7 @@ function World2.build(original)
 	if existing then
 		assert(existing:GetAttribute("GameplayWorld2Version") == 1, "Review existing World2Map before replacing it")
 		if existing:GetAttribute("ArenaOffsetX") ~= Config.WorldOffset.X then
-			local oldRiverX = existing.SkippingWorld.Water_1.Position.X
+			local oldRiverX = existing.SkippingWorld.Field_1.Position.X
 			require(script.Parent.MapHierarchy).offset(
 				existing,
 				Config.WorldOffset - Vector3.new(existing:GetAttribute("ArenaOffsetX") or 0, 0, 0)
@@ -50,12 +50,8 @@ function World2.build(original)
 		end
 	end
 	for i = 1, 8 do
-		local water = world.SkippingWorld["Water_" .. i]
-		water.Color = water.Color:Lerp(C(142, 119, 252), 0.3)
-		local caustics = water:FindFirstChild("WaterCaustics")
-		if caustics then
-			caustics.Color3 = water.Color:Lerp(C(255, 255, 255), 0.5)
-		end
+		local field = world.SkippingWorld["Field_" .. i]
+		field.Color = field.Color:Lerp(C(142, 119, 252), 0.3)
 	end
 	for _, egg in Config.Eggs do
 		local model = world.SkippingWorld["Egg_" .. egg.id]

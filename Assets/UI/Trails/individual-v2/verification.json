@@ -1,0 +1,161 @@
+{
+  "commonTransform": {
+    "scale": 0.6215780998389694,
+    "dx": 126.0,
+    "dy": 115.74396135265704
+  },
+  "height": 1024,
+  "assets": [
+    {
+      "passed": true,
+      "transparentPixels": 831402,
+      "file": "01-gale-trail.png",
+      "height": 1024,
+      "minimumPaddingPixels": 129,
+      "width": 1024,
+      "order": 1,
+      "alphaBounds": [
+        184,
+        182,
+        856,
+        894
+      ]
+    },
+    {
+      "passed": true,
+      "transparentPixels": 809864,
+      "file": "02-tidal-trail.png",
+      "height": 1024,
+      "minimumPaddingPixels": 126,
+      "width": 1024,
+      "order": 2,
+      "alphaBounds": [
+        126,
+        151,
+        887,
+        894
+      ]
+    },
+    {
+      "passed": true,
+      "transparentPixels": 798102,
+      "file": "03-volcanic-trail.png",
+      "height": 1024,
+      "minimumPaddingPixels": 139,
+      "width": 1024,
+      "order": 3,
+      "alphaBounds": [
+        175,
+        186,
+        854,
+        884
+      ]
+    },
+    {
+      "passed": true,
+      "transparentPixels": 864650,
+      "file": "04-electric-trail.png",
+      "height": 1024,
+      "minimumPaddingPixels": 158,
+      "width": 1024,
+      "order": 4,
+      "alphaBounds": [
+        199,
+        158,
+        853,
+        851
+      ]
+    },
+    {
+      "passed": true,
+      "transparentPixels": 829688,
+      "file": "05-frost-trail.png",
+      "height": 1024,
+      "minimumPaddingPixels": 126,
+      "width": 1024,
+      "order": 5,
+      "alphaBounds": [
+        126,
+        129,
+        888,
+        874
+      ]
+    },
+    {
+      "passed": true,
+      "transparentPixels": 817692,
+      "file": "06-earthquake-trail.png",
+      "height": 1024,
+      "minimumPaddingPixels": 126,
+      "width": 1024,
+      "order": 6,
+      "alphaBounds": [
+        126,
+        200,
+        864,
+        868
+      ]
+    },
+    {
+      "passed": true,
+      "transparentPixels": 817192,
+      "file": "07-void-trail.png",
+      "height": 1024,
+      "minimumPaddingPixels": 127,
+      "width": 1024,
+      "order": 7,
+      "alphaBounds": [
+        140,
+        184,
+        896,
+        872
+      ]
+    },
+    {
+      "passed": true,
+      "transparentPixels": 826520,
+      "file": "08-cosmic-trail.png",
+      "height": 1024,
+      "minimumPaddingPixels": 126,
+      "width": 1024,
+      "order": 8,
+      "alphaBounds": [
+        126,
+        138,
+        888,
+        894
+      ]
+    },
+    {
+      "passed": true,
+      "transparentPixels": 866815,
+      "file": "09-rainbow-trail.png",
+      "height": 1024,
+      "minimumPaddingPixels": 156,
+      "width": 1024,
+      "order": 9,
+      "alphaBounds": [
+        156,
+        188,
+        856,
+        854
+      ]
+    },
+    {
+      "passed": true,
+      "transparentPixels": 814237,
+      "file": "10-divine-trail.png",
+      "height": 1024,
+      "minimumPaddingPixels": 149,
+      "width": 1024,
+      "order": 10,
+      "alphaBounds": [
+        178,
+        149,
+        854,
+        845
+      ]
+    }
+  ],
+  "width": 1024
+}

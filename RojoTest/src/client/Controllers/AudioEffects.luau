@@ -23,6 +23,11 @@ local IMPACT_SOUNDS = {
 	Blue = { asset = "volume_slider.ogg", speed = 1.85, volume = 0.16 },
 	Purple = { asset = "volume_slider.ogg", speed = 0.7, volume = 0.16 },
 	Rainbow = { asset = "volume_slider.ogg", speed = 1.35, volume = 0.13 },
+	Tidal = { asset = "impact_water.mp3", speed = 1.15, volume = 0.2 },
+	Electric = { asset = "impact_explosion_03.mp3", speed = 2.6, volume = 0.14 },
+	Earthquake = { asset = "impact_explosion_03.mp3", speed = 0.62, volume = 0.22 },
+	Cosmic = { asset = "volume_slider.ogg", speed = 1.6, volume = 0.13 },
+	Divine = { asset = "volume_slider.ogg", speed = 1.05, volume = 0.14 },
 }
 
 export type Context = {
@@ -153,12 +158,13 @@ function Effects.mount(context: Context): Handle
 			sound.RollOffMinDistance, sound.RollOffMaxDistance = 8, 85
 			sound.RollOffMode = Enum.RollOffMode.InverseTapered
 			sound.Parent = source
-			if trailId == "Red" or trailId == "White" then
+			if trailId == "Red" or trailId == "White" or trailId == "Earthquake" or trailId == "Electric" then
+				local heavy = trailId == "Red" or trailId == "Earthquake"
 				local equalizer = Instance.new("EqualizerSoundEffect")
-				equalizer.LowGain = trailId == "Red" and 2 or -15
-				equalizer.HighGain = trailId == "Red" and -10 or 2
+				equalizer.LowGain = heavy and (trailId == "Earthquake" and 6 or 2) or -15
+				equalizer.HighGain = heavy and -10 or (trailId == "Electric" and 6 or 2)
 				equalizer.Parent = sound
-			elseif trailId == "Purple" then
+			elseif trailId == "Purple" or trailId == "Cosmic" or trailId == "Divine" then
 				local echo = Instance.new("EchoSoundEffect")
 				echo.Delay, echo.Feedback, echo.WetLevel = 0.09, 0.2, -12
 				echo.Parent = sound
@@ -171,9 +177,9 @@ function Effects.mount(context: Context): Handle
 			end)
 		end
 		note(profile.speed * (1 + (contact % 3 - 1) * 0.035))
-		if trailId == "Rainbow" then
+		if trailId == "Rainbow" or trailId == "Divine" or trailId == "Cosmic" then
 			task.delay(0.075, function()
-				note(profile.speed * 1.25)
+				note(profile.speed * (trailId == "Divine" and 1.5 or 1.25))
 			end)
 		end
 	end

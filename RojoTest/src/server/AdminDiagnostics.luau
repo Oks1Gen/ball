@@ -25,7 +25,7 @@ function Diagnostics.run(map)
 		local front = map:GetAttribute("RouteFrontZ")
 		assert(front, "Нет начала маршрута")
 		for i = 1, 8 do
-			local p = map.SkippingWorld:FindFirstChild("Water_" .. i)
+			local p = map.SkippingWorld:FindFirstChild("Field_" .. i)
 			assert(p and math.abs(p.Size.Z - 270) < 0.02, "Биом " .. i .. ": неверная длина")
 			assert(math.abs(p.Position.Z - (front - (i - 0.5) * 270)) < 0.02, "Щель у биома " .. i)
 		end
@@ -34,7 +34,7 @@ function Diagnostics.run(map)
 	check("Опоры берегов", function()
 		local rp = RaycastParams.new()
 		rp.FilterType = Enum.RaycastFilterType.Include
-		rp.FilterDescendantsInstances = { map.WaterCorridor, map.SkippingWorld }
+		rp.FilterDescendantsInstances = { map.FieldCorridor, map.SkippingWorld }
 		local count = 0
 		for _, p in map.SkippingWorld:GetChildren() do
 			if p.Name:match("^BiomeBank%d_[12]$") then

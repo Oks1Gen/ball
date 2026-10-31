@@ -3,47 +3,47 @@ local map = workspace.Map.World1
 local world = map.SkippingWorld
 -- The front of the route is the front edge of the first biome: the scene is
 -- the truth, the attribute of the map only describes it.
-local front = world.Water_1.Position.Z + world.Water_1.Size.Z / 2
+local front = world.Field_1.Position.Z + world.Field_1.Size.Z / 2
 assert(map:GetAttribute("BiomeLengthScale") == 1.5)
 assert(map:GetAttribute("RouteLengthStuds") == 2160)
 local checks = 0
 local rp = RaycastParams.new()
 rp.FilterType = Enum.RaycastFilterType.Include
-rp.FilterDescendantsInstances = { map.WaterCorridor, world }
--- The banks are the walkable ground beside the river. Their edges are read
--- from the scene: the river was moved after this check was written, so the
+rp.FilterDescendantsInstances = { map.FieldCorridor, world }
+-- The banks are the walkable ground beside the pitch. Their edges are read
+-- from the scene: the pitch was moved after this check was written, so the
 -- columns are derived and not hard coded.
-local river = world.Water_1
-local riverLeft = river.Position.X - river.Size.X / 2
-local riverRight = river.Position.X + river.Size.X / 2
+local pitch = world.Field_1
+local pitchLeft = pitch.Position.X - pitch.Size.X / 2
+local pitchRight = pitch.Position.X + pitch.Size.X / 2
 local leftWall = map.PerimeterWalls.CorridorLeft
 local rightWall = map.PerimeterWalls.CorridorRight
 local leftEdge = leftWall.Position.X + leftWall.Size.X / 2
 local rightEdge = rightWall.Position.X - rightWall.Size.X / 2
 local columns = {
 	leftEdge + 6,
-	(leftEdge + riverLeft) / 2,
-	(riverRight + rightEdge) / 2,
+	(leftEdge + pitchLeft) / 2,
+	(pitchRight + rightEdge) / 2,
 	rightEdge - 6,
 }
 for i = 1, 8 do
-	local water = world["Water_" .. i]
-	assert(math.abs(water.Size.Z - 270) < 0.01)
-	assert(math.abs(water.Position.Z - (front - (i - 0.5) * 270)) < 0.01)
-	assert(math.abs(water.Size.X - 111.6) < 0.01)
+	local field = world["Field_" .. i]
+	assert(math.abs(field.Size.Z - 270) < 0.01)
+	assert(math.abs(field.Position.Z - (front - (i - 0.5) * 270)) < 0.01)
+	assert(math.abs(field.Size.X - 111.6) < 0.01)
 	local banks = 0
 	for _, b in world:GetChildren() do
 		if b.Name:match("^BiomeBank" .. i .. "_[12]$") then
 			banks += 1
-			assert(math.abs(b.Size.Z - 270) < 0.01 and math.abs(b.Position.Z - water.Position.Z) < 0.01)
+			assert(math.abs(b.Size.Z - 270) < 0.01 and math.abs(b.Position.Z - field.Position.Z) < 0.01)
 		end
 	end
 	assert(banks == 4)
 	for _, t in { 1, 45, 135, 225, 269 } do
 		local z = front - (i - 1) * 270 - t
-		-- The river carries a surface over the whole biome.
-		local surface = workspace:Raycast(Vector3.new((riverLeft + riverRight) / 2, 40, z), Vector3.new(0, -60, 0), rp)
-		assert(surface and surface.Instance == water, "No river surface at " .. z)
+		-- The pitch carries a surface over the whole biome.
+		local surface = workspace:Raycast(Vector3.new((pitchLeft + pitchRight) / 2, 40, z), Vector3.new(0, -60, 0), rp)
+		assert(surface and surface.Instance == field, "No pitch surface at " .. z)
 		-- The banks carry a floor, and the floor of the corridor has two
 		-- levels: the inner one and the outer one.
 		for _, x in columns do

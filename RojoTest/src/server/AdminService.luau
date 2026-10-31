@@ -254,7 +254,7 @@ function Service:dispatch(player, command, value)
 			map = c.map
 			local bank
 			for _, p in map.SkippingWorld:GetChildren() do
-				if p.Name == "BiomeBank8_1" and p.Position.X < map.SkippingWorld.Water_8.Position.X then
+				if p.Name == "BiomeBank8_1" and p.Position.X < map.SkippingWorld.Field_8.Position.X then
 					bank = p
 					break
 				end
@@ -273,9 +273,9 @@ function Service:dispatch(player, command, value)
 			local biome = tonumber(value)
 			assert(biome and biome % 1 == 0 and biome >= 1 and biome <= 8, "Неизвестный биом")
 			local bank
-			local water = map.SkippingWorld["Water_" .. biome]
+			local field = map.SkippingWorld["Field_" .. biome]
 			for _, p in map.SkippingWorld:GetChildren() do
-				if p.Name == "BiomeBank" .. biome .. "_2" and p.Position.X < water.Position.X then
+				if p.Name == "BiomeBank" .. biome .. "_2" and p.Position.X < field.Position.X then
 					bank = p
 					break
 				end

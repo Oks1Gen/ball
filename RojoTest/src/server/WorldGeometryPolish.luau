@@ -192,7 +192,7 @@ function Polish.apply(map: any)
 		end
 	end
 	-- World2 has a one-stud exposed strip between apron and the first pitch.
-	local apron, pitch = map.Lobby.ThrowingApron, map.SkippingWorld.Water_1
+	local apron, pitch = map.Lobby.ThrowingApron, map.SkippingWorld.Field_1
 	local front, back = pitch.Position.Z + pitch.Size.Z / 2, apron.Position.Z - apron.Size.Z / 2
 	if back - front > 0.01 then
 		slab(

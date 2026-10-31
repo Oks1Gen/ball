@@ -5,13 +5,13 @@ local V = Vector3.new
 local SCALE = 1.5
 
 -- The attributes describe the route of the scene. The scene is edited after
--- the expansion, so they are read from the water blocks themselves: an
+-- the expansion, so they are read from the pitch blocks themselves: an
 -- attribute that does not match the geometry would report a gap that is not
 -- there.
 function Expansion.refresh(map): { front: number, back: number }?
 	local world = map.SkippingWorld
-	local first = world:FindFirstChild("Water_1") :: BasePart?
-	local last = world:FindFirstChild("Water_8") :: BasePart?
+	local first = world:FindFirstChild("Field_1") :: BasePart?
+	local last = world:FindFirstChild("Field_8") :: BasePart?
 	if not first or not last then
 		return nil
 	end
@@ -32,7 +32,7 @@ function Expansion.apply(map, dryRun)
 	end
 	assert(map:GetAttribute("BiomeLengthScale") == nil, "Review the existing route scale")
 	local world = map.SkippingWorld
-	local first = world.Water_1
+	local first = world.Field_1
 	assert(math.abs(first.Size.Z - 180) < 0.01, "Expected eight authored 180-stud biomes")
 	local front = first.Position.Z + first.Size.Z / 2
 	local oldBack, newBack = front - 1440, front - 2160
@@ -94,11 +94,11 @@ function Expansion.apply(map, dryRun)
 		end
 		pivots[root] = root:GetPivot() + delta(root:GetPivot().Position.Z)
 	end
-	-- Continuous ground, water skins and the legacy underlay remain continuous.
+	-- Continuous ground, pitch skins and the legacy underlay remain continuous.
 	for _, p in world:GetChildren() do
 		if p:IsA("BasePart") then
 			if
-				p.Name:match("^Water_%d$")
+				p.Name:match("^Field_%d$")
 				or p.Name:match("^BiomeBank%d_[12]$")
 				or p.Name == "BankExtension"
 				or p.Name == "BankSafetyExtension"
@@ -122,7 +122,7 @@ function Expansion.apply(map, dryRun)
 			end
 		end
 	end
-	for _, zone in map.WaterCorridor:GetChildren() do
+	for _, zone in map.FieldCorridor:GetChildren() do
 		if zone:IsA("Model") then
 			local trunks = {}
 			for _, p in zone:GetChildren() do
@@ -153,7 +153,7 @@ function Expansion.apply(map, dryRun)
 			pivots[zone] = zone:GetPivot() + delta(zone:GetPivot().Position.Z)
 		end
 	end
-	stretch(map.WaterCorridor.RiverBed)
+	stretch(map.FieldCorridor.RiverBed)
 	for _, p in map.PerimeterWalls:GetChildren() do
 		if p:IsA("BasePart") then
 			if p.Name == "CorridorLeft" or p.Name == "CorridorRight" then
@@ -231,7 +231,7 @@ function Expansion.apply(map, dryRun)
 			end
 		end
 	end
-	scenery(map.WaterCorridor["01_ЛУГА"].TropicalLanding)
+	scenery(map.FieldCorridor["01_ЛУГА"].TropicalLanding)
 	for _, name in
 		{
 			"DesertArchaeology",

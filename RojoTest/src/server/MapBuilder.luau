@@ -126,7 +126,7 @@ function MapBuilder.build()
 		tree(lobby, position.X, position.Z, 0, C(80, 196, 49), false)
 	end
 
-	local corridor = group("WaterCorridor")
+	local corridor = group("FieldCorridor")
 	local biomes = {
 		{ name = "ЛУГА", a = C(121, 218, 69), b = C(153, 233, 91), earth = C(155, 105, 64), leaf = C(83, 195, 48) },
 		{

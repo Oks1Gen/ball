@@ -13,7 +13,7 @@ function Pitches.apply(map)
 	container.Name = "FootballPitchMarkings"
 	container.Parent = world
 	for i = 1, 8 do
-		local surface = assert(world:FindFirstChild("Water_" .. i))
+		local surface = assert(world:FindFirstChild("Field_" .. i))
 		-- Keep the authored plane and all route/gameplay coordinates unchanged.
 		local originalColor = surface:GetAttribute("OriginalPitchColor")
 		if i == 1 then
