@@ -271,7 +271,10 @@ function Guide.mount(context: any)
 				else
 					key = "Egg"
 					title.Text = "Hatch a Common Egg for " .. Config.format(cost) .. " Wins"
-					if panel == "Common Egg" then
+					if context.previewEgg() == "Common" then
+						key = ""
+						button = findButton({ "EggPreviewHatch" }, now)
+					elseif panel == "Common Egg" then
 						key = ""
 						button = findButton({ "Hatch" }, now)
 					end

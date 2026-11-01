@@ -436,6 +436,7 @@ function Controller:Start()
 		end,
 	})
 	local balls = BallHolder.mount()
+	local trainingTrail = require(clientRoot:WaitForChild("TrainingTrail")).new()
 	local world = WorldVisuals.mount({
 		ownedBalls = function()
 			return latest and latest.data.stones
@@ -500,6 +501,22 @@ function Controller:Start()
 			action:FireServer(command, value, extra)
 		end,
 	})
+	local eggPreview = require(clientRoot.Controllers.EggPreview).mount({
+		parent = player:WaitForChild("PlayerGui"),
+		snapshot = function()
+			return latest
+		end,
+		pets = Snapshot.pets,
+		blocked = function()
+			return currentPanel ~= nil or flight ~= nil or hatchBusy or player:GetAttribute("MapIntroActive") == true
+		end,
+		hatch = function(id: string, count: number)
+			collectorUI:request("Hatch", id, count)
+		end,
+		buyAdmin = function()
+			send("Product", "AdminEgg")
+		end,
+	})
 	local input = InputController.mount({
 		player = player,
 		send = send,
@@ -526,6 +543,7 @@ function Controller:Start()
 		hatch = function(id: string, count: number)
 			collectorUI:request("Hatch", id, count)
 		end,
+		previewEgg = eggPreview.egg,
 	})
 
 	local tutorial = require(clientRoot.Controllers.Tutorial).mount({
@@ -543,6 +561,7 @@ function Controller:Start()
 		end,
 		throwButton = hudRefs.throwButton,
 		autoButton = hudRefs.auto,
+		previewEgg = eggPreview.egg,
 	})
 
 	local function beginThrow(info: any)
@@ -729,6 +748,7 @@ function Controller:Start()
 			balls.setPractice(d.stone)
 		end
 		balls.setStone(d.stone)
+		eggPreview.refresh()
 		panels.refresh()
 		followers.refresh(Snapshot.equipped(), Snapshot.pets())
 		notice(info.notice)
@@ -778,6 +798,7 @@ function Controller:Start()
 		end
 		local root = player.Character and player.Character:FindFirstChild("HumanoidRootPart") :: BasePart?
 		world.frame()
+		eggPreview.frame()
 		local hand = player.Character
 			and (player.Character:FindFirstChild("RightHand") or player.Character:FindFirstChild("Right Arm"))
 		if hand and latest then
@@ -813,17 +834,26 @@ function Controller:Start()
 					local distance = (position - shot.start).Magnitude
 					local facing = shot.finish - shot.start
 					practice:PivotTo(CFrame.lookAt(position, position + facing) * CFrame.Angles(distance / 0.8, 0, 0))
+					trainingTrail.update(
+						latest.data.trail,
+						position,
+						phase < 1.15,
+						latest.data.settings.effects ~= false
+					)
 				end
 				if not shot then
 					trainingBoost.clear()
+					trainingTrail.clear()
 				end
 				balls.showPractice(shot ~= nil and phase < 1.15)
 			else
 				trainingBoost.clear()
+				trainingTrail.clear()
 			end
 		else
 			trainingShot = nil
 			trainingBoost.clear()
+			trainingTrail.clear()
 			goalEffects.clearTraining()
 		end
 		if latest then

@@ -9,6 +9,21 @@ export type Release = {
 
 local releases: { Release } = {
 	{
+		id = "2026-11-01-compact-lobby",
+		date = "November 1, 2026",
+		title = "Cosier lobby",
+		changes = {
+			"The lobby is smaller, so the portal, eggs, ball stand and training lanes are all just a few steps from the spawn.",
+			"New lavender stud paths with straight branches lead to every station, and the lawn has a checkerboard pattern.",
+			"The four leaderboards now stand in one straight row, with the trophy and a waterfall in the middle at the end of the main path.",
+			"The eggs stand in an arc around the egg court, with the Volcanic Inferno egg in the middle.",
+			"Walk up to an egg to see its pets and their chances, then press E to hatch or R to hatch three. Only the nearest egg's panel shows.",
+			"Your equipped trail now follows the ball on the training lanes too.",
+			"The paths are a deeper lavender.",
+			"The waterfall behind the trophy now falls all the way from the top of the cliff, fed by a stream, with flowing water, foam, splashes and ripples in the pool.",
+		},
+	},
+	{
 		id = "2026-10-31-trail-icons",
 		date = "October 31, 2026",
 		title = "New trail icons",

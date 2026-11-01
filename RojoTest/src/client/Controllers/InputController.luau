@@ -16,6 +16,8 @@ export type Context = {
 	activeEgg: () -> string,
 	eggName: (string) -> string,
 	hatch: (string, number) -> (),
+	-- The egg of the open nearest-egg panel ("AdminEgg" for the Volcanic egg).
+	previewEgg: () -> string?,
 }
 
 export type Handle = {
@@ -32,11 +34,19 @@ function Input.mount(context: Context): Handle
 		local egg = context.activeEgg()
 		local eggName = context.eggName(egg)
 		local snapshot = context.snapshot()
-		if input.KeyCode == Enum.KeyCode.Escape and panel then
+		local preview = if panel then nil else context.previewEgg()
+		local single = input.KeyCode == Enum.KeyCode.E or input.KeyCode == Enum.KeyCode.ButtonY
+		local triple = input.KeyCode == Enum.KeyCode.R or input.KeyCode == Enum.KeyCode.ButtonX
+		if
+			(preview == "AdminEgg" and single)
+			or (panel == "Volcanic Inferno Egg" and input.KeyCode == Enum.KeyCode.E)
+		then
+			context.send("Product", "AdminEgg")
+		elseif preview and preview ~= "AdminEgg" and (single or triple) then
+			context.hatch(preview, if triple then 3 else 1)
+		elseif input.KeyCode == Enum.KeyCode.Escape and panel then
 			context.clearHatch()
 			context.closePanel()
-		elseif panel == "Volcanic Inferno Egg" and input.KeyCode == Enum.KeyCode.E then
-			context.send("Product", "AdminEgg")
 		elseif panel == eggName and input.KeyCode == Enum.KeyCode.E then
 			context.hatch(egg, 1)
 		elseif panel == eggName and input.KeyCode == Enum.KeyCode.R then

@@ -10,9 +10,14 @@ function Repair.apply(map: any)
 		folder = Instance.new("Folder")
 		folder.Name, folder.Parent = "SurfaceSeparation", map
 	end
+	-- Records of decor retired to WorldBackups by a layout migration are expected to be absent.
+	local retired = {}
+	for id in string.gmatch(folder:GetAttribute("RetiredRecordIds") or "", "%d+") do
+		retired[tonumber(id)] = true
+	end
 	local changed, missing = 0, 0
 	for index, record in records do
-		if record[1][1] ~= map.Name then
+		if record[1][1] ~= map.Name or retired[index] then
 			continue
 		end
 		local parents: { Instance } = { map }
