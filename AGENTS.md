@@ -33,4 +33,9 @@
 
 ## Память
 
-Перед задачей выполни READ, после — WRITE по `C:\Users\dakem\Documents\SecondBrain\skills\obsidian-memory\SKILL.md`. Знания проекта остаются в этом репозитории; при конфликте выигрывают `AGENTS.md` и docs проекта.
+SecondBrain: C:\Users\dakem\Documents\SecondBrain. Точечная правка — память не нужна.
+Создаёшь или переделываешь вид, механику или ассет — сначала
+`node C:/Users/dakem/Documents/SecondBrain/skills/obsidian-memory/scripts/mem.mjs context <домен>` и следуй выводу
+(домены: ui, motion, 3d, anim, map, vfx, sfx, code).
+Пользователь дал правило или поправку, оценил визуальный результат, ты нашёл ловушку или проверенный факт — перед ответом прочитай C:/Users/dakem/Documents/SecondBrain/skills/obsidian-memory/references/write.md.
+Конфликт: слова пользователя > AGENTS.md и docs проекта > память.
