@@ -32,11 +32,8 @@ function Rewards.offlineRate(data: any, lanes: any, ballPower: number): number
 			end
 		end
 	end
-	local multiplier = (1 + data.rebirths)
-		* pets
-		* ballPower
-		* (if data.perks.DoubleSkill then 2 else 1)
-		* (if data.world == 2 then 3 else 1)
+	local multiplier = (1 + data.rebirths) * pets * ballPower * (if data.perks.DoubleSkill then 2 else 1)
+
 	return math.min(Data.MaxProgress, gain * multiplier * 7 / 0.8 * Rewards.OfflineFraction)
 end
 

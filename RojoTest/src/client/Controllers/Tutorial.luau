@@ -6,6 +6,7 @@ local ContentProvider = game:GetService("ContentProvider")
 local GuiService = game:GetService("GuiService")
 local Shared = game.ReplicatedStorage.Shared
 local Config: any = require(Shared.GameConfig)
+local WorldRefs = require(Shared.WorldRefs)
 local Insets = require(script.Parent.Parent.Modules.GuiInsets)
 local Kit: any = require(script.Parent.HudKit)
 local Guide = {}
@@ -104,27 +105,26 @@ function Guide.mount(context: any)
 		end
 		cachedKey, cachedTarget, lookupAt = key, nil, now + 1
 		if key == "Train" then
-			local zone = arena:FindFirstChild("TrainingZone")
+			local zone = WorldRefs.training(arena)
 			local lane = zone and zone:FindFirstChild("TrainingLane1")
 			local strip = lane and lane:FindFirstChild("TrainingStrip")
 			if strip and strip:IsA("BasePart") then
 				cachedTarget = strip
 			end
 		elseif key == "Kick" then
-			local lobby = arena:FindFirstChild("Lobby")
-			local apron = lobby and lobby:FindFirstChild("ThrowingApron")
+			local apron = WorldRefs.apron(arena)
 			if apron and apron:IsA("BasePart") then
 				cachedTarget = apron
 			end
 		elseif key == "Egg" then
-			local world = arena:FindFirstChild("SkippingWorld")
+			local world = WorldRefs.eggs(arena)
 			local egg = world and world:FindFirstChild("Egg_Common")
 			local shell = egg and egg:FindFirstChild("EggShell")
 			if shell and shell:IsA("BasePart") then
 				cachedTarget = shell
 			end
 		elseif key == "Ball" then
-			local stand = arena:FindFirstChild("EmptyItemStand")
+			local stand = WorldRefs.balls(arena)
 			if stand then
 				for _, node in stand:GetDescendants() do
 					if node:IsA("ProximityPrompt") and node:GetAttribute("BallId") == "Smooth" then
@@ -319,7 +319,7 @@ function Guide.mount(context: any)
 				return
 			end
 			local map = workspace:FindFirstChild("Map")
-			local arena = map and map:FindFirstChild(if d.world == 2 then "World2" else "World1")
+			local arena = map and map:FindFirstChild("World1")
 			local goal = arena and target(arena, key, now)
 			if not goal then
 				return

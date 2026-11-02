@@ -3,13 +3,15 @@ local Shared = game.ReplicatedStorage.Shared
 local Config = require(Shared.GameConfig)
 local Motion = require(Shared.ShotMotion)
 local Zones = require(Shared.Core.ZoneProgression)
+local Refs = require(Shared.WorldRefs)
 local ShotZones = {}
 
 function ShotZones.crossings(arena: any, info: any): { any }
 	local result = {}
 	local travel = info.direction * (info.distance / Config.DistancePerStud)
+	local boundaries = assert(Refs.boundaries(arena), "Missing football course boundaries")
 	for index = 1, #Config.Biomes - 1 do
-		local wall = arena.ZoneDividers["Boundary" .. index].Wall
+		local wall = boundaries["Boundary" .. index].Wall
 		local start = wall.CFrame:PointToObjectSpace(info.startPosition)
 		local delta = wall.CFrame:VectorToObjectSpace(travel)
 		if delta.Z < -0.000001 and start.Z >= 0 then

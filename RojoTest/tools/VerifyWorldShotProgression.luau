@@ -6,14 +6,15 @@ module.Name = "GameConfigShotCheck"
 module.Parent = game.ReplicatedStorage.Shared
 local Config = require(module)
 module:Destroy()
+local WorldRefs = require(game.ReplicatedStorage.Shared.WorldRefs)
 local checks, examples = 0, {}
 local function check(ok, message)
 	assert(ok, message)
 	checks += 1
 end
-for world = 1, 2 do
+for world = 1, 1 do
 	local definition = Config.WorldShotProgression[world]
-	local map = workspace.Map[world == 1 and "World1" or "World2"]
+	local map = workspace.Map["World1"]
 	local limit = Config.shotLimit(world, map)
 	local previous = 0
 	for _, fraction in { 0, 0.0001, 0.001, 0.01, 0.1, 0.5, 0.9, 1 } do
@@ -41,8 +42,8 @@ for world = 1, 2 do
 	local frame = Config.arenaFrame(map)
 	local start = frame:PointToWorldSpace(Config.ShotStartLocal)
 	local finish = start + frame.LookVector * (limit / Config.DistancePerStud)
-	local last = map.SkippingWorld.Field_8
-	local finale = map.SkippingWorld:FindFirstChild("SakuraJapaneseFinale")
+	local last = WorldRefs.field(map, 8)
+	local finale = WorldRefs.course(map):FindFirstChild("SakuraJapaneseFinale", true)
 	local gate = finale and finale:FindFirstChild("SakuraGatewayFrame")
 	local goal = gate and gate:GetPivot().Position or last.Position + frame.LookVector * (last.Size.Z / 2 - 7)
 	check(math.abs((goal - finish):Dot(frame.LookVector)) < 0.25, "Flight reaches the measured endpoint")
@@ -51,11 +52,12 @@ for world = 1, 2 do
 	local lobby = Instance.new("Model")
 	lobby.Name = "Lobby"
 	lobby.Parent = sample
-	map.Lobby.ThrowingApron:Clone().Parent = lobby
+	WorldRefs.apron(map):Clone().Parent = lobby
 	local scenery = Instance.new("Model")
 	scenery.Name = "SkippingWorld"
 	scenery.Parent = sample
-	last:Clone().Parent = scenery
+	local sampleField = last:Clone()
+	sampleField.Name, sampleField.Parent = "Field_8", scenery
 	if gate then
 		local endGroup = Instance.new("Model")
 		endGroup.Name = "SakuraJapaneseFinale"

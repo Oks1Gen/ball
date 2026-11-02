@@ -82,21 +82,7 @@ for _, board in ipairs(boards:GetChildren()) do
 	check(board.Frame.CFrame.LookVector:Dot(toward) > 0, "Board faces courtyard")
 end
 check(boards.ReservedFourthBoard:GetAttribute("LayoutPlaceholder"), "Fourth ranking reserved; data logic untouched")
-local portal = map.SkippingWorld.World2Portal
-check(
-	portal.SakuraVisual
-		and (
-			portal.SakuraCourtyard:FindFirstChild("SakuraTree") or portal.SakuraCourtyard:GetAttribute("HideSakuraTree")
-		),
-	"Portal visual and requested tree visibility"
-)
-local prompt = portal.PortalField:FindFirstChildWhichIsA("ProximityPrompt", true)
-check(prompt and prompt.Enabled and prompt.Parent:IsA("Attachment"), "Portal interaction retained")
-local ground = f:PointToObjectSpace(prompt.Parent.WorldPosition)
-check(
-	math.abs(ground.X + 174) < 0.01 and math.abs(ground.Z - 48) < 0.01 and ground.Y < 7,
-	"Portal prompt at reachable height"
-)
+check(not map.SkippingWorld:FindFirstChild("World2Portal"), "Retired portal absent")
 local params = RaycastParams.new()
 params.FilterType = Enum.RaycastFilterType.Include
 params.FilterDescendantsInstances = { map.Lobby }

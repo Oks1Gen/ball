@@ -144,8 +144,7 @@ function Flight.start(info, context)
 		camera.CameraType = Enum.CameraType.Scriptable
 	end
 	local started = info.startedAt or workspace:GetServerTimeNow()
-	local startPosition = info.startPosition
-		or Vector3.new(-116, 1.8, -0.3) + (info.world == 2 and Config.WorldOffset or Vector3.zero)
+	local startPosition = info.startPosition or Vector3.new(-116, 1.8, -0.3)
 	ball:PivotTo(CFrame.new(startPosition))
 	local direction = info.direction or -Vector3.zAxis
 	local right = direction:Cross(Vector3.yAxis).Unit

@@ -1,6 +1,7 @@
 --!strict
 local Visual = {}
 local AssetService = game:GetService("AssetService")
+local WorldRefs = require(script.Parent.WorldRefs)
 
 -- Content.fromObject consumes the mesh it is built from, so a shared
 -- EditableMesh would leave the second world without the custom egg. Every
@@ -25,20 +26,23 @@ local function buildMesh()
 	editable:RemoveUnused()
 	return editable
 end
-function Visual.create(map)
-	local world = map:FindFirstChild("SkippingWorld")
-	local anchor = world and world:FindFirstChild("HackedAdminEgg")
-	local stand = world and world:FindFirstChild("HackedEggStand")
+function Visual.create(map: any)
+	if map:GetAttribute("WorldLayoutReady") ~= true then
+		return
+	end
+	local world = WorldRefs.volcanic(map)
+	local anchor = world and world:FindFirstChild("InteractionAnchor")
+	local stand = world and world:FindFirstChild("Pedestal")
 	if not world or not anchor or not stand then
 		return
 	end
-	if world:FindFirstChild("VolcanicEggVisual") then
+	if world:FindFirstChild("Visual") then
 		return
 	end
 	local part = AssetService:CreateMeshPartAsync(Content.fromObject(buildMesh()), {
 		CollisionFidelity = Enum.CollisionFidelity.Box,
 	})
-	part.Name = "VolcanicEggVisual"
+	part.Name = "Visual"
 	part.Color = Color3.new(1, 1, 1)
 	part.Material = Enum.Material.SmoothPlastic
 	part.Anchored = true
@@ -50,7 +54,7 @@ function Visual.create(map)
 	part.CFrame = anchor.CFrame + Vector3.new(0, centerY - anchor.Position.Y, 0)
 	part:SetAttribute("SourceEgg", "02 Volcanic Inferno")
 	part.Parent = world
-	local fallback = world:FindFirstChild("VolcanicEggFallback")
+	local fallback = world:FindFirstChild("Fallback")
 	if fallback then
 		fallback.LocalTransparencyModifier = 1
 	end
@@ -59,8 +63,8 @@ end
 function Visual.start()
 	-- Render locally so EditableMesh contents need no asset upload or replication.
 	local watched, busy, failed = {}, {}, {}
-	local function watch(map)
-		if watched[map] or (map.Name ~= "World1" and map.Name ~= "World2") then
+	local function watch(map: any)
+		if watched[map] or map.Name ~= "World1" then
 			return
 		end
 		watched[map] = true
@@ -79,10 +83,11 @@ function Visual.start()
 			end)
 		end
 		map.DescendantAdded:Connect(function(child)
-			if child.Name == "SkippingWorld" or child.Name == "HackedAdminEgg" or child.Name == "HackedEggStand" then
+			if child.Name == "VolcanicEgg" or child.Name == "InteractionAnchor" or child.Name == "Pedestal" then
 				attempt()
 			end
 		end)
+		map:GetAttributeChangedSignal("WorldLayoutReady"):Connect(attempt)
 		attempt()
 	end
 	local maps = workspace:WaitForChild("Map")

@@ -38,9 +38,11 @@ function Eggs.apply(map)
 			end
 		end
 		visual.Parent = stand
-		local labelAnchor = assert(stand:FindFirstChild("LabelAnchor"))
+		local labelAnchor = stand:FindFirstChild("LabelAnchor")
 		local labelY = targetBottom + scaledSize.Y + 5.5
-		labelAnchor.CFrame = labelAnchor.CFrame + Vector3.new(0, labelY - labelAnchor.Position.Y, 0)
+		if labelAnchor and labelAnchor:IsA("BasePart") then
+			labelAnchor.CFrame = labelAnchor.CFrame + Vector3.new(0, labelY - labelAnchor.Position.Y, 0)
+		end
 	end
 end
 

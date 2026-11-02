@@ -32,7 +32,6 @@ function Data.fresh(): any
 		pets = {},
 		equipped = {},
 		world = 1,
-		unlockedWorld2 = false,
 		perks = {},
 		receipts = {},
 		trainingBoosts = { ["67"] = 0, ["69"] = 0, ["144"] = 0 },
@@ -92,8 +91,8 @@ function Data.normalize(input: any, catalog: any): any
 			data.trainingBoosts[key] = bounded(input.trainingBoosts[key], 0, 1000000)
 		end
 	end
-	data.world = if input.world == 2 then 2 else 1
-	data.unlockedWorld2 = input.unlockedWorld2 == true or data.world == 2
+	-- Retired worlds never strand a returning player outside the remaining map.
+	data.world = 1
 	local seen = {}
 	if type(input.pets) == "table" then
 		for _, pet in ipairs(input.pets) do

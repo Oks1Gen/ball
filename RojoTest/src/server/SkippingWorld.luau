@@ -79,7 +79,7 @@ function World.finish(map)
 		studs.Color3 = apron.Color
 		studs.Parent = apron
 	end
-	if not map.SkippingWorld:FindFirstChild("MainPlazaPath") then
+	if not map:GetAttribute("RetiredLobbyPaving") and not map.SkippingWorld:FindFirstChild("MainPlazaPath") then
 		local function pave(name, size, pos, color)
 			local p = Instance.new("Part")
 			p.Name = name
@@ -126,16 +126,6 @@ function World.finish(map)
 		if label:IsA("TextLabel") and label.Text:find("↻") then
 			label.Text = label.Text:gsub("↻", "RB")
 		end
-	end
-	local gate = map.SkippingWorld.World2Portal.PortalField
-	local prompt = gate:FindFirstChildWhichIsA("ProximityPrompt", true)
-	if prompt and prompt.Parent == gate then
-		local attach = Instance.new("Attachment")
-		attach.Name = "GroundLevelPrompt"
-		attach.Position = V(0, -16, 0)
-		attach.Parent = gate
-		prompt.Parent = attach
-		prompt.RequiresLineOfSight = false
 	end
 	local admin = map.SkippingWorld:FindFirstChild("HackedAdminEgg")
 	if admin and not admin:FindFirstChild("ProximityPrompt") then
@@ -517,34 +507,11 @@ function World.apply(map)
 			end
 		end
 	end
-	-- Extend only the end of the watercourse; existing lobby and lane volumes stay intact.
-	workspace.Terrain:FillBlock(CFrame.new(-116, -8, -1360), V(112, 16, 160), Enum.Material.Water)
+	-- The river is flat parts with VFX now (tools/FlatRiverWater.luau); no Terrain water is filled here.
 	part("RiverEndSafety", V(210, 80, 2), V(-116, 25, -1442), C(100, 180, 230), true).Transparency = 1
 	for _, x in { -175, -57 } do
 		part("BankSafetyExtension", V(2, 100, 160), V(x, 49, -1360), C(255, 255, 255), true).Transparency = 1
 	end
-	local portal = Instance.new("Model")
-	portal.Name = "World2Portal"
-	portal.Parent = root
-	for _, x in { -121, -87 } do
-		part("PortalPillar", V(3, 40, 3), V(x, 20, 205), C(71, 255, 244), false, Enum.Material.Neon, portal)
-	end
-	part("PortalTop", V(37, 3, 3), V(-104, 40, 205), C(112, 253, 255), false, Enum.Material.Neon, portal)
-	local gate =
-		part("PortalField", V(31, 36, 0.5), V(-104, 20, 205), C(24, 226, 249), false, Enum.Material.Neon, portal)
-	gate.Transparency = 0.5
-	for x = -117, -91, 4 do
-		local p =
-			part("EnergyBeam", V(0.3, 36, 0.3), V(x, 20, 204.6), C(235, 255, 255), false, Enum.Material.Neon, portal)
-		p:SetAttribute("AnimatedPortal", true)
-	end
-	label("WORLD 2\n100K WINS", V(-104, 45, 205), 41, C(252, 246, 163), portal)
-	local prompt = Instance.new("ProximityPrompt")
-	prompt.ActionText = "Travel"
-	prompt.ObjectText = "World 2 • 100K Wins"
-	prompt.HoldDuration = 0.5
-	prompt.MaxActivationDistance = 12
-	prompt.Parent = gate
 	for _, egg in Config.Eggs do
 		local model = Instance.new("Model")
 		model.Name = "Egg_" .. egg.id

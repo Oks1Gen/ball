@@ -1,5 +1,6 @@
 --!strict
 local Config = require(game.ReplicatedStorage.Shared.GameConfig)
+local Refs = require(game.ReplicatedStorage.Shared.WorldRefs)
 local Dividers = {}
 local HEIGHT = 33
 local CANVAS = Vector2.new(2048, 144)
@@ -41,6 +42,52 @@ local function title(anchor: BasePart, face: Enum.NormalId, text: string)
 	stroke.Color = Color3.fromRGB(25, 30, 42)
 	stroke.Thickness = 3
 	stroke.Parent = label
+end
+
+function Dividers.align(map: any)
+	local course = Refs.course(map)
+	local root = map:FindFirstChild("ZoneDividers") or course:FindFirstChild("Boundaries")
+	if not root then
+		return
+	end
+	for index = 1, #Config.Biomes - 1 do
+		local current, following = Refs.field(map, index), Refs.field(map, index + 1)
+		local group = assert(root:FindFirstChild("Boundary" .. index), "Missing course divider")
+		local back = current.CFrame * CFrame.new(0, current.Size.Y / 2, -current.Size.Z / 2)
+		local front = following.CFrame * CFrame.new(0, following.Size.Y / 2, following.Size.Z / 2)
+		local boundary = back:Lerp(front, 0.5)
+		local left, right = -current.Size.X / 2, current.Size.X / 2
+		local zone = course:FindFirstChild("Zones")
+		local geometry = if zone then zone[string.format("Zone%02d", index)].Geometry else course
+		for _, bank in geometry:GetChildren() do
+			if bank:IsA("BasePart") and bank.Name:match("^BiomeBank" .. index .. "_") then
+				for _, x in { -1, 1 } do
+					local offset = boundary:PointToObjectSpace(
+						bank.CFrame:PointToWorldSpace(Vector3.new(x * bank.Size.X / 2, 0, 0))
+					)
+					left, right = math.min(left, offset.X), math.max(right, offset.X)
+				end
+			end
+		end
+		boundary *= CFrame.new((left + right) / 2, 0.06, 0)
+		local width = right - left
+		local wall = group.Wall
+		wall.Size, wall.CFrame = Vector3.new(width, HEIGHT, 0.1), boundary * CFrame.new(0, HEIGHT / 2, 0)
+		wall.Color, wall.Transparency = following.Color, 0.5
+		group.TopEdge.Size = Vector3.new(width, 0.22, 0.3)
+		group.TopEdge.CFrame = boundary * CFrame.new(0, HEIGHT, 0)
+		group.TopEdge.Color = following.Color
+		local anchor = group.TitleAnchor
+		anchor.Size, anchor.CFrame, anchor.Color = Vector3.new(width, 11, 0.29), wall.CFrame, following.Color
+		group:SetAttribute("FromZone", Config.Biomes[index].name)
+		group:SetAttribute("ToZone", Config.Biomes[index + 1].name)
+		for _, gui in anchor:GetChildren() do
+			if gui:IsA("SurfaceGui") and gui:FindFirstChild("ZoneName") then
+				gui.ZoneName.Text =
+					string.upper(Config.Biomes[if gui.Face == Enum.NormalId.Back then index + 1 else index].name)
+			end
+		end
+	end
 end
 
 function Dividers.apply(map: any)
@@ -109,6 +156,7 @@ function Dividers.apply(map: any)
 		end
 		root:SetAttribute("FieldTintVersion", 2)
 		root:SetAttribute("CenteredTitlesVersion", 1)
+		Dividers.align(map)
 		return root
 	end
 	root = Instance.new("Folder")
@@ -151,6 +199,7 @@ function Dividers.apply(map: any)
 	root:SetAttribute("FieldTintVersion", 2)
 	root:SetAttribute("CenteredTitlesVersion", 1)
 	root.Parent = map
+	Dividers.align(map)
 	return root
 end
 

@@ -84,9 +84,7 @@ function Throw.build(context: Context): (Player, number?, number?, number?) -> (
 			end
 		end)
 		local award = math.max(1, math.floor(distance / 8))
-		award = math.floor(
-			award * trail.boost * (d.perks.DoubleWins and 2 or 1) * (1 + s.friends * 0.1) * (d.world == 2 and 3 or 1)
-		)
+		award = math.floor(award * trail.boost * (d.perks.DoubleWins and 2 or 1) * (1 + s.friends * 0.1))
 		local info = {
 			userId = player.UserId,
 			distance = distance,

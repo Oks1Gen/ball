@@ -4,6 +4,7 @@
 -- transparency and the camera state only change when they really change.
 local CollectionService = game:GetService("CollectionService")
 local BallVisuals = require(game.ReplicatedStorage.Shared.BallVisuals)
+local WorldRefs = require(game.ReplicatedStorage.Shared.WorldRefs)
 
 local World = {}
 
@@ -20,7 +21,6 @@ export type Handle = {
 }
 
 function World.mount(context: Context): Handle
-	local portalBeams: { BasePart } = {}
 	local standPreviews: { Instance } = CollectionService:GetTagged("BallStandPreview")
 	local mapCache: { [number]: any } = {}
 	local laneCache: { [string]: { instance: any, found: boolean, retryAt: number } } = {}
@@ -104,18 +104,6 @@ function World.mount(context: Context): Handle
 			end
 		end)
 
-	task.spawn(function()
-		for _, name in { "World1", "World2" } do
-			local map: any = workspace:WaitForChild("Map"):WaitForChild(name)
-			local world: any = map:WaitForChild("SkippingWorld")
-			for _, part in world.World2Portal:GetChildren() do
-				if part:IsA("BasePart") and part:GetAttribute("AnimatedPortal") then
-					table.insert(portalBeams, part)
-				end
-			end
-		end
-	end)
-
 	-- The lane is looked up once per world and lane number: the string
 	-- concatenation and the tree search do not belong in the frame loop.
 	-- A miss is not final: the map or the zone can still be streaming in, so
@@ -137,14 +125,12 @@ function World.mount(context: Context): Handle
 		end
 		local map = mapCache[world]
 		if map == nil or not map.Parent then
-			map = (
-				workspace:FindFirstChild("Map") and workspace.Map:FindFirstChild(world == 2 and "World2" or "World1")
-			)
+			map = (workspace:FindFirstChild("Map") and workspace.Map:FindFirstChild("World1"))
 			mapCache[world] = map
 		end
 		local found: any = nil
 		if map then
-			local zone = map:FindFirstChild("TrainingZone")
+			local zone = WorldRefs.training(map)
 			found = zone and zone:FindFirstChild("TrainingLane" .. index)
 		end
 		if found == nil then
@@ -159,7 +145,7 @@ function World.mount(context: Context): Handle
 		local camera = workspace.CurrentCamera
 		for _, model in standPreviews do
 			if model:IsA("Model") and model:IsDescendantOf(workspace) then
-				local base = model:GetAttribute("DisplayBasePivot")
+				local base, labelBase = BallVisuals.displayOrigin(model)
 				if base and camera and (camera.CFrame.Position - base.Position).Magnitude < 250 then
 					local pose, bob = BallVisuals.standPose(
 						base,
@@ -168,7 +154,6 @@ function World.mount(context: Context): Handle
 					)
 					model:PivotTo(pose)
 					local link = model:FindFirstChild("DisplayLabel")
-					local labelBase = model:GetAttribute("DisplayLabelBase")
 					if link and link:IsA("ObjectValue") and link.Value and labelBase then
 						link.Value.Position = labelBase + Vector3.new(0, bob, 0)
 					end
@@ -179,7 +164,6 @@ function World.mount(context: Context): Handle
 
 	return {
 		frame = function()
-			local now = os.clock()
 			local rebirths = context.rebirths()
 			local owned = context.ownedBalls()
 			if rebirths ~= lastRebirths or owned ~= lastOwned then
@@ -188,10 +172,6 @@ function World.mount(context: Context): Handle
 				for gui in signs do
 					updateSign(gui)
 				end
-			end
-			local effectsOn = context.effects()
-			for i, beam in portalBeams do
-				beam.Transparency = effectsOn and (0.2 + 0.5 * (0.5 + 0.5 * math.sin(now * 4 + i))) or 0.7
 			end
 			updateStands()
 		end,
@@ -206,7 +186,6 @@ function World.mount(context: Context): Handle
 			for gui in signs do
 				removeSign(gui)
 			end
-			portalBeams = {}
 			standPreviews = {}
 		end,
 	}

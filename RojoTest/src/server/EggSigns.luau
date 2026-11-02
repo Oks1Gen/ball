@@ -114,7 +114,7 @@ function Signs.apply(map: Instance, settings: any?)
 	if not world then
 		return
 	end
-	local worldFactor = if map.Name == "World2" then 10 else 1
+	local worldFactor = 1
 	for _, egg in config.Eggs do
 		local stand = world:FindFirstChild("Egg_" .. egg.id)
 		local shell = stand and stand:FindFirstChild("EggShell")

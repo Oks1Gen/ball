@@ -22,9 +22,6 @@ function Pitches.apply(map)
 		end
 		if not originalColor then
 			originalColor = surface:GetAttribute("FootballPitch") and Config.Biomes[i].color or surface.Color
-			if surface:GetAttribute("FootballPitch") and map.Name == "World2" then
-				originalColor = originalColor:Lerp(Color3.fromRGB(142, 119, 252), 0.3)
-			end
 			surface:SetAttribute("OriginalPitchColor", originalColor)
 		end
 		surface.Color = originalColor

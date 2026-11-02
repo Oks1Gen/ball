@@ -370,7 +370,7 @@ function S.Eggs(p)
 	local compact = w < 730
 	local egg = Config.find(Config.Eggs, p.EggId) or Config.Eggs[1]
 	local pool = Config.eggPets(egg.id)
-	local cost = egg.cost * (p.Data.world == 2 and 10 or 1)
+	local cost = egg.cost
 	local tabs = {}
 	local tabW, tabGap = Spacing.row(w - 32, 4, 44)
 	for i, item in Config.Eggs do
@@ -409,7 +409,7 @@ function S.Eggs(p)
 		total += item.weight
 	end
 	for i, item in pool do
-		local boost = item.boost * egg.boost * (p.Data.world == 2 and 3 or 1)
+		local boost = item.boost * egg.boost
 		cards[item.id] = e(U.Surface, {
 			Name = "EggPet" .. item.id,
 			Color = T.plate(rarity(item.rarity)),

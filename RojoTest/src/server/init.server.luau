@@ -11,5 +11,5 @@ require(script.IntroStreaming).start()
 for _, service in services do
 	service:Start()
 end
-require(script.SkippingGame).start(World.map, World.world2)
+require(script.SkippingGame).start(World.map)
 print("[Ball] Server started - BUILD stack-1")

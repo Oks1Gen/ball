@@ -2,6 +2,7 @@
 local C = Color3.fromRGB
 -- The pure economy lives in Core/Economy so it can be tested without the engine.
 local Economy = require("./Core/Economy")
+local WorldRefs = require("./WorldRefs")
 local Config = {}
 Config.DataVersion = 1
 Config.MaxLevel = Economy.MaxLevel
@@ -17,7 +18,6 @@ Config.BallDiameter = 1.1
 Config.ShotStartLocal = Vector3.new(-115.6, 1.27, 0.3)
 Config.WorldShotProgression = {
 	[1] = { requiredPower = 1000000, routeStuds = 2160 },
-	[2] = { requiredPower = 100000000, routeStuds = 1440 },
 }
 Config.RebirthBaseSkill = Economy.RebirthBaseSkill
 Config.RebirthSkillGrowth = Economy.RebirthSkillGrowth
@@ -32,10 +32,10 @@ function Config.rebirthProgress(skill, rebirths)
 end
 -- The apron is a live scene anchor; map movement must also move gameplay coordinates.
 function Config.arenaFrame(arena: any): CFrame
-	return arena.Lobby.ThrowingApron.CFrame * CFrame.new(115, -0.3, -13)
+	return WorldRefs.apron(arena).CFrame * CFrame.new(115, -0.3, -13)
 end
 function Config.apronCharacterPose(arena: any, root: BasePart, humanoid: Humanoid, localZ: number): CFrame
-	local apron = arena.Lobby.ThrowingApron
+	local apron = WorldRefs.apron(arena)
 	local height = root.Size.Y / 2 + (humanoid.RigType == Enum.HumanoidRigType.R6 and 2 or humanoid.HipHeight)
 	return apron.CFrame * CFrame.new(-1, apron.Size.Y / 2 + height + 0.15, localZ)
 end
@@ -43,16 +43,15 @@ function Config.trainingSurface(lane: any): number
 	local strip = lane.TrainingStrip
 	return strip.Position.Y + strip.Size.Y / 2 + (lane:FindFirstChild("ImportedField") and 0.08 or 0)
 end
-function Config.shotLimit(world, arena)
-	local definition = Config.WorldShotProgression[world == 2 and 2 or 1]
-	arena = arena
-		or (workspace:FindFirstChild("Map") and workspace.Map:FindFirstChild(world == 2 and "World2" or "World1"))
-	local scenery = arena and arena:FindFirstChild("SkippingWorld")
-	local field = scenery and scenery:FindFirstChild("Field_8")
+function Config.shotLimit(_world, arena)
+	local definition = Config.WorldShotProgression[1]
+	arena = arena or (workspace:FindFirstChild("Map") and workspace.Map:FindFirstChild("World1"))
+	local scenery = WorldRefs.course(arena)
+	local field = WorldRefs.field(arena, 8)
 	if field then
 		local frame = Config.arenaFrame(arena)
 		local start = frame:PointToWorldSpace(Config.ShotStartLocal)
-		local finale = scenery:FindFirstChild("SakuraJapaneseFinale")
+		local finale = scenery:FindFirstChild("SakuraJapaneseFinale", true)
 		local gate = finale and finale:FindFirstChild("SakuraGatewayFrame")
 		local goal = gate and gate:GetPivot().Position or field.Position + frame.LookVector * (field.Size.Z / 2 - 7)
 		return math.max(
@@ -64,14 +63,14 @@ function Config.shotLimit(world, arena)
 	return math.floor((definition.routeStuds - 7 - 0.3) * Config.DistancePerStud)
 end
 function Config.shotDistance(skill, power, world, arena)
-	local definition = Config.WorldShotProgression[world == 2 and 2 or 1]
+	local definition = Config.WorldShotProgression[1]
 	-- Rebirths and pets already increase earned Skill; do not multiply them again.
 	local ratio = Economy.shotRatio(skill, power, definition.requiredPower)
 	local limit = Config.shotLimit(world, arena)
 	return Economy.shotDistance(ratio, limit)
 end
-function Config.shotDuration(distance: number, world: number?, intensity: number?): number
-	local duration = math.clamp(3.2 + distance / 850, 3.2, world == 2 and 10 or 14)
+function Config.shotDuration(distance: number, _world: number?, intensity: number?): number
+	local duration = math.clamp(3.2 + distance / 850, 3.2, 14)
 	return duration / (1 + 0.8 * math.clamp(intensity or 0, 0, 1))
 end
 function Config.shotBounceGain(multiplier)
@@ -80,7 +79,6 @@ end
 Config.StudTexture = "rbxassetid://138746650062134"
 Config.Music = "rbxassetid://1836105470"
 Config.RiverX = -116
-Config.WorldOffset = Vector3.new(2000, 0, 0)
 Config.Biomes = {
 	{ name = "Palm Beach", distance = 0, color = C(29, 207, 227), bank = C(126, 229, 72), kind = "palm" },
 	{ name = "Desert Dunes", distance = 750, color = C(245, 188, 64), bank = C(244, 209, 103), kind = "desert" },

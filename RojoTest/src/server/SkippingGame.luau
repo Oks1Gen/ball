@@ -9,6 +9,7 @@ local RunService = game:GetService("RunService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
 local Config = require(ReplicatedStorage.Shared.GameConfig)
+local WorldRefs = require(ReplicatedStorage.Shared.WorldRefs)
 local BallPurchases = require(ReplicatedStorage.Shared.BallPurchases)
 local TrainingMotion = require(ReplicatedStorage.Shared.TrainingMotion)
 local Net = require(ReplicatedStorage.Shared.Net)
@@ -33,7 +34,7 @@ local Lifecycle = require(script.Parent.Gameplay.Lifecycle)
 local Game: any = {}
 local started = false
 
-function Game.start(map, world2)
+function Game.start(map)
 	if started then
 		return
 	end
@@ -50,7 +51,7 @@ function Game.start(map, world2)
 	-- otherwise.
 	local function laneSet(arena, label: string)
 		local set = {}
-		local zone = arena:FindFirstChild("TrainingZone")
+		local zone = WorldRefs.training(arena)
 		for index = 1, 7 do
 			local lane = zone and zone:FindFirstChild("TrainingLane" .. index)
 			local pad = lane and lane:FindFirstChild("StartingPad")
@@ -67,10 +68,9 @@ function Game.start(map, world2)
 		end
 		return set
 	end
-	local lanes = { [1] = laneSet(map, "World1"), [2] = laneSet(world2, "World2") }
-	local function arenaFor(player: Player)
-		local state = states[player]
-		return state and state.data.world == 2 and world2 or map
+	local lanes = { [1] = laneSet(map, "World1") }
+	local function arenaFor(_player: Player)
+		return map
 	end
 	local function frameFor(player: Player)
 		return Config.arenaFrame(arenaFor(player))
@@ -149,7 +149,7 @@ function Game.start(map, world2)
 		hum.AutoRotate = false
 	end
 	local function laneEntry(s: any, index: number)
-		local set = s.lanes and s.lanes[s.data.world == 2 and 2 or 1]
+		local set = s.lanes and s.lanes[1]
 		return set and set[index]
 	end
 	local function startTraining(player: Player, index: number)
@@ -260,14 +260,13 @@ function Game.start(map, world2)
 			* BallPurchases.power(d)
 			* (d.perks.DoubleSkill and 2 or 1)
 			* (1 + state.friends * 0.1)
-			* (d.world == 2 and 3 or 1)
 	end
 	local function inApron(player)
 		local p, h = rootFor(player)
 		if not p or not h or h.Health <= 0 then
 			return false
 		end
-		local apron = arenaFor(player).Lobby.ThrowingApron
+		local apron = WorldRefs.apron(arenaFor(player))
 		local point = apron.CFrame:PointToObjectSpace(p.Position)
 		return math.abs(point.X) <= apron.Size.X / 2
 			and math.abs(point.Z) <= apron.Size.Z / 2 + 1
@@ -343,7 +342,7 @@ function Game.start(map, world2)
 			publish(player, "Pet storage full (60). Delete a pet first.")
 			return
 		end
-		local cost = testing and 0 or egg.cost * (d.world == 2 and 10 or 1)
+		local cost = testing and 0 or egg.cost
 		if d.wins < cost * amount then
 			publish(player, "Need " .. Config.format(cost * amount) .. " Wins")
 			return
@@ -373,7 +372,7 @@ function Game.start(map, world2)
 				uid = HttpService:GenerateGUID(false),
 				id = chosen.id,
 				name = chosen.name,
-				boost = chosen.boost * egg.boost * (d.world == 2 and 3 or 1),
+				boost = chosen.boost * egg.boost,
 				rarity = chosen.rarity,
 			}
 			table.insert(d.pets, pet)
@@ -481,7 +480,7 @@ function Game.start(map, world2)
 		stopTraining = stopTraining,
 		arenaFor = arenaFor,
 		rootFor = rootFor,
-	}, map, world2)
+	}, map)
 	-- The training lanes are cached once per arena: the hot loop then reads a
 	-- ready reference instead of walking the arena tree on every tick.
 	Training.run({

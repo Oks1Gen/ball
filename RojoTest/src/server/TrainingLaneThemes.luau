@@ -944,7 +944,7 @@ local function build(lane: Model, index: number): Model
 end
 
 function Themes.apply(map: Instance)
-	-- Only the seven World1 lanes approved in the reference. World2 keeps its authored theme.
+	-- Only the seven World1 lanes approved in the reference.
 	if map.Name ~= "World1" then
 		return
 	end

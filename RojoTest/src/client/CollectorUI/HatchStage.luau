@@ -194,7 +194,7 @@ local function againOf(p: Props, eggs: { EggEntry }): { egg: string, count: numb
 	if not egg or not data or data.wins == nil then
 		return nil
 	end
-	local cost = egg.cost * (if data.world == 2 then 10 else 1) * count
+	local cost = egg.cost * count
 	local pets = if p.Inventory then #p.Inventory.pets else 0
 	if data.wins < cost or pets + count > 60 then
 		return nil

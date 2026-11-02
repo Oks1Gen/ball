@@ -1,15 +1,17 @@
 --!strict
--- Compact lobby (v2): lavender stud paths with square branches, checker lawn and chunky trees.
--- Station placement is an authored Edit migration (tools/CompactLobbyRelayout.luau); this
--- module only draws cosmetic layers around the stations where they now stand.
+-- Compact lobby (v3): dark grey stud paths with square branches, checker lawn and chunky trees.
+-- Station placement is an authored Edit migration (tools/CompactLobbyRelayout.luau, then
+-- tools/LobbyCenterRelayout.luau, which centred the lobby on the field axis X 55 and moved
+-- this layer 12 studs west); this module only draws cosmetic layers where the stations stand.
+local Palette = require(script.Parent.LobbyPalette)
 local Layout = {}
 local V, P, RGB = Vector3.new, Vector2.new, Color3.fromRGB
-local STUDS = "rbxassetid://88156646156237"
-local FILL = RGB(160, 140, 222)
-local EDGE = RGB(116, 94, 194)
-local CURB = RGB(238, 234, 252)
+local STUDS = Palette.Studs
+local FILL = Palette.Path
+local EDGE = Palette.PathEdge
+local CURB = Palette.PathCurb
 local LAWN_DARK = RGB(96, 180, 50)
-local VERSION = 2
+local VERSION = 3
 type Region = { name: string, polygon: { Vector2 }, openX: number?, openZ: number? }
 
 local function cross(a: Vector2, b: Vector2): number
@@ -55,6 +57,8 @@ local function paint(root: Instance)
 				p.Color = FILL
 			elseif p.Name == "InsetBorder" then
 				p.Color = EDGE
+			elseif p.Name == "PathCurb" then
+				p.Color = CURB
 			end
 		end
 	end
@@ -118,23 +122,24 @@ function Layout.apply(map: Instance): Instance?
 	local zone = assert(map:FindFirstChild("TrainingZone"))
 	local first = assert(zone:FindFirstChild("TrainingLane1"))
 	local strip = assert(first:FindFirstChild("TrainingStrip")) :: BasePart
-	assert((strip.Position - V(103, 21.4, 177)).Magnitude < 0.02, "Authored lobby changed: remeasure before applying")
+	assert((strip.Position - V(91, 21.4, 177)).Magnitude < 0.02, "Authored lobby changed: remeasure before applying")
 	local top = apron.Position.Y - 0.3 + 0.26
 	local root = Instance.new("Folder")
 	root.Name = "CompactLobbyLayout"
 	root.Parent = map
-	-- Rectangles touch but never overlap; shared edges get no curb.
+	-- Rectangles touch but never overlap; shared edges get no curb. The boulevard runs on the
+	-- field axis (X 55.5).
 	local regions: { Region } = {
-		{ name = "Boulevard", polygon = rectangle(58, 77, 150, 279), openZ = 150 },
-		{ name = "TrophyPlaza", polygon = rectangle(47, 88, 279, 301) },
-		{ name = "HallWalkWest", polygon = rectangle(-9, 47, 293, 301) },
-		{ name = "HallWalkEast", polygon = rectangle(88, 144, 293, 301) },
-		{ name = "PortalCourt", polygon = rectangle(-6, 30, 150, 194) },
-		{ name = "PortalPath", polygon = rectangle(30, 58, 165, 179) },
-		{ name = "BallCourt", polygon = rectangle(20.5, 34, 189, 255) },
-		{ name = "BallPath", polygon = rectangle(34, 58, 215, 229) },
-		{ name = "EggCourt", polygon = rectangle(-6, 58, 255, 279) },
-		{ name = "EggCourtBack", polygon = rectangle(-6, 47, 279, 293) },
+		{ name = "Boulevard", polygon = rectangle(46, 65, 150, 279), openZ = 150 },
+		{ name = "TrophyPlaza", polygon = rectangle(35, 76, 279, 301) },
+		{ name = "HallWalkWest", polygon = rectangle(-21, 35, 293, 301) },
+		{ name = "HallWalkEast", polygon = rectangle(76, 132, 293, 301) },
+		{ name = "PortalCourt", polygon = rectangle(-18, 18, 150, 194) },
+		{ name = "PortalPath", polygon = rectangle(18, 46, 165, 179) },
+		{ name = "BallCourt", polygon = rectangle(8.5, 22, 189, 255) },
+		{ name = "BallPath", polygon = rectangle(22, 46, 215, 229) },
+		{ name = "EggCourt", polygon = rectangle(-18, 46, 255, 279) },
+		{ name = "EggCourtBack", polygon = rectangle(-18, 35, 279, 293) },
 	}
 	for i = 1, 7 do
 		local lane = assert(zone:FindFirstChild("TrainingLane" .. i))
@@ -143,7 +148,7 @@ function Layout.apply(map: Instance): Instance?
 		local front = foundation.Position.X - foundation.Size.X / 2
 		table.insert(regions, {
 			name = "TrainingApproach" .. i,
-			polygon = rectangle(77, front, surface.Position.Z - 6.5, surface.Position.Z + 6.5),
+			polygon = rectangle(65, front, surface.Position.Z - 6.5, surface.Position.Z + 6.5),
 			openX = front,
 		})
 	end
@@ -221,7 +226,8 @@ function Layout.apply(map: Instance): Instance?
 		surface.Material = Enum.Material.Plastic
 		local studs = Instance.new("Texture")
 		studs.Name, studs.Texture, studs.Face = "PathStuds", STUDS, Enum.NormalId.Top
-		studs.StudsPerTileU, studs.StudsPerTileV, studs.Transparency = 8, 8, 0.45
+		studs.StudsPerTileU, studs.StudsPerTileV = Palette.StudsPerTile, Palette.StudsPerTile
+		studs.Transparency = Palette.StudsTransparency
 		-- Keep one stud phase across every rectangle.
 		studs.OffsetStudsU, studs.OffsetStudsV = lo.X % 8, lo.Y % 8
 		studs.Parent = surface
@@ -270,10 +276,10 @@ function Layout.apply(map: Instance): Instance?
 		local base = template:GetPivot()
 		for i, spot in
 			{
-				P(-11, 205),
-				P(-11, 232),
-				P(-12, 274),
-				P(128, 159),
+				P(-39, 205),
+				P(-39, 232),
+				P(-40, 274),
+				P(116, 159),
 				P(150, 291),
 			}
 		do

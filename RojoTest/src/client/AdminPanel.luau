@@ -452,8 +452,8 @@ function Panel.mount(context: Context)
 				)
 			end
 			y += math.ceil(#Config.Eggs / eggColumns) * (38 + eggGap)
-			local worldBoost = status.world == 2 and 3 or 1
-			y = label(egg.name .. " · " .. Config.format(egg.cost * (status.world == 2 and 10 or 1)) .. " Wins", y + 4)
+			local worldBoost = 1
+			y = label(egg.name .. " · " .. Config.format(egg.cost) .. " Wins", y + 4)
 			local pool = Config.eggPets(egg.id)
 			local columns = math.max(1, math.floor((bodyWidth + 10) / 220))
 			local cw = (bodyWidth - (columns - 1) * 10) / columns
@@ -544,7 +544,6 @@ function Panel.mount(context: Context)
 					color = Style.Colors.Purple,
 				},
 				{ label = "Мир 1", command = "Teleport", value = "World1" },
-				{ label = "Мир 2", command = "Teleport", value = "World2" },
 			}, y + 10, 210, 42)
 			y = label("Тренировочные площадки", y + 8)
 			local lanes = {}

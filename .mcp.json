@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "vfxforgeultra": {
+      "command": "node",
+      "args": ["C:\\Users\\dakem\\Documents\\VibeCodeProjects\\VfxForgeULTRA\\tools\\mcp\\server.mjs"]
+    }
+  }
+}

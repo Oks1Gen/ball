@@ -70,6 +70,20 @@ function Visuals.preview(parent, id)
 end
 
 -- Deterministic cosmetic motion; never accumulates position error.
+function Visuals.displayOrigin(model: Model): (CFrame?, Vector3?)
+	local display = model.Parent
+	local localBase = model:GetAttribute("DisplayBaseLocal")
+	local localLabel = model:GetAttribute("DisplayLabelLocal")
+	if display and display:IsA("Model") and typeof(localBase) == "CFrame" and typeof(localLabel) == "Vector3" then
+		local top = display:FindFirstChild("DisplayTop")
+		if not top or not top:IsA("BasePart") then
+			return nil, nil -- A partially streamed display will retry next frame.
+		end
+		return top.CFrame * localBase, top.CFrame:PointToWorldSpace(localLabel)
+	end
+	return model:GetAttribute("DisplayBasePivot") :: CFrame?, model:GetAttribute("DisplayLabelBase") :: Vector3?
+end
+
 function Visuals.standPose(base, time, phase)
 	local bob = 0.45 * math.sin((time % 2.5) * math.pi * 2 / 2.5 + phase)
 	return (base + Vector3.new(0, bob, 0)) * CFrame.Angles(0, (time % 22.5) * math.pi * 2 / 22.5, 0), bob

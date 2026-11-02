@@ -1,10 +1,11 @@
 -- No player/profile changes. Check safe destinations at real and moved stands.
 local Interaction = require(game.ServerScriptService.Server.Gameplay.EggInteraction)
 local Config = require(game.ReplicatedStorage.Shared.GameConfig)
+local WorldRefs = require(game.ReplicatedStorage.Shared.WorldRefs)
 local checked = 0
-for _, world in { workspace.Map.World1, workspace.Map.World2 } do
+for _, world in { workspace.Map.World1 } do
 	for _, egg in Config.Eggs do
-		local shell = world.SkippingWorld["Egg_" .. egg.id].EggShell
+		local shell = WorldRefs.eggs(world)["Egg_" .. egg.id].EggShell
 		local destination = Interaction.destination(world, egg.id, 3)
 		assert(destination, "No safe destination for " .. world.Name .. "/" .. egg.id)
 		local offset = (destination.Position - shell.Position) * Vector3.new(1, 0, 1)
@@ -15,9 +16,10 @@ end
 local fixture = Instance.new("Model")
 fixture.Name = "EggDestinationFixture"
 local ok, result = pcall(function()
+	local lobby = Instance.new("Folder")
+	lobby.Name, lobby.Parent = "Lobby", fixture
 	local scenery = Instance.new("Folder")
-	scenery.Name = "SkippingWorld"
-	scenery.Parent = fixture
+	scenery.Name, scenery.Parent = "EggShop", lobby
 	local stand = Instance.new("Model")
 	stand.Name = "Egg_Common"
 	stand.Parent = scenery

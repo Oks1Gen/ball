@@ -1,5 +1,10 @@
 # Подписи мячей
 
+С 02.11.2026 стенд целиком находится в `Lobby/BallShop` (Model).
+Каждый `Displays/DisplayNN` содержит Ball, LabelAnchor с BillboardGui,
+пьедестал и PurchaseAnchor; `DisplayLabel` остаётся ссылкой на подпись своего
+слота. Подробности миграции и строительной фазы — [world-structure.md](world-structure.md).
+
 `server/BallStandSigns.luau` оформляет существующие подписи стендов в двух мирах
 по референсу, без фоновой плашки. Три строки: зелёный UNLOCKED или красный LOCKED,
 светлый множитель `1x Skill`…`10x Skill` и жёлтая цена `0 Wins`…`75M Wins`.

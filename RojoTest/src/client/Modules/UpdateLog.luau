@@ -9,6 +9,56 @@ export type Release = {
 
 local releases: { Release } = {
 	{
+		id = "2026-11-02-course-regions",
+		date = "November 2, 2026",
+		title = "Clearer course regions",
+		changes = {
+			"Shore colours, scenery and dividers now line up with all eight football regions, with cleaner transitions between themes.",
+		},
+	},
+	{
+		id = "2026-11-02-single-world",
+		date = "November 2, 2026",
+		title = "Lobby polish",
+		changes = {
+			"The lobby walls have richer caramel colours, with checkerboard and studs restored around the terrace corners.",
+			"World 2 and its travel portal have been removed. Returning players keep their progress and now arrive in World 1.",
+		},
+	},
+	{
+		id = "2026-11-02-lobby-walls",
+		date = "November 2, 2026",
+		title = "Brighter lobby walls",
+		changes = {
+			"The lobby walls and entrance arch have warmer, richer caramel colours and a much flatter checkerboard finish.",
+		},
+	},
+	{
+		id = "2026-11-02-training-paths",
+		date = "November 2, 2026",
+		title = "Training paths",
+		changes = {
+			"The lobby paths now lead straight to the relocated training fields, with matching openings along the main walkway.",
+			"The main walkway is twice as wide, with shorter training approaches and a lighter grey checkerboard across the lobby paths.",
+		},
+	},
+	{
+		id = "2026-11-01-lobby-waterfall",
+		date = "November 1, 2026",
+		title = "Lobby makeover",
+		changes = {
+			"The lobby paths are now a soft grey.",
+			"The waterfall is much wider and arcs down from the top of the cliff into a bigger pool, with no rock walls on its sides.",
+			"The east cliff has a second waterfall that matches the main one.",
+			"The cliff walls and the entrance arch, inside and out, have a studded checkerboard pattern.",
+			"Trees, bushes and stones have studs on every side, and the lobby shares one colour palette.",
+			"The lobby is now centred on the football field: the main path, the waterfall and the leaderboards line up with the pitch, and the entrance arch is symmetrical.",
+			"The entrance arch is a clean frame now: the slanted corner braces are gone and its pillars meet the walls without gaps.",
+			"Flickering where two surfaces overlapped is fixed across the lobby, the terraces and the training lanes.",
+			"A calm river now runs along both sides of the football fields for their whole length, with sparkles, ripples and foam by the banks; the old animated water is gone, so the map runs smoother.",
+		},
+	},
+	{
 		id = "2026-11-01-compact-lobby",
 		date = "November 1, 2026",
 		title = "Cosier lobby",

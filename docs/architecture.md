@@ -1,5 +1,11 @@
 # Стек и структура
 
+Обязательная компоновка карты — [world-structure.md](world-structure.md).
+WorldService восстанавливает входы старых builders через WorldLayout.prepare,
+а после оформления собирает каноническое дерево через WorldLayout.apply.
+Runtime получает объекты через Shared.WorldRefs. Исторические пути ниже
+относятся к строительной фазе, а не к готовой карте.
+
 Версии инструментов закреплены в корневом `rokit.toml`: Rojo 7.7.0, Wally 0.3.2, StyLua 2.5.2, Selene 0.31.0, Lune 0.8.9, luau-lsp 1.70.1. Библиотеки React/ReactRoblox 17.2.1 и Ripple 0.10.2 закреплены в `RojoTest/wally.toml` и `wally.lock`.
 
 ## Исходники
@@ -58,7 +64,7 @@ tools/VerifyEggInteraction.luau проверяет восемь яиц двух 
 
 ## Структура карты в Workspace
 
-Карта хранится в `Workspace.Map` (Folder): `World1` и `World2` — Folder, их непосредственные разделы (`Lobby`, `SkippingWorld`, `TrainingZone`, декор и ограждения) — тоже Folder. Модели отдельных объектов внутри разделов сохраняются для работы pivot, анимаций и визуальных шаблонов. Старые корни `ProgressionMap`/`World2Map` обслуживает только миграция `src/server/MapHierarchy.luau`; текущий код и Studio-инструменты используют новые пути.
+Карта хранится в `Workspace.Map` (Folder) и содержит только `World1`, с разделами `Lobby`, `FootballCourse`, `TrainingArea`. Канонический контракт — `world-structure.md`; удаление World2 и перенос старых профилей — `single-world.md`. Модели отдельных объектов сохраняют pivots, анимации и игровые ссылки. Исторический корень `ProgressionMap` обслуживает миграция `src/server/MapHierarchy.luau`.
 
 WorldService мигрирует старую авторскую сцену перед запуском процедур оформления и затем организует разделы. Миграция сохраняет части, атрибуты, теги и ObjectValue-ссылки на заменяемые контейнеры. `Locked` задаётся пользователем вручную: организация карты не меняет это свойство. Ручную сцену не перестраивать. Эти изменения Workspace нужно сохранять в Studio; Rojo по-прежнему управляет исходниками, а не авторской сценой.
 

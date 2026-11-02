@@ -158,8 +158,7 @@ function MapBuilder.build()
 			leaf = C(178, 112, 255),
 		},
 	}
-	-- Terrain water occupies only this map's river bounds.
-	workspace.Terrain:FillBlock(CFrame.new(-116, -8, -640), V(112, 16, 1280), Enum.Material.Water)
+	-- No Terrain water: the river is flat parts with VFX (tools/FlatRiverWater.luau, docs/lobby-style.md).
 	workspace.Terrain.WaterColor = C(20, 180, 220)
 	workspace.Terrain.WaterTransparency = 0.22
 	workspace.Terrain.WaterWaveSize = 0.12

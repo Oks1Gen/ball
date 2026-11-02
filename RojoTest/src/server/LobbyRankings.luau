@@ -4,6 +4,7 @@ local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local DataStoreService = game:GetService("DataStoreService")
 local Config = require(game.ReplicatedStorage.Shared.GameConfig)
+local WorldRefs = require(game.ReplicatedStorage.Shared.WorldRefs)
 local Data = require(game.ReplicatedStorage.Shared.Core.ProfileData)
 local C, V = Color3.fromRGB, Vector3.new
 local categories = {
@@ -58,19 +59,8 @@ function Rankings.apply(map)
 	if map:FindFirstChild("LobbyRankings") then
 		return
 	end
-	local portal = assert(map.SkippingWorld:FindFirstChild("World2Portal"))
-	local field = assert(portal:FindFirstChild("PortalField"))
 	local frame = map.Lobby.ThrowingApron.CFrame * CFrame.new(115, -0.3, -13)
-	local oldPosition = field.Position
-	local target = frame:PointToWorldSpace(V(-155, 20, 60))
-	portal:PivotTo(portal:GetPivot() + (target - field.Position))
-	local facing = CFrame.new(field.Position) * CFrame.Angles(0, math.rad(-135), 0)
-	portal:PivotTo(facing * field.CFrame:Inverse() * portal:GetPivot())
-	local prompt = assert(field:FindFirstChildWhichIsA("ProximityPrompt", true))
-	local attachment = prompt.Parent
-	assert(attachment:IsA("Attachment"), "Portal needs its ground-level prompt")
-	local promptPoint = frame:PointToWorldSpace(V(-155, 4, 60))
-	attachment.Position = field.CFrame:PointToObjectSpace(promptPoint)
+	local oldPosition = frame:PointToWorldSpace(V(-104, 20, 205))
 	local group = Instance.new("Model")
 	group.Name = "LobbyRankings"
 	local function part(parent, name, size, cf, color)
@@ -324,7 +314,7 @@ function Rankings.record(userId, data)
 end
 
 function Rankings.render(map, states)
-	local group = assert(map:FindFirstChild("LobbyRankings"))
+	local group = assert(WorldRefs.rankings(map))
 	for _, category in categories do
 		local entries = {}
 		for _, entry in cached[category.key] or {} do

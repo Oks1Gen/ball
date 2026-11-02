@@ -79,7 +79,7 @@ end
 
 function Hierarchy.migrate()
 	local maps = Hierarchy.container()
-	for index, legacyName in { "ProgressionMap", "World2Map" } do
+	for index, legacyName in { "ProgressionMap" } do
 		local name = "World" .. index
 		local legacy = workspace:FindFirstChild(legacyName)
 		assert(not (legacy and maps:FindFirstChild(name)), "Both legacy and organized world exist")

@@ -3,8 +3,8 @@ local Config = require(script.Parent.GameConfig)
 local Timing = require(script.Parent.Core.KickTiming)
 local Feedback = {}
 
-function Feedback.profile(skill, power, world, timingMultiplier: number?, perfectCount: number?)
-	local target = Config.WorldShotProgression[world == 2 and 2 or 1].requiredPower
+function Feedback.profile(skill, power, _world, timingMultiplier: number?, perfectCount: number?)
+	local target = Config.WorldShotProgression[1].requiredPower
 	local ratio = math.clamp(Config.effectiveShotPower(skill, power) / target, 0, 1)
 	local intensity = ratio ^ 0.22
 	local quality = Timing.quality(timingMultiplier or 1)

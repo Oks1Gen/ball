@@ -16,7 +16,9 @@ function Repair.apply(map: any)
 		retired[tonumber(id)] = true
 	end
 	local changed, missing = 0, 0
-	for index, record in records do
+	for ordinal, record in records do
+		-- Explicit ids preserve saved render links after retired-world records are removed.
+		local index = record[7] or ordinal
 		if record[1][1] ~= map.Name or retired[index] then
 			continue
 		end

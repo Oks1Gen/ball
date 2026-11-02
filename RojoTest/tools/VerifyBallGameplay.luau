@@ -37,9 +37,9 @@ d.stone = "WorldCreator"
 check(Buy.power(d) == 1, "Reject unowned bonus")
 d.wins = 75000000
 check(Buy.buyOrEquip(d, "WorldCreator") and d.wins == 0 and Buy.power(d) == 10, "Final tier")
-for _, map in { workspace.Map.World1, workspace.Map.World2 } do
+for _, map in { workspace.Map.World1 } do
 	local found = 0
-	for _, p in map.EmptyItemStand:GetDescendants() do
+	for _, p in require(game.ReplicatedStorage.Shared.WorldRefs).balls(map):GetDescendants() do
 		if p:IsA("ProximityPrompt") and p:GetAttribute("BallId") then
 			found += 1
 		end

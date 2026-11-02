@@ -199,26 +199,6 @@ function Layout.apply(map)
 		stand.WorldPivot = stand:GetBoundingBox()
 	end
 
-	-- Retain the sakura portal, tree, flowers and lanterns in a front-side pocket.
-	local portal = skip.World2Portal
-	local portalDelta = frame * CF(-174, 20, 48) * portal.PortalField.CFrame:Inverse()
-	moveModel(portal, portalDelta)
-	local slabs = {}
-	for _, o in ipairs(portal.SakuraCourtyard:GetChildren()) do
-		if o:IsA("BasePart") and o.Name == "ApproachSlab" then
-			table.insert(slabs, o)
-		end
-	end
-	table.sort(slabs, function(a, b)
-		return localPoint(a.Position).Z < localPoint(b.Position).Z
-	end)
-	for i, o in ipairs(slabs) do
-		o.CFrame = frame * CF(-149 + (i - 1) * 6, 0.09, 48)
-	end
-	if not portal.PrimaryPart then
-		portal.WorldPivot = portal:GetBoundingBox()
-	end
-
 	-- A four-sided visual capacity, with existing rankings retaining their logic.
 	local rankings = map.LobbyRankings
 	local function boardAt(board, x, z, yaw)

@@ -139,45 +139,6 @@ function Polish.apply(map: any)
 		for _, r in edges do
 			slab("OutsideEdge", r, top, Color3.fromRGB(115, 135, 156), false)
 		end
-		-- Cut old stepping stones at the paving boundary instead of stacking them.
-		for _, p in map.SkippingWorld.World2Portal.SakuraCourtyard:GetChildren() do
-			if p:IsA("BasePart") and p.Name == "ApproachSlab" then
-				selected[p] = true
-				hide(p)
-				local a, b = p.Position - p.Size / 2, p.Position + p.Size / 2
-				local pieces: { Rect } = { { a.X, b.X, a.Z, b.Z } }
-				for _, cut in paths do
-					local remaining: { Rect } = {}
-					for _, r in pieces do
-						local x0, x1, z0, z1 =
-							math.max(r[1], cut[1] - 0.35),
-							math.min(r[2], cut[2] + 0.35),
-							math.max(r[3], cut[3] - 0.35),
-							math.min(r[4], cut[4] + 0.35)
-						if x1 <= x0 or z1 <= z0 then
-							table.insert(remaining, r)
-						else
-							for _, piece in
-								{
-									{ r[1], x0, r[3], r[4] },
-									{ x1, r[2], r[3], r[4] },
-									{ x0, x1, r[3], z0 },
-									{ x0, x1, z1, r[4] },
-								}
-							do
-								if piece[2] - piece[1] > 0.01 and piece[4] - piece[3] > 0.01 then
-									table.insert(remaining, piece)
-								end
-							end
-						end
-					end
-					pieces = remaining
-				end
-				for _, r in pieces do
-					slab("PortalApproach", r, top, p.Color, true)
-				end
-			end
-		end
 		for _, render in map.SurfaceSeparation:GetChildren() do
 			local original = render:FindFirstChild("OriginalPart")
 			if
@@ -191,7 +152,7 @@ function Polish.apply(map: any)
 			end
 		end
 	end
-	-- World2 has a one-stud exposed strip between apron and the first pitch.
+	-- Preserve any authored seam between the apron and the first pitch.
 	local apron, pitch = map.Lobby.ThrowingApron, map.SkippingWorld.Field_1
 	local front, back = pitch.Position.Z + pitch.Size.Z / 2, apron.Position.Z - apron.Size.Z / 2
 	if back - front > 0.01 then

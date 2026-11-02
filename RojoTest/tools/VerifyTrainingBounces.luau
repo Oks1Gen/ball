@@ -42,7 +42,7 @@ end
 local oldCF, oldFov = workspace.CurrentCamera.CFrame, workspace.CurrentCamera.FieldOfView
 local camera = workspace.CurrentCamera
 local sizes = { Vector2.new(1920, 1080), Vector2.new(1280, 720), Vector2.new(844, 390) }
-for _, name in { "World1", "World2" } do
+for _, name in { "World1" } do
 	local map = workspace.Map:FindFirstChild(name)
 	if map then
 		local previousLength = 0

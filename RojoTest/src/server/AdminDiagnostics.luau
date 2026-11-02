@@ -123,8 +123,7 @@ function Diagnostics.run(map)
 			Config.shotDistance(100000, 1, 1, map) > Config.shotDistance(10000, 1, 1, map) * 2.5,
 			"Shot progression mismatch"
 		)
-		assert(Config.shotDistance(100000000, 1, 2) == Config.shotLimit(2), "World 2 endpoint mismatch")
-		return "Пороги: 1 млн / 100 млн силы; World 1: " .. limit .. " м"
+		return "Порог: 1 млн силы; World 1: " .. limit .. " м"
 	end)
 	check("Платные продукты", function()
 		local missing = 0

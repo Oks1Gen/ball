@@ -268,7 +268,7 @@ local function Panel(p: PanelProps)
 	else
 		local egg = assert(Config.find(Config.Eggs, id), "Unknown egg " .. id)
 		title, titleColor = string.gsub(egg.name, " Egg$", ""), egg.color
-		local cost = egg.cost * (if p.World == 2 then 10 else 1)
+		local cost = egg.cost
 		currency, price, affordable = "Wins", Config.format(cost), p.Wins >= cost
 		local pool = Config.eggPets(id)
 		local total = 0
@@ -441,7 +441,7 @@ function Preview.mount(context: Context): Handle
 	local function scan(arena: Instance)
 		stations = {}
 		stationArena = arena
-		local scenery = arena:FindFirstChild("SkippingWorld")
+		local scenery = require(game.ReplicatedStorage.Shared.WorldRefs).eggs(arena)
 		if not scenery then
 			return
 		end
@@ -466,7 +466,12 @@ function Preview.mount(context: Context): Handle
 			local model = scenery:FindFirstChild("Egg_" .. egg.id)
 			add(egg.id, model and model:FindFirstChild("EggShell"), model)
 		end
-		add(ADMIN, scenery:FindFirstChild("HackedAdminEgg"), scenery:FindFirstChild("AdminEggCaption"))
+		local volcanic = require(game.ReplicatedStorage.Shared.WorldRefs).volcanic(arena)
+		add(
+			ADMIN,
+			volcanic and (volcanic:FindFirstChild("InteractionAnchor") or volcanic:FindFirstChild("HackedAdminEgg")),
+			volcanic and (volcanic:FindFirstChild("Sign") or volcanic:FindFirstChild("AdminEggCaption"))
+		)
 	end
 
 	local function render()
@@ -530,7 +535,7 @@ function Preview.mount(context: Context): Handle
 			return nil
 		end
 		local map = workspace:FindFirstChild("Map")
-		local arena = map and map:FindFirstChild(if snapshot.data.world == 2 then "World2" else "World1")
+		local arena = map and map:FindFirstChild("World1")
 		if not arena then
 			return nil
 		end

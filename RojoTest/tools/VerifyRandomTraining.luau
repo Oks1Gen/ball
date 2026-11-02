@@ -4,15 +4,17 @@ local Motion = require(Shared.TrainingMotion)
 local Goal = require(Shared.TrainingGoal)
 local Area = require(Shared.TrainingArea)
 local Config = require(Shared.GameConfig)
+local WorldRefs = require(Shared.WorldRefs)
+local clearance = Config.BallDiameter / 2 + 0.17
 local checks, shots, lanes = 0, 0, 0
 local function check(value, message)
 	assert(value, message)
 	checks += 1
 end
 
-for _, worldName in { "World1", "World2" } do
+for _, worldName in { "World1" } do
 	local map = workspace.Map:FindFirstChild(worldName)
-	local zone = map and map:FindFirstChild("TrainingZone")
+	local zone = map and WorldRefs.training(map)
 	for index = 1, 7 do
 		local lane = zone and zone:FindFirstChild("TrainingLane" .. index)
 		local strip = lane and lane:FindFirstChild("TrainingStrip")
@@ -42,8 +44,8 @@ for _, worldName in { "World1", "World2" } do
 				local repeatShot = Goal.shot(lane, root, 73123, cycle)
 				check((shot.finish - repeatShot.finish).Magnitude < 1e-5, "Cycle target is deterministic")
 				local point = net.CFrame:PointToObjectSpace(shot.finish)
-				check(math.abs(point.X) <= net.Size.X / 2 - 0.97, "Ball clears side posts")
-				check(math.abs(point.Y) <= net.Size.Y / 2 - 0.97, "Ball clears crossbar and ground edge")
+				check(math.abs(point.X) <= net.Size.X / 2 - clearance, "Ball clears side posts")
+				check(math.abs(point.Y) <= net.Size.Y / 2 - clearance, "Ball clears crossbar and ground edge")
 				local hit = Goal.contact(net, shot.start, shot.finish, index)
 				check(hit ~= nil, "Shot actually reaches the net")
 				check(

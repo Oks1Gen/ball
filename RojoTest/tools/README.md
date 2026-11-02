@@ -1,5 +1,27 @@
 # tools
 
+- `VerifyCourseRegions.luau` — проверяет 8 текущих локаций FootballCourse,
+  32 тела берегов, 28 стыков, 160 проб опоры, принадлежность природного декора
+  и 7 последовательных пересечений удара (последнее только в Play/Server).
+
+- `VerifyLobbyWallCoverage.luau` — независимые точечные проверки открытых
+  граней террас: studs, чётность клеток, отсутствие перекрытий и пропусков.
+  Выполнять в Edit и на сервере после Play; также проверяет отсутствие World2/портала.
+
+- `VerifyLobbyWalls.luau` — проверка толщины и цвета декоративной шахматной
+  облицовки World1, сохранности задних плоскостей и отключённой физики.
+  Выполнять в Edit и повторно на сервере после штатного Play.
+
+- `VerifyTransparentCleanup.luau` — Studio-модуль: `capture(Map)` перед чисткой,
+  `compare(Map)` после. Проверяет удаление только кандидатов, сохранность всех
+  остальных частей и pivots, тренировочные траектории/подписи и повторный аудит.
+
+- `VerifyWorldLayout.luau` — Studio-модуль проверки канонической структуры:
+  `capture()`/`compare()` сверяют геометрию и физику при миграции, `run()`
+  проверяет связи обоих миров, `moveShop(world)` переносит и поворачивает
+  только несохранённую копию стенда, проверяя анимации, подписи и промпты.
+  Контракт и строительная фаза старых модулей — `docs/world-structure.md`.
+
 - `VerifyTwoStageKick.luau` — 19 изолированных проверок сервера в Play:
   порядок двух стадий, ×0.25/×6, идеальные стадии, одноразовые token и отмена
   без наград/записи профиля.
@@ -106,6 +128,13 @@ Edit, и в Play (там, где это указано в таблице).
 | `CheckSurfaceOverlaps.luau` | Read-only аудит открытых граней блоков и клиньев обоих миров `Workspace.Map`, пространственный индекс, допуск 0.035 студ | Studio MCP или Command Bar | Edit / Server | Да: только чтение | Нет |
 | `ColorImportedPortals.luau` | Раскрашивает импортированные порталы `portals-v6-no-textures` по шести темам, ставит атрибут `PortalTheme`, копию сохраняет в `ServerStorage.WorldBackups.BeforePortalColoring` | Studio MCP, Edit | Edit | Нет: при повторе `assert` об уже покрашенных порталах | Да |
 | `ColorSakura.luau` | Раскрашивает `sakura-split-colors`: ствол, 4 кроны и 65 лепестков; копия в `WorldBackups.BeforeSplitSakuraColoring` | Studio MCP, Edit | Edit | Нет: при повторе `assert` об уже покрашенной сакуре | Да |
+| `CurvedWaterfallUpgrade.luau` | Заменяет водопад лобби между каменными стенами широким изогнутым потоком из Beam с ручьём, бассейном и VFX; убранное — в `WorldBackups.BeforeCurvedWaterfall_20261101` (см. `docs/lobby-paths.md`) | Studio MCP, Edit, после `FullWaterfallUpgrade` | Edit | Нет: при повторе `assert` об атрибуте `CurvedWaterfall` | Да |
+| `TerraceCheckerWalls.luau` | Первая версия шахматки террас лобби World1 (только грани террас). Заменён `LobbyStyleRefresh.luau`, повторно не запускать | Studio MCP, Edit | Edit | Нет: при повторе `assert` о существующей папке | Да |
+| `SideWaterfallUpgrade.luau` | Клонирует изогнутый водопад лобби на восточную стену (`SpawnGarden.SideWaterfall`); `LobbyWaterfallGarden` и декор на пути воды — в `WorldBackups.BeforeSideWaterfall_20261101` | Studio MCP, Edit, после `CurvedWaterfallUpgrade` | Edit | Нет: при повторе `assert` о существующем `SideWaterfall` | Да |
+| `LobbyCenterRelayout.luau` | Центрирует лобби World1 на оси поля X 55: западная стена −28, всё между стенами −12, восточная опора туннеля укорочена до 42 studs; прежние CFrame — в `BeforeLobbyCentering` (см. `docs/lobby-paths.md`) | Studio MCP, Edit, после `CompactLobbyRelayout`; затем `LobbyStyleRefresh` | Edit | Нет: при повторе `assert` об атрибуте `LobbyCentered` | Да |
+| `FlatRiverWater.luau` | Убирает Terrain-реку обоих миров и ставит плоскую воду `RiverWater` вдоль обеих сторон коридора полей; VFX добавлены плагином VfxForgeUltra (см. `docs/lobby-style.md`) | Studio MCP, Edit | Edit | Да: мир с `RiverWater` пропускается | Да |
+| `FixCoplanarFaces.luau` | Повторяет аудит `CheckSurfaceOverlaps` и разводит видимые совпадающие грани на 0.06 studs, не трогая детали с коллизией; прежние CFrame/Size — в `BeforeFaceSeparation*` (см. `docs/surface-separation.md`) | Studio MCP, Edit; повторять после `LobbyStyleRefresh` | Edit | Да: проходы до 0 видимых пар | Да |
+| `LobbyStyleRefresh.luau` | Единый стиль лобби по `LobbyPalette`: штыри 0.45 / 8 studs, цвета декора по токенам, штыри на всех открытых гранях декора и камня, шахматка на всех видимых земляных гранях, включая арку и потолок туннеля (см. `docs/lobby-style.md`) | Studio MCP, Edit | Edit | Да: шахматка пересобирается, штыри и цвета только дополняются | Да |
 | `CornerRockGarden.luau` | Добавляет моховой каменный сад в левый угол входа лобби: 8 каменных масс с мхом, 5 кустов, 30 цветов, короткие лианы | Studio MCP, Edit | Edit | Нет: при повторе `assert` о существующем `CornerRockGarden` | Да |
 | `ImportTrophy.luau` | Собирает модель `ImportedTrophy` из геометрии Blender через `EditableMesh`; только локальное превью, загрузка меша в Roblox требует подтверждения | Studio MCP или Command Bar, Edit, после загрузки `_G.TrophyImportData` | Edit | Нет: при повторе `assert` о существующем трофее | Да |
 | `LabelImportedBalls.luau` | Подписывает 10 импортированных мячей (`BillboardGui` + якоря `LabelAnchor`), расставляет якоря над плитками витрины | Studio MCP, Edit | Edit | Да: при `StandLabelsVersion = 1` возвращает «Already labelled» | Да |

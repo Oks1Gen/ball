@@ -1,7 +1,6 @@
 client/AdminPanel.luau|TypeError|<type-expression>
 client/AdminPanel.luau|TypeError|<type-expression>
 client/AdminPanel.luau|TypeError|<type-expression>
-client/AdminPanel.luau|TypeError|<type-expression>
 client/AdminPanel.luau|TypeError|Expected this to be exactly but got caused by: Property 'value' is not compatible. Expected this to be exactly 'number', but got 'string'
 client/CollectorUI/Components.luau|TypeError|Expected this to be 'Color3', but got 'boolean'
 client/CollectorUI/Components.luau|TypeError|Expected this to be 'Color3', but got 'boolean'
@@ -260,14 +259,10 @@ client/Controllers/PetFollowers.luau|TypeError|Expected this to be 'number', but
 client/Controllers/PetFollowers.luau|TypeError|Expected this to be 'number', but got 'number | unknown' caused by: Not all union options are compatible. Expected this to be 'number', but got 'unknown'
 client/Controllers/PetFollowers.luau|TypeError|Expected this to be 'number', but got 'number | unknown' caused by: Not all union options are compatible. Expected this to be 'number', but got 'unknown'
 client/Controllers/PetFollowers.luau|TypeError|Expected this to be 'number', but got 'number | unknown' caused by: Not all union options are compatible. Expected this to be 'number', but got 'unknown'
-client/Controllers/WorldVisuals.luau|TypeError|Expected this to be 'Vector3', but got 'unknown'
-client/Controllers/WorldVisuals.luau|TypeError|Expected this to be 'Vector3', but got 'unknown'
 client/Controllers/WorldVisuals.luau|TypeError|Expected this to be 'number', but got 'number | unknown' caused by: Not all union options are compatible. Expected this to be 'number', but got 'unknown'
 client/Controllers/WorldVisuals.luau|TypeError|Expected this to be 'number', but got 'number | unknown' caused by: Not all union options are compatible. Expected this to be 'number', but got 'unknown'
 client/Controllers/WorldVisuals.luau|TypeError|Key 'Position' not found in external type 'Instance'
 client/Controllers/WorldVisuals.luau|TypeError|Key 'Position' not found in external type 'Instance'
-client/Controllers/WorldVisuals.luau|TypeError|Type 'unknown' does not have key 'Position'
-client/Controllers/WorldVisuals.luau|TypeError|Type 'unknown' does not have key 'Position'
 client/Modules/HudLayout.luau|TypeError|Expected this to be exactly 'Pin', but got '<type>' caused by: Property 'offset' is not compatible. Expected this to be exactly 'number', but got 'number?'
 client/Modules/HudLayout.luau|TypeError|Expected this to be exactly 'Pin', but got '<type>' caused by: Property 'offset' is not compatible. Expected this to be exactly 'number', but got 'number?'
 client/Modules/HudLayout.luau|TypeError|Expected this to be exactly 'Pin', but got '<type>' caused by: Property 'offset' is not compatible. Expected this to be exactly 'number', but got 'number?'
@@ -347,10 +342,6 @@ server/AdminService.luau|TypeError|Type T where T = {- amount: any, count: never
 server/AdminService.luau|TypeError|Type T where T = {- amount: any, count: never | T, egg: string, key: any, pet: any -} cannot be compared with "Sakura"
 server/AdminService.luau|TypeError|Type T where T = {- amount: any, count: never | T, egg: string, key: any, pet: any -} cannot be compared with "World1"
 server/AdminService.luau|TypeError|Type T where T = {- amount: any, count: never | T, egg: string, key: any, pet: any -} cannot be compared with "World1"
-server/AdminService.luau|TypeError|Type T where T = {- amount: any, count: never | T, egg: string, key: any, pet: any -} cannot be compared with "World1"
-server/AdminService.luau|TypeError|Type T where T = {- amount: any, count: never | T, egg: string, key: any, pet: any -} cannot be compared with "World1"
-server/AdminService.luau|TypeError|Type T where T = {- amount: any, count: never | T, egg: string, key: any, pet: any -} cannot be compared with "World2"
-server/AdminService.luau|TypeError|Type T where T = {- amount: any, count: never | T, egg: string, key: any, pet: any -} cannot be compared with "World2"
 server/AdminService.luau|TypeError|Type T where T = {- amount: any, count: never | T, egg: string, key: any, pet: any -} cannot be compared with "World2"
 server/AdminService.luau|TypeError|Type T where T = {- amount: any, count: never | T, egg: string, key: any, pet: any -} cannot be compared with "World2"
 server/AdminService.luau|TypeError|Type T where T = {- amount: any, count: never | T, egg: string, key: any, pet: any -} cannot be compared with "max"
@@ -1237,18 +1228,6 @@ server/LobbyLayoutTwoAxes.luau|TypeError|Unknown type used in / operation; consi
 server/LobbyLayoutTwoAxes.luau|TypeError|Unknown type used in / operation; consider adding a type annotation to 'size'
 server/LobbyLayoutTwoAxes.luau|TypeError|Unknown type used in / operation; consider adding a type annotation to 'size'
 server/LobbyLayoutTwoAxes.luau|TypeError|Unknown type used in / operation; consider adding a type annotation to 'size'
-server/LobbyPortalFacing.luau|TypeError|Unknown type used in * operation; consider adding a type annotation to 'map'
-server/LobbyPortalFacing.luau|TypeError|Unknown type used in * operation; consider adding a type annotation to 'map'
-server/LobbyPortalFacing.luau|TypeError|Unknown type used in * operation; consider adding a type annotation to 'map'
-server/LobbyPortalFacing.luau|TypeError|Unknown type used in - operation; consider adding a type annotation to 'a'
-server/LobbyPortalFacing.luau|TypeError|Unknown type used in - operation; consider adding a type annotation to 'a'
-server/LobbyPortalFacing.luau|TypeError|Unknown type used in - operation; consider adding a type annotation to 'a'
-server/LobbyPortalFacing.luau|TypeError|Unknown type used in < comparison; consider adding a type annotation to 'a'
-server/LobbyPortalFacing.luau|TypeError|Unknown type used in < comparison; consider adding a type annotation to 'a'
-server/LobbyPortalFacing.luau|TypeError|Unknown type used in < comparison; consider adding a type annotation to 'a'
-server/LobbyPortalFacing.luau|TypeError|Unknown type used in < comparison; consider adding a type annotation to 'a'
-server/LobbyPortalFacing.luau|TypeError|Unknown type used in < comparison; consider adding a type annotation to 'a'
-server/LobbyPortalFacing.luau|TypeError|Unknown type used in < comparison; consider adding a type annotation to 'a'
 server/LobbyRankings.luau|TypeError|Expected this to be 'Instance?', but got '<type>' caused by: None of the union options are compatible. For example: Key 'Lobby' not found in external type 'Instance'
 server/LobbyRankings.luau|TypeError|Expected this to be 'Instance?', but got '<type>' caused by: None of the union options are compatible. For example: Key 'Lobby' not found in external type 'Instance'
 server/LobbyRankings.luau|TypeError|Expected this to be 'Instance?', but got '<type>' caused by: None of the union options are compatible. For example: Key 'Lobby' not found in external type 'Instance'
@@ -1257,10 +1236,6 @@ server/LobbyRankings.luau|TypeError|Unknown type used in * operation; consider a
 server/LobbyRankings.luau|TypeError|Unknown type used in * operation; consider adding a type annotation to 'map'
 server/LobbyRankings.luau|TypeError|Unknown type used in * operation; consider adding a type annotation to 'map'
 server/LobbyRankings.luau|TypeError|Unknown type used in * operation; consider adding a type annotation to 'map'
-server/LobbyRankings.luau|TypeError|Unknown type used in + operation
-server/LobbyRankings.luau|TypeError|Unknown type used in + operation
-server/LobbyRankings.luau|TypeError|Unknown type used in + operation
-server/LobbyRankings.luau|TypeError|Unknown type used in + operation
 server/MapBuilder.luau|TypeError|Argument count mismatch. Function 'part' expects 6 arguments, but only 5 are specified
 server/MapBuilder.luau|TypeError|Argument count mismatch. Function 'part' expects 6 arguments, but only 5 are specified
 server/MapBuilder.luau|TypeError|Argument count mismatch. Function 'part' expects 6 arguments, but only 5 are specified
@@ -2503,54 +2478,6 @@ server/PolarExpeditionScenery.luau|TypeError|Unknown type used in / operation; c
 server/PolarExpeditionScenery.luau|TypeError|Unknown type used in / operation; consider adding a type annotation to 'upper'
 server/PolarExpeditionScenery.luau|TypeError|Unknown type used in / operation; consider adding a type annotation to 'upper'
 server/PolarExpeditionScenery.luau|TypeError|Unknown type used in / operation; consider adding a type annotation to 'upper'
-server/SakuraCourtyard.luau|TypeError|Argument count mismatch. Function 'part' expects 6 arguments, but only 5 are specified
-server/SakuraCourtyard.luau|TypeError|Argument count mismatch. Function 'part' expects 6 arguments, but only 5 are specified
-server/SakuraCourtyard.luau|TypeError|Argument count mismatch. Function 'part' expects 6 arguments, but only 5 are specified
-server/SakuraCourtyard.luau|TypeError|Argument count mismatch. Function 'part' expects 6 arguments, but only 5 are specified
-server/SakuraCourtyard.luau|TypeError|Argument count mismatch. Function 'part' expects 6 arguments, but only 5 are specified
-server/SakuraCourtyard.luau|TypeError|Argument count mismatch. Function 'part' expects 6 arguments, but only 5 are specified
-server/SakuraCourtyard.luau|TypeError|Argument count mismatch. Function 'part' expects 6 arguments, but only 5 are specified
-server/SakuraCourtyard.luau|TypeError|Argument count mismatch. Function 'part' expects 6 arguments, but only 5 are specified
-server/SakuraCourtyard.luau|TypeError|Argument count mismatch. Function 'part' expects 6 arguments, but only 5 are specified
-server/SakuraCourtyard.luau|TypeError|Argument count mismatch. Function 'part' expects 6 arguments, but only 5 are specified
-server/SakuraCourtyard.luau|TypeError|Argument count mismatch. Function 'part' expects 6 arguments, but only 5 are specified
-server/SakuraCourtyard.luau|TypeError|Argument count mismatch. Function 'part' expects 6 arguments, but only 5 are specified
-server/SakuraCourtyard.luau|TypeError|Argument count mismatch. Function 'part' expects 6 arguments, but only 5 are specified
-server/SakuraCourtyard.luau|TypeError|Argument count mismatch. Function 'part' expects 6 arguments, but only 5 are specified
-server/SakuraCourtyard.luau|TypeError|Argument count mismatch. Function 'part' expects 6 arguments, but only 5 are specified
-server/SakuraCourtyard.luau|TypeError|Argument count mismatch. Function 'part' expects 6 arguments, but only 5 are specified
-server/SakuraCourtyard.luau|TypeError|Argument count mismatch. Function 'part' expects 6 arguments, but only 5 are specified
-server/SakuraCourtyard.luau|TypeError|Argument count mismatch. Function 'part' expects 6 arguments, but only 5 are specified
-server/SakuraCourtyard.luau|TypeError|Argument count mismatch. Function 'part' expects 6 arguments, but only 5 are specified
-server/SakuraCourtyard.luau|TypeError|Argument count mismatch. Function 'part' expects 6 arguments, but only 5 are specified
-server/SakuraCourtyard.luau|TypeError|Argument count mismatch. Function 'part' expects 6 arguments, but only 5 are specified
-server/SakuraCourtyard.luau|TypeError|Argument count mismatch. Function 'part' expects 6 arguments, but only 5 are specified
-server/SakuraCourtyard.luau|TypeError|Argument count mismatch. Function 'part' expects 6 arguments, but only 5 are specified
-server/SakuraCourtyard.luau|TypeError|Argument count mismatch. Function 'part' expects 6 arguments, but only 5 are specified
-server/SakuraCourtyard.luau|TypeError|Argument count mismatch. Function 'part' expects 6 arguments, but only 5 are specified
-server/SakuraCourtyard.luau|TypeError|Argument count mismatch. Function 'part' expects 6 arguments, but only 5 are specified
-server/SakuraCourtyard.luau|TypeError|Argument count mismatch. Function 'part' expects 6 arguments, but only 5 are specified
-server/SakuraCourtyard.luau|TypeError|Argument count mismatch. Function 'part' expects 6 arguments, but only 5 are specified
-server/SakuraCourtyard.luau|TypeError|Argument count mismatch. Function 'part' expects 6 arguments, but only 5 are specified
-server/SakuraCourtyard.luau|TypeError|Argument count mismatch. Function 'part' expects 6 arguments, but only 5 are specified
-server/SakuraCourtyard.luau|TypeError|Argument count mismatch. Function 'part' expects 6 arguments, but only 5 are specified
-server/SakuraCourtyard.luau|TypeError|Argument count mismatch. Function 'part' expects 6 arguments, but only 5 are specified
-server/SakuraCourtyard.luau|TypeError|Argument count mismatch. Function 'part' expects 6 arguments, but only 5 are specified
-server/SakuraCourtyard.luau|TypeError|Argument count mismatch. Function 'part' expects 6 arguments, but only 5 are specified
-server/SakuraCourtyard.luau|TypeError|Argument count mismatch. Function 'part' expects 6 arguments, but only 5 are specified
-server/SakuraCourtyard.luau|TypeError|Argument count mismatch. Function 'part' expects 6 arguments, but only 5 are specified
-server/SakuraCourtyard.luau|TypeError|Argument count mismatch. Function 'part' expects 6 arguments, but only 5 are specified
-server/SakuraCourtyard.luau|TypeError|Argument count mismatch. Function 'part' expects 6 arguments, but only 5 are specified
-server/SakuraCourtyard.luau|TypeError|Argument count mismatch. Function 'part' expects 6 arguments, but only 5 are specified
-server/SakuraCourtyard.luau|TypeError|Argument count mismatch. Function 'part' expects 6 arguments, but only 5 are specified
-server/SakuraCourtyard.luau|TypeError|Argument count mismatch. Function 'part' expects 6 arguments, but only 5 are specified
-server/SakuraCourtyard.luau|TypeError|Argument count mismatch. Function 'part' expects 6 arguments, but only 5 are specified
-server/SakuraCourtyard.luau|TypeError|Argument count mismatch. Function 'part' expects 6 arguments, but only 5 are specified
-server/SakuraCourtyard.luau|TypeError|Argument count mismatch. Function 'part' expects 6 arguments, but only 5 are specified
-server/SakuraCourtyard.luau|TypeError|Argument count mismatch. Function 'part' expects 6 arguments, but only 5 are specified
-server/SakuraCourtyard.luau|TypeError|Expected this to be 'Instance?', but got '<type>' caused by: None of the union options are compatible. For example: Key 'PortalField' not found in external type 'Instance'
-server/SakuraCourtyard.luau|TypeError|Expected this to be 'Instance?', but got '<type>' caused by: None of the union options are compatible. For example: Key 'PortalField' not found in external type 'Instance'
-server/SakuraCourtyard.luau|TypeError|Expected this to be 'Instance?', but got '<type>' caused by: None of the union options are compatible. For example: Key 'PortalField' not found in external type 'Instance'
 server/SakuraFinaleScenery.luau|TypeError|Argument count mismatch. Function 'blossom' expects 4 arguments, but only 3 are specified
 server/SakuraFinaleScenery.luau|TypeError|Argument count mismatch. Function 'blossom' expects 4 arguments, but only 3 are specified
 server/SakuraFinaleScenery.luau|TypeError|Argument count mismatch. Function 'blossom' expects 4 arguments, but only 3 are specified
@@ -3088,18 +3015,6 @@ server/SakuraJapaneseScenery.luau|TypeError|Unknown type used in / operation; co
 server/SakuraJapaneseScenery.luau|TypeError|Unknown type used in / operation; consider adding a type annotation to 'upper'
 server/SakuraJapaneseScenery.luau|TypeError|Unknown type used in / operation; consider adding a type annotation to 'upper'
 server/SakuraJapaneseScenery.luau|TypeError|Unknown type used in / operation; consider adding a type annotation to 'upper'
-server/SakuraPortal.luau|TypeError|Unknown type used in - operation; consider adding a type annotation to 'center'
-server/SakuraPortal.luau|TypeError|Unknown type used in - operation; consider adding a type annotation to 'center'
-server/SakuraPortal.luau|TypeError|Unknown type used in - operation; consider adding a type annotation to 'center'
-server/SakuraPortal.luau|TypeError|Unknown type used in - operation; consider adding a type annotation to 'p'
-server/SakuraPortal.luau|TypeError|Unknown type used in - operation; consider adding a type annotation to 'p'
-server/SakuraPortal.luau|TypeError|Unknown type used in - operation; consider adding a type annotation to 'p'
-server/SakuraPortal.luau|TypeError|Unknown type used in / operation; consider adding a type annotation to 'p'
-server/SakuraPortal.luau|TypeError|Unknown type used in / operation; consider adding a type annotation to 'p'
-server/SakuraPortal.luau|TypeError|Unknown type used in / operation; consider adding a type annotation to 'p'
-server/SakuraTreePlacement.luau|TypeError|Unknown type used in * operation
-server/SakuraTreePlacement.luau|TypeError|Unknown type used in * operation
-server/SakuraTreePlacement.luau|TypeError|Unknown type used in * operation
 server/Services/WorldService.luau|TypeError|Argument count mismatch. Function expects 2 arguments, but only 1 is specified
 server/Services/WorldService.luau|TypeError|Argument count mismatch. Function expects 2 arguments, but only 1 is specified
 server/SkippingGame.luau|DeprecatedApi|Member 'IsFriendsWith' is deprecated, use 'Player:IsFriendsWithAsync' instead
@@ -3210,9 +3125,6 @@ server/SkippingWorld.luau|TypeError|Expected this to be 'Enum.Material', but got
 server/SkippingWorld.luau|TypeError|Expected this to be 'Instance?', but got '<type>' caused by: None of the union options are compatible. For example: Expected this to be 'Instance', but got '<type>' caused by: Property 'FindFirstChild' is not compatible. Expected this to be but got caused by: Return type is not compatible. Expected this to be '<type>', but got 'Instance?' caused by: Not all union options are compatible. Key 'Color' not found in external type 'Instance'
 server/SkippingWorld.luau|TypeError|Expected this to be 'Instance?', but got '<type>' caused by: None of the union options are compatible. For example: Expected this to be 'Instance', but got '<type>' caused by: Property 'FindFirstChild' is not compatible. Expected this to be but got caused by: Return type is not compatible. Expected this to be '<type>', but got 'Instance?' caused by: Not all union options are compatible. Key 'Color' not found in external type 'Instance'
 server/SkippingWorld.luau|TypeError|Expected this to be 'Instance?', but got '<type>' caused by: None of the union options are compatible. For example: Expected this to be 'Instance', but got '<type>' caused by: Property 'FindFirstChild' is not compatible. Expected this to be but got caused by: Return type is not compatible. Expected this to be '<type>', but got 'Instance?' caused by: Not all union options are compatible. Key 'Color' not found in external type 'Instance'
-server/SkippingWorld.luau|TypeError|Expected this to be 'Instance?', but got '<type>' caused by: None of the union options are compatible. For example: Expected this to be 'Instance', but got '<type>' caused by: Property 'FindFirstChildWhichIsA' is not compatible. Expected this to be but got caused by: Return type is not compatible. Expected this to be '<type>', but got 'Instance?'
-server/SkippingWorld.luau|TypeError|Expected this to be 'Instance?', but got '<type>' caused by: None of the union options are compatible. For example: Expected this to be 'Instance', but got '<type>' caused by: Property 'FindFirstChildWhichIsA' is not compatible. Expected this to be but got caused by: Return type is not compatible. Expected this to be '<type>', but got 'Instance?'
-server/SkippingWorld.luau|TypeError|Expected this to be 'Instance?', but got '<type>' caused by: None of the union options are compatible. For example: Expected this to be 'Instance', but got '<type>' caused by: Property 'FindFirstChildWhichIsA' is not compatible. Expected this to be but got caused by: Return type is not compatible. Expected this to be '<type>', but got 'Instance?'
 server/SkippingWorld.luau|TypeError|Expected this to be 'Instance?', but got '<type>' caused by: None of the union options are compatible. For example: Key 'Color' not found in external type 'Instance'
 server/SkippingWorld.luau|TypeError|Expected this to be 'Instance?', but got '<type>' caused by: None of the union options are compatible. For example: Key 'Color' not found in external type 'Instance'
 server/SkippingWorld.luau|TypeError|Expected this to be 'Instance?', but got '<type>' caused by: None of the union options are compatible. For example: Key 'Color' not found in external type 'Instance'
@@ -3952,9 +3864,3 @@ shared/TrainingCamera.luau|TypeError|Unknown type used in - operation; consider 
 shared/TrainingCamera.luau|TypeError|Unknown type used in / operation; consider adding a type annotation to 'viewport'
 shared/VolcanicEggVisual.luau|TypeError|Function only returns 1 value, but 2 are required here
 shared/VolcanicEggVisual.luau|TypeError|Function only returns 1 value, but 2 are required here
-shared/VolcanicEggVisual.luau|TypeError|Unknown type used in + operation; consider adding a type annotation to 'anchor'
-shared/VolcanicEggVisual.luau|TypeError|Unknown type used in + operation; consider adding a type annotation to 'anchor'
-shared/VolcanicEggVisual.luau|TypeError|Unknown type used in + operation; consider adding a type annotation to 'stand'
-shared/VolcanicEggVisual.luau|TypeError|Unknown type used in + operation; consider adding a type annotation to 'stand'
-shared/VolcanicEggVisual.luau|TypeError|Unknown type used in / operation; consider adding a type annotation to 'stand'
-shared/VolcanicEggVisual.luau|TypeError|Unknown type used in / operation; consider adding a type annotation to 'stand'

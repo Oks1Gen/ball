@@ -180,7 +180,6 @@ function Service:dispatch(player, command, value)
 			d.trails[t.id] = true
 		end
 		d.rebirths = math.max(16, d.rebirths)
-		d.unlockedWorld2 = true
 		d.perks.AutoThrow = true
 		d.perks.DoubleSkill = true
 		d.perks.DoubleWins = true
@@ -200,9 +199,8 @@ function Service:dispatch(player, command, value)
 		assert(#pets > 0 and pets[1], "Неизвестный пет")
 		assert(#d.pets + #pets <= 60, "Инвентарь петов заполнен")
 		for _, p in pets do
-			local boost = p.boost
-				* (egg and egg.boost or p.eggBoost or (p.visual and 2 or 1))
-				* (d.world == 2 and 3 or 1)
+			local boost = p.boost * (egg and egg.boost or p.eggBoost or (p.visual and 2 or 1))
+
 			table.insert(
 				d.pets,
 				{ uid = H:GenerateGUID(false), id = p.id, name = p.name, rarity = p.rarity, boost = boost }
@@ -243,18 +241,18 @@ function Service:dispatch(player, command, value)
 	elseif command == "Teleport" then
 		local root, hum = c.rootFor(player)
 		assert(root and hum, "Нет персонажа")
-		if value == "World1" or value == "World2" then
-			d.world = value == "World2" and 2 or 1
-		end
+		assert(value ~= "World2", "Второй мир удалён")
+		d.world = 1
 		local map = c.arenaFor(player)
-		if value == "Lobby" or value == "World1" or value == "World2" then
+		if value == "Lobby" or value == "World1" then
 			self:move(player, Config.apronCharacterPose(map, root, hum, 3))
 		elseif value == "Sakura" then
 			d.world = 1
 			map = c.map
 			local bank
-			for _, p in map.SkippingWorld:GetChildren() do
-				if p.Name == "BiomeBank8_1" and p.Position.X < map.SkippingWorld.Field_8.Position.X then
+			local refs = require(game.ReplicatedStorage.Shared.WorldRefs)
+			for _, p in refs.course(map):GetDescendants() do
+				if p.Name == "BiomeBank8_1" and p:IsA("BasePart") and p.Position.X < refs.field(map, 8).Position.X then
 					bank = p
 					break
 				end
@@ -273,9 +271,10 @@ function Service:dispatch(player, command, value)
 			local biome = tonumber(value)
 			assert(biome and biome % 1 == 0 and biome >= 1 and biome <= 8, "Неизвестный биом")
 			local bank
-			local field = map.SkippingWorld["Field_" .. biome]
-			for _, p in map.SkippingWorld:GetChildren() do
-				if p.Name == "BiomeBank" .. biome .. "_2" and p.Position.X < field.Position.X then
+			local refs = require(game.ReplicatedStorage.Shared.WorldRefs)
+			local field = refs.field(map, biome)
+			for _, p in refs.course(map):GetDescendants() do
+				if p.Name == "BiomeBank" .. biome .. "_2" and p:IsA("BasePart") and p.Position.X < field.Position.X then
 					bank = p
 					break
 				end
@@ -292,7 +291,8 @@ function Service:dispatch(player, command, value)
 		assert(n and n % 1 == 0 and n >= 1 and n <= 7, "Неизвестная площадка")
 		local root, hum = c.rootFor(player)
 		assert(root and hum, "Нет персонажа")
-		local pad = c.arenaFor(player).TrainingZone["TrainingLane" .. n].StartingPad
+		local pad =
+			require(game.ReplicatedStorage.Shared.WorldRefs).training(c.arenaFor(player))["TrainingLane" .. n].StartingPad
 		local h = root.Size.Y / 2 + (hum.RigType == Enum.HumanoidRigType.R6 and 2 or hum.HipHeight)
 		self:move(player, pad.CFrame * CFrame.new(0, pad.Size.Y / 2 + h + 0.15, 0))
 	else

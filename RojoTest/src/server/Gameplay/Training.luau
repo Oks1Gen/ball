@@ -36,7 +36,7 @@ function Training.run(context: Context)
 				local pos, hum = context.rootFor(player)
 				local laneIndex = nil
 				if pos and hum and hum.Health > 0 and os.clock() >= s.busyUntil then
-					local lanes = s.lanes and s.lanes[s.data.world == 2 and 2 or 1]
+					local lanes = s.lanes and s.lanes[1]
 					for i, def in context.Config.Lanes do
 						local entry = lanes and lanes[i]
 						local strip = entry and entry.strip

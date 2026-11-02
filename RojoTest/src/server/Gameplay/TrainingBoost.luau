@@ -24,7 +24,7 @@ function Boost.claim(context: any, player: Player, seed: number, offer: number):
 	end
 	local definition = Rules.offer(seed, offer)
 	local now = workspace:GetServerTimeNow()
-	local set = s.lanes and s.lanes[s.data.world == 2 and 2 or 1]
+	local set = s.lanes and s.lanes[1]
 	local entry = set and set[s.lane]
 	if
 		definition.product

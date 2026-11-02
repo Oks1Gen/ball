@@ -69,7 +69,7 @@ return {
 		data.perks.DoubleSkill = true
 		data.pets = { { uid = "pet", boost = 2 } }
 		data.equipped = { "pet" }
-		assert(Rewards.offlineRate(data, lanes, 5) == 2 * 3 * 3 * 2 * 2 * 5 * 7 / 0.8 * 0.25)
+		assert(Rewards.offlineRate(data, lanes, 5) == 2 * 3 * 2 * 2 * 5 * 7 / 0.8 * 0.25)
 	end,
 	["return rewards use the same progression cap as every other accrual"] = function()
 		local data = Data.fresh()

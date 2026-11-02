@@ -150,20 +150,12 @@ function Polish.apply(map)
 	local turf = part(tunnel, "TunnelGrassRoof", V(310, 1.6, 46), V(-106, 63.8, -20), grass)
 	studs(turf, Enum.NormalId.Top)
 	-- The existing entrance barrier remains intact; the roof clears the walkable banks.
+	-- Plain post-and-lintel frame: the slanted shoulder braces were removed at the user's request.
 	for _, z in { 3.4, -43.4 } do
 		part(tunnel, "StoneLintel", V(211, 3.2, 2), V(-116, 55.4, z), stone)
-		for _, x in { -216, -16 } do
-			part(tunnel, "StoneArchLeg", V(5.5, 47, 2.2), V(x, 31.9, z), stone)
-			part(
-				tunnel,
-				"ArchShoulder",
-				V(9, 10, 2.3),
-				V(x + (x < -116 and 4 or -4), 49, z),
-				stone,
-				x < -116 and math.pi / 2 or -math.pi / 2,
-				false,
-				true
-			)
+		-- Legs tuck 0.25 studs into the abutments so no slit shows beside them.
+		for _, x in { -216.25, -15.75 } do
+			part(tunnel, "StoneArchLeg", V(6, 47, 2.2), V(x, 31.9, z), stone)
 		end
 	end
 	-- Hidden foundation catches a slip at a seam without raising the authored bank surfaces.

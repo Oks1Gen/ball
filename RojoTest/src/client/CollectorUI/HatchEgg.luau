@@ -205,10 +205,8 @@ local function EggView(p: { World: number, Id: string, Color: Color3, Drive: () 
 	drive.current = p.Drive
 	React.useEffect(function()
 		local viewport = assert(ref.current, "Egg viewport must be mounted")
-		local map = (
-			workspace:FindFirstChild("Map") and workspace.Map:FindFirstChild(p.World == 2 and "World2" or "World1")
-		)
-		local scenery = map and map:FindFirstChild("SkippingWorld")
+		local map = (workspace:FindFirstChild("Map") and workspace.Map:FindFirstChild("World1"))
+		local scenery = require(game.ReplicatedStorage.Shared.WorldRefs).eggs(map)
 		local stand = scenery and scenery:FindFirstChild("Egg_" .. p.Id)
 		local source = stand and stand:FindFirstChild("ImportedVisual")
 		local model

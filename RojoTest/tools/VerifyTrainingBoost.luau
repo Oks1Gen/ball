@@ -1,6 +1,7 @@
 -- Isolated checks: no real remotes, profile writes, or Marketplace prompts.
 local Shared = game.ReplicatedStorage.Shared
 local Config = require(Shared.GameConfig)
+local WorldRefs = require(Shared.WorldRefs)
 local Motion = require(Shared.TrainingMotion)
 local Rules = require(Shared.Core.TrainingBoost)
 local Data = require(Shared.Core.ProfileData)
@@ -14,9 +15,9 @@ local function check(value, message)
 	assert(value, message)
 	checks += 1
 end
-for world = 1, 2 do
-	local arena = workspace.Map:FindFirstChild(if world == 1 then "World1" else "World2")
-	local zone = arena and arena:FindFirstChild("TrainingZone")
+for world = 1, 1 do
+	local arena = workspace.Map:FindFirstChild("World1")
+	local zone = arena and WorldRefs.training(arena)
 	for index = 1, 7 do
 		local lane = zone and zone:FindFirstChild("TrainingLane" .. index)
 		local strip = lane and lane:FindFirstChild("TrainingStrip")
