@@ -12,7 +12,7 @@ cut out of a sheet. Original generated files remain untouched.
 - `generation.json`: complete prompts and original generation paths.
 - `source-bounds.json`: alpha bounds before export.
 - `verification.json`: final dimensions, alpha bounds and padding checks.
-- `trail-icons-1024.zip`: exactly the ten standalone PNGs.
+The redundant ZIP was removed on 2026-11-03; all ten standalone PNGs remain.
 
 The approved set was uploaded through Studio MCP and connected in
 `RojoTest/src/client/UIAssets.luau` on 2026-10-31. `roblox-assets.json` records

@@ -1,0 +1,286 @@
+{
+  "date": "2026-11-03",
+  "backupCommit": "a010fd2",
+  "deletedArchiveRoots": 55,
+  "deletedInstances": 84300,
+  "unchangedCurrentMapNodes": 38419,
+  "remainingBackupDescendants": 80805,
+  "remainingWorld1JournalDescendants": 13128,
+  "archives": [
+    {
+      "objects": 1749,
+      "path": "ServerStorage.WorldBackups.ProgressionMap_BeforeVisualPolish_20261007_002938",
+      "name": "ProgressionMap_BeforeVisualPolish_20261007_002938"
+    },
+    {
+      "objects": 5298,
+      "path": "ServerStorage.WorldBackups.ProgressionMap_BeforeSurfaceRepair_20261007_003742",
+      "name": "ProgressionMap_BeforeSurfaceRepair_20261007_003742"
+    },
+    {
+      "objects": 2239,
+      "path": "ServerStorage.WorldBackups.BeforeImportedFields",
+      "name": "BeforeImportedFields"
+    },
+    {
+      "objects": 194,
+      "path": "ServerStorage.WorldBackups.BeforeBallGameplay",
+      "name": "BeforeBallGameplay"
+    },
+    {
+      "objects": 4,
+      "path": "ServerStorage.WorldBackups.BeforeKickMechanics",
+      "name": "BeforeKickMechanics"
+    },
+    {
+      "objects": 5,
+      "path": "ServerStorage.WorldBackups.BeforeMovedMapFix",
+      "name": "BeforeMovedMapFix"
+    },
+    {
+      "objects": 156,
+      "path": "ServerStorage.WorldBackups.PendingOakReplacement",
+      "name": "PendingOakReplacement"
+    },
+    {
+      "objects": 1649,
+      "path": "ServerStorage.WorldBackups.ProgressionMap_BeforeEnvironmentRefresh",
+      "name": "ProgressionMap_BeforeEnvironmentRefresh"
+    },
+    {
+      "objects": 1649,
+      "path": "ServerStorage.WorldBackups.World2Map_BeforeEnvironmentRefresh",
+      "name": "World2Map_BeforeEnvironmentRefresh"
+    },
+    {
+      "objects": 83,
+      "path": "ServerStorage.WorldBackups.BeforeBallShopStyle",
+      "name": "BeforeBallShopStyle"
+    },
+    {
+      "objects": 18,
+      "path": "ServerStorage.WorldBackups.BeforeLobbyRankings",
+      "name": "BeforeLobbyRankings"
+    },
+    {
+      "objects": 105,
+      "path": "ServerStorage.WorldBackups.BeforeImportedEggReplacement",
+      "name": "BeforeImportedEggReplacement"
+    },
+    {
+      "objects": 18,
+      "path": "ServerStorage.WorldBackups.BeforeSakuraPortal",
+      "name": "BeforeSakuraPortal"
+    },
+    {
+      "objects": 159,
+      "path": "ServerStorage.WorldBackups.BeforeSakuraResize",
+      "name": "BeforeSakuraResize"
+    },
+    {
+      "objects": 65,
+      "path": "ServerStorage.WorldBackups.ProgressionMap_BeforeLobbyFlowers",
+      "name": "ProgressionMap_BeforeLobbyFlowers"
+    },
+    {
+      "objects": 68,
+      "path": "ServerStorage.WorldBackups.BeforeSakuraColoring",
+      "name": "BeforeSakuraColoring"
+    },
+    {
+      "objects": 71,
+      "path": "ServerStorage.WorldBackups.SakuraTreeBeforePlacement",
+      "name": "SakuraTreeBeforePlacement"
+    },
+    {
+      "objects": 7,
+      "path": "ServerStorage.WorldBackups.TelescopeBeforeGroundFix",
+      "name": "TelescopeBeforeGroundFix"
+    },
+    {
+      "objects": 1228,
+      "path": "ServerStorage.WorldBackups.PalmBeachBeforeDetailPolish",
+      "name": "PalmBeachBeforeDetailPolish"
+    },
+    {
+      "objects": 1684,
+      "path": "ServerStorage.WorldBackups.PalmBeachBeforeCompositionMatch",
+      "name": "PalmBeachBeforeCompositionMatch"
+    },
+    {
+      "objects": 1684,
+      "path": "ServerStorage.WorldBackups.PalmBeachBeforeVisibleBoundaryFit",
+      "name": "PalmBeachBeforeVisibleBoundaryFit"
+    },
+    {
+      "objects": 1684,
+      "path": "ServerStorage.WorldBackups.PalmBeachBeforePalmPlanting",
+      "name": "PalmBeachBeforePalmPlanting"
+    },
+    {
+      "objects": 594,
+      "path": "ServerStorage.WorldBackups.DesertBeforeArchClearance",
+      "name": "DesertBeforeArchClearance"
+    },
+    {
+      "objects": 899,
+      "path": "ServerStorage.WorldBackups.VioletBeforeCrystalPolish",
+      "name": "VioletBeforeCrystalPolish"
+    },
+    {
+      "objects": 661,
+      "path": "ServerStorage.WorldBackups.EmberFirstComposition",
+      "name": "EmberFirstComposition"
+    },
+    {
+      "objects": 666,
+      "path": "ServerStorage.WorldBackups.EmberBeforePlantDensity",
+      "name": "EmberBeforePlantDensity"
+    },
+    {
+      "objects": 184,
+      "path": "ServerStorage.WorldBackups.BeforeEmberFrontTurn",
+      "name": "BeforeEmberFrontTurn"
+    },
+    {
+      "objects": 1775,
+      "path": "ServerStorage.WorldBackups.MoonlightFirstComposition",
+      "name": "MoonlightFirstComposition"
+    },
+    {
+      "objects": 1734,
+      "path": "ServerStorage.WorldBackups.PolarBeforeLandmarkSpacing",
+      "name": "PolarBeforeLandmarkSpacing"
+    },
+    {
+      "objects": 1556,
+      "path": "ServerStorage.WorldBackups.JapaneseBeforePanorama",
+      "name": "JapaneseBeforePanorama"
+    },
+    {
+      "objects": 31098,
+      "path": "ServerStorage.WorldBackups.BeforeBiomeLengthExpansion_20261015_122259",
+      "name": "BeforeBiomeLengthExpansion_20261015_122259"
+    },
+    {
+      "objects": 421,
+      "path": "ServerStorage.WorldBackups.BeforePortalFacingTwoAxes_20261018",
+      "name": "BeforePortalFacingTwoAxes_20261018"
+    },
+    {
+      "objects": 421,
+      "path": "ServerStorage.WorldBackups.BeforePortalWholeCompositionTurn_20261018",
+      "name": "BeforePortalWholeCompositionTurn_20261018"
+    },
+    {
+      "objects": 31,
+      "path": "ServerStorage.WorldBackups.DecoratedEggs15_BeforeColorRestore_20261021",
+      "name": "DecoratedEggs15_BeforeColorRestore_20261021"
+    },
+    {
+      "objects": 35,
+      "path": "ServerStorage.WorldBackups.WaterBeforeFootball_20261021",
+      "name": "WaterBeforeFootball_20261021"
+    },
+    {
+      "objects": 3,
+      "path": "ServerStorage.WorldBackups.BeforeTrophyMeshRecovery_20261022",
+      "name": "BeforeTrophyMeshRecovery_20261022"
+    },
+    {
+      "objects": 143,
+      "path": "ServerStorage.WorldBackups.ZoneDividersBeforeFieldTint_20261026",
+      "name": "ZoneDividersBeforeFieldTint_20261026"
+    },
+    {
+      "objects": 143,
+      "path": "ServerStorage.WorldBackups.ZoneDividersBeforeStrongerTint_20261026_163839",
+      "name": "ZoneDividersBeforeStrongerTint_20261026_163839"
+    },
+    {
+      "objects": 143,
+      "path": "ServerStorage.WorldBackups.ZoneDividersBeforeCenteredTitles_20261026_173941",
+      "name": "ZoneDividersBeforeCenteredTitles_20261026_173941"
+    },
+    {
+      "objects": 115,
+      "path": "ServerStorage.WorldBackups.BeforeTrainingLaneSigns_20261026",
+      "name": "BeforeTrainingLaneSigns_20261026"
+    },
+    {
+      "objects": 3553,
+      "path": "ServerStorage.WorldBackups.BeforeTrainingLaneDetailPass_20261029",
+      "name": "BeforeTrainingLaneDetailPass_20261029"
+    },
+    {
+      "objects": 2401,
+      "path": "ServerStorage.WorldBackups.BeforeLaneGateProgression_20261029",
+      "name": "BeforeLaneGateProgression_20261029"
+    },
+    {
+      "objects": 4374,
+      "path": "ServerStorage.WorldBackups.BeforeDistinctLanePalette_20261029",
+      "name": "BeforeDistinctLanePalette_20261029"
+    },
+    {
+      "objects": 40,
+      "path": "ServerStorage.WorldBackups.BeforeLobbyArrowRemoval_20261029",
+      "name": "BeforeLobbyArrowRemoval_20261029"
+    },
+    {
+      "objects": 71,
+      "path": "ServerStorage.WorldBackups.BeforeLowPolyV2Balls",
+      "name": "BeforeLowPolyV2Balls"
+    },
+    {
+      "objects": 263,
+      "path": "ServerStorage.WorldBackups.BeforeMinimalBallStand",
+      "name": "BeforeMinimalBallStand"
+    },
+    {
+      "objects": 33,
+      "path": "ServerStorage.WorldBackups.BeforeArchCleanup_20261101",
+      "name": "BeforeArchCleanup_20261101"
+    },
+    {
+      "objects": 1,
+      "path": "ServerStorage.WorldBackups.BeforeVolcanic_HackedPixel",
+      "name": "BeforeVolcanic_HackedPixel"
+    },
+    {
+      "objects": 1,
+      "path": "ServerStorage.WorldBackups.BeforeVolcanic_HackedPixel",
+      "name": "BeforeVolcanic_HackedPixel"
+    },
+    {
+      "objects": 1,
+      "path": "ServerStorage.WorldBackups.BeforeVolcanic_HackedPixel",
+      "name": "BeforeVolcanic_HackedPixel"
+    },
+    {
+      "objects": 1,
+      "path": "ServerStorage.WorldBackups.BeforeVolcanic_HackedPixel",
+      "name": "BeforeVolcanic_HackedPixel"
+    },
+    {
+      "objects": 1,
+      "path": "ServerStorage.WorldBackups.BeforeVolcanic_HackedPixel",
+      "name": "BeforeVolcanic_HackedPixel"
+    },
+    {
+      "objects": 1,
+      "path": "ServerStorage.WorldBackups.BeforeVolcanic_HackedPixel",
+      "name": "BeforeVolcanic_HackedPixel"
+    },
+    {
+      "objects": 2,
+      "path": "ServerStorage.WorldBackups.BeforeVolcanic_HackedAdminEgg",
+      "name": "BeforeVolcanic_HackedAdminEgg"
+    },
+    {
+      "objects": 13118,
+      "path": "ServerStorage.WorldLayoutState.World2",
+      "name": "World2"
+    }
+  ]
+}

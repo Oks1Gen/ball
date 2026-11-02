@@ -161,7 +161,7 @@ Edit, и в Play (там, где это указано в таблице).
 | `VerifyRebirthProgression.luau` | Проверяет границы уровней для восьми счётчиков перерождений, порог уровня 80, формулу сброса, случай 999 999, запрет пропуска уровня силой мяча | Studio MCP, Edit или Server | Edit / Server | Да: только чтение | Нет |
 | `VerifyShotFeedback.luau` | Проверяет скорость, FOV, длину следа, время контакта и фиксированные награды за семь отскоков в обоих мирах | Studio MCP, Edit или Play | Edit / Play | Да: только чтение | Нет |
 | `VerifySkippingWorld.luau` | Сверяет текущую карту с бэкапом `BeforeSkippingGame`, проверяет семь дорожек, восемь биомов, полы броска и высоту промпта портала | Studio MCP, Edit | Edit | Да: только чтение | Нет |
-| `VerifyTrainingBounces.luau` | Проверяет три и четыре контакта по дорожкам, дробный нанос, камеру в четырёх размерах экрана; камера остаётся неизменной | Studio MCP, Edit или Play | Edit / Play | Да: только чтение | Нет |
+| `VerifyTrainingBounces.luau` | Проверяет три и четыре контакта по дорожкам, сохранение дробной награды и рост семи дорожек через WorldRefs; камера остаётся неизменной | Studio MCP, Edit или Play | Edit / Play | Да: только чтение | Нет |
 | `VerifyUncommonEgg.luau` | Проверяет сто исходов зелёного яйца, шансы, цену 500 Crowns, сохранность пула Common и сохранённых питомцев, четыре гидратированных меша | Studio MCP, Edit | Edit | Да: только чтение | Нет |
 | `VerifyWorldShotProgression.luau` | Проверяет пороги обоих миров, рост дистанции, эквивалентность силы мяча, большие значения Skill, предел трассы и устойчивость к переносу и повороту карты | Studio MCP, Edit или Server | Edit / Server | Да: только чтение | Нет |
 
@@ -191,8 +191,6 @@ JSON и обратно), служебные `.mjs`/`.ps1` и список шаб
 | `ExportPortals.py`, `ExportPortalsNoTextures.py`, `ExportPetPack.py`, `ExportRobloxPack.py`, `ExportTrophy.py` | Выгружают геометрию порталов, питомцев и трофея из Blender в JSON |
 | `InspectPetPack.py`, `InspectPortals.py`, `InspectTrophy.py` | Печатают состав и метрики исходных наборов без изменения геометрии |
 | `RestoreDecoratedEggColors.py` | Возвращает исходные цвета украшенных яиц |
-| `ConnectCollectorUI.py` | Однократная миграция исходников клиента; прежняя версия сохранена в `backups/` |
-| `PrepareUIPackages.py` | Заменяет строковые alias'ы Ripple на Instance-require |
 | `check.mjs` | Полная локальная проверка проекта (запускается из `RojoTest/`) |
 | `prepare-ui.mjs` | То же для Node-части: готовит Ripple после `wally install` |
 | `rojo.ps1` | Запуск и остановка Rojo-сервера проекта (`StartRojo.bat` / `StopRojo.bat`) |

@@ -1,6 +1,6 @@
 # Ball
 
-Roblox-проект из [Oks1Gen/ball](https://github.com/Oks1Gen/ball). Исходники игры, ассеты и Wally-зависимости находятся в `RojoTest/`.
+Roblox-проект из [Oks1Gen/ball](https://github.com/Oks1Gen/ball). Исходники игры и Wally-зависимости находятся в `RojoTest/`; текущие UI-ассеты и исходники мячей — в `Assets/UI/` и `Assets/Balls/`.
 
 ## Запуск
 

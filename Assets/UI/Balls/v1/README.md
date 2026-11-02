@@ -3,8 +3,8 @@
 Ten individual transparent PNG icons, 1254 x 1254, generated with built-in ImageGen from the user's actual Blender models. Final files are in `final/`. Volcano uses the richer second revision based directly on its model render.
 
 - `source-renders/`: isolated Blender captures at 45 degree azimuth and 45 degree elevation; `capture.json` records source objects and successful renders.
-- `imagegen-initial/`: first outlined icon generation.
-- `previous/`: preserved superseded volcano outline pass.
+- The first outlined generation (`imagegen-initial/`) is archived in Git commit `a010fd2`.
+- The superseded Volcano pass (`previous/`) is archived in Git commit `a010fd2`.
 - `preview.png`: QA contact sheet on alternating light/dark backgrounds; this is not an inventory asset.
 - `preview.json`: resolution and alpha spot checks for all ten final files.
 - `prompts-and-assets.json`: original generation prompts and source mapping; current upload records are in `roblox-assets.json`.

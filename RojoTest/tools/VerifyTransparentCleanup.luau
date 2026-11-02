@@ -58,9 +58,11 @@ function Verify.compare(map: Instance): any
 		assert(part.Parent == nil, "Reviewed garbage was not deleted")
 	end
 	local current = gameplay(map)
+	local verifiedTrainingLanes = 0
 	for world, original in snapshot.gameplay do
 		assert(current[world].limit == original.limit, "Shot limit changed")
 		for i, lane in original.lanes do
+			verifiedTrainingLanes += 1
 			for j, value in lane do
 				assert(current[world].lanes[i][j] == value, "Training trajectory or sign changed")
 			end
@@ -71,7 +73,7 @@ function Verify.compare(map: Instance): any
 	return {
 		removedParts = #snapshot.removed,
 		unchangedParts = checked,
-		verifiedTrainingLanes = 14,
+		verifiedTrainingLanes = verifiedTrainingLanes,
 		remainingCandidates = #nextPlan.parts,
 	}
 end

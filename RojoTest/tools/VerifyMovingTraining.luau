@@ -1,6 +1,7 @@
 -- Run in Studio with new sources synced. Uses temporary shot state, no player data changes.
 local Shared = game.ReplicatedStorage.Shared
 local Config = require(Shared.GameConfig)
+local Refs = require(Shared.WorldRefs)
 local Goal = require(Shared.TrainingGoal)
 local Tracker = require(game.StarterPlayer.StarterPlayerScripts.Client.Modules.TrainingShot)
 local checks, lanes = 0, 0
@@ -9,7 +10,7 @@ local function check(value, message)
 	checks += 1
 end
 
-local zone = workspace.Map.World1.TrainingZone
+local zone = Refs.training(workspace.Map.World1)
 for index = 1, 7 do
 	local lane = zone:FindFirstChild("TrainingLane" .. index)
 	local strip = lane and lane:FindFirstChild("TrainingStrip")

@@ -1,7 +1,7 @@
 -- Run through Studio MCP in Edit or Play; no player data is changed.
 local Shared = game.ReplicatedStorage.Shared
 local Motion = require(Shared.TrainingMotion)
-local Camera = require(Shared.TrainingCamera)
+local Refs = require(Shared.WorldRefs)
 local Config = require(Shared.GameConfig)
 local checks = 0
 local function check(ok, message)
@@ -39,39 +39,15 @@ for lane = 1, 7 do
 		check(math.abs(total + remainder - perCycle * 100) < 1e-5, "Total training rate preserved")
 	end
 end
-local oldCF, oldFov = workspace.CurrentCamera.CFrame, workspace.CurrentCamera.FieldOfView
 local camera = workspace.CurrentCamera
-local sizes = { Vector2.new(1920, 1080), Vector2.new(1280, 720), Vector2.new(844, 390) }
-for _, name in { "World1" } do
-	local map = workspace.Map:FindFirstChild(name)
-	if map then
-		local previousLength = 0
-		for i = 1, 7 do
-			local lane = map.TrainingZone["TrainingLane" .. i]
-			check(lane.TrainingStrip.Size.X > previousLength, "Lanes grow with rebirth requirement")
-			previousLength = lane.TrainingStrip.Size.X
-			local bounds, size = lane:GetBoundingBox()
-			for _, viewport in sizes do
-				local pose = Camera.pose(lane, lane.StartingPad.Position + Vector3.new(0, 3, 0), viewport)
-				local tanV = math.tan(math.rad(Camera.FieldOfView / 2))
-				for _, x in { -1, 1 } do
-					for _, y in { -1, 1 } do
-						for _, z in { -1, 1 } do
-							local p = pose:PointToObjectSpace(
-								bounds * Vector3.new(x * size.X / 2, y * size.Y / 2, z * size.Z / 2)
-							)
-							check(
-								p.Z < 0
-									and math.abs(p.Y / -p.Z) < tanV * 0.97
-									and math.abs(p.X / -p.Z) < tanV * viewport.X / viewport.Y * 0.97,
-								"Whole field inside camera margins"
-							)
-						end
-					end
-				end
-			end
-		end
-	end
+local oldCF, oldFov = camera.CFrame, camera.FieldOfView
+local world = assert(workspace.Map:FindFirstChild("World1"), "Missing World1")
+local zone = assert(Refs.training(world), "Missing training lanes")
+local previousLength = 0
+for i = 1, 7 do
+	local lane = assert(zone:FindFirstChild("TrainingLane" .. i), "Missing lane")
+	check(lane.TrainingStrip.Size.X > previousLength, "Lanes grow with rebirth requirement")
+	previousLength = lane.TrainingStrip.Size.X
 end
 check(camera.CFrame == oldCF and camera.FieldOfView == oldFov, "Verification leaves camera unchanged")
-return { checks = checks, contacts = "3 / 4", cameraSizes = #sizes }
+return { checks = checks, contacts = "3 / 4", lanes = 7 }

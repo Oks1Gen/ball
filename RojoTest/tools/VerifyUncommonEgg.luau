@@ -20,11 +20,10 @@ assert(Config.find(Config.Eggs, "Uncommon").cost == 500)
 for _, id in { "Dog", "Cat", "Bunny", "Fox", "Dragon", "AdminDragon", "Cactus", "Frog", "Watermelon", "GreenDragon" } do
 	assert(Config.pet(id), "Saved pet definition missing: " .. id)
 end
-for _, egg in { "Common" } do
-	assert(#Config.eggPets(egg) == 5)
-	for roll = 1, 100 do
-		assert(table.find({ "Dog", "Cat", "Bunny", "Fox", "Dragon" }, Config.rollEggPet(egg, roll).id))
-	end
+local common = { ScarletMushroom = true, StrawberryCake = true, AutumnCat = true, FlameCat = true }
+assert(#Config.eggPets("Common") == 4)
+for roll = 1, 100 do
+	assert(common[Config.rollEggPet("Common", roll).id], "Current Common pool changed")
 end
 local visuals = shared.PetVisuals:Clone()
 visuals.Name = "UncommonEggVisualCheck"

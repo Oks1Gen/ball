@@ -14,8 +14,8 @@ data. Starter Pack displays its real contents (10K Wins and Double Skill).
 The existing client remains the single owner of active menu identity, blur,
 HUD visibility and server actions. The four new screens use React Luau/
 ReactRoblox 17.2.1 and Ripple 0.10.2, pinned in wally.toml/wally.lock and mapped
-to ReplicatedStorage.Packages. Run `tools/bin/wally.exe install`, then
-`tools/PrepareUIPackages.py` after reinstalling dependencies: the latter resolves
+to ReplicatedStorage.Packages. Run `wally install`, then
+`node tools/prepare-ui.mjs` after reinstalling dependencies: the latter resolves
 Ripple's string aliases into Roblox Instance requires. Dependency licenses are
 retained under Packages. Theme, primitives, screens and lifecycle are separate
 modules; the old four screen builders have been replaced by adapter calls.
@@ -731,7 +731,7 @@ pre-change map and the disabled football prototype scripts.
 `src/server/SkippingGame.luau` owns rewards, purchases, profile saving and validation.
 `src/client/init.client.luau` supplies the HUD, menus, stone flight, pets and sound.
 `src/client/Icons.luau` displays the generated icon atlas configured by
-`src/client/UIAssets.luau`. `NativeIcons.luau` retains the original native artwork
+`src/client/UIAssets.luau`. The removed `NativeIcons.luau` is preserved in Git commit `a010fd2` with the original native artwork
 as a fallback for an unset atlas or an unknown icon type.
 `src/server/World2.luau` creates a separate advanced arena, retaining the same
 layout with a purple sky-garden palette and its own eight-biome watercourse.

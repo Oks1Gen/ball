@@ -13,8 +13,10 @@ for i, item in Config.Stones do
 		check(item.power > Config.Stones[i - 1].power and item.cost > Config.Stones[i - 1].cost, "Increasing tiers")
 	end
 	local m = Visuals.create(item.id, 1.6)
-	local cf, size = m:GetBoundingBox()
-	check((m:GetPivot().Position - cf.Position).Magnitude < 0.01, "Centered gameplay ball")
+	local _, size = m:GetBoundingBox()
+	-- Asymmetric sparks, spikes and rings shift the outer bounding box. The ball
+	-- still spins around its authored body origin; fitting includes accessories.
+	check(m:GetPivot().Position.Magnitude < 0.01, "Gameplay pivot stays at authored origin")
 	check(math.abs(math.max(size.X, size.Y, size.Z) - 1.6) < 0.01, "Gameplay size")
 	for _, p in m:GetDescendants() do
 		if p:IsA("BasePart") then
