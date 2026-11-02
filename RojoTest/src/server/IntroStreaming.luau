@@ -1,6 +1,7 @@
 --!strict
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local WorldRefs = require(ReplicatedStorage.Shared.WorldRefs)
 local IntroStreaming = {}
 function IntroStreaming.start()
 	local remote = Instance.new("RemoteEvent")
@@ -31,12 +32,25 @@ function IntroStreaming.start()
 		used[player] = true
 		local anchors = {}
 		sessions[player] = anchors
-		-- Server-owned positions; the client cannot request arbitrary map regions.
-		local positions = { Vector3.new(48, 30, 200) }
-		for i = 0, 7 do
-			table.insert(positions, Vector3.new(48, 30, -10.399963 - i * 270))
+		-- Server-owned positions read from the scene; the client cannot request arbitrary regions.
+		local positions = {}
+		local map = workspace:FindFirstChild("Map")
+		local world = map and map:FindFirstChild("World1")
+		local spawn = world and WorldRefs.spawn(world)
+		if spawn then
+			table.insert(positions, spawn.Position + Vector3.new(0, 10, 0))
 		end
-		table.insert(positions, Vector3.new(48, 70, -2029))
+		local last: BasePart? = nil
+		for i = 1, 8 do
+			local field = world and WorldRefs.field(world, i)
+			if field then
+				table.insert(positions, Vector3.new(field.Position.X - 7, field.Position.Y + 9.4, field.Position.Z))
+				last = field
+			end
+		end
+		if last then
+			table.insert(positions, last.Position + Vector3.new(0, 50, 7 - last.Size.Z / 2))
+		end
 		for _, position in positions do
 			local anchor = Instance.new("Part")
 			anchor.Name = "IntroStreamingFocus"

@@ -3,8 +3,9 @@
 local Config = require(game.ReplicatedStorage.Shared.GameConfig)
 local Goal = require(game.ReplicatedStorage.Shared.TrainingGoal)
 local UIAssets = require(game.StarterPlayer.StarterPlayerScripts.Client.UIAssets)
+local Scale = require(game.ReplicatedStorage.Shared.WorldScale)
 local Signs = {}
-local HEIGHT = 4.6
+local HEIGHT = 4.6 -- authored studs; the sign scales with the world
 
 local function top(part: BasePart): number
 	local cf, size = part.CFrame, part.Size
@@ -36,6 +37,8 @@ end
 
 function Signs.apply(map: Instance, definitions: any?)
 	local lanes = definitions or Config.Lanes
+	local scale = Scale.factor(map)
+	local height = HEIGHT * scale
 	local zone = map:FindFirstChild("TrainingZone")
 	if not zone then
 		return
@@ -76,7 +79,7 @@ function Signs.apply(map: Instance, definitions: any?)
 			then net.Position
 			elseif endpoint and endpoint:IsA("BasePart") then endpoint.Position
 			else strip.Position
-		local goalTop = if net then top(net) else top(strip) + 5.4
+		local goalTop = if net then top(net) else top(strip) + 5.4 * scale
 		local visual = lane:FindFirstChild("ImportedField")
 		if visual then
 			for _, part in visual:GetChildren() do
@@ -93,7 +96,7 @@ function Signs.apply(map: Instance, definitions: any?)
 		anchor.CanCollide, anchor.CanTouch, anchor.CanQuery = false, false, false
 		anchor.CastShadow = false
 		anchor.Size = Vector3.one * 0.1
-		anchor.Position = Vector3.new(center.X, goalTop + HEIGHT / 2 + 0.9, center.Z)
+		anchor.Position = Vector3.new(center.X, goalTop + height / 2 + 0.9 * scale, center.Z)
 		anchor.Parent = lane
 		local previousGui = anchor:FindFirstChild("TrainingLaneSign")
 		local gui = if previousGui and previousGui:IsA("BillboardGui")
@@ -101,7 +104,7 @@ function Signs.apply(map: Instance, definitions: any?)
 			else Instance.new("BillboardGui")
 		gui.Name = "TrainingLaneSign"
 		gui.Adornee = anchor
-		gui.Size = UDim2.fromScale(9, HEIGHT)
+		gui.Size = UDim2.fromScale(9 * scale, height)
 		gui.StudsOffset = Vector3.zero
 		gui.AlwaysOnTop = false
 		gui.LightInfluence = 0

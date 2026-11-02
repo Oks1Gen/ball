@@ -266,7 +266,8 @@ function Panel.mount(context: Context)
 		end)
 	end
 
-	local function grid(items: any, y: number, minWidth: number, cellHeight: number): number
+	type CommandButton = { label: string, command: string, value: any?, color: Color3? }
+	local function grid(items: { CommandButton }, y: number, minWidth: number, cellHeight: number): number
 		local inset = MotionConfig.Spacing.ScrollInset
 		local available = bodyWidth - inset * 2
 		local minimumGap = Spacing.gap(minWidth)

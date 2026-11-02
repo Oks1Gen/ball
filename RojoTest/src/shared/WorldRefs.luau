@@ -14,6 +14,14 @@ function Refs.field(world: any, index: number): any
 	return if zones then zone and zone:FindFirstChild("Field") else course and course:FindFirstChild("Field_" .. index)
 end
 
+function Refs.finish(world: any): BasePart?
+	local course = Refs.course(world)
+	local zones = course and course:FindFirstChild("Zones")
+	local zone = zones and zones:FindFirstChild("Zone08")
+	local boundaries = zone and zone:FindFirstChild("Boundaries")
+	return boundaries and boundaries:FindFirstChild("ShotFinish") :: BasePart?
+end
+
 function Refs.boundaries(world: any): any
 	local course = Refs.course(world)
 	return (course and course:FindFirstChild("Boundaries")) or (world and world:FindFirstChild("ZoneDividers"))
@@ -43,6 +51,12 @@ function Refs.apron(world: any): any
 	local lobby = world and world:FindFirstChild("Lobby")
 	local launch = lobby and lobby:FindFirstChild("LaunchArea")
 	return (launch and launch:FindFirstChild("ThrowingApron")) or (lobby and lobby:FindFirstChild("ThrowingApron"))
+end
+
+function Refs.spawn(world: any): any
+	local lobby = world and world:FindFirstChild("Lobby")
+	local spawns = lobby and lobby:FindFirstChild("Spawns")
+	return spawns and spawns:FindFirstChildWhichIsA("SpawnLocation")
 end
 
 function Refs.rankings(world: any): any

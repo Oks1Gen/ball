@@ -20,6 +20,7 @@ function Controller:Start()
 	local Presentation = require(clientRoot.Modules:WaitForChild("UiPresentation"))
 	local Kit = require(clientRoot.Controllers:WaitForChild("HudKit"))
 	local HudBuilder = require(clientRoot.Controllers:WaitForChild("HudBuilder"))
+	local UpgradeNotices = require(clientRoot.Controllers:WaitForChild("UpgradeNotices"))
 	local TopbarControls = require(clientRoot.Controllers:WaitForChild("TopbarControls"))
 	local HudMotion = require(clientRoot.Controllers:WaitForChild("HudMotion"))
 	local MotionConfig = require(ReplicatedStorage.Shared:WaitForChild("UiMotionConfig"))
@@ -392,6 +393,25 @@ function Controller:Start()
 		end
 	end
 
+	local upgradeNotices = UpgradeNotices.mount({
+		parent = player:WaitForChild("PlayerGui"),
+		blocked = function()
+			return currentPanel ~= nil
+				or flight ~= nil
+				or hatchBusy
+				or player:GetAttribute("MapIntroActive") == true
+				or (kickTiming ~= nil and kickTiming.active())
+				or game:GetService("GuiService").MenuIsOpen
+		end,
+		open = function(upgrade: any)
+			if upgrade.kind == "Ball" then
+				openCollector("Inventory", "Inventory", upgrade.itemId)
+			else
+				openPanel(if upgrade.kind == "Trail" then "Trails" else "Rebirth")
+			end
+		end,
+	})
+
 	topbar = TopbarControls.mount(player, function(name: string)
 		openPanel(name)
 	end)
@@ -698,6 +718,7 @@ function Controller:Start()
 		collectorUI:setHidden(flight ~= nil)
 		local d = info.data
 		gui:SetAttribute("ReducedMotion", d.settings.effects == false)
+		upgradeNotices.update(info)
 		hudRefs.skillText.Text = Config.format(d.skill) .. " SKILL"
 		hudRefs.multiText.Text = "×" .. string.format("%.2f", info.multiplier) .. " Multiplier"
 		local gainedLevels = info.trainingLevelsGained or 0
@@ -775,6 +796,7 @@ function Controller:Start()
 
 	RunService.RenderStepped:Connect(function(dt: number)
 		local now = os.clock()
+		upgradeNotices.frame(dt)
 		if
 			not welcomeShown
 			and latest
@@ -857,6 +879,18 @@ function Controller:Start()
 			goalEffects.clearTraining()
 		end
 		if latest then
+			-- Geometry is local and immediate; cooldown/readiness still comes from the server.
+			local character = player.Character
+			local characterRoot = character and character:FindFirstChild("HumanoidRootPart")
+			local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+			local map = workspace:FindFirstChild("Map")
+			local arena = map and map:FindFirstChild("World1")
+			latest.canThrow = latest.throwReady == true
+				and characterRoot ~= nil
+				and characterRoot:IsA("BasePart")
+				and humanoid ~= nil
+				and humanoid.Health > 0
+				and Config.inThrowZone(arena, characterRoot.Position)
 			local timingActive = kickTiming.active()
 			hudRefs.throwButton.Visible = latest.canThrow and not flight and not latest.training and not timingActive
 			local throwShadow = HudLayout.findNode(hud, "ThrowShadow")
@@ -891,6 +925,7 @@ function Controller:Start()
 	end)
 
 	clientRoot.Destroying:Connect(function()
+		upgradeNotices.destroy()
 		tutorial.destroy()
 		kickTiming.destroy()
 		viewportConnection:Disconnect()

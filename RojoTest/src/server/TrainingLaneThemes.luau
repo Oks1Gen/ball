@@ -1,5 +1,6 @@
 --!strict
 -- Approved biome reference B. Cosmetic parts only; authored lanes and nets stay in place.
+local Scale = require(game.ReplicatedStorage.Shared.WorldScale)
 local Themes = {}
 local V, RGB = Vector3.new, Color3.fromRGB
 local WHITE = RGB(245, 246, 231)
@@ -949,6 +950,8 @@ function Themes.apply(map: Instance)
 		return
 	end
 	local zone = assert(map:FindFirstChild("TrainingZone"))
+	-- The goal sign floats an authored 3.5 studs above the crest, shrunk with the world.
+	local signRise = 3.5 * Scale.factor(map)
 	for i = 1, 7 do
 		local lane = assert(zone:FindFirstChild("TrainingLane" .. i)) :: Model
 		local existing = lane:FindFirstChild("BiomeReferenceVisuals")
@@ -957,7 +960,7 @@ function Themes.apply(map: Instance)
 			local anchor = lane:FindFirstChild("GoalSignAnchor")
 			if anchor and anchor:IsA("BasePart") then
 				anchor.Position =
-					V(anchor.Position.X, (existing:GetAttribute("CrestWorldY") :: number) + 3.5, anchor.Position.Z)
+					V(anchor.Position.X, (existing:GetAttribute("CrestWorldY") :: number) + signRise, anchor.Position.Z)
 			end
 			continue
 		end
@@ -1015,7 +1018,7 @@ function Themes.apply(map: Instance)
 		local anchor = lane:FindFirstChild("GoalSignAnchor")
 		if anchor and anchor:IsA("BasePart") then
 			anchor.Position =
-				V(anchor.Position.X, (visual:GetAttribute("CrestWorldY") :: number) + 3.5, anchor.Position.Z)
+				V(anchor.Position.X, (visual:GetAttribute("CrestWorldY") :: number) + signRise, anchor.Position.Z)
 		end
 		task.wait()
 	end

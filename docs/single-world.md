@@ -2,7 +2,9 @@
 
 С 02.11.2026 в игре один мир — `Workspace.Map.World1`. World2, его портал
 в лобби и генератор второго мира удалены. В World1 остаются 8 полей, 7
-тренировок, 10 слотов мячей и 4 обычных яйца; конечный биом Sakura сохранён.
+тренировок, 10 слотов мячей и 4 обычных яйца. Позже в тот же день FootballCourse
+переделан в Football City с финалом City Stadium; прежний декор Sakura сохранён
+в ServerStorage. Подробности — [football-course.md](football-course.md).
 
 `SingleWorld.apply()` перед сборкой убирает из Workspace остатки World2,
 World2Map и старого портала. WorldService собирает и оформляет только World1.

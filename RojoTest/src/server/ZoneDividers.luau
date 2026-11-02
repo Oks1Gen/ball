@@ -1,7 +1,9 @@
 --!strict
 local Config = require(game.ReplicatedStorage.Shared.GameConfig)
 local Refs = require(game.ReplicatedStorage.Shared.WorldRefs)
+local Scale = require(game.ReplicatedStorage.Shared.WorldScale)
 local Dividers = {}
+-- Authored studs; every divider size below is multiplied by the world scale.
 local HEIGHT = 33
 local CANVAS = Vector2.new(2048, 144)
 
@@ -50,6 +52,8 @@ function Dividers.align(map: any)
 	if not root then
 		return
 	end
+	local k = Scale.factor(map)
+	local height = HEIGHT * k
 	for index = 1, #Config.Biomes - 1 do
 		local current, following = Refs.field(map, index), Refs.field(map, index + 1)
 		local group = assert(root:FindFirstChild("Boundary" .. index), "Missing course divider")
@@ -69,16 +73,16 @@ function Dividers.align(map: any)
 				end
 			end
 		end
-		boundary *= CFrame.new((left + right) / 2, 0.06, 0)
+		boundary *= CFrame.new((left + right) / 2, 0.06 * k, 0)
 		local width = right - left
 		local wall = group.Wall
-		wall.Size, wall.CFrame = Vector3.new(width, HEIGHT, 0.1), boundary * CFrame.new(0, HEIGHT / 2, 0)
+		wall.Size, wall.CFrame = Vector3.new(width, height, 0.1 * k), boundary * CFrame.new(0, height / 2, 0)
 		wall.Color, wall.Transparency = following.Color, 0.5
-		group.TopEdge.Size = Vector3.new(width, 0.22, 0.3)
-		group.TopEdge.CFrame = boundary * CFrame.new(0, HEIGHT, 0)
+		group.TopEdge.Size = Vector3.new(width, 0.22 * k, 0.3 * k)
+		group.TopEdge.CFrame = boundary * CFrame.new(0, height, 0)
 		group.TopEdge.Color = following.Color
 		local anchor = group.TitleAnchor
-		anchor.Size, anchor.CFrame, anchor.Color = Vector3.new(width, 11, 0.29), wall.CFrame, following.Color
+		anchor.Size, anchor.CFrame, anchor.Color = Vector3.new(width, 11 * k, 0.29 * k), wall.CFrame, following.Color
 		group:SetAttribute("FromZone", Config.Biomes[index].name)
 		group:SetAttribute("ToZone", Config.Biomes[index + 1].name)
 		for _, gui in anchor:GetChildren() do
@@ -112,6 +116,8 @@ function Dividers.apply(map: any)
 			end
 		end
 	end
+	local k = Scale.factor(map)
+	local height = HEIGHT * k
 	local root = map:FindFirstChild("ZoneDividers")
 	if root then
 		local updateTint = root:GetAttribute("FieldTintVersion") ~= 2
@@ -132,10 +138,10 @@ function Dividers.apply(map: any)
 				if updateTint then
 					wall.Transparency = 0.5
 				end
-				local delta = HEIGHT - wall.Size.Y
+				local delta = height - wall.Size.Y
 				if math.abs(delta) > 0.001 then
 					local shift = wall.CFrame.UpVector * delta
-					wall.Size = Vector3.new(wall.Size.X, HEIGHT, wall.Size.Z)
+					wall.Size = Vector3.new(wall.Size.X, height, wall.Size.Z)
 					wall.CFrame += shift / 2
 					for _, name in { "TopEdge", "TitleAnchor" } do
 						local node = group:FindFirstChild(name)
@@ -149,7 +155,7 @@ function Dividers.apply(map: any)
 					if anchor and anchor:IsA("BasePart") then
 						anchor.CFrame = wall.CFrame
 						-- Keep both text faces just outside the translucent wall.
-						anchor.Size = Vector3.new(anchor.Size.X, anchor.Size.Y, wall.Size.Z + 0.04)
+						anchor.Size = Vector3.new(anchor.Size.X, anchor.Size.Y, wall.Size.Z + 0.04 * k)
 					end
 				end
 			end
@@ -189,10 +195,16 @@ function Dividers.apply(map: any)
 		group:SetAttribute("ToZone", Config.Biomes[index + 1].name)
 		group.Parent = root
 		local color = following.Color
-		part(group, "Wall", Vector3.new(width, HEIGHT, 0.25), boundary * CFrame.new(0, HEIGHT / 2, 0), color, 0.5)
-		part(group, "TopEdge", Vector3.new(width, 0.22, 0.3), boundary * CFrame.new(0, HEIGHT, 0), color, 0.2)
-		local anchor =
-			part(group, "TitleAnchor", Vector3.new(width, 11, 0.29), boundary * CFrame.new(0, HEIGHT / 2, 0), color, 1)
+		part(group, "Wall", Vector3.new(width, height, 0.25 * k), boundary * CFrame.new(0, height / 2, 0), color, 0.5)
+		part(group, "TopEdge", Vector3.new(width, 0.22 * k, 0.3 * k), boundary * CFrame.new(0, height, 0), color, 0.2)
+		local anchor = part(
+			group,
+			"TitleAnchor",
+			Vector3.new(width, 11 * k, 0.29 * k),
+			boundary * CFrame.new(0, height / 2, 0),
+			color,
+			1
+		)
 		title(anchor, Enum.NormalId.Back, Config.Biomes[index + 1].name)
 		title(anchor, Enum.NormalId.Front, Config.Biomes[index].name)
 	end

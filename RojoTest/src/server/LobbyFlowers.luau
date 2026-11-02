@@ -1,6 +1,7 @@
 --!strict
+local Construction = require(script.Parent.ConstructionTypes)
 local Flowers = {}
-function Flowers.apply(map)
+function Flowers.apply(map: Construction.World): number?
 	local world = map.SkippingWorld
 	if world:FindFirstChild("ImprovedLobbyFlowers") then
 		return
@@ -18,7 +19,7 @@ function Flowers.apply(map)
 	local backup = Instance.new("Folder")
 	backup.Name = map.Name .. "_BeforeLobbyFlowers"
 	backup.Parent = game.ServerStorage.WorldBackups
-	local function part(parent, name, size, cf, color, shape)
+	local function part(parent: Instance, name: string, size: Vector3, cf: CFrame, color: Color3, shape: Enum.PartType?)
 		local p = Instance.new("Part")
 		p.Name = name
 		p.Size = size
@@ -31,7 +32,7 @@ function Flowers.apply(map)
 		p.CanQuery = false
 		p.TopSurface = Enum.SurfaceType.Smooth
 		p.BottomSurface = Enum.SurfaceType.Smooth
-		if shape then
+		if shape and p:IsA("Part") then
 			p.Shape = shape
 		end
 		p.Parent = parent

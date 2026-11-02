@@ -1,18 +1,19 @@
 --!strict
+local Construction = require(script.Parent.ConstructionTypes)
 -- Rearranges the authored World 1 lobby; never regenerates imported scenery.
 local Layout = {}
 local V, CF, C = Vector3.new, CFrame.new, Color3.fromRGB
 local VERSION = 1
 local TEXTURE = "rbxassetid://88156646156237"
 
-function Layout.apply(map)
+function Layout.apply(map: Construction.World): Instance?
 	if map:GetAttribute("LobbyLayoutVersion") == VERSION then
 		return map:FindFirstChild("TwoAxesLayout")
 	end
 	assert(map.Name == "World1" and map:GetAttribute("Version") == 9, "Unexpected authored map")
 	local lobby, skip, training = map.Lobby, map.SkippingWorld, map.TrainingZone
 	local frame = lobby.ThrowingApron.CFrame * CF(115, -0.3, -13)
-	local function localPoint(p)
+	local function localPoint(p: Vector3)
 		return frame:PointToObjectSpace(p)
 	end
 	local function _point(x, y, z)
@@ -40,7 +41,17 @@ function Layout.apply(map)
 	borders.Name = "Borders"
 	borders.Parent = root
 	local pale, edge = C(205, 218, 231), C(115, 135, 156)
-	local function part(parent, name, x0, x1, z0, z1, color, y, height)
+	local function part(
+		parent: Instance,
+		name: string,
+		x0: number,
+		x1: number,
+		z0: number,
+		z1: number,
+		color: Color3,
+		y: number?,
+		height: number?
+	)
 		local p = Instance.new("Part")
 		p.Name, p.Size = name, V(x1 - x0, height or 0.14, z1 - z0)
 		p.CFrame = frame * CF((x0 + x1) / 2, y or 0.19, (z0 + z1) / 2)
@@ -57,23 +68,26 @@ function Layout.apply(map)
 		p.Parent = parent
 		return p
 	end
-	local function moveModel(model, delta)
+	local function moveModel(model: Model, delta: CFrame)
 		model:PivotTo(delta * model:GetPivot())
 	end
-	local function movePart(p, delta)
+	local function movePart(p: BasePart, delta: CFrame)
 		p.CFrame = delta * p.CFrame
 	end
-	local function hide(p)
+	local function hide(p: BasePart)
 		p.Transparency = 1
 		for _, t in ipairs(p:GetDescendants()) do
-			if t:IsA("Texture") or t:IsA("Decal") then
+			if t:IsA("Decal") then
 				t.Transparency = 1
 			end
 		end
 	end
 
 	-- Capture detached legacy labels before changing their original positions.
-	local laneLabels, donorParts, donorLabel, bestLabel = {}, {}, nil, nil
+	local laneLabels: { { BasePart } } = {}
+	local donorParts: { BasePart } = {}
+	local donorLabel: BasePart? = nil
+	local bestLabel: BasePart? = nil
 	for i = 1, 7 do
 		laneLabels[i] = {}
 	end
@@ -95,8 +109,8 @@ function Layout.apply(map)
 				end
 			end
 			for i = 1, 7 do
-				local lane = training["TrainingLane" .. i]
-				local board = skip:FindFirstChild("LaneBoard" .. i)
+				local lane = assert(training:FindFirstChild("TrainingLane" .. i)) :: Construction.Lane
+				local board = skip:FindFirstChild("LaneBoard" .. i) :: BasePart?
 				if
 					board
 					and math.abs(o.Position.Z - lane.TrainingStrip.Position.Z) < 0.1
@@ -111,14 +125,14 @@ function Layout.apply(map)
 
 	-- Keep the imported training meshes, triggers, lengths and lane IDs intact.
 	for i = 1, 7 do
-		local lane = training["TrainingLane" .. i]
+		local lane = assert(training:FindFirstChild("TrainingLane" .. i)) :: Construction.Lane
 		local old = localPoint(lane.StartingPad.Position)
 		local shift = frame:VectorToWorldSpace(V(-91 - old.X, 0, 155 - (i - 1) * 17 - old.Z))
 		local delta = CF(shift)
 		moveModel(lane, delta)
 		for _, name in ipairs({ "TrainingStone" .. i, "LaneBoard" .. i }) do
 			local o = skip:FindFirstChild(name)
-			if o then
+			if o and o:IsA("BasePart") then
 				movePart(o, delta)
 			end
 		end
@@ -141,14 +155,15 @@ function Layout.apply(map)
 		end
 	end
 	local trainingTitle = training:FindFirstChild("UIAnchor")
-	if trainingTitle then
+	if trainingTitle and trainingTitle:IsA("BasePart") then
 		trainingTitle.CFrame = frame * CF(-56, 12, 169)
 	end
 
-	local eggs = { Common = { -148, 141 }, Uncommon = { -173, 141 }, Rare = { -148, 161 }, Rainbow = { -173, 161 } }
+	local eggs: { [string]: { number } } =
+		{ Common = { -148, 141 }, Uncommon = { -173, 141 }, Rare = { -148, 161 }, Rainbow = { -173, 161 } }
 	for id, site in pairs(eggs) do
-		local model = skip["Egg_" .. id]
-		local p = localPoint(model.EggPedestal.Position)
+		local model = assert(skip:FindFirstChild("Egg_" .. id)) :: Model
+		local p = localPoint((assert(model:FindFirstChild("EggPedestal")) :: BasePart).Position)
 		moveModel(model, CF(frame:VectorToWorldSpace(V(site[1] - p.X, 0, site[2] - p.Z))))
 		if not model.PrimaryPart then
 			model.WorldPivot = model:GetBoundingBox()
@@ -171,7 +186,7 @@ function Layout.apply(map)
 	moveModel(stand, standDelta)
 	-- These are separate imported workspace models, not children of the stand.
 	local balls = workspace:FindFirstChild("AllBalls_NoTextures")
-	if balls then
+	if balls and balls:IsA("Model") then
 		moveModel(balls, standDelta)
 		for _, o in ipairs(balls:GetChildren()) do
 			if o:IsA("Model") then
@@ -188,8 +203,11 @@ function Layout.apply(map)
 	end
 	for _, o in ipairs(skip:GetChildren()) do
 		if o:IsA("BasePart") and o:GetAttribute("BallDisplayLabelSlot") then
-			local top = stand:FindFirstChild("DisplayTop" .. o:GetAttribute("BallDisplayLabelSlot"))
-			local oldTop = top and (standDelta:Inverse() * top.CFrame).Position
+			local top = stand:FindFirstChild("DisplayTop" .. tostring(o:GetAttribute("BallDisplayLabelSlot")))
+			local oldTop: Vector3? = nil
+			if top and top:IsA("BasePart") then
+				oldTop = (standDelta:Inverse() * top.CFrame).Position
+			end
 			if oldTop and math.abs(o.Position.X - oldTop.X) < 0.1 and math.abs(o.Position.Z - oldTop.Z) < 0.1 then
 				movePart(o, standDelta)
 			end
@@ -201,8 +219,8 @@ function Layout.apply(map)
 
 	-- A four-sided visual capacity, with existing rankings retaining their logic.
 	local rankings = map.LobbyRankings
-	local function boardAt(board, x, z, yaw)
-		local old = board.Frame.CFrame
+	local function boardAt(board: Model, x: number, z: number, yaw: number)
+		local old = (assert(board:FindFirstChild("Frame")) :: BasePart).CFrame
 		local target = frame * CF(x, 18, z) * CFrame.Angles(0, yaw or 0, 0)
 		moveModel(board, target * old:Inverse())
 		board.WorldPivot = board:GetBoundingBox()
@@ -213,12 +231,16 @@ function Layout.apply(map)
 	local future = rankings.best:Clone()
 	future.Name = "ReservedFourthBoard"
 	future:SetAttribute("LayoutPlaceholder", true)
-	local gui = future.Panel.RankingGui
-	gui.Title.Text = "ДОНАТ"
-	gui.Scope.Text = "РЕЙТИНГ БУДЕТ НАСТРОЕН ПОЗЖЕ"
-	gui.Status.Text = "Место для четвёртого рейтинга"
+	local gui = assert(assert(future:FindFirstChild("Panel")):FindFirstChild("RankingGui"))
+	local title = assert(gui:FindFirstChild("Title")) :: TextLabel
+	title.Text = "ДОНАТ"
+	local scope = assert(gui:FindFirstChild("Scope")) :: TextLabel
+	scope.Text = "РЕЙТИНГ БУДЕТ НАСТРОЕН ПОЗЖЕ"
+	local status = assert(gui:FindFirstChild("Status")) :: TextLabel
+	status.Text = "Место для четвёртого рейтинга"
 	for i = 1, 10 do
-		gui["Row" .. i].Entry.Text = i .. ".   —"
+		local entry = assert(assert(gui:FindFirstChild("Row" .. i)):FindFirstChild("Entry")) :: TextLabel
+		entry.Text = i .. ".   —"
 	end
 	boardAt(future, -159, 195, -math.pi / 2)
 	future.Parent = rankings
@@ -247,7 +269,7 @@ function Layout.apply(map)
 	end
 	-- Preserve the planted stone walkway, now an outer-side route.
 	local stoneWalk = map:FindFirstChild("StoneGrassWalkway")
-	if stoneWalk then
+	if stoneWalk and stoneWalk:IsA("Model") then
 		moveModel(stoneWalk, CF(frame:VectorToWorldSpace(V(-3, 0, 0))))
 	end
 	local spawn = lobby.MapSpawn
@@ -281,7 +303,7 @@ function Layout.apply(map)
 		{ -98, -3, 29, 37 }, -- front outer-route link
 		{ -98, -3, 167, 175 }, -- rear outer-route link
 	}
-	local function contains(x, z, padding)
+	local function contains(x: number, z: number, padding: number?)
 		for _, r in ipairs(rectangles) do
 			if
 				x > r[1] - (padding or 0)
@@ -295,14 +317,15 @@ function Layout.apply(map)
 		return false
 	end
 	-- Rectangle union: large continuous slabs, no intersecting layers at junctions.
-	local xs, zs = {}, {}
+	local xSet: { [number]: boolean } = {}
+	local zSet: { [number]: boolean } = {}
 	for _, r in ipairs(rectangles) do
-		xs[r[1]] = true
-		xs[r[2]] = true
-		zs[r[3]] = true
-		zs[r[4]] = true
+		xSet[r[1]] = true
+		xSet[r[2]] = true
+		zSet[r[3]] = true
+		zSet[r[4]] = true
 	end
-	local function keys(t)
+	local function keys(t: { [number]: boolean }): { number }
 		local a = {}
 		for k in pairs(t) do
 			table.insert(a, k)
@@ -310,11 +333,11 @@ function Layout.apply(map)
 		table.sort(a)
 		return a
 	end
-	xs, zs = keys(xs), keys(zs)
+	local xs, zs = keys(xSet), keys(zSet)
 	local slabsOut, open = {}, {}
 	for zi = 1, #zs - 1 do
 		local spans = {}
-		local begin
+		local begin: number? = nil
 		for xi = 1, #xs - 1 do
 			local inside = contains((xs[xi] + xs[xi + 1]) / 2, (zs[zi] + zs[zi + 1]) / 2)
 			if inside and not begin then
@@ -345,7 +368,7 @@ function Layout.apply(map)
 	end
 	-- Thin dark edges only on the true outer silhouette of the paving union.
 	for _, x in ipairs(xs) do
-		local begin
+		local begin: number? = nil
 		for zi = 1, #zs - 1 do
 			local z = (zs[zi] + zs[zi + 1]) / 2
 			local boundary = contains(x - 0.05, z) ~= contains(x + 0.05, z)
@@ -360,7 +383,7 @@ function Layout.apply(map)
 		end
 	end
 	for _, z in ipairs(zs) do
-		local begin
+		local begin: number? = nil
 		for xi = 1, #xs - 1 do
 			local x = (xs[xi] + xs[xi + 1]) / 2
 			local boundary = contains(x, z - 0.05) ~= contains(x, z + 0.05)
@@ -381,8 +404,11 @@ function Layout.apply(map)
 		skip:FindFirstChild("ImprovedLobbyFlowers"),
 		map.EnvironmentPolish:FindFirstChild("LobbyGardens"),
 	}
-	local occupied = {}
+	local occupied: { Vector3 } = {}
 	for _, flowers in ipairs(plantingGroups) do
+		if not flowers then
+			continue
+		end
 		for _, model in ipairs(flowers:GetChildren()) do
 			if not model:IsA("Model") then
 				continue

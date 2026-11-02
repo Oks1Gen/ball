@@ -2,8 +2,9 @@
 -- Two-line reference-style captions above the existing eggs. Prices are gameplay data.
 local Config = require(game.ReplicatedStorage.Shared.GameConfig)
 local UIAssets = require(game.StarterPlayer.StarterPlayerScripts.Client.UIAssets)
+local Scale = require(game.ReplicatedStorage.Shared.WorldScale)
 local Signs = {}
-local HEIGHT = 4.2
+local HEIGHT = 4.2 -- authored studs; the sign scales with the world
 local C = Color3.fromRGB
 local TITLE_COLORS = { Common = C(220, 233, 229), Uncommon = C(46, 255, 35), Rare = C(0, 210, 255) }
 
@@ -32,8 +33,10 @@ local function caption(
 	title: string,
 	price: string,
 	currency: string,
-	id: string
+	id: string,
+	scale: number
 )
+	local height = HEIGHT * scale
 	local old = parent:FindFirstChild("EggSignAnchor")
 	local anchor = if old and old:IsA("Part") then old else Instance.new("Part")
 	anchor.Name = "EggSignAnchor"
@@ -42,13 +45,13 @@ local function caption(
 	anchor.CanCollide, anchor.CanTouch, anchor.CanQuery = false, false, false
 	anchor.CastShadow = false
 	anchor.Size = Vector3.one * 0.1
-	anchor.Position = Vector3.new(center.X, topY + HEIGHT / 2 + 1, center.Z)
+	anchor.Position = Vector3.new(center.X, topY + height / 2 + scale, center.Z)
 	anchor.Parent = parent
 	local oldGui = anchor:FindFirstChild("EggSign")
 	local gui = if oldGui and oldGui:IsA("BillboardGui") then oldGui else Instance.new("BillboardGui")
 	gui.Name = "EggSign"
 	gui.Adornee = anchor
-	gui.Size = UDim2.fromScale(if id == "AdminEgg" then 20 else 16, HEIGHT)
+	gui.Size = UDim2.fromScale((if id == "AdminEgg" then 20 else 16) * scale, height)
 	gui.AlwaysOnTop = false
 	gui.LightInfluence = 0
 	gui.MaxDistance = 180
@@ -115,6 +118,7 @@ function Signs.apply(map: Instance, settings: any?)
 		return
 	end
 	local worldFactor = 1
+	local scale = Scale.factor(map)
 	for _, egg in config.Eggs do
 		local stand = world:FindFirstChild("Egg_" .. egg.id)
 		local shell = stand and stand:FindFirstChild("EggShell")
@@ -142,7 +146,8 @@ function Signs.apply(map: Instance, settings: any?)
 			title,
 			config.format(egg.cost * worldFactor) .. " Wins",
 			"Wins",
-			egg.id
+			egg.id,
+			scale
 		)
 	end
 	local admin = world:FindFirstChild("HackedAdminEgg")
@@ -184,7 +189,8 @@ function Signs.apply(map: Instance, settings: any?)
 			"Volcanic Inferno Egg",
 			config.format(config.Products.AdminEgg.price),
 			"Robux",
-			"AdminEgg"
+			"AdminEgg",
+			scale
 		)
 	end
 end

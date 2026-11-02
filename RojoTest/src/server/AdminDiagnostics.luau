@@ -1,9 +1,10 @@
 --!strict
+local Construction = require(script.Parent.ConstructionTypes)
 local Config = require(game.ReplicatedStorage.Shared.GameConfig)
 local Diagnostics = {}
-function Diagnostics.run(map)
+function Diagnostics.run(map: Construction.World)
 	local rows = {}
-	local function check(title, callback)
+	local function check(title: string, callback: () -> string)
 		local ok, result = pcall(callback)
 		local detail
 		if ok then
@@ -22,14 +23,16 @@ function Diagnostics.run(map)
 		})
 	end
 	check("Длина и стыки 8 биомов", function()
-		local front = map:GetAttribute("RouteFrontZ")
+		local front = map:GetAttribute("RouteFrontZ") :: number?
 		assert(front, "Нет начала маршрута")
+		-- 270 studs before World1 was scaled by 0.8, 216 after.
+		local length = (map:GetAttribute("BiomeLengthStuds") :: number?) or 270
 		for i = 1, 8 do
-			local p = map.SkippingWorld:FindFirstChild("Field_" .. i)
-			assert(p and math.abs(p.Size.Z - 270) < 0.02, "Биом " .. i .. ": неверная длина")
-			assert(math.abs(p.Position.Z - (front - (i - 0.5) * 270)) < 0.02, "Щель у биома " .. i)
+			local p = map.SkippingWorld:FindFirstChild("Field_" .. i) :: BasePart?
+			assert(p and math.abs(p.Size.Z - length) < 0.02, "Биом " .. i .. ": неверная длина")
+			assert(math.abs(p.Position.Z - (front - (i - 0.5) * length)) < 0.02, "Щель у биома " .. i)
 		end
-		return "8 × 270 studs; весь маршрут 2160 studs"
+		return string.format("8 × %g studs; весь маршрут %g studs", length, 8 * length)
 	end)
 	check("Опоры берегов", function()
 		local rp = RaycastParams.new()
@@ -37,7 +40,7 @@ function Diagnostics.run(map)
 		rp.FilterDescendantsInstances = { map.FieldCorridor, map.SkippingWorld }
 		local count = 0
 		for _, p in map.SkippingWorld:GetChildren() do
-			if p.Name:match("^BiomeBank%d_[12]$") then
+			if p:IsA("BasePart") and p.Name:match("^BiomeBank%d_[12]$") then
 				local top = p.Position.Y + p.Size.Y / 2
 				for _, t in { -0.44, 0, 0.44 } do
 					local hit = workspace:Raycast(
@@ -108,13 +111,15 @@ function Diagnostics.run(map)
 		end
 		return #Config.Stones .. " мячей; " .. #Config.Trails .. " трейлов"
 	end)
-	check("Финальная арка сакуры", function()
-		local root = map.SkippingWorld:FindFirstChild("SakuraJapaneseFinale")
+	check("Финальный стадион Football City", function()
+		local refs = require(game.ReplicatedStorage.Shared.WorldRefs)
+		local course = refs.course(map)
+		local root = course.Zones.Zone08.Environment:FindFirstChild("Cityscape")
 		assert(
-			root and root:FindFirstChild("SakuraGatewayFrame") and root:FindFirstChild("SakuraPortalPanorama"),
-			"Нет арки или панорамы"
+			root and root:FindFirstChild("ChampionshipFinish") and refs.finish(map),
+			"Нет стадиона или точки финиша"
 		)
-		return "Декор на месте; телепортация пока не подключена"
+		return "Стадион и конечная точка удара на месте"
 	end)
 	check("Дальность броска", function()
 		local limit = Config.shotLimit(1, map)

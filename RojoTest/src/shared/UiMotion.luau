@@ -51,6 +51,8 @@ function Motion.button(button: GuiButton, visual: GuiObject, shadow: GuiObject?)
 	local pressed: InputObject? = nil
 	local connections: { RBXScriptConnection } = {}
 	local destroyed = false
+	local attentionHigh = false
+	local attentionRevision = 0
 	local releaseTarget: number? = nil
 	local limits: { [UITextSizeConstraint]: { min: number, max: number, lastMin: number, lastMax: number } } = {}
 	local function target(release: boolean?)
@@ -59,7 +61,7 @@ function Motion.button(button: GuiButton, visual: GuiObject, shadow: GuiObject?)
 		local value = if not enabled
 			then 1
 			elseif pressed then settings.PressScale
-			elseif hover or focus then settings.HoverScale
+			elseif hover or focus or attentionHigh then settings.HoverScale
 			else 1
 		if Motion.reduced(button) then
 			spring:setPosition(1)
@@ -129,6 +131,36 @@ function Motion.button(button: GuiButton, visual: GuiObject, shadow: GuiObject?)
 		hover, focus, pressed = false, false, nil
 		target()
 	end
+	-- Attention uses this very same motion/target as hover, never a second scale.
+	-- Mouse/focus/press own the animation while the user interacts with the button.
+	local function refreshAttention()
+		attentionRevision += 1
+		local revision = attentionRevision
+		attentionHigh = false
+		target()
+		local function beat()
+			if destroyed or attentionRevision ~= revision then
+				return
+			end
+			if
+				button:GetAttribute("AttentionPulse") ~= true
+				or Motion.reduced(button)
+				or not Motion.enabled(button)
+			then
+				attentionHigh = false
+				target()
+				return
+			end
+			if not hover and not focus and not pressed and not releaseTarget then
+				attentionHigh = not attentionHigh
+				target()
+			end
+			task.delay(settings.HoverTime + 0.4, beat)
+		end
+		if button:GetAttribute("AttentionPulse") == true and not Motion.reduced(button) and Motion.enabled(button) then
+			beat()
+		end
+	end
 	resets[button] = reset
 	local function connect(signal: RBXScriptSignal, callback: (...any) -> ())
 		table.insert(connections, signal:Connect(callback))
@@ -187,17 +219,27 @@ function Motion.button(button: GuiButton, visual: GuiObject, shadow: GuiObject?)
 	end)
 	local screen = button:FindFirstAncestorOfClass("ScreenGui")
 	if screen then
-		connect(screen:GetAttributeChangedSignal("ReducedMotion"), reset)
+		connect(screen:GetAttributeChangedSignal("ReducedMotion"), function()
+			reset()
+			refreshAttention()
+		end)
+		connect(screen:GetPropertyChangedSignal("Enabled"), refreshAttention)
 	end
+	connect(button:GetAttributeChangedSignal("AttentionPulse"), refreshAttention)
 	connect(Input.WindowFocusReleased, reset)
-	connect(button:GetPropertyChangedSignal("Active"), reset)
-	connect(button:GetPropertyChangedSignal("Interactable"), reset)
-	connect(button:GetPropertyChangedSignal("Visible"), reset)
+	local function availabilityChanged()
+		reset()
+		refreshAttention()
+	end
+	connect(button:GetPropertyChangedSignal("Active"), availabilityChanged)
+	connect(button:GetPropertyChangedSignal("Interactable"), availabilityChanged)
+	connect(button:GetPropertyChangedSignal("Visible"), availabilityChanged)
 	local function destroy()
 		if destroyed then
 			return
 		end
 		destroyed = true
+		attentionRevision += 1
 		resets[button] = nil
 		for _, connection in connections do
 			connection:Disconnect()
@@ -208,6 +250,7 @@ function Motion.button(button: GuiButton, visual: GuiObject, shadow: GuiObject?)
 		scale:Destroy()
 	end
 	connect(button.Destroying, destroy)
+	refreshAttention()
 	return destroy
 end
 

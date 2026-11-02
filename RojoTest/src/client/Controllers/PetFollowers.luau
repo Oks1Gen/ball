@@ -157,7 +157,7 @@ function Followers.mount(context: Context): Handle
 						fire[model] = PetFlameEffects.mount(model)
 					end
 				end
-				rowWidth += model:GetAttribute("FollowerWidth") or 2
+				rowWidth += (model:GetAttribute("FollowerWidth") :: number?) or 2
 			end
 		end,
 		update = function(root: BasePart?, now: number)
@@ -195,10 +195,10 @@ function Followers.mount(context: Context): Handle
 			local enabled = not context.effects or context.effects()
 			local edge = -rowWidth / 2
 			for i, model in followers do
-				local width = model:GetAttribute("FollowerWidth") or 2
+				local width = (model:GetAttribute("FollowerWidth") :: number?) or 2
 				local x = edge + width / 2
 				edge += width + 0.65
-				local height = model:GetAttribute("FollowerHeight") or 2.8
+				local height = (model:GetAttribute("FollowerHeight") :: number?) or 2.8
 				local y = math.sin(now * 3 + i) * 0.25 - 0.9 + (height - 2.8) / 2
 				local target = root.CFrame * CFrame.new(x, y, 4.5)
 				local effect = fire[model]

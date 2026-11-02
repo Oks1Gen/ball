@@ -3,6 +3,7 @@
 -- Legacy five-section collision remains untouched underneath these cosmetic skins.
 local Palette = require(script.Parent.CoursePalette)
 local Studs = require(script.Parent.LobbyPalette)
+local Scale = require(game.ReplicatedStorage.Shared.WorldScale)
 local Regions = {}
 local V = Vector3.new
 local leaves = { Shrub = true, LeafBlock = true, LeafCrown = true, PalmBlade = true }
@@ -57,7 +58,7 @@ local function body(bank: BasePart, field: BasePart, color: Color3, bottom: numb
 	return p
 end
 
-local function natural(detail: Model, zone: any, palette: any): boolean
+local function natural(detail: Model, zone: any, palette: any, margin: number): boolean
 	if not detail:FindFirstChildWhichIsA("BasePart", true) then
 		return false
 	end
@@ -90,7 +91,7 @@ local function natural(detail: Model, zone: any, palette: any): boolean
 	end
 	local cf, size = detail:GetBoundingBox()
 	local field = zone.Field
-	local low, high = field.Position.Z - field.Size.Z / 2 + 1, field.Position.Z + field.Size.Z / 2 - 1
+	local low, high = field.Position.Z - field.Size.Z / 2 + margin, field.Position.Z + field.Size.Z / 2 - margin
 	if size.Z > high - low then
 		return false
 	end
@@ -163,7 +164,8 @@ function Regions.apply(world: any): any
 		for _, detail in zone.Environment:GetChildren() do
 			if detail:IsA("Model") and detail:GetAttribute("CourseNaturalDetail") then
 				details += 1
-				if natural(detail, zone, Palette[index]) then
+				-- A detail keeps one authored stud from the zone ends, scaled with the world.
+				if natural(detail, zone, Palette[index], Scale.factor(world)) then
 					moved += 1
 				end
 			end

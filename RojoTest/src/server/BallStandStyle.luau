@@ -1,14 +1,16 @@
 --!strict
--- Minimal studded look: lavender steps, and on each slot a periwinkle pad inside a cream frame.
+-- Minimal studded look in the lobby path colours: path-grey steps, and on each slot a darker
+-- pad inside a light curb-coloured frame, so the stand reads as part of the paving.
 -- Idempotent: colours, studs and pad height are recomputed from the authored parts every run.
+local Palette = require(script.Parent.LobbyPalette)
 local Style = {}
-local C, V = Color3.fromRGB, Vector3.new
-local STUDS = "rbxassetid://88156646156237"
+local V = Vector3.new
+local STUDS = Palette.Studs
 local STUD_FACES =
 	{ Enum.NormalId.Top, Enum.NormalId.Right, Enum.NormalId.Left, Enum.NormalId.Front, Enum.NormalId.Back }
-local step = C(196, 196, 244)
-local frame = C(244, 232, 226)
-local pad = C(172, 188, 240)
+local step = Palette.Path
+local frame = Palette.PathCurb
+local pad = Palette.PathChecker
 
 local function studs(part: BasePart, faces: { Enum.NormalId })
 	for _, t in part:GetChildren() do

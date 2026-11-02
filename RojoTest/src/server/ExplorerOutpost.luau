@@ -1,6 +1,7 @@
 --!strict
+local Construction = require(script.Parent.ConstructionTypes)
 local Outpost = {}
-function Outpost.apply(map)
+function Outpost.apply(map: Construction.World): number?
 	local tunnel = map.SpawnGardenPolish.EntranceTunnel
 	if tunnel:FindFirstChild("ExplorerOutpost") then
 		return
@@ -11,7 +12,14 @@ function Outpost.apply(map)
 	local wood = Color3.fromRGB(112, 67, 42)
 	local dark = Color3.fromRGB(64, 40, 30)
 	local gold = Color3.fromRGB(219, 170, 66)
-	local function part(name, size, pos, color, rotation, shape)
+	local function part(
+		name: string,
+		size: Vector3,
+		pos: Vector3,
+		color: Color3,
+		rotation: CFrame?,
+		shape: Enum.PartType?
+	)
 		local p = Instance.new("Part")
 		p.Name = name
 		p.Size = size
@@ -24,13 +32,13 @@ function Outpost.apply(map)
 		p.CanQuery = false
 		p.TopSurface = Enum.SurfaceType.Smooth
 		p.BottomSurface = Enum.SurfaceType.Smooth
-		if shape then
+		if shape and p:IsA("Part") then
 			p.Shape = shape
 		end
 		p.Parent = group
 		return p
 	end
-	local function bar(name, a, b, width, color)
+	local function bar(name: string, a: Vector3, b: Vector3, width: number, color: Color3)
 		return part(
 			name,
 			Vector3.new(width, width, (b - a).Magnitude),
@@ -57,7 +65,7 @@ function Outpost.apply(map)
 	gui.AlwaysOnTop = false
 	gui.LightInfluence = 1
 	gui.Parent = board
-	local function shape(name, pos, size, color, rotation)
+	local function shape(name: string, pos: Vector2, size: Vector2, color: Color3, rotation: number?)
 		local f = Instance.new("Frame")
 		f.Name = name
 		f.Position = UDim2.fromScale(pos.X, pos.Y)

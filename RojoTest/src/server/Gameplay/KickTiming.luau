@@ -46,7 +46,7 @@ function KickTiming.build(context: any)
 			end
 			if not context.inApron(player) then
 				context.effect:FireClient(player, "KickCancelled")
-				context.publish(player, "Go to the yellow THROW ZONE")
+				context.publish(player, "Go to the orange THROW ZONE")
 				return
 			end
 			local pending = {

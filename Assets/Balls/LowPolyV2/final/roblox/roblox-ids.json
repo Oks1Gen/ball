@@ -1,0 +1,58 @@
+{
+    "owner_user":  11789507527,
+    "universe_granted_use":  10770268214,
+    "model":  72414326263846,
+    "atlas_image":  125793810196493,
+    "balls":  {
+                  "Pebble":  {
+                                 "name":  "Rubber Ball",
+                                 "file":  "Ball_01_Rubber",
+                                 "mesh":  73462181734739
+                             },
+                  "Smooth":  {
+                                 "name":  "Classic Ball",
+                                 "file":  "Ball_02_Classic",
+                                 "mesh":  84909701317103
+                             },
+                  "Golden":  {
+                                 "name":  "Beach Ball",
+                                 "file":  "Ball_03_Beach",
+                                 "mesh":  88101141057174
+                             },
+                  "Ruby":  {
+                               "name":  "Basketball",
+                               "file":  "Ball_04_Basketball",
+                               "mesh":  112644403609426
+                           },
+                  "Emerald":  {
+                                  "name":  "Leather Ball",
+                                  "file":  "Ball_05_Leather",
+                                  "mesh":  130090105407534
+                              },
+                  "Galaxy":  {
+                                 "name":  "Steel Ball",
+                                 "file":  "Ball_06_Steel",
+                                 "mesh":  75431251297599
+                             },
+                  "Rainbow":  {
+                                  "name":  "Gold Ball",
+                                  "file":  "Ball_07_Gold",
+                                  "mesh":  85649873211801
+                              },
+                  "DragonSun":  {
+                                    "name":  "Storm Ball",
+                                    "file":  "Ball_08_Storm",
+                                    "mesh":  125908551287478
+                                },
+                  "BlackHole":  {
+                                    "name":  "Volcano Ball",
+                                    "file":  "Ball_09_Volcano",
+                                    "mesh":  77213453662376
+                                },
+                  "WorldCreator":  {
+                                       "name":  "Sun Ball",
+                                       "file":  "Ball_10_Sun",
+                                       "mesh":  110588632339103
+                                   }
+              }
+}

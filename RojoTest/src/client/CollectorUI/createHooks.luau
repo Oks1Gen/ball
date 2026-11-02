@@ -1,13 +1,20 @@
 --!strict
---!nocheck
 -- Dependency injection keeps package paths owned by the consuming project.
-return function(React, Ripple)
+local _ReactTypes = require(game.ReplicatedStorage.Packages.React)
+local _RippleTypes = require(game.ReplicatedStorage.Packages.Ripple)
+return function(React: typeof(_ReactTypes), Ripple: typeof(_RippleTypes))
 	-- onRest(value) fires when the spring settles; reduced motion settles immediately.
-	local function useSpringBinding(initial, options, reducedMotion, onRest)
+	local function useSpringBinding<T>(
+		initial: T,
+		options: { Frequency: number, DampingRatio: number },
+		reducedMotion: boolean,
+		onRest: ((T) -> ())?
+	)
 		local binding, update = React.useBinding(initial)
 		local rest = React.useRef(onRest)
 		rest.current = onRest
-		local motion = React.useRef(nil)
+		type Spring = typeof(Ripple.createSpring(initial))
+		local motion = React.useRef(nil :: Spring?)
 		local goal = React.useRef(initial)
 		local frequency = options.Frequency
 		local damping = options.DampingRatio
@@ -53,22 +60,23 @@ return function(React, Ripple)
 			if reducedMotion then
 				setGoal(goal.current)
 			end
+			return nil
 		end, { reducedMotion })
 		return binding, setGoal
 	end
 
 	local function useWindowNavigation()
-		local activeWindow, setActiveWindow = React.useState(nil)
-		local function toggle(windowId)
+		local activeWindow, setActiveWindow = React.useState(nil :: string?)
+		local function toggle(windowId: string)
 			assert(type(windowId) == "string", "Window id must be a string")
-			setActiveWindow(function(current)
+			setActiveWindow(function(current: string?): string?
 				if current == windowId then
 					return nil
 				end
 				return windowId
 			end)
 		end
-		local function close(windowId)
+		local function close(windowId: string)
 			setActiveWindow(function(current)
 				if current == windowId then
 					return nil

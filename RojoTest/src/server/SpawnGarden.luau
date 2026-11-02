@@ -1,4 +1,5 @@
 --!strict
+local Construction = require(script.Parent.ConstructionTypes)
 -- Terraced spawn perimeter. Gameplay geometry and manually placed activities stay intact.
 local Garden = {}
 local C, V = Color3.fromRGB, Vector3.new
@@ -7,7 +8,7 @@ local earth, grass = C(159, 111, 72), C(92, 205, 48)
 local leaf, lightLeaf = C(47, 166, 55), C(125, 217, 62)
 local stone, wood = C(135, 151, 157), C(135, 89, 49)
 
-function Garden.apply(map)
+function Garden.apply(map: Construction.World): Instance?
 	if map:FindFirstChild("SpawnGarden") then
 		return map.SpawnGarden
 	end
@@ -16,7 +17,8 @@ function Garden.apply(map)
 	local protected = {}
 	for _, p in map:GetDescendants() do
 		if p:IsA("BasePart") then
-			protected[p] = { p.CFrame, p.Size, p.CanCollide, p.CanTouch, p.CanQuery }
+			protected[p] =
+				{ frame = p.CFrame, size = p.Size, collide = p.CanCollide, touch = p.CanTouch, query = p.CanQuery }
 		end
 	end
 	local storage = game.ServerStorage
@@ -44,7 +46,7 @@ function Garden.apply(map)
 	local root = Instance.new("Model")
 	root.Name, root.WorldPivot, root.Parent = "SpawnGarden", frame, map
 	root:SetAttribute("Version", 1)
-	local function studs(p, face)
+	local function studs(p: BasePart, face: Enum.NormalId)
 		local t = Instance.new("Texture")
 		t.Name, t.Texture, t.Face = "GardenStuds", STUDS, face
 		t.StudsPerTileU, t.StudsPerTileV = 8, 8
@@ -59,13 +61,22 @@ function Garden.apply(map)
 		end
 		t.Parent = p
 	end
-	local function model(name, base)
+	local function model(name: string, base: Vector3)
 		local m = Instance.new("Model")
 		m.Name, m.WorldPivot, m.Parent = name, frame * CFrame.new(base), root
 		return m
 	end
-	local function part(parent, name, size, pos, color, yaw, textured, wedge)
-		local p = Instance.new(wedge and "WedgePart" or "Part")
+	local function part(
+		parent: Instance,
+		name: string,
+		size: Vector3,
+		pos: Vector3,
+		color: Color3,
+		yaw: number?,
+		textured: boolean?,
+		wedge: boolean?
+	)
+		local p: BasePart = if wedge then Instance.new("WedgePart") else Instance.new("Part")
 		p.Name, p.Size, p.Color = name, size, color
 		p.CFrame = frame * CFrame.new(pos) * CFrame.Angles(0, yaw or 0, 0)
 		p.Anchored, p.CanCollide, p.CanTouch, p.CanQuery = true, false, false, false
@@ -80,7 +91,7 @@ function Garden.apply(map)
 		end
 		return p
 	end
-	local function rock(parent, base, scale, variant)
+	local function rock(parent: Instance, base: Vector3, scale: number, variant: number)
 		part(parent, "Rock", V(5, 5.5, 4.8) * scale, base + V(0, 2.75, 0) * scale, stone, variant * 0.18, true)
 		part(
 			parent,
@@ -94,7 +105,7 @@ function Garden.apply(map)
 		)
 		part(parent, "Pebble", V(2.8, 1.7, 3) * scale, base + V(-3, 0.85, 1) * scale, stone, -0.2, true)
 	end
-	local function bush(parent, base, scale)
+	local function bush(parent: Instance, base: Vector3, scale: number)
 		for i, a in { { 0, 1.8, 0, 5, 3.6, 4.5 }, { 3, 1.25, 1, 3.4, 2.5, 3.4 }, { -2.5, 1, 1.5, 3, 2, 3 } } do
 			part(
 				parent,
@@ -107,7 +118,7 @@ function Garden.apply(map)
 			)
 		end
 	end
-	local function flowers(parent, base, variant)
+	local function flowers(parent: Instance, base: Vector3, variant: number)
 		local colors = { C(255, 236, 134), C(255, 143, 164), C(244, 251, 228) }
 		for i = 1, 3 do
 			local p = base + V((i - 2) * 1.5, 0, (i % 2) * 1.2)
@@ -116,7 +127,7 @@ function Garden.apply(map)
 			part(parent, "FlowerCenter", V(0.32, 0.15, 0.32), p + V(0, 1.62, 0), C(255, 206, 64))
 		end
 	end
-	local function tree(parent, base, height, variant)
+	local function tree(parent: Instance, base: Vector3, height: number, variant: number)
 		local m = Instance.new("Model")
 		m.Name, m.WorldPivot, m.Parent = "TerraceTree", frame * CFrame.new(base), parent
 		part(m, "Trunk", V(1.8, height * 0.66, 1.8), base + V(0, height * 0.33, 0), wood, 0, true)
@@ -138,7 +149,7 @@ function Garden.apply(map)
 			)
 		end
 	end
-	local function lantern(parent, base)
+	local function lantern(parent: Instance, base: Vector3)
 		part(parent, "LanternFoot", V(2.6, 0.7, 2.6), base + V(0, 0.35, 0), stone)
 		part(parent, "LanternPost", V(0.6, 3.6, 0.6), base + V(0, 2.3, 0), wood)
 		part(parent, "LanternFrame", V(2, 2.5, 2), base + V(0, 4.6, 0), wood)
@@ -149,7 +160,7 @@ function Garden.apply(map)
 		l.Color, l.Brightness, l.Range, l.Shadows = C(255, 227, 167), 0.45, 11, false
 		l.Parent = pane
 	end
-	local function vines(parent, base, side)
+	local function vines(parent: Instance, base: Vector3, side: boolean)
 		for i = 1, 4 do
 			local y = base.Y - i * 1.45
 			local pos = V(base.X + math.sin(i * 1.7) * 0.7, y, base.Z)
@@ -167,12 +178,12 @@ function Garden.apply(map)
 	end
 	-- Disable only the old lobby checker treatment; keep the original boundary blockers.
 	for _, name in { "LobbyLeft", "LobbyRight", "LobbyBack" } do
-		local p = assert(map.PerimeterWalls:FindFirstChild(name))
+		local p = assert(map.PerimeterWalls:FindFirstChild(name)) :: BasePart
 		for _, d in p:GetDescendants() do
 			if d:IsA("SurfaceGui") then
 				d.Enabled = false
 			end
-			if d:IsA("Texture") or d:IsA("Decal") then
+			if d:IsA("Decal") then
 				d.Transparency = 1
 			end
 		end
@@ -188,7 +199,7 @@ function Garden.apply(map)
 				if pos.Y > 60 and pos.Z > 220 then
 					p.Transparency = 1
 					for _, t in p:GetChildren() do
-						if t:IsA("Texture") or t:IsA("Decal") then
+						if t:IsA("Decal") then
 							t.Transparency = 1
 						end
 					end
@@ -196,14 +207,15 @@ function Garden.apply(map)
 			end
 		end
 	end
-	for _, container in { map.PerimeterWalls, map.SurfaceRepairs } do
+	local oldContainers: { Instance } = { map.PerimeterWalls, map.SurfaceRepairs }
+	for _, container in oldContainers do
 		for _, p in container:GetChildren() do
 			if p:IsA("BasePart") and p.Name:find("WallPanel") then
 				local pos = frame:PointToObjectSpace(p.Position)
 				if pos.Z > 0 then
 					p.Transparency = 1
 					for _, t in p:GetDescendants() do
-						if t:IsA("Texture") or t:IsA("Decal") then
+						if t:IsA("Decal") then
 							t.Transparency = 1
 						end
 					end
@@ -334,9 +346,9 @@ function Garden.apply(map)
 	end
 	local checks = 0
 	for p, state in protected do
-		assert(p.CFrame == state[1] and p.Size == state[2], "Garden moved original geometry: " .. p:GetFullName())
+		assert(p.CFrame == state.frame and p.Size == state.size, "Garden moved original geometry: " .. p:GetFullName())
 		assert(
-			p.CanCollide == state[3] and p.CanTouch == state[4] and p.CanQuery == state[5],
+			p.CanCollide == state.collide and p.CanTouch == state.touch and p.CanQuery == state.query,
 			"Garden changed collision: " .. p:GetFullName()
 		)
 		checks += 1

@@ -1,14 +1,15 @@
 --!strict
+local Construction = require(script.Parent.ConstructionTypes)
 local Eggs = {}
 local meshIds = require(script.Parent.ImportedEggMeshIds)
 
-function Eggs.apply(map)
+function Eggs.apply(map: Construction.World)
 	local templates = game.ServerStorage:WaitForChild("ImportedEggVisuals")
 	for _, part in templates:GetDescendants() do
 		if part:IsA("MeshPart") and part.MeshId == "" then
 			local size = part.Size
 			local mesh = game:GetService("AssetService"):CreateMeshPartAsync(
-				Content.fromUri(assert(meshIds[part.Name], "Missing egg mesh ID: " .. part.Name))
+				Content.fromUri((assert(meshIds[part.Name], "Missing egg mesh ID: " .. part.Name)))
 			)
 			part:ApplyMesh(mesh)
 			part.Size = size
@@ -16,13 +17,13 @@ function Eggs.apply(map)
 		end
 	end
 	for _, id in { "Common", "Uncommon", "Rare", "Rainbow" } do
-		local stand = assert(map.SkippingWorld:FindFirstChild("Egg_" .. id))
+		local stand = assert(map.SkippingWorld:FindFirstChild("Egg_" .. id)) :: Model
 		if stand:FindFirstChild("ImportedVisual") then
 			continue
 		end
-		local shell = assert(stand:FindFirstChild("EggShell"))
-		local ring = assert(stand:FindFirstChild("EggRing"))
-		local visual = assert(templates:FindFirstChild(id)):Clone()
+		local shell = assert(stand:FindFirstChild("EggShell")) :: BasePart
+		local ring = assert(stand:FindFirstChild("EggRing")) :: BasePart
+		local visual = (assert(templates:FindFirstChild(id)) :: Model):Clone()
 		visual.Name = "ImportedVisual"
 		visual.WorldPivot = CFrame.identity
 		local _, size = visual:GetBoundingBox()

@@ -1,8 +1,9 @@
 --!strict
+local Construction = require(script.Parent.ConstructionTypes)
 local Config = require(game.ReplicatedStorage.Shared.GameConfig)
 local World = {}
 local C, V = Color3.fromRGB, Vector3.new
-function World.finish(map)
+function World.finish(map: Construction.World)
 	if map:GetAttribute("SkippingFinishVersion") == 7 then
 		return
 	end
@@ -59,7 +60,7 @@ function World.finish(map)
 	terrain.WaterColor = C(16, 194, 226)
 	for i = 1, 8 do
 		local field = map.SkippingWorld:FindFirstChild("Field_" .. i)
-		if field then
+		if field and field:IsA("BasePart") then
 			field.Position = V(field.Position.X, 0.7, field.Position.Z)
 			field.Transparency = 0.08
 			field.Material = Enum.Material.SmoothPlastic
@@ -80,7 +81,7 @@ function World.finish(map)
 		studs.Parent = apron
 	end
 	if not map:GetAttribute("RetiredLobbyPaving") and not map.SkippingWorld:FindFirstChild("MainPlazaPath") then
-		local function pave(name, size, pos, color)
+		local function pave(name: string, size: Vector3, pos: Vector3, color: Color3)
 			local p = Instance.new("Part")
 			p.Name = name
 			p.Size = size
@@ -143,21 +144,21 @@ function World.finish(map)
 	end
 	map:SetAttribute("SkippingFinishVersion", 7)
 end
-function World.refine(map)
+function World.refine(map: Construction.World)
 	if map:GetAttribute("SkippingRefinementVersion") == 1 then
 		return
 	end
-	local function hide(p)
+	local function hide(p: BasePart)
 		p.Transparency = 1
 		for _, t in p:GetChildren() do
-			if t:IsA("Texture") or t:IsA("Decal") then
+			if t:IsA("Decal") then
 				t.Transparency = 1
 			end
 		end
 	end
 	for _, p in map:GetDescendants() do
 		if p:IsA("BasePart") and not p:IsDescendantOf(map.SkippingWorld) then
-			local source = p:GetAttribute("SurfaceSource") or p:GetFullName()
+			local source = tostring(p:GetAttribute("SurfaceSource") or p:GetFullName())
 			if
 				(source:find("PerimeterWalls") and (p.Position.Z < 0 or p.Name:find("Panel")))
 				or source:find("CorridorBarriers")
@@ -179,12 +180,12 @@ function World.refine(map)
 	-- Aligned eight-stud checker squares, with a continuous HD stud overlay.
 	for _i, info in
 		{
-			{ map.PerimeterWalls.LobbyLeft, Enum.NormalId.Right },
-			{ map.PerimeterWalls.LobbyRight, Enum.NormalId.Left },
-			{ map.PerimeterWalls.LobbyBack, Enum.NormalId.Front },
+			{ wall = map.PerimeterWalls.LobbyLeft, face = Enum.NormalId.Right },
+			{ wall = map.PerimeterWalls.LobbyRight, face = Enum.NormalId.Left },
+			{ wall = map.PerimeterWalls.LobbyBack, face = Enum.NormalId.Front },
 		}
 	do
-		local wall, face = info[1], info[2]
+		local wall, face = info.wall, info.face
 		local width = face == Enum.NormalId.Front and wall.Size.X or wall.Size.Z
 		local gui = Instance.new("SurfaceGui")
 		gui.Name = "ReferenceCheckerWall"
@@ -215,6 +216,9 @@ function World.refine(map)
 		studs.Parent = gui
 	end
 	for _, p in map.SkippingWorld:GetChildren() do
+		if not p:IsA("BasePart") then
+			continue
+		end
 		if p.Name == "GrassWallCrown" then
 			hide(p)
 		end
@@ -230,7 +234,7 @@ function World.refine(map)
 		end
 	end
 	local old = map.Lobby.ThrowingApron:FindFirstChild("ThrowZoneLettering")
-	if old then
+	if old and old:IsA("SurfaceGui") then
 		old.Enabled = false
 	end
 	local apron = map.Lobby.ThrowingApron
@@ -268,7 +272,7 @@ function World.refine(map)
 	-- Plaza paths and flower clusters are installed by World.finish.
 	map:SetAttribute("SkippingRefinementVersion", 1)
 end
-function World.apply(map)
+function World.apply(map: Construction.World): Instance?
 	if map:GetAttribute("SkippingWorldVersion") == 1 then
 		World.refine(map)
 		World.finish(map)
@@ -277,7 +281,15 @@ function World.apply(map)
 	local root = Instance.new("Model")
 	root.Name = "SkippingWorld"
 	root.Parent = map
-	local function part(name, size, pos, color, solid, material, parent)
+	local function part(
+		name: string,
+		size: Vector3,
+		pos: Vector3,
+		color: Color3,
+		solid: boolean?,
+		material: Enum.Material?,
+		parent: Instance?
+	)
 		local p = Instance.new("Part")
 		p.Name = name
 		p.Size = size
@@ -293,8 +305,9 @@ function World.apply(map)
 		p.Parent = parent or root
 		return p
 	end
-	local function studs(p, faces)
-		for _, face in faces or { Enum.NormalId.Top } do
+	local function studs(p: BasePart, faces: { Enum.NormalId }?)
+		local selectedFaces: { Enum.NormalId } = faces or { Enum.NormalId.Top }
+		for _, face in selectedFaces do
 			local t = Instance.new("Texture")
 			t.Texture = Config.StudTexture
 			t.Face = face
@@ -305,7 +318,7 @@ function World.apply(map)
 			t.Parent = p
 		end
 	end
-	local function label(text, pos, size, color, parent)
+	local function label(text: string, pos: Vector3, size: number, color: Color3, parent: Instance?)
 		local anchor = part("LabelAnchor", V(0.1, 0.1, 0.1), pos, C(255, 255, 255), false, nil, parent)
 		anchor.Transparency = 1
 		local gui = Instance.new("BillboardGui")
@@ -327,10 +340,10 @@ function World.apply(map)
 		s.Parent = l
 		return l
 	end
-	local function hide(p)
+	local function hide(p: BasePart)
 		p.Transparency = 1
 		for _, d in p:GetChildren() do
-			if d:IsA("Texture") or d:IsA("Decal") then
+			if d:IsA("Decal") then
 				d.Transparency = 1
 			elseif d:IsA("BillboardGui") then
 				d.Enabled = false
@@ -371,14 +384,14 @@ function World.apply(map)
 		)
 	end
 	for _, d in map:GetDescendants() do
-		if d:IsA("TextLabel") and d.Parent:IsA("BillboardGui") and not d:IsDescendantOf(root) then
+		if d:IsA("TextLabel") and d.Parent and d.Parent:IsA("BillboardGui") and not d:IsDescendantOf(root) then
 			if d.Text:find("БАРЬЕР") or d.Text:find("ЗОНА") or d.Text:find("ПРЕДМЕТЫ") then
 				d.Parent.Enabled = false
 			end
 		end
 	end
 	for i = 1, 7 do
-		local lane = map.TrainingZone:FindFirstChild("TrainingLane" .. i)
+		local lane = assert(map.TrainingZone:FindFirstChild("TrainingLane" .. i)) :: Construction.Lane
 		local def = Config.Lanes[i]
 		lane:SetAttribute("RequiredRebirths", def.rebirths)
 		lane:SetAttribute("TrainingMultiplier", def.multiplier)
@@ -546,7 +559,7 @@ function World.apply(map)
 	-- A free pet display supplies the same moving mascot silhouette as the references.
 	for i, stone in Config.Stones do
 		local pedestal = map.EmptyItemStand:FindFirstChild("EmptyPedestal" .. i)
-		if pedestal then
+		if pedestal and pedestal:IsA("BasePart") then
 			local rock = part(
 				"DisplayStone_" .. stone.id,
 				V(5, 2, 4),

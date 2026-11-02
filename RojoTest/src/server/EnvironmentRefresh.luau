@@ -1,4 +1,6 @@
 --!strict
+local Construction = require(script.Parent.ConstructionTypes)
+type Palette = { earth: Color3, flower: Color3, leaf: Color3, light: Color3, rock: Color3 }
 -- A native-part art pass. Scene anchors, authored floors and gameplay markers stay intact.
 local Refresh = {}
 local VERSION = 1
@@ -6,7 +8,7 @@ local C, V = Color3.fromRGB, Vector3.new
 local STUDS = "rbxassetid://88156646156237"
 local palettes = require(script.Parent.CoursePalette)
 
-local function studs(part, face)
+local function studs(part: BasePart, face: Enum.NormalId)
 	local name = "RefreshStuds_" .. face.Name
 	if part:FindFirstChild(name) then
 		return
@@ -22,7 +24,7 @@ local function studs(part, face)
 	texture.Parent = part
 end
 
-function Refresh.apply(map)
+function Refresh.apply(map: Construction.World): Instance?
 	assert(map and map:GetAttribute("Version") == 9, "Authored map v9 required")
 	if map:GetAttribute("EnvironmentRefreshVersion") == VERSION then
 		return map.NativeEnvironment
@@ -56,7 +58,7 @@ function Refresh.apply(map)
 	lobby.Name = "LobbyAccents"
 	lobby.Parent = native
 	local saved, changed = {}, {}
-	local function remember(p)
+	local function remember(p: BasePart)
 		if saved[p] then
 			return
 		end
@@ -69,12 +71,12 @@ function Refresh.apply(map)
 		link.Parent = copy
 		copy.Parent = backup
 	end
-	local function hide(p, keepCollision)
+	local function hide(p: BasePart, keepCollision: boolean?)
 		remember(p)
 		changed[p] = true
 		p.Transparency = 1
 		for _, t in p:GetChildren() do
-			if t:IsA("Texture") or t:IsA("Decal") then
+			if t:IsA("Decal") then
 				t.Transparency = 1
 			end
 		end
@@ -84,8 +86,17 @@ function Refresh.apply(map)
 			p.CanQuery = false
 		end
 	end
-	local function part(parent, name, size, position, color, yaw, wedge, texture)
-		local p = Instance.new(wedge and "WedgePart" or "Part")
+	local function part(
+		parent: Instance,
+		name: string,
+		size: Vector3,
+		position: Vector3,
+		color: Color3,
+		yaw: number?,
+		wedge: boolean?,
+		texture: boolean?
+	)
+		local p: BasePart = if wedge then Instance.new("WedgePart") else Instance.new("Part")
 		p.Name = name
 		p.Size = size
 		p.Color = color
@@ -106,20 +117,27 @@ function Refresh.apply(map)
 		end
 		return p
 	end
-	local function model(parent, name, base)
+	local function model(parent: Instance, name: string, base: Vector3)
 		local m = Instance.new("Model")
 		m.Name = name
 		m.WorldPivot = frame * CFrame.new(base)
 		m.Parent = parent
 		return m
 	end
-	local function beam(parent, name, a, b, width, color)
+	local function beam(parent: Instance, name: string, a: Vector3, b: Vector3, width: number, color: Color3)
 		local p = part(parent, name, V(width, (b - a).Magnitude, width), (a + b) / 2, color, 0, false, false)
 		p.CFrame = frame * CFrame.lookAt((a + b) / 2, b) * CFrame.Angles(math.pi / 2, 0, 0)
 		studs(p, Enum.NormalId.Front)
 		return p
 	end
-	local function broadTree(parent, base, height, palette, variant, palm)
+	local function broadTree(
+		parent: Instance,
+		base: Vector3,
+		height: number,
+		palette: Palette,
+		variant: number,
+		palm: boolean?
+	)
 		local m = model(parent, palm and "RobloxPalm" or "RobloxOak", base)
 		local h = height
 		local wood = C(143, 101, 63)
@@ -184,7 +202,7 @@ function Refresh.apply(map)
 		end
 		return m
 	end
-	local function rockGarden(parent, base, scale, palette, variant)
+	local function rockGarden(parent: Instance, base: Vector3, scale: number, palette: Palette, variant: number)
 		local m = model(parent, "FacetedRockGarden", base)
 		part(m, "RockCore", V(5.6, 3.8, 5.1) * scale, base + V(0, 1.9, 0) * scale, palette.rock, variant * 0.17)
 		part(
@@ -224,7 +242,7 @@ function Refresh.apply(map)
 		)
 		return m
 	end
-	local function plants(parent, base, scale, palette, flower)
+	local function plants(parent: Instance, base: Vector3, scale: number, palette: Palette, flower: boolean?)
 		local m = model(parent, "PlantPocket", base)
 		for i, v in
 			{ { 0, 1.2, 0, 3.7, 2.4, 3.2 }, { 2.1, 0.8, 1.0, 2.6, 1.6, 2.9 }, { -1.6, 0.7, 1.4, 2.5, 1.4, 2.4 } }
@@ -285,7 +303,7 @@ function Refresh.apply(map)
 				local pieces = { root }
 				local visible = root.Transparency < 0.99
 				local palm = false
-				for _, p in root.Parent:GetChildren() do
+				for _, p in assert(root.Parent):GetChildren() do
 					if
 						p:IsA("BasePart")
 						and p ~= root
@@ -304,7 +322,7 @@ function Refresh.apply(map)
 			elseif root.Name == "BiomeDecorStem" and root.Transparency < 0.99 then
 				local pieces = { root }
 				local palm = false
-				for _, p in root.Parent:GetChildren() do
+				for _, p in assert(root.Parent):GetChildren() do
 					if
 						p:IsA("BasePart")
 						and (p.Name == "CandyCrown" or p.Name == "PalmFrond")

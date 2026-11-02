@@ -21,6 +21,12 @@ local Palette = {
 	PathCheckerCell = 8,
 	PathEdge = RGB(112, 117, 126),
 	PathCurb = RGB(207, 210, 216),
+	PathArrow = RGB(78, 82, 92),
+	ThrowZone = RGB(255, 168, 38),
+	ThrowZoneChecker = RGB(255, 204, 64),
+	ThrowZoneEdge = RGB(226, 128, 22),
+	ThrowZoneCell = 4,
+	ThrowZoneBand = 1.2,
 
 	Studs = "rbxassetid://88156646156237",
 	StudsTransparency = 0.45,

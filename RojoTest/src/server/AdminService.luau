@@ -1,5 +1,6 @@
 --!strict
 local Access = require(script.Parent.AdminAccess)
+local Construction = require(script.Parent.ConstructionTypes)
 local Diagnostics = require(script.Parent.AdminDiagnostics)
 local Config = require(game.ReplicatedStorage.Shared.GameConfig)
 local Economy = require(game.ReplicatedStorage.Shared.Core.Economy)
@@ -7,6 +8,42 @@ local Net = require(game.ReplicatedStorage.Shared.Net)
 local H = game:GetService("HttpService")
 local Service = {}
 Service.__index = Service
+export type Context = {
+	states: { [Player]: any },
+	remotes: Folder,
+	map: Instance,
+	publish: (Player) -> (),
+	stopTraining: (Player) -> (),
+	rootFor: (Player) -> (BasePart?, Humanoid?),
+	arenaFor: (Player) -> any,
+	save: (Player, boolean?, string?) -> boolean,
+	fresh: () -> any,
+	equipBest: (any) -> (),
+	hatch: (Player, string, number?, boolean?) -> (),
+	throw: (Player, number?) -> (),
+	effect: RemoteEvent,
+}
+type Row = { ok: boolean, title: string, detail: string }
+type Status = {
+	wins: number,
+	skill: number,
+	rebirths: number,
+	world: number,
+	pets: number,
+	equipped: number,
+	shot: number,
+	studio: boolean,
+	errors: number,
+}
+type Fields = {
+	context: Context,
+	logs: { { time: string, kind: string, own: boolean, isError: boolean, message: string } },
+	last: { [Player]: number },
+	counters: { [Player]: { count: number, window: number } },
+	secrets: { [string]: boolean },
+}
+type Admin = typeof(setmetatable({} :: Fields, Service))
+
 -- At most this many admin commands per player and per minute.
 Service.CommandLimit = 60
 Service.CommandWindow = 60
@@ -25,8 +62,9 @@ local function redact(text, secrets)
 	return masked
 end
 
-function Service.new(context)
-	local self = setmetatable({ context = context, logs = {}, last = {}, counters = {}, secrets = {} }, Service)
+function Service.new(context: Context): Admin
+	local self =
+		setmetatable({ context = context, logs = {}, last = {}, counters = {}, secrets = {} } :: Fields, Service)
 	local remote: RemoteFunction? = nil
 	-- The admin remote exists only while an authorized player is in the game.
 	-- It is created with the first of them and stays for the session.
@@ -85,7 +123,7 @@ function Service.new(context)
 	return self
 end
 
-function Service:status(player)
+function Service.status(self: Admin, player: Player): Status?
 	local s = self.context.states[player]
 	if not s then
 		return nil
@@ -115,7 +153,7 @@ function Service:status(player)
 	}
 end
 
-function Service:move(player, target)
+function Service.move(self: Admin, player: Player, target: CFrame)
 	local c = self.context
 	local s = c.states[player]
 	c.stopTraining(player)
@@ -131,14 +169,14 @@ function Service:move(player, target)
 	root.AssemblyAngularVelocity = Vector3.zero
 end
 
-function Service:dispatch(player, command, value)
+function Service.dispatch(self: Admin, player: Player, command: string, value: any): (string, { Row }?)
 	local c = self.context
 	local s: any = c.states[player]
 	assert(s, "Данные игрока ещё загружаются")
 	if command == "Status" then
-		return "Панель готова."
+		return "Панель готова.", nil
 	elseif command == "Diagnostics" then
-		return "Проверки завершены.", Diagnostics.run(c.map)
+		return "Проверки завершены.", Diagnostics.run(c.map :: Construction.World)
 	elseif command == "Logs" then
 		local rows = {}
 		for i = #self.logs, 1, -1 do
@@ -236,7 +274,7 @@ function Service:dispatch(player, command, value)
 		)
 		local root, hum = c.rootFor(player)
 		assert(root and hum, "Нет персонажа")
-		self:move(player, Config.apronCharacterPose(c.arenaFor(player), root, hum, -11))
+		self:move(player, Config.apronCharacterPose(c.arenaFor(player), root, hum, Config.KickStanceFromFront))
 		c.throw(player, distance)
 	elseif command == "Teleport" then
 		local root, hum = c.rootFor(player)
@@ -245,7 +283,7 @@ function Service:dispatch(player, command, value)
 		d.world = 1
 		local map = c.arenaFor(player)
 		if value == "Lobby" or value == "World1" then
-			self:move(player, Config.apronCharacterPose(map, root, hum, 3))
+			self:move(player, Config.apronCharacterPose(map, root, hum, Config.ApronStandFromFront))
 		elseif value == "Sakura" then
 			d.world = 1
 			map = c.map
@@ -291,18 +329,18 @@ function Service:dispatch(player, command, value)
 		assert(n and n % 1 == 0 and n >= 1 and n <= 7, "Неизвестная площадка")
 		local root, hum = c.rootFor(player)
 		assert(root and hum, "Нет персонажа")
-		local pad =
-			require(game.ReplicatedStorage.Shared.WorldRefs).training(c.arenaFor(player))["TrainingLane" .. n].StartingPad
+		local arena = c.arenaFor(player)
+		local pad = require(game.ReplicatedStorage.Shared.WorldRefs).training(arena)["TrainingLane" .. n].StartingPad
 		local h = root.Size.Y / 2 + (hum.RigType == Enum.HumanoidRigType.R6 and 2 or hum.HipHeight)
 		self:move(player, pad.CFrame * CFrame.new(0, pad.Size.Y / 2 + h + 0.15, 0))
 	else
 		error("Неизвестная команда")
 	end
 	c.save(player)
-	return "Готово. Изменения внесены в сохраняемый прогресс."
+	return "Готово. Изменения внесены в сохраняемый прогресс.", nil
 end
 
-function Service:handle(player, command, value)
+function Service.handle(self: Admin, player: Player, command: any, value: any)
 	if not Access.isAuthorized(player.UserId) then
 		return { ok = false, message = "Нет доступа." }
 	end
@@ -320,7 +358,7 @@ function Service:handle(player, command, value)
 	local counter = self.counters[player]
 	if not counter or now - counter.window >= Service.CommandWindow then
 		counter = { count = 0, window = now }
-		self.counters[player] = counter
+		self.counters[player] = assert(counter)
 	end
 	if counter.count >= Service.CommandLimit then
 		return { ok = false, message = "Слишком много команд. Подожди минуту." }

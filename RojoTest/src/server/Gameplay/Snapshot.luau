@@ -34,6 +34,7 @@ function Snapshot.build(context: Context, player: Player, notice: string?, force
 		level = level,
 		multiplier = context.multiplier(s),
 		canThrow = context.inApron(player) and os.clock() >= s.busyUntil,
+		throwReady = os.clock() >= s.busyUntil,
 		rebirthRequiredLevel = rebirthRequiredLevel,
 		rebirthProgress = rebirthProgress,
 		rebirthReady = level >= rebirthRequiredLevel,

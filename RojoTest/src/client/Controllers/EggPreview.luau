@@ -233,7 +233,7 @@ local function Panel(p: PanelProps)
 	if admin then
 		local pet = Config.AdminPet
 		title, titleColor = "Volcanic Inferno", LAVA
-		currency, price, affordable = "Robux", Config.format(Config.Products.AdminEgg.price), true
+		currency, price, affordable = "Robux", Config.format(assert(Config.Products.AdminEgg.price)), true
 		tiles.Card = e(PetTile, {
 			Item = pet,
 			Chance = "100%",

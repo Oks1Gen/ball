@@ -1,7 +1,8 @@
 --!strict
+local Construction = require(script.Parent.ConstructionTypes)
 local Japanese = {}
 
-function Japanese.apply(map)
+function Japanese.apply(map: Construction.World): Instance?
 	local world = map.SkippingWorld
 	if world:FindFirstChild("SakuraJapaneseFinale") then
 		return
@@ -9,7 +10,9 @@ function Japanese.apply(map)
 	local base = world:FindFirstChild("SakuraThreshold")
 	assert(base, "Sakura finale missing")
 	local V, C = Vector3.new, Color3.fromRGB
-	local left, right, upper, lower = math.huge, -math.huge, nil, nil
+	local left, right = math.huge, -math.huge
+	local upper: BasePart? = nil
+	local lower: BasePart? = nil
 	for _, p in ipairs(world:GetChildren()) do
 		if p:IsA("BasePart") and p.Name == "BiomeBank8_2" then
 			left = math.min(left, p.Position.X - p.Size.X / 2)
@@ -38,7 +41,7 @@ function Japanese.apply(map)
 		old.Name = "BeforeJapaneseFinale"
 		old.Parent = backups
 	end
-	local banner = base.BlossomBannerGarden
+	local banner = assert(base:FindFirstChild("BlossomBannerGarden")) :: Model
 	local bannerBack = banner:GetPivot().Position.Z - 5
 	for _, p in ipairs(banner:GetDescendants()) do
 		if
@@ -57,7 +60,7 @@ function Japanese.apply(map)
 			p.Transparency = 1
 			p:SetAttribute("JapaneseBannerHidden", true)
 			for _, t in ipairs(p:GetChildren()) do
-				if t:IsA("Texture") or t:IsA("Decal") then
+				if t:IsA("Decal") then
 					t.Transparency = 1
 				end
 			end
@@ -75,8 +78,16 @@ function Japanese.apply(map)
 		C(184, 170, 176),
 		C(255, 151, 192),
 		C(255, 219, 233)
-	local function part(name, size, cf, color, studs, shape, class)
-		local p = Instance.new(class or "Part")
+	local function part(
+		name: string,
+		size: Vector3,
+		cf: CFrame,
+		color: Color3,
+		studs: boolean?,
+		shape: Enum.PartType?,
+		class: string?
+	)
+		local p = Instance.new(class or "Part") :: BasePart
 		p.Name = name
 		p.Size = size
 		p.CFrame = cf
@@ -88,7 +99,7 @@ function Japanese.apply(map)
 		p.CanQuery = false
 		p.TopSurface = Enum.SurfaceType.Smooth
 		p.BottomSurface = Enum.SurfaceType.Smooth
-		if shape then
+		if shape and p:IsA("Part") then
 			p.Shape = shape
 		end
 		if studs then
@@ -102,19 +113,19 @@ function Japanese.apply(map)
 		p.Parent = parent
 		return p
 	end
-	local function box(name, size, pos, color, studs, rot)
+	local function box(name: string, size: Vector3, pos: Vector3, color: Color3, studs: boolean?, rot: CFrame?)
 		return part(name, size, CFrame.new(pos) * (rot or CFrame.identity), color, studs)
 	end
-	local function bar(name, a, b, w, color)
+	local function bar(name: string, a: Vector3, b: Vector3, w: number, color: Color3)
 		return part(name, V(w, w, (a - b).Magnitude), CFrame.lookAt((a + b) / 2, b), color)
 	end
-	local function begin(name)
+	local function begin(name: string)
 		local m = Instance.new("Model")
 		m.Name = name
 		parent = m
 		return m
 	end
-	local function finish(m, pos)
+	local function finish(m: Model, pos: Vector3)
 		if m.Name == "SakuraGatewayFrame" or m.Name == "GatewaySakuraBough" then
 			for _, p in ipairs(m:GetDescendants()) do
 				if p:IsA("BasePart") then
@@ -126,7 +137,15 @@ function Japanese.apply(map)
 		m.Parent = root
 		parent = root
 	end
-	local function triangle(name, a, b, c, color, thickness, studs)
+	local function triangle(
+		name: string,
+		a: Vector3,
+		b: Vector3,
+		c: Vector3,
+		color: Color3,
+		thickness: number,
+		studs: boolean?
+	)
 		local ab, ac, bc = b - a, c - a, c - b
 		if ab:Dot(ab) > ac:Dot(ac) and ab:Dot(ab) > bc:Dot(bc) then
 			c, a = a, c
@@ -171,7 +190,7 @@ function Japanese.apply(map)
 			end
 		end
 	end
-	local function blossom(cf, r, border)
+	local function blossom(cf: CFrame, r: number, border: boolean?)
 		for j = 1, 5 do
 			local a = j * math.pi * 2 / 5
 			local offset = V(math.cos(a) * r * 0.72, math.sin(a) * r * 0.72, 0)
@@ -203,7 +222,7 @@ function Japanese.apply(map)
 			Enum.PartType.Cylinder
 		)
 	end
-	local function glow(p, color, brightness, range)
+	local function glow(p: BasePart, color: Color3, brightness: number, range: number)
 		local l = Instance.new("PointLight")
 		l.Color = color
 		l.Brightness = brightness
@@ -211,7 +230,7 @@ function Japanese.apply(map)
 		l.Shadows = false
 		l.Parent = p
 	end
-	local pavilionPos = base.SakuraViewingBench:GetPivot().Position
+	local pavilionPos = (assert(base:FindFirstChild("SakuraViewingBench")) :: Model):GetPivot().Position
 	local pavilion = begin("SakuraTeaPavilion")
 	box("TeaDeck", V(14.3, 0.12, 14.3), pavilionPos + V(0, 0.06, 0), wood, true)
 	for _, x in ipairs({ -5.8, 5.8 }) do

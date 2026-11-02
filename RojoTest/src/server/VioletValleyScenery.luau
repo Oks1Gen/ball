@@ -1,11 +1,14 @@
 --!strict
+local Construction = require(script.Parent.ConstructionTypes)
 local Violet = {}
-function Violet.apply(map)
+function Violet.apply(map: Construction.World): Instance?
 	local world = map.SkippingWorld
 	if world:FindFirstChild("CrystalObservatory") then
 		return
 	end
-	local left, right, upper, lower = math.huge, -math.huge, nil, nil
+	local left, right = math.huge, -math.huge
+	local upper: BasePart? = nil
+	local lower: BasePart? = nil
 	for _, p in ipairs(world:GetChildren()) do
 		if p:IsA("BasePart") and p.Name == "BiomeBank4_2" then
 			left = math.min(left, p.Position.X - p.Size.X / 2)
@@ -63,7 +66,7 @@ function Violet.apply(map)
 	local purple = Color3.fromRGB(178, 107, 235)
 	local pink = Color3.fromRGB(224, 162, 244)
 	local cyan = Color3.fromRGB(104, 209, 229)
-	local function part(name, size, cf, color, studs, shape)
+	local function part(name: string, size: Vector3, cf: CFrame, color: Color3, studs: boolean?, shape: Enum.PartType?)
 		local p = Instance.new("Part")
 		p.Name = name
 		p.Size = size
@@ -76,7 +79,7 @@ function Violet.apply(map)
 		p.CanQuery = false
 		p.TopSurface = Enum.SurfaceType.Smooth
 		p.BottomSurface = Enum.SurfaceType.Smooth
-		if shape then
+		if shape and p:IsA("Part") then
 			p.Shape = shape
 		end
 		if studs then
@@ -90,13 +93,13 @@ function Violet.apply(map)
 		p.Parent = parent
 		return p
 	end
-	local function box(name, size, pos, color, studs, rot)
+	local function box(name: string, size: Vector3, pos: Vector3, color: Color3, studs: boolean?, rot: CFrame?)
 		return part(name, size, CFrame.new(pos) * (rot or CFrame.identity), color, studs)
 	end
-	local function bar(name, a, b, w, color)
+	local function bar(name: string, a: Vector3, b: Vector3, w: number, color: Color3)
 		return part(name, Vector3.new(w, w, (a - b).Magnitude), CFrame.lookAt((a + b) / 2, b), color)
 	end
-	local function tube(name, a, b, w, color)
+	local function tube(name: string, a: Vector3, b: Vector3, w: number, color: Color3)
 		return part(
 			name,
 			Vector3.new((a - b).Magnitude, w, w),
@@ -106,18 +109,18 @@ function Violet.apply(map)
 			Enum.PartType.Cylinder
 		)
 	end
-	local function begin(name)
+	local function begin(name: string)
 		local m = Instance.new("Model")
 		m.Name = name
 		parent = m
 		return m
 	end
-	local function finish(m, pos)
+	local function finish(m: Model, pos: Vector3)
 		m.WorldPivot = CFrame.new(pos)
 		m.Parent = root
 		parent = root
 	end
-	local function crystal(pos, h, w, color, yaw, glow)
+	local function crystal(pos: Vector3, h: number, w: number, color: Color3, yaw: number?, glow: boolean?)
 		local p = template:Clone()
 		p.Name = "FacetedAmethyst"
 		p.Size = Vector3.new(w, h, w * 0.8)
@@ -145,7 +148,7 @@ function Violet.apply(map)
 		end
 		return p
 	end
-	local function plants(pos, index, s)
+	local function plants(pos: Vector3, index: number, s: number)
 		s = s or 1
 		for i = 1, 6 do
 			local a = i * math.pi / 3 + index * 0.27
@@ -314,7 +317,7 @@ function Violet.apply(map)
 	root.Parent = world
 	task.wait()
 	local index = 0
-	local function garden(pos, scale)
+	local function garden(pos: Vector3, scale: number)
 		index += 1
 		local m = begin("CrystalGarden")
 		for j = 1, 4 do

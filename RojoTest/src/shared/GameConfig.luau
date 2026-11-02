@@ -11,13 +11,15 @@ Config.TrainingCycle = 1.2
 Config.KickContact = 0.42
 -- The training contact and the shot windup are the same moment of the kick.
 Config.KickWindup = Config.KickContact
-Config.DistancePerStud = 750 / 180
+-- World1 was scaled by 0.8 on 2026-11-02. CourseLength then doubled only
+-- the route: each current 432-stud location is 2250 m at the same conversion.
+Config.DistancePerStud = 750 / 144
 -- One ball size for the hand, the training lane and the kick.
 Config.BallDiameter = 1.1
--- Arena-frame rest point of the kick ball: on the apron, just ahead of the right foot's toe.
+-- Reference origin for progression limits; live shots start at the player's kicking foot.
 Config.ShotStartLocal = Vector3.new(-115.6, 1.27, 0.3)
 Config.WorldShotProgression = {
-	[1] = { requiredPower = 1000000, routeStuds = 2160 },
+	[1] = { requiredPower = 1000000, routeStuds = 3456 },
 }
 Config.RebirthBaseSkill = Economy.RebirthBaseSkill
 Config.RebirthSkillGrowth = Economy.RebirthSkillGrowth
@@ -31,28 +33,44 @@ function Config.rebirthProgress(skill, rebirths)
 	return Economy.rebirthProgress(skill, rebirths)
 end
 -- The apron is a live scene anchor; map movement must also move gameplay coordinates.
+-- The reference origin tracks its front edge when the apron is resized.
 function Config.arenaFrame(arena: any): CFrame
-	return WorldRefs.apron(arena).CFrame * CFrame.new(115, -0.3, -13)
+	local apron = WorldRefs.apron(arena)
+	return apron.CFrame * CFrame.new(115, apron.Size.Y / 2 - 0.6, -apron.Size.Z / 2 - 6.68)
 end
-function Config.apronCharacterPose(arena: any, root: BasePart, humanoid: Humanoid, localZ: number): CFrame
+-- `fromFront`: studs from the apron's front edge, positive onto the apron, negative towards the course.
+function Config.apronCharacterPose(arena: any, root: BasePart, humanoid: Humanoid, fromFront: number): CFrame
 	local apron = WorldRefs.apron(arena)
 	local height = root.Size.Y / 2 + (humanoid.RigType == Enum.HumanoidRigType.R6 and 2 or humanoid.HipHeight)
-	return apron.CFrame * CFrame.new(-1, apron.Size.Y / 2 + height + 0.15, localZ)
+	return apron.CFrame * CFrame.new(-1, apron.Size.Y / 2 + height + 0.15, -apron.Size.Z / 2 + fromFront)
+end
+-- Legacy admin teleport destination. Gameplay kicks keep the player's current position.
+Config.KickStanceFromFront = -4.68
+Config.ApronStandFromFront = 7.5
+-- Use the visible orange surface as the shared client/server activation boundary.
+function Config.inThrowZone(arena: any, position: Vector3): boolean
+	local apron = WorldRefs.apron(arena)
+	if not apron then
+		return false
+	end
+	local point = apron.CFrame:PointToObjectSpace(position)
+	return math.abs(point.X) <= apron.Size.X / 2
+		and math.abs(point.Z) <= apron.Size.Z / 2
+		and point.Y >= apron.Size.Y / 2
+		and point.Y < apron.Size.Y / 2 + 12
 end
 function Config.trainingSurface(lane: any): number
 	local strip = lane.TrainingStrip
 	return strip.Position.Y + strip.Size.Y / 2 + (lane:FindFirstChild("ImportedField") and 0.08 or 0)
 end
-function Config.shotLimit(_world, arena)
+function Config.shotLimit(_world, arena, startPosition: Vector3?)
 	local definition = Config.WorldShotProgression[1]
 	arena = arena or (workspace:FindFirstChild("Map") and workspace.Map:FindFirstChild("World1"))
-	local scenery = WorldRefs.course(arena)
 	local field = WorldRefs.field(arena, 8)
 	if field then
 		local frame = Config.arenaFrame(arena)
-		local start = frame:PointToWorldSpace(Config.ShotStartLocal)
-		local finale = scenery:FindFirstChild("SakuraJapaneseFinale", true)
-		local gate = finale and finale:FindFirstChild("SakuraGatewayFrame")
+		local start = startPosition or frame:PointToWorldSpace(Config.ShotStartLocal)
+		local gate = WorldRefs.finish(arena)
 		local goal = gate and gate:GetPivot().Position or field.Position + frame.LookVector * (field.Size.Z / 2 - 7)
 		return math.max(
 			Economy.ShotDistanceFloor,
@@ -89,6 +107,13 @@ Config.Biomes = {
 	{ name = "Frozen Falls", distance = 4500, color = C(129, 225, 255), bank = C(215, 246, 255), kind = "ice" },
 	{ name = "Rainbow Paradise", distance = 5250, color = C(238, 124, 230), bank = C(166, 242, 121), kind = "rainbow" },
 }
+-- Public zone names/colours follow Football City. The kinds are construction-only
+-- compatibility for historical generators, which run before the final city pass.
+for index, theme in require(script.Parent.FootballCity) do
+	Config.Biomes[index].name = theme.name
+	Config.Biomes[index].color = theme.pitch
+	Config.Biomes[index].bank = theme.paving
+end
 Config.Lanes = {
 	{ multiplier = 1, rebirths = 0, color = C(90, 222, 153) },
 	{ multiplier = 2, rebirths = 2, color = C(40, 220, 210) },
@@ -344,7 +369,8 @@ Config.Gifts = {
 	{ time = 1800, wins = 50000, skill = 25000 },
 }
 -- Set actual IDs after creating products in this experience's Creator Dashboard.
-Config.Products = {
+type Product = { id: number, price: number?, skill: number?, trainingBoost: number? }
+local products: { [string]: Product } = {
 	TrainingBoost67 = { id = 0, trainingBoost = 67 },
 	TrainingBoost69 = { id = 0, trainingBoost = 69 },
 	TrainingBoost144 = { id = 0, trainingBoost = 144 },
@@ -358,6 +384,7 @@ Config.Products = {
 	SkipRebirth = { id = 0, price = 49 },
 	AdminEgg = { id = 0, price = 175 },
 }
+Config.Products = products
 
 function Config.find(list, id)
 	for _, item in list do

@@ -106,7 +106,7 @@ local function cleanup()
 end
 table.insert(connections, cover.Activated:Connect(cleanup))
 
-local ok, failure = xpcall(function()
+local completion = table.pack(xpcall(function()
 	local View = require(script.View)
 	local Preloader = require(script.AssetPreloader)
 	local Config = require(script.Config)
@@ -148,7 +148,8 @@ local ok, failure = xpcall(function()
 	-- Only the completed screen fades; progress never advances on a timer.
 	view.finish()
 	task.wait(Config.FadeTime)
-end, debug.traceback)
+end, debug.traceback))
+local ok, failure = completion[1], completion[2]
 cleanup()
 if not ok then
 	warn("Loading screen ended safely: " .. tostring(failure))

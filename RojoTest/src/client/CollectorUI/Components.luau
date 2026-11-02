@@ -230,6 +230,11 @@ local function useButtonMotion(p)
 			Motion.resetButtons(buttonRef.current)
 		end
 	end, { p.Inert == true, reduced == true })
+	React.useEffect(function()
+		if buttonRef.current then
+			buttonRef.current:SetAttribute("AttentionPulse", p.Attention == true)
+		end
+	end, { p.Attention == true })
 	return buttonRef, visualRef
 end
 function U.Button(p)
@@ -391,10 +396,10 @@ function U.FloatingIcon(p)
 		Kind = p.Kind,
 		Size = p.Size,
 		AnchorPoint = p.AnchorPoint,
-		Position = time:map(function(t)
+		Position = time:map(function(t: number)
 			return (p.Position or UDim2.new()) + UDim2.fromOffset(0, math.round(math.sin(t * 1.4) * 4))
 		end),
-		Rotation = time:map(function(t)
+		Rotation = time:map(function(t: number)
 			return math.sin(t * 0.8) * 3
 		end),
 	})
@@ -772,9 +777,12 @@ function U.Scroll(p)
 	}, p.Children)
 end
 function U.TrailPreview(p)
-	local ref = React.useRef(nil)
+	local ref = React.useRef(nil :: ViewportFrame?)
 	React.useEffect(function()
 		local viewport = ref.current
+		if not viewport then
+			return function() end
+		end
 		local world = Instance.new("WorldModel")
 		world.Parent = viewport
 		local function part(size, cf, color)
@@ -821,7 +829,7 @@ function U.TrailPreview(p)
 			world:Destroy()
 			camera:Destroy()
 		end
-	end, { p.Color, p.Rainbow == true })
+	end, { p.Color, p.Rainbow })
 	return e("ViewportFrame", {
 		Name = "TrailPreview",
 		ref = ref,

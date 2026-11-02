@@ -9,6 +9,7 @@ function Service:Start()
 	local layout = require(root.WorldLayout)
 	for _, world in hierarchy.container():GetChildren() do
 		if world.Name == "World1" then
+			require(root.CourseLength).apply(world)
 			layout.prepare(world)
 		end
 	end
@@ -56,8 +57,12 @@ function Service:Start()
 	require(root.WorldLighting).apply()
 	layout.apply(map)
 	require(root.CourseRegions).apply(map)
+	require(root.EntranceArchRemoval).apply(map)
 	require(root.LobbyWalls).apply(map)
 	require(root.LobbyPaths).apply(map)
+	require(root.ThrowZoneStyle).apply(map)
+	require(root.FootballCityScenery).apply(map)
+	require(root.CloudSea).apply(map)
 	require(root.TransparentCleanup).apply(hierarchy.container())
 	self.map = map
 end

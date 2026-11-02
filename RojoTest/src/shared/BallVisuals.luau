@@ -3,10 +3,10 @@ local Shared = script.Parent
 local _Config = require(Shared.GameConfig)
 local Visuals = {}
 
-function Visuals.create(id, diameter)
+function Visuals.create(id: string, diameter: number): Model
 	local templates = Shared:WaitForChild("BallTemplates")
 	local template = templates:FindFirstChild(id) or templates:FindFirstChild("Pebble")
-	assert(template, "Missing ball template")
+	assert(template and template:IsA("Model"), "Missing ball template")
 	local model = template:Clone()
 	model.Name = "Ball_" .. id
 	model:SetAttribute("BallId", id)
@@ -34,13 +34,13 @@ function Visuals.create(id, diameter)
 end
 
 -- Changes whenever a template's fit size changes, so placed display copies know to rebuild.
-function Visuals.fitKey(id): string
+function Visuals.fitKey(id: string): string
 	local templates = Shared:WaitForChild("BallTemplates")
 	local template = templates:FindFirstChild(id) or templates:FindFirstChild("Pebble")
 	return tostring(template and template:GetAttribute("FitSize"))
 end
 
-function Visuals.visible(model, visible)
+function Visuals.visible(model: Model, visible: boolean)
 	for _, part in model:GetDescendants() do
 		if part:IsA("BasePart") then
 			part.LocalTransparencyModifier = visible and 0 or 1
@@ -48,7 +48,7 @@ function Visuals.visible(model, visible)
 	end
 end
 
-function Visuals.preview(parent, id)
+function Visuals.preview(parent: Instance, id: string)
 	local viewport = Instance.new("ViewportFrame")
 	viewport.Name = "BallPreview"
 	viewport.BackgroundTransparency = 1
@@ -84,7 +84,7 @@ function Visuals.displayOrigin(model: Model): (CFrame?, Vector3?)
 	return model:GetAttribute("DisplayBasePivot") :: CFrame?, model:GetAttribute("DisplayLabelBase") :: Vector3?
 end
 
-function Visuals.standPose(base, time, phase)
+function Visuals.standPose(base: CFrame, time: number, phase: number)
 	local bob = 0.45 * math.sin((time % 2.5) * math.pi * 2 / 2.5 + phase)
 	return (base + Vector3.new(0, bob, 0)) * CFrame.Angles(0, (time % 22.5) * math.pi * 2 / 22.5, 0), bob
 end

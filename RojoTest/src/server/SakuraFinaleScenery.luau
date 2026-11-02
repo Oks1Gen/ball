@@ -1,13 +1,16 @@
 --!strict
+local Construction = require(script.Parent.ConstructionTypes)
 local Finale = {}
 
-function Finale.apply(map)
+function Finale.apply(map: Construction.World): Instance?
 	local world = map.SkippingWorld
 	if world:FindFirstChild("SakuraThreshold") then
 		return
 	end
 	local V, C = Vector3.new, Color3.fromRGB
-	local left, right, upper, lower = math.huge, -math.huge, nil, nil
+	local left, right = math.huge, -math.huge
+	local upper: BasePart? = nil
+	local lower: BasePart? = nil
 	for _, p in ipairs(world:GetChildren()) do
 		if p:IsA("BasePart") and p.Name == "BiomeBank8_2" then
 			left = math.min(left, p.Position.X - p.Size.X / 2)
@@ -35,7 +38,7 @@ function Finale.apply(map)
 		old.Name = "BeforeSakuraThreshold"
 		old.Parent = backups
 	end
-	local function hide(object)
+	local function hide(object: Instance)
 		object:Clone().Parent = old
 		local list = object:GetDescendants()
 		table.insert(list, object)
@@ -43,7 +46,7 @@ function Finale.apply(map)
 			if p:IsA("BasePart") then
 				p.Transparency = 1
 				p:SetAttribute("FinaleVisualHidden", true)
-			elseif p:IsA("Texture") or p:IsA("Decal") then
+			elseif p:IsA("Decal") then
 				p.Transparency = 1
 			elseif p:IsA("Light") then
 				p.Enabled = false
@@ -87,8 +90,16 @@ function Finale.apply(map)
 		C(213, 236, 191),
 		C(250, 237, 210),
 		C(255, 214, 135)
-	local function part(name, size, cf, color, studs, shape, class)
-		local p = Instance.new(class or "Part")
+	local function part(
+		name: string,
+		size: Vector3,
+		cf: CFrame,
+		color: Color3,
+		studs: boolean?,
+		shape: Enum.PartType?,
+		class: string?
+	)
+		local p = Instance.new(class or "Part") :: BasePart
 		p.Name = name
 		p.Size = size
 		p.CFrame = cf
@@ -100,7 +111,7 @@ function Finale.apply(map)
 		p.CanQuery = false
 		p.TopSurface = Enum.SurfaceType.Smooth
 		p.BottomSurface = Enum.SurfaceType.Smooth
-		if shape then
+		if shape and p:IsA("Part") then
 			p.Shape = shape
 		end
 		if studs then
@@ -114,31 +125,31 @@ function Finale.apply(map)
 		p.Parent = parent
 		return p
 	end
-	local function box(name, size, pos, color, studs, rot)
+	local function box(name: string, size: Vector3, pos: Vector3, color: Color3, studs: boolean?, rot: CFrame?)
 		return part(name, size, CFrame.new(pos) * (rot or CFrame.identity), color, studs)
 	end
-	local function _bar(name, a, b, w, color)
+	local function _bar(name: string, a: Vector3, b: Vector3, w: number, color: Color3)
 		return part(name, V(w, w, (a - b).Magnitude), CFrame.lookAt((a + b) / 2, b), color)
 	end
-	local function begin(name)
+	local function begin(name: string)
 		local m = Instance.new("Model")
 		m.Name = name
 		parent = m
 		return m
 	end
-	local function finish(m, pos)
+	local function finish(m: Model, pos: Vector3)
 		m.WorldPivot = CFrame.new(pos)
 		m.Parent = root
 		parent = root
 	end
-	local function blossom(pos, s, color, cf)
-		cf = cf or CFrame.new(pos)
+	local function blossom(pos: Vector3?, s: number, color: Color3, cf: CFrame?)
+		local pose = cf or CFrame.new(assert(pos))
 		for j = 1, 5 do
 			local a = j * math.pi * 2 / 5
 			part(
 				"SakuraPetal",
 				V(0.14 * s, 0.85 * s, 0.85 * s),
-				cf * CFrame.new(math.cos(a) * 0.4 * s, 0, math.sin(a) * 0.4 * s) * CFrame.Angles(0, 0, math.pi / 2),
+				pose * CFrame.new(math.cos(a) * 0.4 * s, 0, math.sin(a) * 0.4 * s) * CFrame.Angles(0, 0, math.pi / 2),
 				color,
 				false,
 				Enum.PartType.Cylinder
@@ -147,13 +158,13 @@ function Finale.apply(map)
 		part(
 			"SakuraHeart",
 			V(0.18 * s, 0.36 * s, 0.36 * s),
-			cf * CFrame.new(0, 0.09 * s, 0) * CFrame.Angles(0, 0, math.pi / 2),
+			pose * CFrame.new(0, 0.09 * s, 0) * CFrame.Angles(0, 0, math.pi / 2),
 			cream,
 			false,
 			Enum.PartType.Cylinder
 		)
 	end
-	local function flowers(pos, s, index)
+	local function flowers(pos: Vector3, s: number, index: number)
 		for j = 1, 5 do
 			local a = j * 1.26 + index
 			local c = pos + V(math.cos(a) * 1.4 * s, 0.8 * s, math.sin(a) * 1.3 * s)
@@ -169,7 +180,7 @@ function Finale.apply(map)
 			blossom(c, 0.8 * s, j % 2 == 0 and pearl or pink)
 		end
 	end
-	local function rockGarden(pos, s, index)
+	local function rockGarden(pos: Vector3, s: number, index: number)
 		for j = 1, 4 do
 			local a = j * math.pi / 2 + index
 			local c = pos + V(math.cos(a) * 1.8 * s, 0.65 * s, math.sin(a) * 1.7 * s)
@@ -185,7 +196,7 @@ function Finale.apply(map)
 		end
 		flowers(pos + V(0, 0, 1.7 * s), s, index)
 	end
-	local function sakura(source, pos, scale, index)
+	local function sakura(source: Model, pos: Vector3, scale: number, index: number)
 		local tree = source:Clone()
 		tree.Name = "FloweringSakura"
 		tree:ScaleTo(tree:GetScale() * scale)
@@ -206,7 +217,7 @@ function Finale.apply(map)
 				if p.Name == "LeafCrown" then
 					table.insert(crowns, p)
 				end
-			elseif p:IsA("Texture") or p:IsA("Decal") then
+			elseif p:IsA("Decal") then
 				p.Transparency = 0
 			end
 		end
@@ -261,7 +272,7 @@ function Finale.apply(map)
 			task.wait()
 		end
 	end
-	local function stoneLantern(pos, s)
+	local function stoneLantern(pos: Vector3, s: number)
 		box("LanternFoundation", V(3.6 * s, 0.45 * s, 3.6 * s), pos + V(0, 0.225 * s, 0), stone, true)
 		box("LanternPlinth", V(2.8 * s, 0.5 * s, 2.8 * s), pos + V(0, 0.7 * s, 0), dark, true)
 		box("StoneLanternStem", V(1.15 * s, 2.6 * s, 1.15 * s), pos + V(0, 2.2 * s, 0), stone, true)

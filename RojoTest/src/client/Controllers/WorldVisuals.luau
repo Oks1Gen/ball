@@ -150,11 +150,11 @@ function World.mount(context: Context): Handle
 					local pose, bob = BallVisuals.standPose(
 						base,
 						workspace:GetServerTimeNow(),
-						(model:GetAttribute("DisplaySlot") or 1) * 0.55
+						((model:GetAttribute("DisplaySlot") :: number?) or 1) * 0.55
 					)
 					model:PivotTo(pose)
 					local link = model:FindFirstChild("DisplayLabel")
-					if link and link:IsA("ObjectValue") and link.Value and labelBase then
+					if link and link:IsA("ObjectValue") and link.Value and link.Value:IsA("BasePart") and labelBase then
 						link.Value.Position = labelBase + Vector3.new(0, bob, 0)
 					end
 				end

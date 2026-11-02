@@ -1,9 +1,10 @@
 --!strict
+local Construction = require(script.Parent.ConstructionTypes)
 -- Separates coincident render faces without changing the original gameplay volumes.
 local MapSurfaceFix = {}
 local V = Vector3.new
 
-function MapSurfaceFix.apply(root)
+function MapSurfaceFix.apply(root: Construction.World)
 	assert(root and root:GetAttribute("Version") == 9, "Surface repair requires map version 9")
 	if root:GetAttribute("SurfaceRepairVersion") == 1 then
 		return root
@@ -13,7 +14,8 @@ function MapSurfaceFix.apply(root)
 	local original = {}
 	for _, p in root:GetDescendants() do
 		if p:IsA("BasePart") then
-			original[p] = { p.CFrame, p.Size, p.CanCollide, p.CanTouch, p.CanQuery }
+			original[p] =
+				{ frame = p.CFrame, size = p.Size, collide = p.CanCollide, touch = p.CanTouch, query = p.CanQuery }
 		end
 	end
 	local storage = game:GetService("ServerStorage")
@@ -25,7 +27,7 @@ function MapSurfaceFix.apply(root)
 	local skins = Instance.new("Model")
 	skins.Name, skins.Parent = "SurfaceRepairs", root
 	local changed = 0
-	local function skin(p, size, cf, suffix)
+	local function skin(p: BasePart, size: Vector3, cf: CFrame?, suffix: string?)
 		local render = p:Clone()
 		render.Name = p.Name .. (suffix or "_Surface")
 		render.Size, render.CFrame = size, cf or p.CFrame
@@ -35,11 +37,11 @@ function MapSurfaceFix.apply(root)
 		changed += 1
 		return render
 	end
-	local function hide(p)
+	local function hide(p: BasePart)
 		p:SetAttribute("SurfaceRepairOriginalTransparency", p.Transparency)
 		p.Transparency = 1
 		for _, t in p:GetChildren() do
-			if t:IsA("Texture") or t:IsA("Decal") then
+			if t:IsA("Decal") then
 				t:SetAttribute("SurfaceRepairOriginalTransparency", t.Transparency)
 				t.Transparency = 1
 			end
@@ -97,9 +99,9 @@ function MapSurfaceFix.apply(root)
 	end
 	skins.WorldPivot = CFrame.new(-116, 0, -528)
 	for p, saved in original do
-		assert(p.CFrame == saved[1] and p.Size == saved[2], "Source geometry changed: " .. p:GetFullName())
+		assert(p.CFrame == saved.frame and p.Size == saved.size, "Source geometry changed: " .. p:GetFullName())
 		assert(
-			p.CanCollide == saved[3] and p.CanTouch == saved[4] and p.CanQuery == saved[5],
+			p.CanCollide == saved.collide and p.CanTouch == saved.touch and p.CanQuery == saved.query,
 			"Source collision changed: " .. p:GetFullName()
 		)
 	end

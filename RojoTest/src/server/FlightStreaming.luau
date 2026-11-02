@@ -16,7 +16,18 @@ end
 -- The character stays at the apron while its camera follows a client-only ball.
 -- Keep the character's normal focus and add one temporary focus on the ball, so
 -- the region it flies through stays streamed for everybody who watches it.
-function Streaming.start(player, info, isActive)
+function Streaming.start(
+	player: Player,
+	info: {
+		windup: number?,
+		startedAt: number,
+		duration: number,
+		startPosition: Vector3,
+		distance: number,
+		direction: Vector3,
+	},
+	isActive: () -> boolean
+)
 	local windup = info.windup or Config.KickWindup
 	Streaming.stop(player)
 	if not workspace.StreamingEnabled then

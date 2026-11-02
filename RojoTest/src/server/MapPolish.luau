@@ -1,4 +1,6 @@
 --!strict
+local Construction = require(script.Parent.ConstructionTypes)
+type Palette = { ground: Color3, leaf: Color3, light: Color3, rock: Color3, wall: Color3 }
 -- Additive visual pass for the existing v9 map. Never regenerates authored geometry.
 local MapPolish = {}
 local VERSION = 1
@@ -42,7 +44,7 @@ local palettes = {
 	},
 }
 
-local function texture(part, face)
+local function texture(part: BasePart, face: Enum.NormalId)
 	local name = "HDStuds_" .. face.Name
 	if part:FindFirstChild(name) then
 		return
@@ -62,7 +64,7 @@ local function texture(part, face)
 	t.Parent = part
 end
 
-function MapPolish.apply(root)
+function MapPolish.apply(root: Construction.World)
 	assert(root and (root:IsA("Model") or root:IsA("Folder")), "ProgressionMap model required")
 	assert(root:GetAttribute("Version") == 9, "Visual pass requires the authored v9 layout")
 	if root:GetAttribute("VisualPolishVersion") == VERSION then
@@ -75,26 +77,35 @@ function MapPolish.apply(root)
 	local protected = {}
 	for _, p in root:GetDescendants() do
 		if p:IsA("BasePart") then
-			protected[p] = { p.CFrame, p.Size, p.CanCollide, p.CanTouch, p.CanQuery }
+			protected[p] =
+				{ frame = p.CFrame, size = p.Size, collide = p.CanCollide, touch = p.CanTouch, query = p.CanQuery }
 		end
 	end
 	if root:IsDescendantOf(workspace) then
 		local storage = game:GetService("ServerStorage")
 		local backups = storage:FindFirstChild("WorldBackups") or Instance.new("Folder")
 		backups.Name, backups.Parent = "WorldBackups", storage
-		local backup = root:Clone()
+		local backup: Instance = root:Clone()
 		backup.Name = "ProgressionMap_BeforeVisualPolish_" .. os.date("%Y%m%d_%H%M%S")
 		backup.Parent = backups
 	end
 	local decor = Instance.new("Model")
 	decor.Name, decor.Parent = "EnvironmentPolish", root
-	local function model(parent, name)
+	local function model(parent: Instance, name: string)
 		local m = Instance.new("Model")
 		m.Name, m.Parent = name, parent
 		return m
 	end
-	local function part(parent, name, size, pos, color, yaw, wedge)
-		local p = Instance.new(if wedge then "WedgePart" else "Part")
+	local function part(
+		parent: Instance,
+		name: string,
+		size: Vector3,
+		pos: Vector3,
+		color: Color3,
+		yaw: number?,
+		wedge: boolean?
+	)
+		local p: BasePart = if wedge then Instance.new("WedgePart") else Instance.new("Part")
 		p.Name, p.Size, p.Color = name, size, color
 		p.CFrame = CFrame.new(pos) * CFrame.Angles(0, yaw or 0, 0)
 		p.Anchored, p.CanCollide, p.CanTouch, p.CanQuery = true, false, false, false
@@ -110,14 +121,14 @@ function MapPolish.apply(root)
 		end
 		return p
 	end
-	local function bush(parent, x, z, y, s, palette)
+	local function bush(parent: Instance, x: number, z: number, y: number, s: number, palette: Palette)
 		local m = model(parent, "ShrubCluster")
 		part(m, "Shrub", V(7 * s, 4 * s, 6 * s), V(x, y + 2 * s, z), palette.leaf, 0.1)
 		part(m, "Shrub", V(5 * s, 3 * s, 5 * s), V(x + 3 * s, y + 1.5 * s, z + 2 * s), palette.light, -0.2)
 		part(m, "Shrub", V(4 * s, 3 * s, 4 * s), V(x - 2.5 * s, y + 1.5 * s, z + 2 * s), palette.leaf, 0.3)
 		m.WorldPivot = CFrame.new(x, y, z)
 	end
-	local function rocks(parent, x, z, y, s, palette)
+	local function rocks(parent: Instance, x: number, z: number, y: number, s: number, palette: Palette)
 		local m = model(parent, "RockCluster")
 		part(m, "RockMass", V(8 * s, 7 * s, 7 * s), V(x, y + 3.5 * s, z), palette.rock, 0.12)
 		part(
@@ -139,7 +150,7 @@ function MapPolish.apply(root)
 		)
 		m.WorldPivot = CFrame.new(x, y, z)
 	end
-	local function tree(parent, x, z, y, scale, palette)
+	local function tree(parent: Instance, x: number, z: number, y: number, scale: number, palette: Palette)
 		local m = model(parent, "BlockTree")
 		part(m, "Trunk", V(2.4 * scale, 11 * scale, 2.4 * scale), V(x, y + 5.5 * scale, z), C(134, 88, 49))
 		part(m, "Crown", V(12 * scale, 7 * scale, 11 * scale), V(x, y + 12 * scale, z), palette.leaf)
@@ -238,9 +249,9 @@ function MapPolish.apply(root)
 	decor.WorldPivot = CFrame.new(-116, 0, -528)
 	-- Fail immediately if this visual pass changes gameplay geometry or collision flags.
 	for p, saved in protected do
-		assert(p.CFrame == saved[1] and p.Size == saved[2], "Geometry changed: " .. p:GetFullName())
+		assert(p.CFrame == saved.frame and p.Size == saved.size, "Geometry changed: " .. p:GetFullName())
 		assert(
-			p.CanCollide == saved[3] and p.CanTouch == saved[4] and p.CanQuery == saved[5],
+			p.CanCollide == saved.collide and p.CanTouch == saved.touch and p.CanQuery == saved.query,
 			"Collision changed: " .. p:GetFullName()
 		)
 	end

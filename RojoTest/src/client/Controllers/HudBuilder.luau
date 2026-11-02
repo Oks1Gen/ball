@@ -238,19 +238,40 @@ function Builder.build(context: Context): Refs
 
 	for _, offer in
 		{
-			{ "+10M", "Skill10M", C(255, 205, 57) },
-			{ "+100M", "Skill100M", C(250, 98, 100) },
-			{ "+1B", "Skill1B", C(174, 111, 239) },
+			{ label = "+10M", product = "Skill10M", color = C(255, 205, 57) },
+			{ label = "+100M", product = "Skill100M", color = C(250, 98, 100) },
+			{ label = "+1B", product = "Skill1B", color = C(174, 111, 239) },
 		}
 	do
-		local item = at(offer[2])
-		local b = Kit.button(hud, offer[2], offer[1], item.x, item.y, item.w, item.h, offer[3], 36, function()
-			send("Product", offer[2])
-		end)
+		local item = at(offer.product)
+		local b = Kit.button(
+			hud,
+			offer.product,
+			offer.label,
+			item.x,
+			item.y,
+			item.w,
+			item.h,
+			offer.color,
+			36,
+			function()
+				send("Product", offer.product)
+			end
+		)
 		Kit.icon(b, "Skill", (item.w - 84) / 2, -12, 84, 84)
 		caption(b).ZIndex = 3
 		Kit.icon(b, "Robux", item.w - 54, 44, 22, 22)
-		Kit.text(b, "Price", tostring(Config.Products[offer[2]].price), item.w - 30, 44, 30, 23, 18, C(142, 255, 51))
+		Kit.text(
+			b,
+			"Price",
+			tostring(Config.Products[offer.product].price),
+			item.w - 30,
+			44,
+			30,
+			23,
+			18,
+			C(142, 255, 51)
+		)
 	end
 
 	local rebirthIconItem = at("RebirthIcon")

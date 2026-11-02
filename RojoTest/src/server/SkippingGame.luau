@@ -40,9 +40,9 @@ function Game.start(map)
 	end
 	started = true
 	local remote = Net.server()
-	local action: any = remote.Action
-	local update: any = remote.Update
-	local effect: any = remote.Effect
+	local action: any = assert(remote:FindFirstChild("Action")) :: RemoteEvent
+	local update: any = assert(remote:FindFirstChild("Update")) :: RemoteEvent
+	local effect: any = assert(remote:FindFirstChild("Effect")) :: RemoteEvent
 	local states: { [Player]: any } = {}
 	local admin
 	-- The training lanes are cached once per arena: the hot loop then reads a
@@ -232,7 +232,7 @@ function Game.start(map)
 				if pair and os.clock() - pair.at < FRIEND_TTL then
 					friend = pair.friend
 				else
-					local ok, result = pcall(player.IsFriendsWith, player, p.UserId)
+					local ok, result = pcall(player.IsFriendsWithAsync, player, p.UserId)
 					if ok then
 						friend = result
 						friendPairs[key] = { friend = friend, at = os.clock() }
@@ -266,12 +266,7 @@ function Game.start(map)
 		if not p or not h or h.Health <= 0 then
 			return false
 		end
-		local apron = WorldRefs.apron(arenaFor(player))
-		local point = apron.CFrame:PointToObjectSpace(p.Position)
-		return math.abs(point.X) <= apron.Size.X / 2
-			and math.abs(point.Z) <= apron.Size.Z / 2 + 1
-			and point.Y >= 0
-			and point.Y < 12
+		return Config.inThrowZone(arenaFor(player), p.Position)
 	end
 	local snapshotContext = {
 		states = states,
@@ -313,7 +308,7 @@ function Game.start(map)
 	-- changed, so the version is bumped by everything that touches them.
 	local function equipBest(s: any)
 		local d = s.data
-		local sorted = table.clone(d.pets)
+		local sorted: { { uid: string, boost: number } } = table.clone(d.pets)
 		table.sort(sorted, function(a, b)
 			return a.boost > b.boost
 		end)

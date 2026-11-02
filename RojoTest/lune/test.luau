@@ -1,5 +1,7 @@
 --!strict
 local suites = {
+	require("../tests/UpgradeNotices.spec"),
+	require("../tests/UpdateLog.spec"),
 	require("../tests/Tutorial.spec"),
 	require("../tests/PerfectKick.spec"),
 	require("../tests/TrainingBoost.spec"),

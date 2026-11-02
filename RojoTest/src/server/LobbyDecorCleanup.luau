@@ -1,6 +1,7 @@
 --!strict
+local Construction = require(script.Parent.ConstructionTypes)
 local Cleanup = {}
-function Cleanup.apply(map)
+function Cleanup.apply(map: Construction.World)
 	local targets = {
 		Vector2.new(-36.923, 150.415),
 		Vector2.new(-32.887, 149.562),
@@ -21,7 +22,10 @@ function Cleanup.apply(map)
 		backup.Name = "RemovedMarkedLobbyDecor"
 		backup.Parent = game.ServerStorage.WorldBackups
 	end
-	local groups = { map.EnvironmentPolish.LobbyGardens, map.NativeEnvironment.LobbyAccents }
+	local groups = {
+		assert(map.EnvironmentPolish:FindFirstChild("LobbyGardens")),
+		assert(map.NativeEnvironment:FindFirstChild("LobbyAccents")),
+	}
 	local removed = 0
 	for _, group in ipairs(groups) do
 		for _, m in ipairs(group:GetChildren()) do

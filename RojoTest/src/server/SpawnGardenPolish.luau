@@ -1,4 +1,5 @@
 --!strict
+local Construction = require(script.Parent.ConstructionTypes)
 -- Adds dense planted terrace pockets and seals the lobby/corridor corner junction.
 local Polish = {}
 local V, C = Vector3.new, Color3.fromRGB
@@ -6,7 +7,7 @@ local STUDS = "rbxassetid://88156646156237"
 local leaf, lime, grass = C(42, 156, 58), C(124, 211, 65), C(92, 205, 48)
 local earth, stone = C(159, 111, 72), C(137, 153, 155)
 
-function Polish.apply(map)
+function Polish.apply(map: Construction.World): Instance?
 	if map:FindFirstChild("SpawnGardenPolish") then
 		return map.SpawnGardenPolish
 	end
@@ -15,7 +16,8 @@ function Polish.apply(map)
 	local protected = {}
 	for _, p in map:GetDescendants() do
 		if p:IsA("BasePart") then
-			protected[p] = { p.CFrame, p.Size, p.CanCollide, p.CanTouch, p.CanQuery }
+			protected[p] =
+				{ frame = p.CFrame, size = p.Size, collide = p.CanCollide, touch = p.CanTouch, query = p.CanQuery }
 		end
 	end
 	local backups = assert(game.ServerStorage:FindFirstChild("WorldBackups"))
@@ -30,19 +32,28 @@ function Polish.apply(map)
 	local root = Instance.new("Model")
 	root.Name, root.WorldPivot, root.Parent = "SpawnGardenPolish", frame, map
 	root:SetAttribute("Version", 1)
-	local function group(name, origin)
+	local function group(name: string, origin: Vector3)
 		local m = Instance.new("Model")
 		m.Name, m.WorldPivot, m.Parent = name, frame * CFrame.new(origin), root
 		return m
 	end
-	local function studs(p, face)
+	local function studs(p: BasePart, face: Enum.NormalId)
 		local t = Instance.new("Texture")
 		t.Name, t.Texture, t.Face = "HDGardenStuds", STUDS, face
 		t.StudsPerTileU, t.StudsPerTileV, t.Transparency = 8, 8, 0.35
 		t.Parent = p
 	end
-	local function part(parent, name, size, position, color, yaw, collide, wedge)
-		local p = Instance.new(wedge and "WedgePart" or "Part")
+	local function part(
+		parent: Instance,
+		name: string,
+		size: Vector3,
+		position: Vector3,
+		color: Color3,
+		yaw: number?,
+		collide: boolean?,
+		wedge: boolean?
+	)
+		local p: BasePart = if wedge then Instance.new("WedgePart") else Instance.new("Part")
 		p.Name, p.Size, p.Color = name, size, color
 		p.CFrame = frame * CFrame.new(position) * CFrame.Angles(0, yaw or 0, 0)
 		p.Anchored, p.CanCollide, p.CanTouch, p.CanQuery = true, collide == true, false, collide == true
@@ -51,7 +62,7 @@ function Polish.apply(map)
 		p.Parent = parent
 		return p
 	end
-	local function shrub(parent, base, scale)
+	local function shrub(parent: Instance, base: Vector3, scale: number)
 		for i, offset in { V(0, 0, 0), V(2.8, 0, 1.5), V(-2, 0, 2.2) } do
 			local size = V(i == 1 and 4.6 or 3.4, i == 1 and 3.3 or 2.5, i == 1 and 4.3 or 3.5) * scale
 			local p = part(
@@ -65,14 +76,14 @@ function Polish.apply(map)
 			studs(p, Enum.NormalId.Top)
 		end
 	end
-	local function flower(parent, base, variant, scale)
+	local function flower(parent: Instance, base: Vector3, variant: number, scale: number)
 		local tint = ({ C(255, 240, 184), C(255, 167, 191), C(246, 254, 236) })[variant % 3 + 1]
 		part(parent, "Stem", V(0.2, 1.6, 0.2) * scale, base + V(0, 0.8, 0) * scale, leaf)
 		part(parent, "Petals", V(2.25, 0.36, 0.95) * scale, base + V(0, 1.65, 0) * scale, tint)
 		part(parent, "Petals", V(0.95, 0.36, 2.25) * scale, base + V(0, 1.67, 0) * scale, tint)
 		part(parent, "Pollen", V(0.65, 0.45, 0.65) * scale, base + V(0, 1.77, 0) * scale, C(255, 194, 51))
 	end
-	local function rocks(parent, base, scale, variant)
+	local function rocks(parent: Instance, base: Vector3, scale: number, variant: number)
 		local p = part(parent, "StoneMass", V(5.2, 7, 5) * scale, base + V(0, 3.5, 0) * scale, stone, variant * 0.14)
 		studs(p, Enum.NormalId.Top)
 		p = part(
@@ -88,7 +99,7 @@ function Polish.apply(map)
 		studs(p, Enum.NormalId.Top)
 		part(parent, "SmallStone", V(2.7, 2.2, 3) * scale, base + V(-3.1, 1.1, 2) * scale, stone, -0.15)
 	end
-	local function lantern(parent, base)
+	local function lantern(parent: Instance, base: Vector3)
 		part(parent, "LanternPlinth", V(2.8, 1, 2.8), base + V(0, 0.5, 0), stone)
 		part(parent, "LanternFrame", V(2.3, 3, 2.3), base + V(0, 2.5, 0), C(117, 77, 43))
 		local pane = part(parent, "LanternLight", V(2.4, 1.8, 1.8), base + V(0, 2.5, 0), C(255, 229, 145))
@@ -173,7 +184,7 @@ function Polish.apply(map)
 		end
 	end
 	local treeTemplate = map.SpawnGarden.SideTerraces1:FindFirstChild("TerraceTree")
-	if treeTemplate then
+	if treeTemplate and treeTemplate:IsA("Model") then
 		for _, x in { -244, -190, -28, 33 } do
 			local tree = treeTemplate:Clone()
 			tree.Name = "TunnelRoofTree"
@@ -199,9 +210,9 @@ function Polish.apply(map)
 	end
 	local checked = 0
 	for p, state in protected do
-		assert(p.CFrame == state[1] and p.Size == state[2], "Polish moved an authored object")
+		assert(p.CFrame == state.frame and p.Size == state.size, "Polish moved an authored object")
 		assert(
-			p.CanCollide == state[3] and p.CanTouch == state[4] and p.CanQuery == state[5],
+			p.CanCollide == state.collide and p.CanTouch == state.touch and p.CanQuery == state.query,
 			"Polish changed authored collisions"
 		)
 		checked += 1

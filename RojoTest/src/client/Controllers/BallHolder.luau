@@ -69,9 +69,10 @@ function Holder.mount(): Handle
 			if practice then
 				practice:Destroy()
 			end
-			practice = BallVisuals.create(id, DIAMETER)
-			practice.Name = "PracticeBall"
-			practice.Parent = workspace
+			local created = BallVisuals.create(id, DIAMETER)
+			created.Name = "PracticeBall"
+			created.Parent = workspace
+			practice = created
 			practiceVisible = nil
 		end,
 		held = function(): Model

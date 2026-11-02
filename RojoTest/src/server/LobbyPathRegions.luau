@@ -4,7 +4,8 @@ local Palette = require(script.Parent.LobbyPalette)
 local Regions = {}
 local V, P = Vector3.new, Vector2.new
 local FILL, EDGE, CURB, STUDS = Palette.Path, Palette.PathEdge, Palette.PathCurb, Palette.Studs
-type Region = { name: string, polygon: { Vector2 }, openX: number?, openZ: number? }
+-- Regions with the same `group` share one Model (e.g. the frame around the training lanes).
+type Region = { name: string, polygon: { Vector2 }, openX: number?, openZ: number?, group: string? }
 local function cross(a: Vector2, b: Vector2): number
 	return a.X * b.Y - a.Y * b.X
 end
@@ -79,12 +80,18 @@ function Regions.build(root: Instance, regions: { Region }, top: number, selecte
 		table.sort(values)
 		return values
 	end
+	local groups: { [string]: Model } = {}
 	for _, region in regions do
 		if not selected[region.name] then
 			continue
 		end
-		local group = Instance.new("Model")
-		group.Name, group.WorldPivot = region.name, CFrame.new(65, top, 224)
+		local groupName = region.group or region.name
+		if not groups[groupName] then
+			local model = Instance.new("Model")
+			model.Name, model.WorldPivot = groupName, CFrame.new(65, top, 224)
+			groups[groupName] = model
+		end
+		local group = groups[groupName]
 		local lo, hi = region.polygon[1], region.polygon[3]
 		local surface = part(
 			group,
@@ -155,8 +162,10 @@ function Regions.build(root: Instance, regions: { Region }, top: number, selecte
 				end
 			end
 		end
-		group.Parent = root
 		task.wait()
+	end
+	for _, group in groups do
+		group.Parent = root
 	end
 end
 return Regions

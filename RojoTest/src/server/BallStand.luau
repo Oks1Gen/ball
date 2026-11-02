@@ -1,7 +1,9 @@
 --!strict
+local Construction = require(script.Parent.ConstructionTypes)
 local Shared = game:GetService("ReplicatedStorage").Shared
 local Config = require(Shared.GameConfig)
 local Visuals = require(Shared.BallVisuals)
+local Scale = require(Shared.WorldScale)
 local Tags = game:GetService("CollectionService")
 local Signs = require(script.Parent.BallStandSigns)
 local Stand = {}
@@ -9,10 +11,10 @@ local DISPLAY_FILL = 0.405
 -- Rest height above the pad: the standPose bob (0.45) plus clear air at its lowest point.
 local BOB = 0.45
 
-function Stand.apply(map)
+function Stand.apply(map: Construction.World)
 	require(script.Parent.BallStandStyle).apply(map)
-	local stand = assert(map:FindFirstChild("EmptyItemStand"))
-	local displayScale = stand:GetAttribute("BallDisplayScale") or 1
+	local stand = assert(map:FindFirstChild("EmptyItemStand")) :: Model
+	local displayScale = ((stand:GetAttribute("BallDisplayScale") :: number?) or 1) * Scale.factor(map)
 	local root = assert(map:FindFirstChild("SkippingWorld"))
 	local imported = map.Name == "World1" and workspace:FindFirstChild("AllBalls_NoTextures")
 	local container = imported or stand:FindFirstChild("DisplayBalls")
@@ -21,7 +23,7 @@ function Stand.apply(map)
 		container.Name = "DisplayBalls"
 		container.Parent = stand
 	end
-	local anchors = {}
+	local anchors: { [number]: BasePart } = {}
 	for _, anchor in root:GetChildren() do
 		if
 			anchor:IsA("BasePart")
@@ -29,7 +31,7 @@ function Stand.apply(map)
 			and (anchor.Name == "LabelAnchor" or anchor:GetAttribute("BallDisplayLabelSlot"))
 		then
 			for slot = 1, 10 do
-				local top = stand:FindFirstChild("DisplayTop" .. slot)
+				local top = stand:FindFirstChild("DisplayTop" .. slot) :: BasePart?
 				if
 					top
 					and math.abs(anchor.Position.X - top.Position.X) < 0.1
@@ -41,7 +43,7 @@ function Stand.apply(map)
 		end
 	end
 	for _, item in Config.Stones do
-		local top = assert(stand:FindFirstChild("DisplayTop" .. item.displaySlot))
+		local top = assert(stand:FindFirstChild("DisplayTop" .. item.displaySlot)) :: BasePart
 		-- The ball body fills under half of its pad, like the items on the reference stands.
 		local diameter = DISPLAY_FILL * math.min(top.Size.X, top.Size.Z)
 		local model
@@ -95,20 +97,20 @@ function Stand.apply(map)
 		local cf, size = model:GetBoundingBox()
 		local anchor = anchors[item.displaySlot]
 		if not anchor then
-			anchor = Instance.new("Part")
-			anchor.Name = "BallLabelAnchor" .. item.displaySlot
-			anchor.Size = Vector3.new(0.1, 0.1, 0.1)
-			anchor.Transparency = 1
-			anchor.Anchored = true
-			anchor.CanCollide = false
-			anchor.CanTouch = false
-			anchor.CanQuery = false
-			anchor.Parent = root
+			local created = Instance.new("Part")
+			created.Name = "BallLabelAnchor" .. item.displaySlot
+			created.Size = Vector3.new(0.1, 0.1, 0.1)
+			created.Transparency = 1
+			created.Anchored = true
+			created.CanCollide = false
+			created.CanTouch = false
+			created.CanQuery = false
+			created.Parent = root
 			local gui = Instance.new("BillboardGui")
 			gui.Name = "BallLabel"
 			gui.MaxDistance = 450
 			gui.LightInfluence = 0
-			gui.Parent = anchor
+			gui.Parent = created
 			local title = Instance.new("TextLabel")
 			title.Size = UDim2.fromScale(1, 1)
 			title.BackgroundTransparency = 1
@@ -119,8 +121,10 @@ function Stand.apply(map)
 			stroke.Thickness = 2
 			stroke.Color = Color3.fromRGB(20, 24, 40)
 			stroke.Parent = title
+			anchor = created
 		end
-		local gui = anchor:FindFirstChildWhichIsA("BillboardGui")
+		local labelAnchor = assert(anchor)
+		local gui = assert(labelAnchor:FindFirstChildWhichIsA("BillboardGui"))
 		anchors[item.displaySlot] = anchor
 		gui.Size = UDim2.fromScale(12 * displayScale, 5.4 * displayScale)
 		gui.Enabled = true
@@ -134,22 +138,24 @@ function Stand.apply(map)
 		link.Value = anchor
 		link.Parent = model
 		Tags:AddTag(model, "BallStandPreview")
-		local promptAnchor = stand:FindFirstChild("BallPurchase" .. item.displaySlot)
+		local promptAnchor = stand:FindFirstChild("BallPurchase" .. item.displaySlot) :: BasePart?
 		if not promptAnchor then
-			promptAnchor = Instance.new("Part")
-			promptAnchor.Name = "BallPurchase" .. item.displaySlot
-			promptAnchor.Size = Vector3.new(0.1, 0.1, 0.1)
-			promptAnchor.Transparency = 1
-			promptAnchor.Anchored = true
-			promptAnchor.CanCollide = false
-			promptAnchor.CanTouch = false
-			promptAnchor.CanQuery = false
-			promptAnchor.Parent = stand
+			local created = Instance.new("Part")
+			created.Name = "BallPurchase" .. item.displaySlot
+			created.Size = Vector3.new(0.1, 0.1, 0.1)
+			created.Transparency = 1
+			created.Anchored = true
+			created.CanCollide = false
+			created.CanTouch = false
+			created.CanQuery = false
+			created.Parent = stand
+			promptAnchor = created
 		end
+		local purchaseAnchor = assert(promptAnchor)
 		-- Follow the display's facing when the authored stand is turned in Studio.
-		promptAnchor.Position =
+		purchaseAnchor.Position =
 			top.CFrame:PointToWorldSpace(Vector3.new(top.Size.X / 2 + displayScale, 0.6 * displayScale, 0))
-		local pp = promptAnchor:FindFirstChildWhichIsA("ProximityPrompt") or Instance.new("ProximityPrompt")
+		local pp = purchaseAnchor:FindFirstChildWhichIsA("ProximityPrompt") or Instance.new("ProximityPrompt")
 		pp.Name = "BallPurchasePrompt"
 		pp.ObjectText = item.name
 		pp.ActionText = "View ball"
@@ -157,13 +163,13 @@ function Stand.apply(map)
 		pp.RequiresLineOfSight = false
 		pp.HoldDuration = 0
 		pp:SetAttribute("BallId", item.id)
-		pp.Parent = promptAnchor
+		pp.Parent = purchaseAnchor
 	end
 	for _, part in root:GetChildren() do
 		if part:IsA("BasePart") and part:GetAttribute("BallDisplayLabelSlot") then
-			local slot = part:GetAttribute("BallDisplayLabelSlot")
+			local slot = part:GetAttribute("BallDisplayLabelSlot") :: number?
 			local gui = part:FindFirstChildWhichIsA("BillboardGui")
-			if gui and anchors[slot] ~= part then
+			if gui and slot and anchors[slot] ~= part then
 				gui.Enabled = false
 			end
 		end

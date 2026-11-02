@@ -3,9 +3,10 @@
 -- linger at each bounce. Pure: the server never uses the warped values.
 local Pace = {}
 
--- Average ball speed (studs/s) where speed effects start and where they peak.
-Pace.Slow = 70
-Pace.Fast = 200
+-- Average ball speed (studs/s) where speed effects start and where they peak. Scaled with World1
+-- (0.8 on 2026-11-02), so a shot of the same length in metres gets the same effects.
+Pace.Slow = 56
+Pace.Fast = 160
 -- Ball speed at a contact relative to an unwarped shot, at full pace.
 Pace.ContactSpeed = 0.2
 

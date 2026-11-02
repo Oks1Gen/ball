@@ -1,11 +1,14 @@
 --!strict
+local Construction = require(script.Parent.ConstructionTypes)
 local Candy = {}
-function Candy.apply(map)
+function Candy.apply(map: Construction.World): Instance?
 	local world = map.SkippingWorld
 	if world:FindFirstChild("CandyPromenade") then
 		return
 	end
-	local left, right, upper, lower = math.huge, -math.huge, nil, nil
+	local left, right = math.huge, -math.huge
+	local upper: BasePart? = nil
+	local lower: BasePart? = nil
 	for _, p in ipairs(world:GetChildren()) do
 		if p:IsA("BasePart") and p.Name == "BiomeBank3_2" then
 			left = math.min(left, p.Position.X - p.Size.X / 2)
@@ -30,7 +33,7 @@ function Candy.apply(map)
 	local root = Instance.new("Model")
 	root.Name = "CandyPromenade"
 	local parent = root
-	local function part(name, size, cf, color, studs, shape)
+	local function part(name: string, size: Vector3, cf: CFrame, color: Color3, studs: boolean?, shape: Enum.PartType?)
 		local p = Instance.new("Part")
 		p.Name = name
 		p.Size = size
@@ -43,7 +46,7 @@ function Candy.apply(map)
 		p.CanQuery = false
 		p.TopSurface = Enum.SurfaceType.Smooth
 		p.BottomSurface = Enum.SurfaceType.Smooth
-		if shape then
+		if shape and p:IsA("Part") then
 			p.Shape = shape
 		end
 		if studs then
@@ -57,24 +60,24 @@ function Candy.apply(map)
 		p.Parent = parent
 		return p
 	end
-	local function box(name, size, pos, color, studs, rot)
+	local function box(name: string, size: Vector3, pos: Vector3, color: Color3, studs: boolean?, rot: CFrame?)
 		return part(name, size, CFrame.new(pos) * (rot or CFrame.identity), color, studs)
 	end
-	local function bar(name, a, b, w, color)
+	local function bar(name: string, a: Vector3, b: Vector3, w: number, color: Color3)
 		return part(name, Vector3.new(w, w, (a - b).Magnitude), CFrame.lookAt((a + b) / 2, b), color)
 	end
-	local function begin(name)
+	local function begin(name: string)
 		local m = Instance.new("Model")
 		m.Name = name
 		parent = m
 		return m
 	end
-	local function finish(m, pos)
+	local function finish(m: Model, pos: Vector3)
 		m.WorldPivot = CFrame.new(pos)
 		m.Parent = root
 		parent = root
 	end
-	local function cylinder(name, pos, h, d, color, rot)
+	local function cylinder(name: string, pos: Vector3, h: number, d: number, color: Color3, rot: CFrame?)
 		return part(
 			name,
 			Vector3.new(h, d, d),
@@ -84,7 +87,7 @@ function Candy.apply(map)
 			Enum.PartType.Cylinder
 		)
 	end
-	local function lollipop(pos, color, radius)
+	local function lollipop(pos: Vector3, color: Color3, radius: number)
 		local old = {}
 		for _, p in ipairs(parent:GetChildren()) do
 			old[p] = true
@@ -205,7 +208,7 @@ function Candy.apply(map)
 			finish(m, pos)
 		end
 	end
-	local function flowers(pos, _index, scale)
+	local function flowers(pos: Vector3, _index: number, scale: number)
 		local m = begin("PastelFlowerPocket")
 		local s = scale or 1
 		for j = 1, 3 do

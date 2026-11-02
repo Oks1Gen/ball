@@ -60,6 +60,8 @@ tools/VerifyEggInteraction.luau проверяет восемь яиц двух 
 
 `roblox.yml` — локальный снимок Roblox API для воспроизводимого офлайн-линтинга; обновлять его следует отдельно с проверкой диффа.
 
+С 03.11.2026 `tools/typecheck-baseline.txt` пуст: исходники проходят анализ без принятых диагностик. Необязательные параметры, типы Roblox-объектов и UI-контракты заданы явно; смешанные снимки геометрии и предложения магазина используют именованные поля. `server/ConstructionTypes` описывает временное дерево старых builders между `WorldLayout.prepare` и `WorldLayout.apply`; runtime продолжает использовать `Shared.WorldRefs`. ProfileStore и установленные пакеты не изменены.
+
 Полный набор запускается и в CI: `.github/workflows/checks.yml` собирает проект на чистой машине с `rokit install` и `node RojoTest/tools/check.mjs`. Selene и сборка не заменяют полноценную проверку типов Luau и Studio Play.
 
 ## Структура карты в Workspace

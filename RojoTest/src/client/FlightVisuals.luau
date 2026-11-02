@@ -258,12 +258,8 @@ function Flight.start(info, context)
 		end
 		lastContact = contacts
 		if context.me then
-			context.distance(
-				elapsed < windup and (if perfect > 0 then "PERFECT!" else "KICK!")
-					or Config.format(info.distance * alpha)
-						.. " m  •  ×"
-						.. string.format("%.1f", Zones.multiplier(lastZone))
-			)
+			-- Match the rendered ball, including its bounce pauses, rather than network snapshots.
+			context.distance(if elapsed < windup then "" else string.format("%d m", math.floor(info.distance * alpha)))
 			local blend = 1 - math.exp(-dt * (9 + 5 * feedback.intensity))
 			local height = position.Y - startPosition.Y
 			-- A fast ball is watched from three quarters: impacts slide across the

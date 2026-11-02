@@ -1,28 +1,29 @@
 --!strict
+local Construction = require(script.Parent.ConstructionTypes)
 -- Applies imported Blender visuals to existing gameplay lane footprints.
 local Fields = {}
 local V = Vector3.new
 local turn = CFrame.Angles(0, math.pi / 2, 0)
 local names = { "Backyard", "Club", "Royal", "Diamond", "Mythic", "Cosmic", "Divine" }
 
-local function hide(part, keepCollision)
+local function hide(part: BasePart, keepCollision: boolean)
 	part.Transparency = 1
 	part.CanCollide = keepCollision
 	part.CanTouch = false
 	part.CanQuery = keepCollision
 	part.CastShadow = false
 	for _, child in part:GetDescendants() do
-		if child:IsA("Texture") or child:IsA("Decal") then
+		if child:IsA("Decal") then
 			child.Transparency = 1
 		end
-		if child:IsA("SurfaceGui") or child:IsA("BillboardGui") then
+		if child:IsA("LayerCollector") then
 			child.Enabled = false
 		end
 	end
 end
 
-local function scaledFrame(source, scale, origin)
-	local function stretch(v)
+local function scaledFrame(source: BasePart, scale: Vector3, origin: Vector3)
+	local function stretch(v: Vector3)
 		return V(v.X * scale.X, v.Y * scale.Y, v.Z * scale.Z)
 	end
 	local sx = stretch(source.CFrame.RightVector)
@@ -53,7 +54,7 @@ local function scaledFrame(source, scale, origin)
 		size
 end
 
-function Fields.apply(map)
+function Fields.apply(map: Construction.World)
 	local repairs = map:FindFirstChild("SurfaceRepairs")
 	if repairs then
 		for _, overlay in repairs:GetChildren() do
@@ -76,7 +77,7 @@ function Fields.apply(map)
 		assert(not lane:FindFirstChild("ImportedField"), "Partial previous field application")
 	end
 	for i = 1, 7 do
-		local lane = zone["TrainingLane" .. i]
+		local lane = assert(zone:FindFirstChild("TrainingLane" .. i)) :: Construction.Lane
 		local strip, foundation = lane.TrainingStrip, lane.Foundation
 		local top = strip.Position.Y + strip.Size.Y / 2
 		local origin = V(strip.Position.X, top, strip.Position.Z)
@@ -86,6 +87,7 @@ function Fields.apply(map)
 		visual:SetAttribute("Theme", names[i])
 		visual.Parent = lane
 		for _, source in templates["Field" .. i]:GetChildren() do
+			assert(source:IsA("BasePart"), "Training template must contain parts")
 			local part = source:Clone()
 			part.CFrame, part.Size = scaledFrame(source, scale, origin)
 			if source.Name:find("_Earth_Base", 1, true) then
@@ -110,11 +112,11 @@ function Fields.apply(map)
 		end
 		if skipping then
 			local stone = skipping:FindFirstChild("TrainingStone" .. i)
-			if stone then
+			if stone and stone:IsA("BasePart") then
 				hide(stone, false)
 			end
-			local board = skipping:FindFirstChild("LaneBoard" .. i)
-			if board then
+			local board = skipping:FindFirstChild("LaneBoard" .. i) :: BasePart?
+			if board and board:IsA("BasePart") then
 				hide(board, false)
 			end
 			local _, bounds = visual:GetBoundingBox()

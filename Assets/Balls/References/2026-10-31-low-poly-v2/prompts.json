@@ -1,0 +1,47 @@
+{
+  "tool": "built-in image_gen",
+  "status": "Concept references; awaiting user review",
+  "style": "Vibrant Roblox low poly, large flat polygon facets, chunky matte plastic geometry, pale lavender background, one ball per square image, no text or realism",
+  "concepts": [
+    [
+      "01-rubber",
+      "Bright coral RED RUBBER playground ball, simple low poly spherical body, only two broad curved recessed darker red seam lines. Charming simple starter ball. No magic, glow or effects."
+    ],
+    [
+      "02-classic",
+      "CLASSIC SOCCER ball: white and charcoal black large pentagonal and hexagonal panels, subtly recessed clean seams, faceted near-round sphere. Simple sporting ball. No effects."
+    ],
+    [
+      "03-beach",
+      "BEACH BALL: cheerful bright yellow, cyan and white broad longitudinal color wedges, simple clearly faceted low poly sphere, clean plastic surface, tiny simplified white valve. No magic or glow."
+    ],
+    [
+      "04-basketball",
+      "BASKETBALL: saturated vivid orange faceted sphere with a few broad recessed charcoal curved basketball channels, perfectly plain colored polygon faces with absolutely NO stipple texture. No magic or glow."
+    ],
+    [
+      "05-leather",
+      "VINTAGE LEATHER SOCCER BALL: rich warm caramel brown chunky polygon panels, dark brown recessed joins, a small number of chunky cream stitch bars at seams. Stylized plastic rendering of leather, no real leather texture or wrinkles. No magic or glow."
+    ],
+    [
+      "06-steel",
+      "STEEL BALL: cool silver and periwinkle gray broad low poly soccer plates, dark slate seams, a few oversized simplified hexagonal bolt heads. Flat shaded matte toy metal, no realistic reflections, no scratches, no magic, no glow."
+    ],
+    [
+      "07-gold",
+      "GOLD SOCCER BALL: vivid saturated golden yellow broad polygon soccer panels with deep amber recessed seams, clean large facets, simple plastic gold shading, one small stylized four pointed golden sparkle beside it. No realistic metal reflections or texture."
+    ],
+    [
+      "08-storm-redesign",
+      "Completely redesigned STORM BALL with a distinctive playful silhouette. Spherical swirling storm cloud made from a FEW large chunky curling faceted cloud lobes, deep indigo and vibrant violet with turquoise highlights. Two large bright lemon yellow solid zigzag lightning bolts project outward from opposite sides like energetic wings, and a small third lightning crest atop. A readable cyan spiral cyclone opening at the front exposes a small brilliant pale cyan core. Cloud lobes form a cohesive ROUND BALL body, NOT a flat cloud icon. Use sculpted graphic cloud curls, chunky angles and a bold yellow/cobalt/purple color palette. Very appealing premium Roblox collectible. Restrained cyan glow only in cyclone eye. No soccer panel pattern, no glowing crack network, no face, no tiny sparks, no realistic clouds, no dark realism. Main form remains spherical and practical to model."
+    ],
+    [
+      "09-volcano-redesign",
+      "Completely redesigned VOLCANO BALL with a distinctive mini-volcano silhouette. Main body a chunky round low poly charcoal and dark plum basalt sphere. Its TOP has a prominent wide angular CRATER with thick stepped rocky lip and bright yellow-orange molten lava inside, like a tiny cartoon volcano incorporated into a ball. A short frozen sculptural eruption of 3 chunky bright orange/yellow lava droplets rises just above crater. Two broad vivid coral-orange lava rivers spill down the front surface in simple graphic stepped strips. A few BIG angular obsidian spikes protrude around lower sides, giving a rugged collectible silhouette. No soccer pattern, no generic glowing crack network, no thin veins, no smoke, no realistic rock texture, no microdetails, no face. Main silhouette clearly remains a ROUND BALL with crater on top, not a mountain or cone. Beautiful vibrant stylized Roblox toy asset, bold clean readable shapes."
+    ],
+    [
+      "10-sun",
+      "SUN BALL: bright golden yellow faceted spherical inner sun core, chunky white and pale cream low poly outer soccer shell panels edged in gold, slight gaps reveal amber center. ONE thin simple golden orbital ring tilted around sphere, two small graphic four pointed gold star sparkles nearby. Clean readable spherical silhouette, controlled glow, geometric matte plastic facets. No blinding bloom, no photorealism."
+    ]
+  ]
+}

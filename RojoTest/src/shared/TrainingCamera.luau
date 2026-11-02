@@ -3,7 +3,7 @@
 local Camera = {}
 Camera.FieldOfView = 60
 
-function Camera.pose(lane, characterPosition, viewport)
+function Camera.pose(lane: Model, characterPosition: Vector3, viewport: Vector2)
 	local cf, size = lane:GetBoundingBox()
 	local points = { characterPosition + Vector3.new(0, 3, 0), characterPosition - Vector3.new(0, 3, 0) }
 	for _, x in { -1, 1 } do

@@ -39,7 +39,7 @@ function Throw.build(context: Context): (Player, number?, number?, number?) -> (
 			return
 		end
 		if not context.inApron(player) then
-			context.publish(player, "Go to the yellow THROW ZONE")
+			context.publish(player, "Go to the orange THROW ZONE")
 			return
 		end
 		local d = s.data
@@ -60,14 +60,21 @@ function Throw.build(context: Context): (Player, number?, number?, number?) -> (
 		local perfect = if adminDistance then 0 else math.clamp(perfectCount or 0, 0, 2)
 		local windup = Perfect.windup(perfect)
 		local feedback = ShotFeedback.profile(d.skill, BallPurchases.power(d), d.world, timing, perfect)
-		local duration = Config.shotDuration(distance, d.world, feedback.intensity)
 		context.stopTraining(player)
 		local root, hum = context.rootFor(player)
 		if not root or not hum then
 			return
 		end
 		local frame = context.frameFor(player)
-		context.lockPose(s, root, hum, Config.apronCharacterPose(context.arenaFor(player), root, hum, -11))
+		-- Keep the authoritative launch position; only turn towards the course.
+		local stance = CFrame.lookAt(root.Position, root.Position + frame.LookVector, Vector3.yAxis)
+		local standingHeight = root.Size.Y / 2 + (hum.RigType == Enum.HumanoidRigType.R6 and 2 or hum.HipHeight)
+		local groundY = root.Position.Y - standingHeight
+		local startPosition =
+			stance:PointToWorldSpace(Vector3.new(0.4, -standingHeight + Config.BallDiameter / 2 + 0.1, -1.7))
+		distance = math.min(distance, Config.shotLimit(d.world, context.arenaFor(player), startPosition))
+		local duration = Config.shotDuration(distance, d.world, feedback.intensity)
+		context.lockPose(s, root, hum, stance)
 		local startedAt = workspace:GetServerTimeNow()
 		local shot = {}
 		s.activeShot = shot
@@ -97,9 +104,9 @@ function Throw.build(context: Context): (Player, number?, number?, number?) -> (
 			trail = d.trail,
 			world = d.world,
 			startedAt = startedAt,
-			startPosition = frame:PointToWorldSpace(Config.ShotStartLocal),
+			startPosition = startPosition,
 			direction = frame.LookVector,
-			groundY = frame:PointToWorldSpace(Vector3.new(-116, 0.82, 0)).Y,
+			groundY = groundY,
 		}
 		local character = player.Character
 		info.zoneCrossings = ShotZones.crossings(context.arenaFor(player), info)

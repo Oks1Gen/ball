@@ -16,7 +16,7 @@ type InventoryPet = { uid: string, id: string, name: string, rarity: string, boo
 -- dialog has to stay above the overlay, otherwise its buttons are dead.
 local LAYER_CONFIRM = 70
 local LAYER_CONFIRM_BOX = 75
-local function label(text, x, y, w, h, size, color)
+local function label(text: string, x: number, y: number, w: number, h: number, size: number, color: Color3?)
 	return e(U.Label, {
 		Text = text,
 		Position = UDim2.fromOffset(x, y),
@@ -26,7 +26,18 @@ local function label(text, x, y, w, h, size, color)
 		Small = size < 20,
 	})
 end
-local function button(name, text, x, y, w, h, callback, color, disabled, size)
+local function button(
+	name: string,
+	text: string,
+	x: number,
+	y: number,
+	w: number,
+	h: number,
+	callback: () -> (),
+	color: Color3?,
+	disabled: boolean?,
+	size: number?
+)
 	return e(U.Button, {
 		Name = name,
 		Text = text,
@@ -49,6 +60,7 @@ local function childrenFrame(children, x, y, w, h)
 	)
 end
 function S.Pets(p)
+	local request: (string, string?, number?) -> () = p.Request
 	local inventory = p.Inventory
 	local equipped: { string } = inventory.equipped
 	local pets: { InventoryPet } = table.clone(inventory.pets)
@@ -63,8 +75,8 @@ function S.Pets(p)
 		end
 		return a.uid < b.uid
 	end)
-	local selected, setSelected = React.useState(nil)
-	local confirm, setConfirm = React.useState(nil)
+	local selected: string?, setSelected: (string?) -> () = React.useState(nil :: string?)
+	local confirm: string?, setConfirm: (string?) -> () = React.useState(nil :: string?)
 	local firstRow, setFirstRow = React.useState(0)
 	local pet: InventoryPet? = nil
 	for _, item in pets do
@@ -215,7 +227,7 @@ function S.Pets(p)
 			Children = cards,
 		}),
 		EquipBest = button("EquipBest", "Equip Best", 4, h - 50, bestWidth, 44, function()
-			p.Request("EquipBest")
+			request("EquipBest")
 		end, nil, p.Busy or #pets == 0),
 	}
 	if not compact then
@@ -245,7 +257,7 @@ function S.Pets(p)
 				pw - 24,
 				46,
 				function()
-					p.Request("Pet", pet.uid)
+					request("Pet", pet.uid)
 				end,
 				isEquipped and T.Colors.Blue or T.Colors.Green,
 				p.Busy or full
@@ -277,7 +289,7 @@ function S.Pets(p)
 	elseif pet then
 		local footerWidth, footerGap = Spacing.row(w - inset * 2, 3, 44)
 		result.EquipBest = button("EquipBest", "Equip Best", inset, h - 50, footerWidth, 44, function()
-			p.Request("EquipBest")
+			request("EquipBest")
 		end, nil, p.Busy)
 		local yes = table.find(equipped, pet.uid) ~= nil
 		local full = not yes and #equipped >= 3
@@ -289,7 +301,7 @@ function S.Pets(p)
 			footerWidth,
 			44,
 			function()
-				p.Request("Pet", pet.uid)
+				request("Pet", pet.uid)
 			end,
 			yes and T.Colors.Blue or T.Colors.Green,
 			p.Busy or full,
@@ -355,7 +367,7 @@ function S.Pets(p)
 						Color = T.Colors.Red,
 						ZIndex = 90,
 						OnActivated = function()
-							p.Request("DeletePet", pet.uid)
+							request("DeletePet", pet.uid)
 							setConfirm(nil)
 						end,
 					}),
@@ -366,7 +378,8 @@ function S.Pets(p)
 	return childrenFrame(result, 0, 0, w, h)
 end
 function S.Eggs(p)
-	local w, h = p.Width, p.Height
+	local request: (string, string?, number?) -> () = p.Request
+	local w: number, h: number = p.Width, p.Height
 	local compact = w < 730
 	local egg = Config.find(Config.Eggs, p.EggId) or Config.Eggs[1]
 	local pool = Config.eggPets(egg.id)
@@ -462,7 +475,7 @@ function S.Eggs(p)
 			hatchWidth,
 			46,
 			function()
-				p.Request("Hatch", egg.id, 1)
+				request("Hatch", egg.id, 1)
 			end,
 			nil,
 			p.Busy or #p.Inventory.pets >= 60,
@@ -476,7 +489,7 @@ function S.Eggs(p)
 			hatchWidth,
 			46,
 			function()
-				p.Request("Hatch", egg.id, 3)
+				request("Hatch", egg.id, 3)
 			end,
 			T.Colors.Eggs,
 			p.Busy or #p.Inventory.pets > 57,
@@ -524,6 +537,7 @@ function S.Eggs(p)
 	return childrenFrame(result, 0, 0, w, h)
 end
 function S.Trails(p)
+	local request: (string, string?, number?) -> () = p.Request
 	local w: number = p.Width
 	local h: number = p.Height
 	local cards = {}
@@ -590,7 +604,7 @@ function S.Trails(p)
 					250,
 					44,
 					function()
-						p.Request("Trail", item.id)
+						request("Trail", item.id)
 					end,
 					T.Colors.Green,
 					p.Busy or equipped,
@@ -608,11 +622,12 @@ function S.Trails(p)
 end
 
 function S.Shop(p)
+	local request: (string, string?, number?) -> () = p.Request
 	local w: number, h: number = p.Width, p.Height
 	local children = {}
 	local function purchase(key)
 		return function()
-			p.Request("Product", key)
+			request("Product", key)
 		end
 	end
 	local function buyButton(key, x, y, width, height)
@@ -646,36 +661,78 @@ function S.Shop(p)
 	end
 	if p.Phone then
 		local offers = {
-			{ "StarterPack", "Starter Pack", "10K Wins + 2× Skill", "Wins", T.Colors.Gold },
-			{ "AdminEgg", "Admin Egg", Config.AdminPet.name .. " • ×25 Skill", "Egg", T.Colors.Green },
-			{ "DoubleSkill", "2× Skill", "Double your Skill gain", "Skill", T.Colors.Green },
-			{ "DoubleWins", "2× Wins", "Double your Wins", "Wins", T.Colors.Gold },
-			{ "AutoThrow", "Auto Kick", "Automatic kicks", "Ball", T.Colors.Blue },
-			{ "Skill10M", "+10M Skill", "Instant Skill", "Skill", T.Colors.Gold },
-			{ "Skill100M", "+100M Skill", "Instant Skill", "Skill", T.Colors.Red },
-			{ "Skill1B", "+1B Skill", "Instant Skill", "Skill", T.Colors.Purple },
-			{ "SkipRebirth", "Skip Rebirth", "Skip the level requirement", "Rebirth", T.Colors.Purple },
+			{
+				key = "StarterPack",
+				title = "Starter Pack",
+				detail = "10K Wins + 2× Skill",
+				icon = "Wins",
+				color = T.Colors.Gold,
+			},
+			{
+				key = "AdminEgg",
+				title = "Admin Egg",
+				detail = Config.AdminPet.name .. " • ×25 Skill",
+				icon = "Egg",
+				color = T.Colors.Green,
+			},
+			{
+				key = "DoubleSkill",
+				title = "2× Skill",
+				detail = "Double your Skill gain",
+				icon = "Skill",
+				color = T.Colors.Green,
+			},
+			{
+				key = "DoubleWins",
+				title = "2× Wins",
+				detail = "Double your Wins",
+				icon = "Wins",
+				color = T.Colors.Gold,
+			},
+			{
+				key = "AutoThrow",
+				title = "Auto Kick",
+				detail = "Automatic kicks",
+				icon = "Ball",
+				color = T.Colors.Blue,
+			},
+			{ key = "Skill10M", title = "+10M Skill", detail = "Instant Skill", icon = "Skill", color = T.Colors.Gold },
+			{
+				key = "Skill100M",
+				title = "+100M Skill",
+				detail = "Instant Skill",
+				icon = "Skill",
+				color = T.Colors.Red,
+			},
+			{ key = "Skill1B", title = "+1B Skill", detail = "Instant Skill", icon = "Skill", color = T.Colors.Purple },
+			{
+				key = "SkipRebirth",
+				title = "Skip Rebirth",
+				detail = "Skip the level requirement",
+				icon = "Rebirth",
+				color = T.Colors.Purple,
+			},
 		}
 		for i, info in offers do
-			children[info[1]] = e(U.Surface, {
-				Name = "Offer" .. info[1],
+			children[info.key] = e(U.Surface, {
+				Name = "Offer" .. info.key,
 				Position = UDim2.fromOffset(12, 12 + (i - 1) * 124),
 				Size = UDim2.fromOffset(w - 30, 104),
-				Color = info[5],
+				Color = info.color,
 				Children = {
 					Icon = e(
 						U.Icon,
-						{ Kind = info[4], Position = UDim2.fromOffset(8, 16), Size = UDim2.fromOffset(72, 72) }
+						{ Kind = info.icon, Position = UDim2.fromOffset(8, 16), Size = UDim2.fromOffset(72, 72) }
 					),
-					Title = label(info[2], 92, 8, w - 260, 30, 23),
+					Title = label(info.title, 92, 8, w - 260, 30, 23),
 					Details = e(U.Label, {
-						Text = info[3],
+						Text = info.detail,
 						Position = UDim2.fromOffset(92, 42),
 						Size = UDim2.fromOffset(w - 260, 52),
 						TextSize = 17,
 						Wrap = true,
 					}),
-					Buy = buyButton(info[1], w - 154, 44, 108, 48),
+					Buy = buyButton(info.key, w - 154, 44, 108, 48),
 				},
 			})
 		end
@@ -688,7 +745,7 @@ function S.Shop(p)
 			w - 30,
 			48,
 			function()
-				p.Request("UnlockAuto")
+				request("UnlockAuto")
 			end,
 			T.Colors.Green,
 			p.Busy,
@@ -776,30 +833,30 @@ function S.Shop(p)
 	})
 	children.UpgradesHeading = label("~ Upgrades ~", 0, 574, w, 40, 30)
 	local offers = {
-		{ "DoubleSkill", "2× Skill", "Skill", T.Colors.Green },
-		{ "DoubleWins", "2× Wins", "Wins", T.Colors.Gold },
-		{ "AutoThrow", "Auto Kick", "Ball", T.Colors.Blue },
-		{ "Skill10M", "+10M Skill", "Skill", T.Colors.Gold },
-		{ "Skill100M", "+100M Skill", "Skill", T.Colors.Red },
-		{ "Skill1B", "+1B Skill", "Skill", T.Colors.Purple },
-		{ "SkipRebirth", "Skip Rebirth", "Rebirth", T.Colors.Purple },
+		{ key = "DoubleSkill", title = "2× Skill", icon = "Skill", color = T.Colors.Green },
+		{ key = "DoubleWins", title = "2× Wins", icon = "Wins", color = T.Colors.Gold },
+		{ key = "AutoThrow", title = "Auto Kick", icon = "Ball", color = T.Colors.Blue },
+		{ key = "Skill10M", title = "+10M Skill", icon = "Skill", color = T.Colors.Gold },
+		{ key = "Skill100M", title = "+100M Skill", icon = "Skill", color = T.Colors.Red },
+		{ key = "Skill1B", title = "+1B Skill", icon = "Skill", color = T.Colors.Purple },
+		{ key = "SkipRebirth", title = "Skip Rebirth", icon = "Rebirth", color = T.Colors.Purple },
 	}
 	local cw = math.floor((w - 34) / 3)
 	for i, info in offers do
-		children[info[1]] = e(U.Surface, {
-			Name = "Offer" .. info[1],
+		children[info.key] = e(U.Surface, {
+			Name = "Offer" .. info.key,
 			Position = UDim2.fromOffset(6 + (i - 1) % 3 * (cw + 8), 632 + math.floor((i - 1) / 3) * 211),
 			Size = UDim2.fromOffset(cw, 195),
-			Color = info[4],
+			Color = info.color,
 			Radius = 2,
 			Outline = 3,
 			Children = {
-				Title = label(info[2], 4, 6, cw - 8, 29, 22),
+				Title = label(info.title, 4, 6, cw - 8, 29, 22),
 				Icon = e(
 					U.Icon,
-					{ Kind = info[3], Position = UDim2.fromOffset(32, 39), Size = UDim2.fromOffset(cw - 64, 93) }
+					{ Kind = info.icon, Position = UDim2.fromOffset(32, 39), Size = UDim2.fromOffset(cw - 64, 93) }
 				),
-				Buy = buyButton(info[1], 10, 143, cw - 20, 42),
+				Buy = buyButton(info.key, 10, 143, cw - 20, 42),
 			},
 		})
 	end
@@ -812,7 +869,7 @@ function S.Shop(p)
 		w - 18,
 		46,
 		function()
-			p.Request("UnlockAuto")
+			request("UnlockAuto")
 		end,
 		T.Colors.Green,
 		p.Busy,

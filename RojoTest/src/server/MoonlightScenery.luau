@@ -1,13 +1,16 @@
 --!strict
+local Construction = require(script.Parent.ConstructionTypes)
 local Moonlight = {}
 
-function Moonlight.apply(map)
+function Moonlight.apply(map: Construction.World): Instance?
 	local world = map.SkippingWorld
 	if world:FindFirstChild("MoonlightPromenade") then
 		return
 	end
 	local V, C = Vector3.new, Color3.fromRGB
-	local left, right, upper, lower = math.huge, -math.huge, nil, nil
+	local left, right = math.huge, -math.huge
+	local upper: BasePart? = nil
+	local lower: BasePart? = nil
 	for _, p in ipairs(world:GetChildren()) do
 		if p:IsA("BasePart") and p.Name == "BiomeBank6_2" then
 			left = math.min(left, p.Position.X - p.Size.X / 2)
@@ -71,8 +74,16 @@ function Moonlight.apply(map)
 		C(69, 75, 135), C(83, 100, 169), C(127, 149, 180), C(172, 199, 221), C(227, 246, 255)
 	local ice, cyan, lavender, leaf, wood =
 		C(166, 226, 252), C(83, 178, 229), C(179, 153, 218), C(129, 170, 192), C(152, 120, 100)
-	local function part(name, size, cf, color, studs, shape, class)
-		local p = Instance.new(class or "Part")
+	local function part(
+		name: string,
+		size: Vector3,
+		cf: CFrame,
+		color: Color3,
+		studs: boolean?,
+		shape: Enum.PartType?,
+		class: string?
+	)
+		local p = Instance.new(class or "Part") :: BasePart
 		p.Name = name
 		p.Size = size
 		p.CFrame = cf
@@ -84,7 +95,7 @@ function Moonlight.apply(map)
 		p.CanQuery = false
 		p.TopSurface = Enum.SurfaceType.Smooth
 		p.BottomSurface = Enum.SurfaceType.Smooth
-		if shape then
+		if shape and p:IsA("Part") then
 			p.Shape = shape
 		end
 		if studs then
@@ -98,24 +109,24 @@ function Moonlight.apply(map)
 		p.Parent = parent
 		return p
 	end
-	local function box(name, size, pos, color, studs, rot)
+	local function box(name: string, size: Vector3, pos: Vector3, color: Color3, studs: boolean?, rot: CFrame?)
 		return part(name, size, CFrame.new(pos) * (rot or CFrame.identity), color, studs)
 	end
-	local function bar(name, a, b, w, color)
+	local function bar(name: string, a: Vector3, b: Vector3, w: number, color: Color3)
 		return part(name, V(w, w, (a - b).Magnitude), CFrame.lookAt((a + b) / 2, b), color)
 	end
-	local function begin(name)
+	local function begin(name: string)
 		local m = Instance.new("Model")
 		m.Name = name
 		parent = m
 		return m
 	end
-	local function finish(m, pos)
+	local function finish(m: Model, pos: Vector3)
 		m.WorldPivot = CFrame.new(pos)
 		m.Parent = root
 		parent = root
 	end
-	local function light(p, brightness, range)
+	local function light(p: BasePart, brightness: number, range: number)
 		local l = Instance.new("PointLight")
 		l.Color = ice
 		l.Brightness = brightness
@@ -123,7 +134,7 @@ function Moonlight.apply(map)
 		l.Shadows = false
 		l.Parent = p
 	end
-	local function crystal(pos, h, w, color, yaw)
+	local function crystal(pos: Vector3, h: number, w: number, color: Color3, yaw: number?)
 		local p = template:Clone()
 		p.Name = "MoonstoneCrystal"
 		p.Size = V(w, h, w * 0.8)
@@ -143,7 +154,7 @@ function Moonlight.apply(map)
 		p.Parent = parent
 		return p
 	end
-	local function flowers(pos, s, index)
+	local function flowers(pos: Vector3, s: number, index: number)
 		for j = 1, 5 do
 			local a = j * math.pi * 2 / 5 + index
 			box(
@@ -195,7 +206,7 @@ function Moonlight.apply(map)
 			end
 		end
 	end
-	local function garden(pos, s, index, tall)
+	local function garden(pos: Vector3, s: number, index: number, tall: boolean?)
 		for j = 1, 5 do
 			local a = j * 1.26 + index * 0.33
 			local h = (0.65 + j % 2 * 0.55) * s
@@ -214,7 +225,7 @@ function Moonlight.apply(map)
 		crystal(pos + V(-1.4 * s, 0, -1.3 * s), h * 0.46 * s, 1.1 * s, pearl, index * 0.6)
 		flowers(pos + V(0, 0, 2.7 * s), 0.85 * s, index)
 	end
-	local function lantern(pos, s)
+	local function lantern(pos: Vector3, s: number)
 		local c = pos + V(0, 1.35 * s, 0)
 		local orb =
 			part("FrostedLanternGlobe", V(1.8 * s, 1.8 * s, 1.8 * s), CFrame.new(c), pearl, false, Enum.PartType.Ball)
@@ -235,7 +246,7 @@ function Moonlight.apply(map)
 		box("LanternFoot", V(1.5 * s, 0.22 * s, 1.5 * s), pos + V(0, 0.05 * s, 0), indigo)
 	end
 	-- Four triangular roof faces form a closed hipped roof, without oversized slabs.
-	local function roofTriangle(a, b, c)
+	local function roofTriangle(a: Vector3, b: Vector3, c: Vector3)
 		local ab, ac, bc = b - a, c - a, c - b
 		if ab:Dot(ab) > ac:Dot(ac) and ab:Dot(ab) > bc:Dot(bc) then
 			c, a = a, c

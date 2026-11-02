@@ -74,7 +74,8 @@ function Visual.start()
 			end
 			busy[map] = true
 			task.spawn(function()
-				local ok, err = pcall(Visual.create, map)
+				local result = table.pack(pcall(Visual.create, map))
+				local ok, err = result[1], result[2]
 				busy[map] = nil
 				if not ok then
 					failed[map] = true

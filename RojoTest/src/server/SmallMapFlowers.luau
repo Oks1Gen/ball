@@ -1,9 +1,10 @@
 --!strict
+local Construction = require(script.Parent.ConstructionTypes)
 -- Small, non-interactive flower pockets on the current World 1 lawn and terraces.
 local Flowers = {}
 local V, C = Vector3.new, Color3.fromRGB
 
-function Flowers.apply(map)
+function Flowers.apply(map: Construction.World): Instance?
 	if map:FindFirstChild("SmallMapFlowers") then
 		return map.SmallMapFlowers
 	end
@@ -13,9 +14,10 @@ function Flowers.apply(map)
 	local surfaces, obstacles, protected = {}, {}, {}
 	for _, p in map:GetDescendants() do
 		if p:IsA("BasePart") then
-			protected[p] = { p.CFrame, p.Size, p.CanCollide, p.CanTouch, p.CanQuery }
+			protected[p] =
+				{ frame = p.CFrame, size = p.Size, collide = p.CanCollide, touch = p.CanTouch, query = p.CanQuery }
 			if
-				p.Name == "GroundTile" and p.Parent == map.Lobby
+				p.Name == "GroundTile" and p.Parent == (map.Lobby :: Instance)
 				or p.Name == "GrassShelf" and p:IsDescendantOf(map.SpawnGarden)
 				or p.Name == "RearGrassLedge" and p:IsDescendantOf(map.SpawnGarden)
 				or p.Name == "TunnelGrassRoof" and p:IsDescendantOf(map.SpawnGardenPolish)
@@ -46,8 +48,9 @@ function Flowers.apply(map)
 	root.Name, root.WorldPivot = "SmallMapFlowers", apron.CFrame
 	root:SetAttribute("Version", 1)
 	local colors = { C(255, 250, 228), C(255, 250, 228), C(255, 180, 205), C(255, 225, 117), C(207, 183, 255) }
-	local planted, groups, bases = 0, 0, {}
-	local function clear(base, surface)
+	local planted, groups = 0, 0
+	local bases: { Vector3 } = {}
+	local function clear(base: Vector3, surface: BasePart)
 		for _, p in obstacles do
 			if p ~= surface then
 				local q = p.CFrame:PointToObjectSpace(base + V(0, 0.8, 0))
@@ -64,7 +67,7 @@ function Flowers.apply(map)
 		end
 		return true
 	end
-	local function part(parent, name, size, cf, color)
+	local function part(parent: Instance, name: string, size: Vector3, cf: CFrame, color: Color3)
 		local p = Instance.new("Part")
 		p.Name, p.Size, p.CFrame, p.Color = name, size, cf, color
 		p.Material = Enum.Material.SmoothPlastic
@@ -72,7 +75,7 @@ function Flowers.apply(map)
 		p.TopSurface, p.BottomSurface = Enum.SurfaceType.Smooth, Enum.SurfaceType.Smooth
 		p.Parent = parent
 	end
-	local function pocket(surface, x, z)
+	local function pocket(surface: BasePart, x: number, z: number)
 		local batch = Instance.new("Model")
 		batch.Name = "FlowerPocket"
 		local origin = surface.CFrame * V(x, surface.Size.Y / 2, z)
@@ -139,11 +142,11 @@ function Flowers.apply(map)
 	local verified = 0
 	for p, old in protected do
 		assert(
-			p.CFrame == old[1]
-				and p.Size == old[2]
-				and p.CanCollide == old[3]
-				and p.CanTouch == old[4]
-				and p.CanQuery == old[5],
+			p.CFrame == old.frame
+				and p.Size == old.size
+				and p.CanCollide == old.collide
+				and p.CanTouch == old.touch
+				and p.CanQuery == old.query,
 			"Existing volume changed: " .. p:GetFullName()
 		)
 		verified += 1

@@ -1,4 +1,5 @@
 --!strict
+local Construction = require(script.Parent.ConstructionTypes)
 local Rankings = {}
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
@@ -55,7 +56,7 @@ Players.PlayerRemoving:Connect(function(player)
 	forget(player.UserId)
 end)
 
-function Rankings.apply(map)
+function Rankings.apply(map: Construction.World)
 	if map:FindFirstChild("LobbyRankings") then
 		return
 	end

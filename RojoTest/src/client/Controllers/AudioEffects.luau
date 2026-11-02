@@ -208,13 +208,11 @@ function Effects.mount(context: Context): Handle
 		p.Shape = Enum.PartType.Cylinder
 		p.CFrame = CFrame.new(pos) * CFrame.Angles(0, 0, math.pi / 2)
 		p.Transparency = 0.4
-		TweenService
-			:Create(
-				p,
-				TweenInfo.new(0.5),
-				{ Size = Vector3.new(0.02, 7 * splashScale, 7 * splashScale), Transparency = 1 }
-			)
-			:Play()
+		TweenService:Create(
+			p,
+			TweenInfo.new(0.5),
+			{ Size = Vector3.new(0.02, 7 * (splashScale or 1), 7 * (splashScale or 1)), Transparency = 1 }
+		):Play()
 		Debris:AddItem(p, 0.6)
 	end
 

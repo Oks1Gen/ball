@@ -2,6 +2,14 @@
 local world = workspace.Map.World1
 local course = world.FootballCourse
 local palette = require(game.ServerScriptService.Server.CoursePalette:Clone())
+if course:GetAttribute("FootballCityVersion") then
+	local themes = require(game.ReplicatedStorage.Shared.FootballCity)
+	for i, theme in themes do
+		palette[i].earth = theme.earth
+	end
+end
+-- CourseRegions keeps props one authored stud from the zone ends, shrunk with the world.
+local margin = 0.99 * require(game.ReplicatedStorage.Shared.WorldScale).factor(world)
 local params = RaycastParams.new()
 params.FilterType = Enum.RaycastFilterType.Include
 local supports = {}
@@ -61,7 +69,7 @@ for index = 1, 8 do
 		then
 			local cf, size = detail:GetBoundingBox()
 			assert(
-				cf.Z - size.Z / 2 >= back + 0.99 and cf.Z + size.Z / 2 <= front - 0.99,
+				cf.Z - size.Z / 2 >= back + margin and cf.Z + size.Z / 2 <= front - margin,
 				"Prop crosses theme boundary"
 			)
 			assert(detail:GetAttribute("CourseRegionIndex") == index, "Wrong natural prop owner")

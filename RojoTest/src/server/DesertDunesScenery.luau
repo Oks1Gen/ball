@@ -1,11 +1,14 @@
 --!strict
+local Construction = require(script.Parent.ConstructionTypes)
 local Desert = {}
-function Desert.apply(map)
+function Desert.apply(map: Construction.World): Instance?
 	local world = map.SkippingWorld
 	if world:FindFirstChild("DesertArchaeology") then
 		return
 	end
-	local left, right, upper, lower = math.huge, -math.huge, nil, nil
+	local left, right = math.huge, -math.huge
+	local upper: BasePart? = nil
+	local lower: BasePart? = nil
 	for _, p in ipairs(world:GetChildren()) do
 		if p:IsA("BasePart") and p.Name == "BiomeBank2_2" then
 			left = math.min(left, p.Position.X - p.Size.X / 2)
@@ -30,7 +33,7 @@ function Desert.apply(map)
 	local wood = Color3.fromRGB(123, 78, 42)
 	local clay = Color3.fromRGB(178, 109, 56)
 	local green = Color3.fromRGB(63, 159, 64)
-	local function part(name, size, cf, color, studs, shape)
+	local function part(name: string, size: Vector3, cf: CFrame, color: Color3, studs: boolean?, shape: Enum.PartType?)
 		local p = Instance.new("Part")
 		p.Name = name
 		p.Size = size
@@ -43,7 +46,7 @@ function Desert.apply(map)
 		p.CanQuery = false
 		p.TopSurface = Enum.SurfaceType.Smooth
 		p.BottomSurface = Enum.SurfaceType.Smooth
-		if shape then
+		if shape and p:IsA("Part") then
 			p.Shape = shape
 		end
 		if studs then
@@ -57,13 +60,13 @@ function Desert.apply(map)
 		p.Parent = parent
 		return p
 	end
-	local function box(name, size, pos, color, studs, rotation)
+	local function box(name: string, size: Vector3, pos: Vector3, color: Color3, studs: boolean?, rotation: CFrame?)
 		return part(name, size, CFrame.new(pos) * (rotation or CFrame.identity), color, studs)
 	end
-	local function bar(name, a, b, width, color)
+	local function bar(name: string, a: Vector3, b: Vector3, width: number, color: Color3)
 		return part(name, Vector3.new(width, width, (a - b).Magnitude), CFrame.lookAt((a + b) / 2, b), color, false)
 	end
-	local function cylinder(name, pos, height, diameter, color)
+	local function cylinder(name: string, pos: Vector3, height: number, diameter: number, color: Color3)
 		return part(
 			name,
 			Vector3.new(height, diameter, diameter),
@@ -73,18 +76,18 @@ function Desert.apply(map)
 			Enum.PartType.Cylinder
 		)
 	end
-	local function begin(name)
+	local function begin(name: string)
 		local m = Instance.new("Model")
 		m.Name = name
 		parent = m
 		return m
 	end
-	local function finish(m, pos)
+	local function finish(m: Model, pos: Vector3)
 		m.WorldPivot = CFrame.new(pos)
 		m.Parent = root
 		parent = root
 	end
-	local function pot(pos, s)
+	local function pot(pos: Vector3, s: number)
 		cylinder("ClayPotBase", pos + Vector3.new(0, 0.25 * s, 0), 0.5 * s, 1.1 * s, clay)
 		cylinder("ClayPotBody", pos + Vector3.new(0, 0.95 * s, 0), 1.2 * s, 1.75 * s, clay)
 		cylinder("ClayPotNeck", pos + Vector3.new(0, 1.65 * s, 0), 0.4 * s, 1.2 * s, clay)
@@ -116,7 +119,9 @@ function Desert.apply(map)
 	end
 	local turn = CFrame.new(archPos) * CFrame.Angles(0, math.pi / 2, 0) * CFrame.new(-archPos)
 	for _, p in ipairs(ruins:GetChildren()) do
-		p.CFrame = turn * p.CFrame
+		if p:IsA("BasePart") then
+			p.CFrame = turn * p.CFrame
+		end
 	end
 	for i = 1, 3 do
 		local pos = archPos + Vector3.new((i % 2 == 0 and 3 or -2), 0, -13 - i * 2.4)
@@ -257,7 +262,7 @@ function Desert.apply(map)
 	root.WorldPivot = CFrame.new((left + right) / 2, ymin, (front + back) / 2)
 	root.Parent = world
 	task.wait()
-	local function cactus(pos, h, _variant)
+	local function cactus(pos: Vector3, h: number, _variant: number)
 		local m = begin("SaguaroCluster")
 		box("CactusTrunk", Vector3.new(1.55, h, 1.55), pos + Vector3.new(0, h / 2, 0), green, true)
 		for _, s in ipairs({ -1, 1 }) do
@@ -280,7 +285,7 @@ function Desert.apply(map)
 		)
 		finish(m, pos)
 	end
-	local function planting(pos, index)
+	local function planting(pos: Vector3, index: number)
 		local m = begin("DesertPlantPocket")
 		for i = 1, 5 do
 			local a = i * math.pi * 2 / 5 + index * 0.5

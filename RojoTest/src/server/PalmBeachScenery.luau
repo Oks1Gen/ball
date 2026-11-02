@@ -1,6 +1,7 @@
 --!strict
+local Construction = require(script.Parent.ConstructionTypes)
 local Scenery = {}
-function Scenery.apply(map)
+function Scenery.apply(map: Construction.World): Instance?
 	local zone = map.FieldCorridor:FindFirstChild("01_ЛУГА")
 	assert(zone, "First biome missing")
 	if zone:FindFirstChild("TropicalLanding") then
@@ -43,7 +44,7 @@ function Scenery.apply(map)
 	local lightWood = Color3.fromRGB(185, 122, 64)
 	local leaf = Color3.fromRGB(42, 153, 46)
 	local lime = Color3.fromRGB(114, 199, 46)
-	local function part(name, size, cf, color, studs, shape)
+	local function part(name: string, size: Vector3, cf: CFrame, color: Color3, studs: boolean?, shape: Enum.PartType?)
 		local p = Instance.new("Part")
 		p.Name = name
 		p.Size = size
@@ -56,7 +57,7 @@ function Scenery.apply(map)
 		p.CanQuery = false
 		p.TopSurface = Enum.SurfaceType.Smooth
 		p.BottomSurface = Enum.SurfaceType.Smooth
-		if shape then
+		if shape and p:IsA("Part") then
 			p.Shape = shape
 		end
 		if studs then
@@ -70,24 +71,24 @@ function Scenery.apply(map)
 		p.Parent = parent
 		return p
 	end
-	local function box(name, size, pos, color, studs, rot)
+	local function box(name: string, size: Vector3, pos: Vector3, color: Color3, studs: boolean?, rot: CFrame?)
 		return part(name, size, CFrame.new(pos) * (rot or CFrame.identity), color, studs)
 	end
-	local function bar(name, a, b, width, color)
+	local function bar(name: string, a: Vector3, b: Vector3, width: number, color: Color3)
 		return part(name, Vector3.new(width, width, (a - b).Magnitude), CFrame.lookAt((a + b) / 2, b), color, false)
 	end
-	local function model(name)
+	local function model(name: string)
 		local m = Instance.new("Model")
 		m.Name = name
 		parent = m
 		return m
 	end
-	local function finish(m, pivot)
+	local function finish(m: Model, pivot: Vector3)
 		m.WorldPivot = CFrame.new(pivot)
 		m.Parent = root
 		parent = root
 	end
-	local function lantern(pos)
+	local function lantern(pos: Vector3)
 		box("LanternFoot", Vector3.new(1.8, 0.25, 1.8), pos + Vector3.new(0, 0.125, 0), dark)
 		box("LanternFrame", Vector3.new(1.35, 1.9, 1.35), pos + Vector3.new(0, 1.2, 0), dark)
 		local glow = box(
@@ -105,7 +106,7 @@ function Scenery.apply(map)
 		l.Shadows = false
 		l.Parent = glow
 	end
-	local function crate(pos, size)
+	local function crate(pos: Vector3, size: number)
 		box("CrateBody", Vector3.new(size, size, size), pos + Vector3.new(0, size / 2, 0), wood, true)
 		for _, x in ipairs({ -1, 1 }) do
 			box(
@@ -126,7 +127,7 @@ function Scenery.apply(map)
 	local hutPos = Vector3.new(left + 9, top, zmin + 171 * spacing)
 	local hut = model("PalmLeafHut")
 	-- Hut front faces inward, with a ten-stud clear route along its front.
-	local function hutBox(name, size, off, color, studs, rot)
+	local function hutBox(name: string, size: Vector3, off: Vector3, color: Color3, studs: boolean?, rot: CFrame?)
 		return box(name, size, hutPos + off, color, studs, rot)
 	end
 	for i = 0, 9 do
@@ -289,7 +290,7 @@ function Scenery.apply(map)
 	root.WorldPivot = CFrame.new((left + right) / 2, top, (zmin + zmax) / 2)
 	root.Parent = zone
 	task.wait()
-	local function plantPocket(pos, index, large)
+	local function plantPocket(pos: Vector3, index: number, large: boolean?)
 		local m = model("TropicalPlanting")
 		local s = large and 1.65 or 1.15
 		for i = 1, 7 do
@@ -394,7 +395,7 @@ function Scenery.apply(map)
 	finish(posts, Vector3.new(left + 43, bottom, zmin + 174 * spacing))
 	-- Match the reference viewed from the desert toward the lobby: hut on screen left.
 	local centerX = (left + right) / 2
-	local function mirror(cf)
+	local function mirror(cf: CFrame)
 		local x, y, z, a, b, c, d, e, f, g, h, i = cf:GetComponents()
 		return CFrame.new(2 * centerX - x, y, z, a, -b, -c, -d, e, f, -g, h, i)
 	end

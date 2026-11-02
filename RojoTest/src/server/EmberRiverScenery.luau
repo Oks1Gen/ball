@@ -1,7 +1,8 @@
 --!strict
+local Construction = require(script.Parent.ConstructionTypes)
 local Ember = {}
 
-local function faceLobby(root)
+local function faceLobby(root: Instance)
 	if root:GetAttribute("FrontFacesLobby") then
 		return
 	end
@@ -13,7 +14,7 @@ local function faceLobby(root)
 	root:SetAttribute("FrontFacesLobby", true)
 end
 
-function Ember.apply(map)
+function Ember.apply(map: Construction.World): Instance?
 	local world = map.SkippingWorld
 	local existing = world:FindFirstChild("AmberMineAndForge")
 	if existing then
@@ -21,7 +22,9 @@ function Ember.apply(map)
 		return existing
 	end
 	local V, C = Vector3.new, Color3.fromRGB
-	local left, right, upper, lower = math.huge, -math.huge, nil, nil
+	local left, right = math.huge, -math.huge
+	local upper: BasePart? = nil
+	local lower: BasePart? = nil
 	for _, p in ipairs(world:GetChildren()) do
 		if p:IsA("BasePart") and p.Name == "BiomeBank5_2" then
 			left = math.min(left, p.Position.X - p.Size.X / 2)
@@ -82,7 +85,7 @@ function Ember.apply(map)
 	local coal, rust, copper, wood, timber, iron =
 		C(76, 66, 65), C(155, 79, 45), C(190, 108, 50), C(110, 65, 31), C(155, 99, 47), C(75, 80, 81)
 	local amber, honey = C(255, 159, 32), C(255, 202, 73)
-	local function part(name, size, cf, color, studs, shape)
+	local function part(name: string, size: Vector3, cf: CFrame, color: Color3, studs: boolean?, shape: Enum.PartType?)
 		local p = Instance.new("Part")
 		p.Name = name
 		p.Size = size
@@ -95,7 +98,7 @@ function Ember.apply(map)
 		p.CanQuery = false
 		p.TopSurface = Enum.SurfaceType.Smooth
 		p.BottomSurface = Enum.SurfaceType.Smooth
-		if shape then
+		if shape and p:IsA("Part") then
 			p.Shape = shape
 		end
 		if studs then
@@ -109,13 +112,13 @@ function Ember.apply(map)
 		p.Parent = parent
 		return p
 	end
-	local function box(name, size, pos, color, studs, rot)
+	local function box(name: string, size: Vector3, pos: Vector3, color: Color3, studs: boolean?, rot: CFrame?)
 		return part(name, size, CFrame.new(pos) * (rot or CFrame.identity), color, studs)
 	end
-	local function bar(name, a, b, w, color)
+	local function bar(name: string, a: Vector3, b: Vector3, w: number, color: Color3)
 		return part(name, V(w, w, (a - b).Magnitude), CFrame.lookAt((a + b) / 2, b), color)
 	end
-	local function cylinder(name, pos, h, d, color, vertical)
+	local function cylinder(name: string, pos: Vector3, h: number, d: number, color: Color3, vertical: boolean?)
 		return part(
 			name,
 			V(h, d, d),
@@ -125,18 +128,18 @@ function Ember.apply(map)
 			Enum.PartType.Cylinder
 		)
 	end
-	local function begin(name)
+	local function begin(name: string)
 		local m = Instance.new("Model")
 		m.Name = name
 		parent = m
 		return m
 	end
-	local function finish(m, pos)
+	local function finish(m: Model, pos: Vector3)
 		m.WorldPivot = CFrame.new(pos)
 		m.Parent = root
 		parent = root
 	end
-	local function crystal(pos, h, w, color, yaw, light)
+	local function crystal(pos: Vector3, h: number, w: number, color: Color3, yaw: number?, light: boolean?)
 		local p = template:Clone()
 		p.Name = "FacetedAmber"
 		p.Size = V(w, h, w * 0.8)
@@ -164,7 +167,7 @@ function Ember.apply(map)
 		end
 		return p
 	end
-	local function rocks(pos, s, index)
+	local function rocks(pos: Vector3, s: number, index: number)
 		for j = 1, 5 do
 			local a = j * 1.26 + index * 0.45
 			local h = (1.5 + j % 3) * s
@@ -178,7 +181,7 @@ function Ember.apply(map)
 			)
 		end
 	end
-	local function grass(pos, s, index)
+	local function grass(pos: Vector3, s: number, index: number)
 		for j = 1, 7 do
 			local a = j * math.pi * 2 / 7 + index * 0.31
 			box(
@@ -191,7 +194,7 @@ function Ember.apply(map)
 			)
 		end
 	end
-	local function crate(pos, s)
+	local function crate(pos: Vector3, s: number)
 		box("SupplyCrate", V(s, s, s), pos + V(0, s / 2, 0), wood, true)
 		for _, side in ipairs({ -1, 1 }) do
 			for _, k in ipairs({ -1, 1 }) do
@@ -211,7 +214,7 @@ function Ember.apply(map)
 			)
 		end
 	end
-	local function lantern(pos)
+	local function lantern(pos: Vector3)
 		box("LanternBase", V(1.1, 0.2, 1.1), pos, iron)
 		local glow = box("WarmLantern", V(0.7, 1.1, 0.7), pos + V(0, 0.65, 0), honey)
 		glow.Material = Enum.Material.Neon
@@ -399,7 +402,7 @@ function Ember.apply(map)
 	finish(forge, forgePos)
 	task.wait()
 	local index = 0
-	local function garden(pos, s, tall)
+	local function garden(pos: Vector3, s: number, tall: boolean?)
 		index += 1
 		local m = begin(tall and "AmberOutcrop" or "EmberShorePocket")
 		rocks(pos, s, index)

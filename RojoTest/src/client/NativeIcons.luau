@@ -3,13 +3,22 @@
 local Icons = {}
 local C = Color3.fromRGB
 local dark = C(19, 22, 48)
-function Icons.draw(parent, kind, color)
+function Icons.draw(parent: Instance, kind: string, color: Color3?)
 	local canvas = Instance.new("Frame")
 	canvas.Name = "Icon_" .. kind
 	canvas.Size = UDim2.fromScale(1, 1)
 	canvas.BackgroundTransparency = 1
 	canvas.Parent = parent
-	local function shape(x, y, w, h, fill, rotation, round, outline)
+	local function shape(
+		x: number,
+		y: number,
+		w: number,
+		h: number,
+		fill: Color3,
+		rotation: number?,
+		round: number?,
+		outline: boolean?
+	)
 		local p = Instance.new("Frame")
 		p.AnchorPoint = Vector2.new(0.5, 0.5)
 		p.Position = UDim2.fromScale(x, y)
@@ -31,7 +40,7 @@ function Icons.draw(parent, kind, color)
 		end
 		return p
 	end
-	local function text(t, x, y, w, h, fill)
+	local function text(t: string, x: number, y: number, w: number, h: number, fill: Color3)
 		local l = Instance.new("TextLabel")
 		l.Text = t
 		l.Position = UDim2.fromScale(x - w / 2, y - h / 2)

@@ -1,6 +1,8 @@
 --!strict
 -- Action: client -> server, command:string, value?, extra?. Requests never carry rewards.
 -- Update: server -> owner, authoritative snapshot table; receipts are removed.
+-- Update.throwReady: server cooldown readiness; canThrow also checks the orange apron.
+-- The client uses throwReady with the shared apron boundary for immediate button visibility.
 -- Effect: server -> owner/all, effect name:string and server-authored payload.
 -- Throw.zoneCrossings: ordered {alpha, zone, name, multiplier}; cosmetic timing only.
 -- Throw begins manual timing. KickRelease(token, serverClockPressTime) locks each stage.
@@ -14,7 +16,8 @@ Net.Folder = "SkippingRemotes"
 -- The gameplay remotes exist for every player. The admin remote is created
 -- by the server only when an authorized player is in the game, so the admin
 -- surface is not part of the world a regular client sees.
-Net.Classes = { Action = "RemoteEvent", Update = "RemoteEvent", Effect = "RemoteEvent" }
+local classes: { [string]: string } = { Action = "RemoteEvent", Update = "RemoteEvent", Effect = "RemoteEvent" }
+Net.Classes = classes
 Net.AdminName = "Admin"
 local simple = {
 	Snapshot = true,
@@ -70,7 +73,7 @@ function Net.validAction(command: any, value: any, extra: any): boolean
 		if value == "sound" or value == "music" then
 			return typeof(extra) == "number" and extra == extra and math.abs(extra) < math.huge
 		end
-		return (value == "shake" or value == "effects") and typeof(extra) == "boolean"
+		return (value == "shake" or value == "effects" or value == "upgradeNotices") and typeof(extra) == "boolean"
 	end
 	return false
 end

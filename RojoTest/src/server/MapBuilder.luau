@@ -1,4 +1,5 @@
 --!strict
+local Construction = require(script.Parent.ConstructionTypes)
 -- Shared by the Studio build and the server bootstrap.
 local MapBuilder = {}
 local VERSION = 9
@@ -6,23 +7,30 @@ local C = Color3.fromRGB
 local V = Vector3.new
 local rng = Random.new(41)
 
-function MapBuilder.build()
+function MapBuilder.build(): Construction.World
 	local existing = workspace:FindFirstChild("Map") and workspace.Map:FindFirstChild("World1")
 	if existing and existing:GetAttribute("Version") == VERSION then
-		return existing
+		return existing :: Construction.World
 	end
 	if existing then
 		existing:Destroy()
 	end
 	local root = Instance.new("Folder")
 	root.Name = "World1"
-	local function group(name)
+	local function group(name: string)
 		local model = Instance.new("Model")
 		model.Name = name
 		model.Parent = root
 		return model
 	end
-	local function part(parent, name, size, pos, color, material)
+	local function part(
+		parent: Instance,
+		name: string,
+		size: Vector3,
+		pos: Vector3,
+		color: Color3,
+		material: Enum.Material?
+	)
 		local p = Instance.new("Part")
 		p.Name = name
 		p.Anchored = true
@@ -35,7 +43,7 @@ function MapBuilder.build()
 		p.Parent = parent
 		return p
 	end
-	local function sign(parent, text, pos, width, color)
+	local function sign(parent: Instance, text: string, pos: Vector3, width: number, color: Color3?)
 		local anchor = part(parent, "UIAnchor", V(1, 1, 1), pos, C(255, 255, 255))
 		anchor.Transparency = 1
 		anchor.CanCollide = false
@@ -64,7 +72,16 @@ function MapBuilder.build()
 		label.Parent = gui
 		return anchor
 	end
-	local function tiles(parent, x, z, width, length, y, a, b)
+	local function tiles(
+		parent: Instance,
+		x: number,
+		z: number,
+		width: number,
+		length: number,
+		y: number,
+		a: Color3,
+		b: Color3
+	)
 		local unit = 16
 		for ix = 0, math.ceil(width / unit) - 1 do
 			for iz = 0, math.ceil(length / unit) - 1 do
@@ -80,7 +97,7 @@ function MapBuilder.build()
 			end
 		end
 	end
-	local function tree(parent, x, z, y, leaf, palm)
+	local function tree(parent: Instance, x: number, z: number, y: number, leaf: Color3, palm: boolean?)
 		local height = if palm then 18 else 12
 		local trunk =
 			part(parent, "Trunk", V(3, height, 3), V(x, y + height / 2, z), C(139, 91, 48), Enum.Material.Wood)
@@ -291,7 +308,7 @@ function MapBuilder.build()
 	end
 
 	local walls = group("PerimeterWalls")
-	local function wall(name, size, pos)
+	local function wall(name: string, size: Vector3, pos: Vector3)
 		part(walls, name, size, pos, C(145, 97, 62))
 	end
 	wall("LobbyLeft", V(6, 64, 224), V(-223, 30, 112))
@@ -342,7 +359,7 @@ function MapBuilder.build()
 	lighting.GlobalShadows = true
 	root:SetAttribute("Version", VERSION)
 	root.Parent = require(script.Parent.MapHierarchy).container()
-	return root
+	return root :: Construction.World
 end
 
 return MapBuilder

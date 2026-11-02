@@ -44,8 +44,8 @@ Workspace/Map/World1
 │  │     ├─ Field
 │  │     ├─ Geometry
 │  │     │  └─ Banks [Model, четыре тела берегов]
-│  │     ├─ Environment
-│  │     └─ Boundaries
+│  │     ├─ Environment/Cityscape [Model, законченные объекты внутри]
+│  │     └─ Boundaries [в Zone08 также ShotFinish]
 │  ├─ Geometry
 │  │  └─ BankSupport/Section01…05 [старые физические опоры общей трассы]
 │  ├─ Environment/River
@@ -82,7 +82,8 @@ Workspace/Map/World1
 ## Невидимые детали и исправления поверхностей
 
 Прозрачность не означает мусор. `PartRole` принимает `Collision`, `Trigger`,
-`QueryVolume`, `LabelAnchor`, `InteractionAnchor`, `HiddenVisual`. Последнее —
+`QueryVolume`, `LabelAnchor`, `InteractionAnchor`, `EffectAnchor` (несущая деталь
+VFX: Attachment, Beam, частицы), `HiddenVisual`. Последнее —
 консервативная классификация старой скрытой геометрии, а не доказательство,
 что её можно удалить. Новая техническая часть должна иметь имя, объясняющее
 назначение, и только необходимые CanCollide/CanTouch/CanQuery.

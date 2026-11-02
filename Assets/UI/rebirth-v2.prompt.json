@@ -1,0 +1,10 @@
+{
+  "key": "rebirth-v2",
+  "generator": "built-in image_gen",
+  "file": "rebirth-v2.png",
+  "image": "rbxassetid://111076798257191",
+  "reference": "User attachment codex-clipboard-b6d0dfd8-1887-4dc2-902c-54e6d3038f90.png, 2026-11-02",
+  "source": "C:/Users/dakem/.codex/generated_images/01a19d24-4d05-73f3-94fe-a67050e8a883/exec-31c50989-3ec1-4080-8785-73c876324922.png",
+  "transparent_background": true,
+  "prompt": "Create a NEW standalone Roblox simulator Rebirth UI ICON, using the attached screenshot only as the shape/color/style reference. Output one centered icon on a genuinely transparent background, square canvas, subject filling 86% of the canvas with safe transparent margins. Two chunky curved arrows interlock into a circular clockwise rebirth/recycle loop, with a small clear hollow center: upper arrow vivid hot pink/magenta, lower arrow bright cyan/light blue. Match the reference's clear broad angular arrowheads, thick smooth black exterior outline, beveled cartoon faces, crisp pale edge highlights and saturated simple shading. The pink arrow curls across the upper half and points down-right; the cyan arrow curls across the lower half and points up-left. Clean bold game icon, readable at 64 pixels. Icon only: NO 'Rebirth', NO text, NO percentage, NO button rectangle, NO grey plate, NO scene, NO background, NO extra symbols, NO glow or floating objects. Preserve transparent alpha."
+}

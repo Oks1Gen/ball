@@ -123,7 +123,7 @@ function HudLayout.landscape(): Spec
 		WinsIcon = entry(78, 601, 42, 43),
 		WinsCount = entry(128, 601, 200, 44, { text = 34 }),
 		FriendBoost = entry(74, 654, 183, 27, { text = 18 }),
-		Distance = entry(414, 96, 452, 46, { text = 31 }),
+		Distance = entry(414, 90, 452, 58, { text = 46 }),
 		HitDistance = entry(425, 153, 430, 27, { text = 20 }),
 		Best = entry(980, 666, 280, 26, { text = 16 }),
 		Hint = entry(360, 680, 560, 24, { text = 16 }),
@@ -609,7 +609,7 @@ function HudLayout.pins(spec: Spec, hud: Instance): { Pin }
 			if offset == nil then
 				offset = if source.side == "left" then item.x - 75 else item.x - 1205
 			end
-			table.insert(pins, { node = node, side = source.side, offset = offset })
+			table.insert(pins, { node = node, side = source.side, offset = assert(offset) })
 			local shadow = HudLayout.findNode(hud, source.name .. "Shadow")
 			if shadow and shadow:IsA("GuiObject") then
 				table.insert(pins, { node = shadow, side = source.side, offset = offset })

@@ -175,7 +175,9 @@ function Commands.install(context: Context)
 		elseif command == "Setting" and type(value) == "string" then
 			if (value == "sound" or value == "music") and type(extra) == "number" and extra == extra then
 				s.data.settings[value] = math.clamp(math.floor(extra), 0, 100)
-			elseif (value == "shake" or value == "effects") and type(extra) == "boolean" then
+			elseif
+				(value == "shake" or value == "effects" or value == "upgradeNotices") and type(extra) == "boolean"
+			then
 				s.data.settings[value] = extra
 			end
 			context.publish(player)

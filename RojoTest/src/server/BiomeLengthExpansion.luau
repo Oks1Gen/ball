@@ -1,4 +1,15 @@
 --!strict
+local Construction = require(script.Parent.ConstructionTypes)
+type ExpansionResult = {
+	alreadyApplied: boolean?,
+	plannedParts: number?,
+	rigidGroups: number?,
+	front: number?,
+	back: number?,
+	backup: string?,
+	changed: number?,
+	unchanged: number?,
+}
 -- Extend the authored World 1 route after its scenery passes, without scaling props.
 local Expansion = {}
 local V = Vector3.new
@@ -8,7 +19,7 @@ local SCALE = 1.5
 -- the expansion, so they are read from the pitch blocks themselves: an
 -- attribute that does not match the geometry would report a gap that is not
 -- there.
-function Expansion.refresh(map): { front: number, back: number }?
+function Expansion.refresh(map: Construction.World): { front: number, back: number }?
 	local world = map.SkippingWorld
 	local first = world:FindFirstChild("Field_1") :: BasePart?
 	local last = world:FindFirstChild("Field_8") :: BasePart?
@@ -23,7 +34,7 @@ function Expansion.refresh(map): { front: number, back: number }?
 	return { front = front, back = back }
 end
 
-function Expansion.apply(map, dryRun)
+function Expansion.apply(map: Construction.World, dryRun: boolean?): ExpansionResult
 	if map:GetAttribute("BiomeLengthScale") == SCALE then
 		if not dryRun then
 			Expansion.refresh(map)
@@ -32,14 +43,14 @@ function Expansion.apply(map, dryRun)
 	end
 	assert(map:GetAttribute("BiomeLengthScale") == nil, "Review the existing route scale")
 	local world = map.SkippingWorld
-	local first = world.Field_1
+	local first = assert(world:FindFirstChild("Field_1")) :: BasePart
 	assert(math.abs(first.Size.Z - 180) < 0.01, "Expected eight authored 180-stud biomes")
 	local front = first.Position.Z + first.Size.Z / 2
 	local oldBack, newBack = front - 1440, front - 2160
-	local function zmap(z)
+	local function zmap(z: number)
 		return front + (z - front) * SCALE
 	end
-	local function delta(z)
+	local function delta(z: number): Vector3
 		return V(0, 0, zmap(z) - z)
 	end
 	local originals, plan, pivots, rigid, attributes = {}, {}, {}, {}, {}
@@ -49,15 +60,15 @@ function Expansion.apply(map, dryRun)
 				{ cf = p.CFrame, size = p.Size, collide = p.CanCollide, touch = p.CanTouch, query = p.CanQuery }
 		end
 	end
-	local function movePart(p, d, size)
+	local function movePart(p: BasePart, d: Vector3, size: Vector3?)
 		assert(not plan[p], "Overlapping expansion operations: " .. p:GetFullName())
 		plan[p] = { cf = p.CFrame + d, size = size or p.Size }
 	end
-	local function stretch(p)
+	local function stretch(p: BasePart)
 		assert(math.abs(p.CFrame.LookVector.Z) > 0.999, "Structural part must follow the river: " .. p:GetFullName())
 		movePart(p, delta(p.Position.Z), V(p.Size.X, p.Size.Y, p.Size.Z * SCALE))
 	end
-	local function moveModel(m, anchorZ)
+	local function moveModel(m: Model, anchorZ: number?)
 		local d = delta(anchorZ or m:GetPivot().Position.Z)
 		for _, p in m:GetDescendants() do
 			if p:IsA("BasePart") then
@@ -69,7 +80,7 @@ function Expansion.apply(map, dryRun)
 		pivots[m] = m:GetPivot() + d
 		table.insert(rigid, { model = m, delta = d })
 	end
-	local function spreadPath(m)
+	local function spreadPath(m: Model)
 		for _, p in m:GetDescendants() do
 			if p:IsA("BasePart") then
 				movePart(p, delta(p.Position.Z))
@@ -77,7 +88,7 @@ function Expansion.apply(map, dryRun)
 		end
 		pivots[m] = m:GetPivot() + delta(m:GetPivot().Position.Z)
 	end
-	local function scenery(root)
+	local function scenery(root: Model)
 		for _, m in root:GetChildren() do
 			if m:IsA("Model") then
 				if
@@ -150,7 +161,9 @@ function Expansion.apply(map, dryRun)
 					end
 				end
 			end
-			pivots[zone] = zone:GetPivot() + delta(zone:GetPivot().Position.Z)
+			if zone:IsA("Model") then
+				pivots[zone :: Model] = (zone :: Model):GetPivot() + delta((zone :: Model):GetPivot().Position.Z)
+			end
 		end
 	end
 	stretch(map.FieldCorridor.RiverBed)
@@ -168,7 +181,7 @@ function Expansion.apply(map, dryRun)
 		end
 	end
 	for _, p in map.CorridorBarriers:GetChildren() do
-		if p.Name == "SideBarrier" then
+		if p:IsA("BasePart") and p.Name == "SideBarrier" then
 			stretch(p)
 		end
 	end
@@ -199,11 +212,13 @@ function Expansion.apply(map, dryRun)
 					end
 				end
 			end
-			pivots[zone] = zone:GetPivot() + delta(zone:GetPivot().Position.Z)
+			if zone:IsA("Model") then
+				pivots[zone] = zone:GetPivot() + delta(zone:GetPivot().Position.Z)
+			end
 		end
 	end
 	local native = map.NativeEnvironment
-	for _, tree in native.Trees:GetChildren() do
+	for _, tree in assert(native:FindFirstChild("Trees")):GetChildren() do
 		if tree:IsA("Model") and tree:GetPivot().Position.Z < front then
 			moveModel(tree)
 		end
@@ -217,7 +232,11 @@ function Expansion.apply(map, dryRun)
 					elseif c:IsA("BasePart") then
 						local anchor = c.Position.Z
 						for _, pillar in garden:GetChildren() do
-							if pillar.Name == "CliffPillar" and math.abs(pillar.Position.X - c.Position.X) < 8 then
+							if
+								pillar:IsA("BasePart")
+								and pillar.Name == "CliffPillar"
+								and math.abs(pillar.Position.X - c.Position.X) < 8
+							then
 								anchor = pillar.Position.Z
 								break
 							end
@@ -231,7 +250,7 @@ function Expansion.apply(map, dryRun)
 			end
 		end
 	end
-	scenery(map.FieldCorridor["01_ЛУГА"].TropicalLanding)
+	scenery(assert(assert(map.FieldCorridor:FindFirstChild("01_ЛУГА")):FindFirstChild("TropicalLanding")) :: Model)
 	for _, name in
 		{
 			"DesertArchaeology",
@@ -243,13 +262,17 @@ function Expansion.apply(map, dryRun)
 			"SakuraThreshold",
 		}
 	do
-		scenery(world[name])
+		scenery(assert(world:FindFirstChild(name)) :: Model)
 	end
 	-- The pavilion and the original bench are one composition, as are the ema rack
 	-- and banner. Gate, panorama and flowering boughs move together to the new end.
-	local japanese = world.SakuraJapaneseFinale
-	local benchZ = world.SakuraThreshold.SakuraViewingBench:GetPivot().Position.Z
-	local bannerZ = world.SakuraThreshold.BlossomBannerGarden:GetPivot().Position.Z
+	local japanese = assert(world:FindFirstChild("SakuraJapaneseFinale")) :: Model
+	local benchZ = (
+		assert(assert(world:FindFirstChild("SakuraThreshold")):FindFirstChild("SakuraViewingBench")) :: Model
+	):GetPivot().Position.Z
+	local bannerZ = (
+		assert(assert(world:FindFirstChild("SakuraThreshold")):FindFirstChild("BlossomBannerGarden")) :: Model
+	):GetPivot().Position.Z
 	for _, m in japanese:GetChildren() do
 		if m:IsA("Model") then
 			if m.Name == "SakuraGatewayFrame" or m.Name == "SakuraPortalPanorama" or m.Name == "GatewaySakuraBough" then
@@ -270,7 +293,7 @@ function Expansion.apply(map, dryRun)
 	for p in originals do
 		for _, key in { "SnowSupportFrame", "MossSupportFrame" } do
 			local cf = p:GetAttribute(key)
-			if cf then
+			if typeof(cf) == "CFrame" then
 				local support, near = nil, 0.02
 				for q, old in originals do
 					if q ~= p and plan[q] then
@@ -309,7 +332,7 @@ function Expansion.apply(map, dryRun)
 		child:Clone().Parent = backup
 		task.wait()
 	end
-	backup.WorldPivot = map:GetAttribute("MapPivot") or CFrame.identity
+	backup.WorldPivot = (map:GetAttribute("MapPivot") :: CFrame?) or CFrame.identity
 	-- Move complete prop models via PivotTo; resize only structural surfaces.
 	local moved = {}
 	for _, entry in rigid do
@@ -341,7 +364,12 @@ function Expansion.apply(map, dryRun)
 	end
 	local Config = require(game.ReplicatedStorage.Shared.GameConfig)
 	for _, p in world:GetChildren() do
-		if p.Name == "LabelAnchor" and math.abs(p.Position.X - first.Position.X) < 1 and p.Position.Z < front then
+		if
+			p:IsA("BasePart")
+			and p.Name == "LabelAnchor"
+			and math.abs(p.Position.X - first.Position.X) < 1
+			and p.Position.Z < front
+		then
 			local gui = p:FindFirstChildWhichIsA("BillboardGui")
 			local label = gui and gui:FindFirstChildWhichIsA("TextLabel")
 			if label then
@@ -370,7 +398,7 @@ function Expansion.apply(map, dryRun)
 		end
 	end
 	for _, name in { "CorridorLeft", "CorridorRight" } do
-		local wall = map.PerimeterWalls[name]:Clone()
+		local wall = (assert(map.PerimeterWalls:FindFirstChild(name)) :: BasePart):Clone()
 		wall.Name = name .. "FinalExtension"
 		wall.Size = V(wall.Size.X, wall.Size.Y, 240)
 		wall.Position = V(wall.Position.X, wall.Position.Y, newBack + 120)

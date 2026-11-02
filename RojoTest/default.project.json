@@ -19,6 +19,9 @@
       }
     },
     "ServerStorage": {
+      "CloudShapes": {
+        "$path": "assets/environment/CloudShapes.luau"
+      },
       "ServerPackages": {
         "$path": "src/serverPackages"
       },
@@ -49,6 +52,11 @@
     },
     "Workspace": {
       "$ignoreUnknownInstances": true
+    },
+    "Players": {
+      "$properties": {
+        "CharacterAutoLoads": false
+      }
     },
     "SoundService": {
       "$properties": {

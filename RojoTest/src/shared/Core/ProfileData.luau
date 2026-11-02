@@ -35,7 +35,7 @@ function Data.fresh(): any
 		perks = {},
 		receipts = {},
 		trainingBoosts = { ["67"] = 0, ["69"] = 0, ["144"] = 0 },
-		settings = { sound = 100, music = 100, shake = true, effects = true },
+		settings = { sound = 100, music = 100, shake = true, effects = true, upgradeNotices = true },
 		daily = 0,
 		dailyCount = 0,
 		lastSeen = 0,
@@ -132,7 +132,7 @@ function Data.normalize(input: any, catalog: any): any
 		for _, key in { "sound", "music" } do
 			data.settings[key] = bounded(input.settings[key], 100, 100)
 		end
-		for _, key in { "shake", "effects" } do
+		for _, key in { "shake", "effects", "upgradeNotices" } do
 			if type(input.settings[key]) == "boolean" then
 				data.settings[key] = input.settings[key]
 			end

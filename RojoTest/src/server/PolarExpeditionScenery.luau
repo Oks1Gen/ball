@@ -1,13 +1,16 @@
 --!strict
+local Construction = require(script.Parent.ConstructionTypes)
 local Polar = {}
 
-function Polar.apply(map)
+function Polar.apply(map: Construction.World): Instance?
 	local world = map.SkippingWorld
 	if world:FindFirstChild("PolarExpedition") then
 		return
 	end
 	local V, C = Vector3.new, Color3.fromRGB
-	local left, right, upper, lower = math.huge, -math.huge, nil, nil
+	local left, right = math.huge, -math.huge
+	local upper: BasePart? = nil
+	local lower: BasePart? = nil
 	for _, p in ipairs(world:GetChildren()) do
 		if p:IsA("BasePart") and p.Name == "BiomeBank7_2" then
 			left = math.min(left, p.Position.X - p.Size.X / 2)
@@ -39,14 +42,14 @@ function Polar.apply(map)
 	for _, m in ipairs(map.NativeEnvironment:GetDescendants()) do
 		if m:IsA("Model") and m.Name == "RobloxOak" then
 			local trunk = m:FindFirstChild("TrunkBase")
-			if trunk and trunk.Position.Z > back and trunk.Position.Z < front then
+			if trunk and trunk:IsA("BasePart") and trunk.Position.Z > back and trunk.Position.Z < front then
 				m:Clone().Parent = old
 				table.insert(trees, V(trunk.Position.X, high, trunk.Position.Z))
 				for _, p in ipairs(m:GetDescendants()) do
 					if p:IsA("BasePart") then
 						p.Transparency = 1
 						p:SetAttribute("PolarTreeHidden", true)
-					elseif p:IsA("Texture") or p:IsA("Decal") then
+					elseif p:IsA("Decal") then
 						p.Transparency = 1
 					end
 				end
@@ -73,7 +76,7 @@ function Polar.apply(map)
 			for _, l in ipairs(p:GetDescendants()) do
 				if l:IsA("Light") then
 					l.Enabled = false
-				elseif l:IsA("Texture") or l:IsA("Decal") then
+				elseif l:IsA("Decal") then
 					l.Transparency = 1
 				end
 			end
@@ -91,8 +94,16 @@ function Polar.apply(map)
 		C(139, 91, 49),
 		C(65, 83, 105),
 		C(255, 192, 81)
-	local function part(name, size, cf, color, studs, shape, class)
-		local p = Instance.new(class or "Part")
+	local function part(
+		name: string,
+		size: Vector3,
+		cf: CFrame,
+		color: Color3,
+		studs: boolean?,
+		shape: Enum.PartType?,
+		class: string?
+	)
+		local p = Instance.new(class or "Part") :: BasePart
 		p.Name = name
 		p.Size = size
 		p.CFrame = cf
@@ -104,7 +115,7 @@ function Polar.apply(map)
 		p.CanQuery = false
 		p.TopSurface = Enum.SurfaceType.Smooth
 		p.BottomSurface = Enum.SurfaceType.Smooth
-		if shape then
+		if shape and p:IsA("Part") then
 			p.Shape = shape
 		end
 		if studs then
@@ -118,24 +129,24 @@ function Polar.apply(map)
 		p.Parent = parent
 		return p
 	end
-	local function box(name, size, pos, color, studs, rot)
+	local function box(name: string, size: Vector3, pos: Vector3, color: Color3, studs: boolean?, rot: CFrame?)
 		return part(name, size, CFrame.new(pos) * (rot or CFrame.identity), color, studs)
 	end
-	local function bar(name, a, b, w, color)
+	local function bar(name: string, a: Vector3, b: Vector3, w: number, color: Color3)
 		return part(name, V(w, w, (a - b).Magnitude), CFrame.lookAt((a + b) / 2, b), color)
 	end
-	local function begin(name)
+	local function begin(name: string)
 		local m = Instance.new("Model")
 		m.Name = name
 		parent = m
 		return m
 	end
-	local function finish(m, pos)
+	local function finish(m: Model, pos: Vector3)
 		m.WorldPivot = CFrame.new(pos)
 		m.Parent = root
 		parent = root
 	end
-	local function crystal(pos, h, w, color, yaw)
+	local function crystal(pos: Vector3, h: number, w: number, color: Color3, yaw: number?)
 		local p = template:Clone()
 		p.Name = "FacetedIce"
 		p.Size = V(w, h, w * 0.8)
@@ -154,7 +165,7 @@ function Polar.apply(map)
 		end
 		p.Parent = parent
 	end
-	local function lamp(pos, s)
+	local function lamp(pos: Vector3, s: number)
 		box("LampFoot", V(1.6 * s, 0.3 * s, 1.6 * s), pos + V(0, 0.15 * s, 0), wood, true)
 		box("WoodLanternPost", V(0.5 * s, 4.8 * s, 0.5 * s), pos + V(0, 2.5 * s, 0), wood, true)
 		box("LanternArm", V(1.8 * s, 0.4 * s, 0.45 * s), pos + V(0.6 * s, 4.6 * s, 0), wood)
@@ -178,7 +189,7 @@ function Polar.apply(map)
 		l.Shadows = false
 		l.Parent = glow
 	end
-	local function crate(pos, s)
+	local function crate(pos: Vector3, s: number)
 		box("SupplyCrate", V(s, s, s), pos + V(0, s / 2, 0), wood, true)
 		for _, side in ipairs({ -1, 1 }) do
 			for _, y in ipairs({ 0.15, s - 0.15 }) do
@@ -193,7 +204,7 @@ function Polar.apply(map)
 			)
 		end
 	end
-	local function frost(pos, s, index, tall)
+	local function frost(pos: Vector3, s: number, index: number, tall: boolean?)
 		for j = 1, 4 do
 			local a = j * math.pi / 2 + index
 			local c = pos + V(math.cos(a) * 2 * s, 0.55 * s, math.sin(a) * 2 * s)
@@ -216,7 +227,7 @@ function Polar.apply(map)
 			)
 		end
 	end
-	local function fir(pos, s)
+	local function fir(pos: Vector3, s: number)
 		box("FirTrunk", V(1.1 * s, 4.0 * s, 1.1 * s), pos + V(0, 2 * s, 0), wood, true)
 		for j, w in ipairs({ 7.8, 6.4, 4.8, 2.8 }) do
 			local y = (3.4 + j * 2.15) * s
@@ -280,7 +291,7 @@ function Polar.apply(map)
 	box("ChimneyOpening", V(1.2, 0.04, 1.4), cabinPos + V(-3.5, 15.32, -2.7), C(35, 49, 63))
 	box("FrontDoor", V(2.6, 5.5, 0.25), cabinPos + V(2.6, 3.1, 5.65), wood, true)
 	box("DoorLatch", V(0.18, 0.3, 0.3), cabinPos + V(3.4, 3.2, 5.87), dark)
-	local function window(cf)
+	local function window(cf: CFrame)
 		part("WindowTimber", V(3.2, 3.0, 0.25), cf, wood)
 		local glow = part("WarmCabinWindow", V(2.65, 2.45, 0.12), cf * CFrame.new(0, 0, 0.18), amber)
 		glow.Material = Enum.Material.Neon

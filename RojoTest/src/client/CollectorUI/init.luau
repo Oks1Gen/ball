@@ -234,7 +234,13 @@ local function Navigation(p)
 	)
 end
 
-function UI.mount(context)
+type Context = {
+	send: (string, any?, any?) -> (),
+	close: (boolean?, (() -> ())?) -> (),
+	open: (string) -> (),
+	selectEgg: (string) -> (),
+}
+function UI.mount(context: Context)
 	local gui = Instance.new("ScreenGui")
 	gui.Name = "CollectorUI"
 	gui.ResetOnSpawn = false
@@ -244,12 +250,13 @@ function UI.mount(context)
 	gui.Parent = Players.LocalPlayer.PlayerGui
 	local root = ReactRoblox.createRoot(gui)
 	local handle = {
+		Destroyed = false,
 		Snapshot = nil,
 		Active = nil,
 		View = nil,
 		Exiting = {},
 		Serial = 0,
-		Pending = nil,
+		Pending = nil :: string?,
 		EggId = "Common",
 		BallId = nil,
 		SelectedPet = nil,
@@ -257,7 +264,7 @@ function UI.mount(context)
 		ModalOpen = false,
 	}
 	local render
-	local function request(command, value, extra)
+	local function request(command: string, value: any?, extra: any?)
 		if handle.Pending then
 			return
 		end
@@ -297,12 +304,13 @@ function UI.mount(context)
 			local width = size * 2 + gap
 			local banner = math.max(phone and 44 or 36, math.floor(size * 0.62))
 			local captionHeight = math.max(22, math.floor(size * 0.3))
+			local progressClearance = math.ceil(size * 0.18)
 			local navItems = {}
 			for i, item in navigation do
 				local shop = i == 1
 				local index = i - 2
 				local x = shop and 0 or index % 2 * (size + gap)
-				local y = shop and 0 or banner + gap + math.floor(index / 2) * (size + gap)
+				local y = shop and 0 or banner + gap + progressClearance + math.floor(index / 2) * (size + gap)
 				local bw, bh = shop and width or size, shop and banner or size
 				navItems[item[1]] = e(U.Button, {
 					Name = "Nav" .. item[1],
@@ -312,10 +320,35 @@ function UI.mount(context)
 					Studs = shop,
 					Transparency = shop and 0 or 0.3,
 					NoShadow = true,
+					Attention = item[1] == "Rebirth"
+						and handle.Snapshot
+						and handle.Snapshot.rebirthReady == true
+						and not handle.Hidden
+						and not handle.ModalOpen,
 					OnActivated = function()
 						open(item[1])
 					end,
 					Children = {
+						Progress = item[1] == "Rebirth"
+								and e(U.Label, {
+									Name = "RebirthPercent",
+									Text = tostring(
+										if handle.Snapshot and handle.Snapshot.rebirthReady
+											then 100
+											else math.clamp(
+												math.floor(
+													((handle.Snapshot and handle.Snapshot.rebirthProgress) or 0) * 100
+												),
+												0,
+												99
+											)
+									) .. "%",
+									TextSize = math.max(18, math.floor(size * 0.36)),
+									Position = UDim2.fromOffset(-8, -size * 0.22),
+									Size = UDim2.fromOffset(size + 16, size * 0.48),
+									ZIndex = 45,
+								})
+							or nil,
 						Ready = item[1] == "Gifts" and Presentation.readyGifts(handle.Snapshot) > 0 and e(U.Surface, {
 							Name = "ReadyGifts",
 							Position = UDim2.new(1, -22, 0, -6),
@@ -335,10 +368,12 @@ function UI.mount(context)
 						}) or nil,
 						Art = e(U.Icon, {
 							Kind = item[2],
-							Position = UDim2.fromOffset(shop and -2 or -size * 0.04, shop and -5 or -size * 0.1),
+							AnchorPoint = item[1] == "Rebirth" and Vector2.new(0.5, 0.5) or nil,
+							Position = item[1] == "Rebirth" and UDim2.fromScale(0.5, 0.42)
+								or UDim2.fromOffset(shop and -2 or -size * 0.04, shop and -5 or -size * 0.1),
 							Size = UDim2.fromOffset(
-								shop and banner + 12 or size * 1.08,
-								shop and banner + 12 or size * 1.08
+								shop and banner + 12 or size * (if item[1] == "Rebirth" then 0.88 else 1.08),
+								shop and banner + 12 or size * (if item[1] == "Rebirth" then 0.88 else 1.08)
 							),
 							ZIndex = 30,
 						}),
@@ -356,7 +391,7 @@ function UI.mount(context)
 					},
 				})
 			end
-			local totalH = banner + 3 * (size + gap)
+			local totalH = banner + progressClearance + 3 * (size + gap)
 			local navY = phone and (area.Y < 300 and 0 or 8)
 				or math.max(0, math.floor((area.Y - totalH) / 2 - area.Y * 0.1))
 			children.Navigation = e(Navigation, {
@@ -599,7 +634,7 @@ function UI.mount(context)
 				return
 			end
 		end
-		self.Serial += 1
+		handle.Serial += 1
 		self.Active = kind
 		self.Pending = nil
 		if eggId then
@@ -622,7 +657,7 @@ function UI.mount(context)
 		if self.View then
 			self.Exiting[self.View.Serial] = self.View
 		end
-		self.Serial += 1
+		handle.Serial += 1
 		self.Active = "Hatch"
 		self.Pending = nil
 		self.View = { Kind = "Hatch", Serial = self.Serial, Hatched = pets }

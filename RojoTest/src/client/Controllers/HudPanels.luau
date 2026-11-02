@@ -13,9 +13,7 @@ local MotionConfig = require(game.ReplicatedStorage.Shared.UiMotionConfig)
 local GuiInsets = require(script.Parent.Parent.Modules.GuiInsets)
 local Presentation = require(script.Parent.Parent.Modules.UiPresentation)
 local ReturnRewardPanels = require(script.Parent.ReturnRewardPanels)
-local UpdateLog = require(script.Parent.Parent.Modules.UpdateLog)
-local TextService = game:GetService("TextService")
-local Style = require(script.Parent.Parent.UiStyle)
+local UpdateLogView = require(script.Parent.UpdateLogView)
 
 local Panels = {}
 local C = Color3.fromRGB
@@ -225,35 +223,11 @@ function Panels.mount(context: Context): Handle
 	local function openUpdateLog()
 		begin("UpdateLog")
 		refresh = nil
-		local modal = shell("Update Log", "UpdateLog", 620, 430)
+		local modal = shell("Update Log", "UpdateLog", 620, 470)
 		local width = modal.Size.X.Offset - 29
 		local phone = phoneArea()
-		local list = scrolling(modal, phone and 70 or 24, 394)
-		for index, release in UpdateLog do
-			local row = Kit.frame(list, release.id, 0, 0, width, 1, Style.PanelDeep)
-			row.LayoutOrder = index
-			row.BackgroundTransparency = 0.25
-			Kit.corner(row, 9)
-			Kit.stroke(row, 2)
-			local title = Kit.text(row, "Title", release.title, 16, 12, width - 32, 34, phone and 24 or 29)
-			title.TextXAlignment = Enum.TextXAlignment.Left
-			local date = Kit.text(row, "Date", release.date, 16, 48, width - 32, 24, 16, Style.Gold)
-			date.TextXAlignment = Enum.TextXAlignment.Left
-			local y = 84
-			local fontSize = phone and 18 or 22
-			for changeIndex, change in release.changes do
-				local text = "• " .. change
-				local height = math.ceil(
-					TextService:GetTextSize(text, fontSize, Enum.Font.GothamBlack, Vector2.new(width - 40, 10000)).Y
-				) + 6
-				local label = Kit.text(row, "Change" .. changeIndex, text, 16, y, width - 40, height, fontSize)
-				label.TextWrapped = true
-				label.TextXAlignment = Enum.TextXAlignment.Left
-				label.TextYAlignment = Enum.TextYAlignment.Top
-				y += height + 12
-			end
-			row.Size = UDim2.fromOffset(width, y + 4)
-		end
+		local list = scrolling(modal, phone and 70 or 24, 434)
+		UpdateLogView.mount(list, width, phone)
 	end
 
 	local function openSettings()
@@ -269,6 +243,7 @@ function Panels.mount(context: Context): Handle
 				{ "Music", "music" },
 				{ "Camera Shake", "shake" },
 				{ "Effects", "effects" },
+				{ "Upgrade Alerts", "upgradeNotices" },
 			}
 		do
 			local row = Kit.frame(list, info[2], 7, 0, width - 29, 63, C(48, 53, 67))
@@ -317,7 +292,7 @@ function Panels.mount(context: Context): Handle
 				if studsCorner then
 					studsCorner.CornerRadius = UDim.new(0, 1)
 				end
-				local knobShadow = row:FindFirstChild("VolumeShadow")
+				local knobShadow = row:FindFirstChild("VolumeShadow") :: GuiObject?
 				local shadowCorner = knobShadow and Kit.cornerOf(knobShadow)
 				if shadowCorner then
 					shadowCorner.CornerRadius = UDim.new(0, 1)
@@ -352,7 +327,7 @@ function Panels.mount(context: Context): Handle
 						or input.UserInputType == Enum.UserInputType.Touch
 					then
 						dragging = true
-						change(input.Position)
+						change(Vector2.new(input.Position.X, input.Position.Y))
 					end
 				end)
 				local move = UserInputService.InputChanged:Connect(function(input)
@@ -427,7 +402,7 @@ function Panels.mount(context: Context): Handle
 				context.closePanel()
 			end
 		)
-		replay.LayoutOrder = 5
+		replay.LayoutOrder = 6
 		refresh = function()
 			local snapshot = context.snapshot()
 			if snapshot then
@@ -436,7 +411,7 @@ function Panels.mount(context: Context): Handle
 				end
 			end
 		end
-		refresh()
+		assert(refresh)()
 	end
 
 	local function openRebirth()
@@ -543,7 +518,7 @@ function Panels.mount(context: Context): Handle
 				Kit.paint(actionButton, ready and C(82, 232, 18) or C(34, 110, 18))
 			end
 		end
-		refresh()
+		assert(refresh)()
 	end
 
 	local function openInventory(selectedId: string?)
@@ -620,7 +595,7 @@ function Panels.mount(context: Context): Handle
 				end
 			end
 		end
-		refresh()
+		assert(refresh)()
 		if selectedId then
 			for i, item in Config.Stones do
 				if item.id == selectedId then
@@ -731,14 +706,14 @@ function Panels.mount(context: Context): Handle
 				b.Interactable = not claimed
 			end
 		end
-		refresh()
+		assert(refresh)()
 	end
 
 	local function openOffline()
 		begin("Offline")
 		local modal = shell("Welcome Back!", "Offline", 720, 520, true)
 		refresh = ReturnRewardPanels.offline(modal, context)
-		refresh()
+		assert(refresh)()
 	end
 
 	local function openDaily()
@@ -746,7 +721,7 @@ function Panels.mount(context: Context): Handle
 		local modal = shell("Daily Rewards", "Daily", 820, 550, true)
 		Kit.corner(modal, 20)
 		refresh = ReturnRewardPanels.daily(modal, context)
-		refresh()
+		assert(refresh)()
 	end
 
 	return {
