@@ -47,9 +47,9 @@ UpdateLog.Releases = {
 			{
 				id = "lobby-scenery",
 				category = "Fixed",
-				summary = "Cleaner lobby decoration",
-				details = "Floating flowers now rest on the terraces, blooms stay clear of shrubs and rocks, and the supply chest no longer intersects the map sign. Removed obsolete hanging entrance decoration and restored clipped flowers.",
-				credits = { { author = "team", role = "Map" } },
+				summary = "Cleaner lobby & matching egg displays",
+				details = "Flowers rest neatly on the terraces. A shared curved stand displays new Meadow, Glacier, Magma and Void eggs as trophy costs rise, with Celestial replacing the premium egg. Each has its own faceted shape and colors. Egg prices, rewards and purchases stay the same.",
+				credits = { { author = "team", role = "Map & art" } },
 			},
 			{
 				id = "lobby-paths",

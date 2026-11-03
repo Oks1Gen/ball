@@ -1,0 +1,58 @@
+{
+  "objects": 93,
+  "meshes": 88,
+  "eggs": [
+    {
+      "name": "Egg_Common.001",
+      "bottom": 0.7850000262260437,
+      "height": 2.849999725818634
+    },
+    {
+      "name": "Egg_Uncommon.001",
+      "bottom": 0.7850000262260437,
+      "height": 2.849999725818634
+    },
+    {
+      "name": "Egg_Volcanic.001",
+      "bottom": 0.9649999141693115,
+      "height": 2.8499999046325684
+    },
+    {
+      "name": "Egg_Rare.001",
+      "bottom": 0.7850000262260437,
+      "height": 2.849999964237213
+    },
+    {
+      "name": "Egg_Rainbow.001",
+      "bottom": 0.7849999666213989,
+      "height": 2.850000023841858
+    }
+  ],
+  "triangles": 34130,
+  "degenerate_faces": 0,
+  "missing_uv": [],
+  "glb_meshes": 88,
+  "glb_unwanted": [],
+  "fbx_roundtrip": {
+    "egg-stand-with-eggs.fbx": {
+      "meshes": 88,
+      "bounds_blender_units": [
+        24.200000762939453,
+        5.301565170288086,
+        3.8150003390732365
+      ],
+      "unwanted": []
+    },
+    "stand-only.fbx": {
+      "meshes": 34,
+      "bounds_blender_units": [
+        24.200000762939453,
+        5.301565170288086,
+        0.9650004344406682
+      ],
+      "unwanted": []
+    }
+  },
+  "open_meshes": [],
+  "final_geometry_closed": true
+}

@@ -1,0 +1,30 @@
+{
+  "thicknessStuds": 0.008,
+  "eggs": [
+    {
+      "name": "Meadow",
+      "parts": 1380,
+      "heightStuds": 10
+    },
+    {
+      "name": "Glacier",
+      "parts": 2088,
+      "heightStuds": 10
+    },
+    {
+      "name": "Magma",
+      "parts": 1457,
+      "heightStuds": 10
+    },
+    {
+      "name": "Void",
+      "parts": 1356,
+      "heightStuds": 10
+    },
+    {
+      "name": "Celestial",
+      "parts": 2504,
+      "heightStuds": 10
+    }
+  ]
+}

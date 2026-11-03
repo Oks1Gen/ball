@@ -36,21 +36,31 @@ function Visual.create(map: any)
 	if not world or not anchor or not stand then
 		return
 	end
-	if world:FindFirstChild("Visual") then
-		return
+	local existing = world:FindFirstChild("Visual")
+	if existing and existing:IsA("Model") and existing:GetAttribute("ElementalEggTheme") == "Celestial" then
+		return existing
 	end
-	local part = AssetService:CreateMeshPartAsync(Content.fromObject(buildMesh()), {
-		CollisionFidelity = Enum.CollisionFidelity.Box,
-	})
+	local part: MeshPart
+	if existing and existing:IsA("MeshPart") then
+		part = existing
+	else
+		part = AssetService:CreateMeshPartAsync(Content.fromObject(buildMesh()), {
+			CollisionFidelity = Enum.CollisionFidelity.Box,
+		})
+	end
 	part.Name = "Visual"
 	part.Color = Color3.new(1, 1, 1)
 	part.Material = Enum.Material.SmoothPlastic
 	part.Anchored = true
 	part.CanCollide, part.CanTouch, part.CanQuery = false, false, false
 	local data = require(script.Parent.VolcanicEggData)
-	local scale = 12.5 / data.size[2]
+	local displayHeight = world:GetAttribute("EggDisplayHeight")
+	local height = if typeof(displayHeight) == "number" then displayHeight else 12.5
+	local scale = height / data.size[2]
 	part.Size = Vector3.new(data.size[1], data.size[2], data.size[3]) * scale
-	local centerY = stand.Position.Y + stand.Size.Y / 2 + 0.3 + part.Size.Y / 2
+	local displayGap = world:GetAttribute("EggDisplayGap")
+	local gap = if typeof(displayGap) == "number" then displayGap else 0.3
+	local centerY = stand.Position.Y + stand.Size.Y / 2 + gap + part.Size.Y / 2
 	part.CFrame = anchor.CFrame + Vector3.new(0, centerY - anchor.Position.Y, 0)
 	part:SetAttribute("SourceEgg", "02 Volcanic Inferno")
 	part.Parent = world
@@ -89,6 +99,7 @@ function Visual.start()
 			end
 		end)
 		map:GetAttributeChangedSignal("WorldLayoutReady"):Connect(attempt)
+		map:GetAttributeChangedSignal("EggStandVersion"):Connect(attempt)
 		attempt()
 	end
 	local maps = workspace:WaitForChild("Map")

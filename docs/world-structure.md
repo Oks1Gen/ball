@@ -32,6 +32,7 @@ Workspace/Map/World1
 │  │        ├─ LabelAnchor → BallLabel [BillboardGui]
 │  │        └─ PurchaseAnchor → BallPurchasePrompt
 │  ├─ EggShop
+│  │  ├─ EggStand [Model: Common, Uncommon, Volcanic, Rare, Rainbow, CenterSteps]
 │  │  ├─ Egg_Common / Egg_Uncommon / Egg_Rare / Egg_Rainbow [Model]
 │  │  └─ VolcanicEgg [Model]
 │  │     ├─ InteractionAnchor

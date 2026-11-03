@@ -19,6 +19,12 @@
       }
     },
     "ServerStorage": {
+      "ElementalEggTemplates": {
+        "$path": "assets/eggs/elemental-v1/elemental-eggs.rbxmx"
+      },
+      "EggStandTemplate": {
+        "$path": "assets/egg-stand/egg-stand.rbxmx"
+      },
       "CloudShapes": {
         "$path": "assets/environment/CloudShapes.luau"
       },

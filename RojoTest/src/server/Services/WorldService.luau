@@ -73,6 +73,8 @@ function Service:Start()
 	require(root.CloudSea).apply(map)
 	require(root.LobbySceneCleanup).apply(map)
 	require(root.TransparentCleanup).apply(hierarchy.container())
+	require(root.EggStandStyle).apply(map)
+	require(root.ElementalEggStyle).apply(map)
 	self.map = map
 end
 return Service

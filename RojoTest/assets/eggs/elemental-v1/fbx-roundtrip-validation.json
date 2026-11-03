@@ -1,0 +1,24 @@
+{
+  "meshes": 105,
+  "roots": [
+    "Celestial",
+    "Glacier",
+    "Magma",
+    "Meadow",
+    "Void"
+  ],
+  "cameras": 0,
+  "lights": 0,
+  "missingUVs": 0,
+  "unexpectedObjects": [],
+  "usedPaletteImages": [
+    {
+      "name": "ElementalEggs_Palette.003",
+      "packed": true
+    },
+    {
+      "name": "ElementalEggs_Palette.004",
+      "packed": true
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "originalPartsChecked": 22256,
+  "originalPartsChanged": 0,
+  "attributes": {
+    "Source": "Blender elemental-v1",
+    "CompletedComponents": 105,
+    "Status": "Ready",
+    "FailedComponents": 0,
+    "CurrentTheme": "Celestial"
+  },
+  "models": {
+    "1": {
+      "clonePivotWorks": true,
+      "pivotAtBase": true,
+      "name": "Meadow",
+      "height": 10.007049560546875,
+      "parts": 15
+    },
+    "2": {
+      "clonePivotWorks": true,
+      "pivotAtBase": true,
+      "name": "Glacier",
+      "height": 10.005788803100586,
+      "parts": 29
+    },
+    "3": {
+      "clonePivotWorks": true,
+      "pivotAtBase": true,
+      "name": "Magma",
+      "height": 10.007795333862305,
+      "parts": 18
+    },
+    "4": {
+      "clonePivotWorks": true,
+      "pivotAtBase": true,
+      "name": "Void",
+      "height": 10.005928039550781,
+      "parts": 17
+    },
+    "5": {
+      "clonePivotWorks": true,
+      "pivotAtBase": true,
+      "name": "Celestial",
+      "height": 10.007843971252441,
+      "parts": 26
+    }
+  }
+}
