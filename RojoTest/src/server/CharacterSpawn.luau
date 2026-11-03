@@ -10,7 +10,7 @@ function CharacterSpawn.start(map: Instance)
 	Players.CharacterAutoLoads = false
 	-- The spawn pad and the apron the session moves the character onto.
 	local points: { Vector3 } = {}
-	for _, part in { WorldRefs.spawn(map), WorldRefs.apron(map) } do
+	for _, part in { WorldRefs.spawn(map), WorldRefs.kickZoneFloor(map) } do
 		table.insert(points, part.Position)
 	end
 	local function load(player: Player)

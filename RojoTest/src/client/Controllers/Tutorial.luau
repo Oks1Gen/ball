@@ -112,7 +112,7 @@ function Guide.mount(context: any)
 				cachedTarget = strip
 			end
 		elseif key == "Kick" then
-			local apron = WorldRefs.apron(arena)
+			local apron = WorldRefs.kickZoneFloor(arena)
 			if apron and apron:IsA("BasePart") then
 				cachedTarget = apron
 			end

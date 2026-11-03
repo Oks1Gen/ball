@@ -66,7 +66,7 @@ river course, throwing apron and other world's scenery are retained.
 
 `tools/ReverseTrainingLaneOrder.luau` reverses the seven existing row positions
 once, guarded by `ProgressionMap.TrainingLaneOrderVersion = 1`. From the rear
-toward the throwing zone, lengths are 58, 54, 50, 46, 42, 38 and 34 studs.
+toward the kick zone, lengths are 58, 54, 50, 46, 42, 38 and 34 studs.
 Complete lane models, starting pads, detached boards and labels, and linked
 surface overlays move together. Original progression values and lane IDs remain
 attached to their lanes. The previous assemblies are preserved in
@@ -131,7 +131,7 @@ the backup is not a substitute for saving the place.
 
 ## Kick progression and camera
 
-Gameplay coordinates now follow the current `Lobby.ThrowingApron` CFrame.
+Gameplay coordinates now follow the current `Lobby.KickZoneFloor` CFrame.
 Spawn, kick stance, egg proximity checks, portal travel and shot visuals no
 longer assume that World 1 remains at its original height or position.
 Character placement includes actual rig standing height and surface clearance.

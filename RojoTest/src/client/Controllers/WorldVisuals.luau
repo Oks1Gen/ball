@@ -5,6 +5,7 @@
 local CollectionService = game:GetService("CollectionService")
 local BallVisuals = require(game.ReplicatedStorage.Shared.BallVisuals)
 local WorldRefs = require(game.ReplicatedStorage.Shared.WorldRefs)
+local PathArrowMotion = require(game.ReplicatedStorage.Shared.PathArrowMotion)
 
 local World = {}
 
@@ -22,6 +23,16 @@ export type Handle = {
 
 function World.mount(context: Context): Handle
 	local standPreviews: { Instance } = CollectionService:GetTagged("BallStandPreview")
+	local arrowRoots = CollectionService:GetTagged("LobbyPathArrowRoot")
+	local arrowAdded = CollectionService:GetInstanceAddedSignal("LobbyPathArrowRoot"):Connect(function(root)
+		table.insert(arrowRoots, root)
+	end)
+	local arrowRemoved = CollectionService:GetInstanceRemovedSignal("LobbyPathArrowRoot"):Connect(function(root)
+		local index = table.find(arrowRoots, root)
+		if index then
+			table.remove(arrowRoots, index)
+		end
+	end)
 	local mapCache: { [number]: any } = {}
 	local laneCache: { [string]: { instance: any, found: boolean, retryAt: number } } = {}
 	local signs: { [Instance]: { RBXScriptConnection } } = {}
@@ -143,6 +154,21 @@ function World.mount(context: Context): Handle
 
 	local function updateStands()
 		local camera = workspace.CurrentCamera
+		local depth, near = 0, math.huge
+		if camera then
+			for _, model in standPreviews do
+				if model:IsA("Model") and model:IsDescendantOf(workspace) then
+					local base = BallVisuals.displayOrigin(model)
+					if base then
+						local distance = -camera.CFrame:PointToObjectSpace(base.Position).Z
+						if distance > 1 then
+							depth = math.max(depth, distance - 1)
+							near = math.min(near, distance - 1)
+						end
+					end
+				end
+			end
+		end
 		for _, model in standPreviews do
 			if model:IsA("Model") and model:IsDescendantOf(workspace) then
 				local base, labelBase = BallVisuals.displayOrigin(model)
@@ -150,12 +176,18 @@ function World.mount(context: Context): Handle
 					local pose, bob = BallVisuals.standPose(
 						base,
 						workspace:GetServerTimeNow(),
-						((model:GetAttribute("DisplaySlot") :: number?) or 1) * 0.55
+						0 -- A shared phase keeps the two caption tiers separated throughout the cycle.
 					)
 					model:PivotTo(pose)
 					local link = model:FindFirstChild("DisplayLabel")
 					if link and link:IsA("ObjectValue") and link.Value and link.Value:IsA("BasePart") and labelBase then
-						link.Value.Position = labelBase + Vector3.new(0, bob, 0)
+						link.Value.Position = BallVisuals.captionPosition(
+							model,
+							camera,
+							depth,
+							((model:GetAttribute("DisplayLabelGap") :: number?) or 3) * depth / near,
+							(model:GetAttribute("DisplayLabelHeight") :: number?) or 2.5
+						) or (labelBase + Vector3.new(0, bob, 0))
 					end
 				end
 			end
@@ -174,9 +206,16 @@ function World.mount(context: Context): Handle
 				end
 			end
 			updateStands()
+			for _, root in arrowRoots do
+				if root:IsA("Model") and root:IsDescendantOf(workspace) then
+					PathArrowMotion.update(root, workspace:GetServerTimeNow())
+				end
+			end
 		end,
 		lane = trainingLane,
 		destroy = function()
+			arrowAdded:Disconnect()
+			arrowRemoved:Disconnect()
 			standAdded:Disconnect()
 			standRemoved:Disconnect()
 			signAdded:Disconnect()

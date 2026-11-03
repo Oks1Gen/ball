@@ -274,7 +274,7 @@ function Service.dispatch(self: Admin, player: Player, command: string, value: a
 		)
 		local root, hum = c.rootFor(player)
 		assert(root and hum, "Нет персонажа")
-		self:move(player, Config.apronCharacterPose(c.arenaFor(player), root, hum, Config.KickStanceFromFront))
+		self:move(player, Config.kickZoneCharacterPose(c.arenaFor(player), root, hum, Config.KickStanceFromFront))
 		c.throw(player, distance)
 	elseif command == "Teleport" then
 		local root, hum = c.rootFor(player)
@@ -283,7 +283,7 @@ function Service.dispatch(self: Admin, player: Player, command: string, value: a
 		d.world = 1
 		local map = c.arenaFor(player)
 		if value == "Lobby" or value == "World1" then
-			self:move(player, Config.apronCharacterPose(map, root, hum, Config.ApronStandFromFront))
+			self:move(player, Config.kickZoneCharacterPose(map, root, hum, Config.KickZoneStandFromFront))
 		elseif value == "Sakura" then
 			d.world = 1
 			map = c.map

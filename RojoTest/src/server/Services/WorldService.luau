@@ -4,6 +4,11 @@ function Service:Init(_context: any) end
 function Service:Start()
 	local root = script.Parent.Parent
 	require(root.SingleWorld).apply()
+	local worlds = workspace:FindFirstChild("Map")
+	local existing = worlds and worlds:FindFirstChild("World1")
+	if existing then
+		require(root.KickZoneMigration).apply(existing)
+	end
 	local hierarchy = require(root.MapHierarchy)
 	hierarchy.migrate()
 	local layout = require(root.WorldLayout)
@@ -59,10 +64,14 @@ function Service:Start()
 	require(root.CourseRegions).apply(map)
 	require(root.EntranceArchRemoval).apply(map)
 	require(root.LobbyWalls).apply(map)
+	require(root.KickZoneStyle).apply(map)
 	require(root.LobbyPaths).apply(map)
-	require(root.ThrowZoneStyle).apply(map)
+	require(root.BallStandSigns).apply(map)
+	require(root.TrainingLaneSigns).apply(map)
 	require(root.FootballCityScenery).apply(map)
+	require(root.FootballCityLandmarks).apply(map)
 	require(root.CloudSea).apply(map)
+	require(root.LobbySceneCleanup).apply(map)
 	require(root.TransparentCleanup).apply(hierarchy.container())
 	self.map = map
 end

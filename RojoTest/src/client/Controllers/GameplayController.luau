@@ -890,7 +890,7 @@ function Controller:Start()
 				and characterRoot:IsA("BasePart")
 				and humanoid ~= nil
 				and humanoid.Health > 0
-				and Config.inThrowZone(arena, characterRoot.Position)
+				and Config.inKickZone(arena, characterRoot.Position)
 			local timingActive = kickTiming.active()
 			hudRefs.throwButton.Visible = latest.canThrow and not flight and not latest.training and not timingActive
 			local throwShadow = HudLayout.findNode(hud, "ThrowShadow")

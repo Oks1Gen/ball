@@ -1,12 +1,12 @@
 -- Edit migration: centre the World1 lobby on the field axis X 55 (2026-11-01). Run once in Edit
 -- after CompactLobbyRelayout and before LobbyStyleRefresh, then save the place.
--- The field, the entrance arch and the throw zone are centred on X 55; the compact lobby was not
+-- The field, the entrance arch and the kick zone are centred on X 55; the compact lobby was not
 -- (walls -17..155, boulevard and rankings on X 67.5). Shifts are multiples of 4 studs so the
 -- stud texture and the 4-stud wall checker keep their phase:
 --   west wall -28 (inner face -45, mirrors the east wall at 155 inside the arch legs);
 --   everything between the walls -12 (boulevard, stations, rankings, training lanes, rear
 --   terraces and the rear waterfall), so the boulevard runs on X 55.5;
---   the east wall and its waterfall stay; the throw zone and the tunnel opening stay;
+--   the east wall and its waterfall stay; the kick zone and the tunnel opening stay;
 --   the east tunnel abutment is trimmed from 62 to 42 studs to mirror the west one.
 -- Every moved BasePart keeps its previous CFrame in BeforeLobbyCentering (resized tunnel parts
 -- also keep BeforeLobbyCenteringSize). Afterwards run tools/LobbyStyleRefresh.luau to rebuild
@@ -106,7 +106,7 @@ assign(map.EmptyItemStand, CENTRE)
 assign(workspace:FindFirstChild("AllBalls_NoTextures"), CENTRE)
 assign(map.Lobby.MapSpawn, CENTRE)
 for _, item in sw:GetChildren() do
-	if item.Name == "ThrowPad" or item.Name == "ThrowZonePrint" or item.Name == "ImprovedLobbyFlowers" then
+	if item.Name == "KickPad" or item.Name == "KickZonePrint" or item.Name == "ImprovedLobbyFlowers" then
 		continue
 	end
 	local parts = partsOf(item)

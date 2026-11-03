@@ -8,7 +8,7 @@ function Outpost.apply(map: Construction.World): number?
 	end
 	local group = Instance.new("Model")
 	group.Name = "ExplorerOutpost"
-	local offset = map.Lobby.ThrowingApron.Position - Vector3.new(24.240257, 20.3, 115.847107)
+	local offset = map.Lobby.KickZoneFloor.Position - Vector3.new(24.240257, 20.3, 115.847107)
 	local wood = Color3.fromRGB(112, 67, 42)
 	local dark = Color3.fromRGB(64, 40, 30)
 	local gold = Color3.fromRGB(219, 170, 66)
@@ -131,21 +131,7 @@ function Outpost.apply(map: Construction.World): number?
 		end
 		part("RailBeam", Vector3.new(13, 0.55, 0.6), Vector3.new(116, 31.5, z), wood)
 	end
-	-- Small wind chime on the opposite wall.
-	part("ChimeWallBracket", Vector3.new(4.5, 0.6, 0.7), Vector3.new(-71.5, 60, 98), wood)
-	bar("ChimeBrace", Vector3.new(-73.5, 57, 98), Vector3.new(-69.5, 60, 98), 0.4, wood)
-	part("ChimeCord", Vector3.new(0.08, 2.8, 0.08), Vector3.new(-69.6, 58.4, 98), dark)
-	part("ChimeCap", Vector3.new(2.5, 0.35, 1.1), Vector3.new(-69.6, 56.9, 98), wood)
-	for i = 1, 4 do
-		part("ChimeTube", Vector3.new(0.2, 3.3 + i % 2 * 0.7, 0.2), Vector3.new(-71.1 + i * 0.6, 54.7, 98), gold)
-	end
-	part(
-		"ChimeCharm",
-		Vector3.new(0.8, 1.3, 0.15),
-		Vector3.new(-69.6, 51.5, 98),
-		Color3.fromRGB(245, 184, 102),
-		CFrame.Angles(0, 0, math.pi / 4)
-	)
+	-- The old arch-mounted wind chime has no mounting wall in the open entrance.
 	-- Local lighting only; the map's daylight settings stay intact.
 	for _, x in ipairs({ -40, 23, 86 }) do
 		part("CeilingLampHousing", Vector3.new(5.5, 0.35, 3.5), Vector3.new(x, 76.8, 84), dark)

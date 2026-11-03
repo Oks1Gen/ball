@@ -75,7 +75,7 @@ if advanced then
 	local offset = advanced:GetAttribute("ArenaOffsetX")
 	assert(
 		offset
-			and math.abs(advanced.Lobby.ThrowingApron.Position.X - map.Lobby.ThrowingApron.Position.X - offset)
+			and math.abs(advanced.Lobby.KickZoneFloor.Position.X - map.Lobby.KickZoneFloor.Position.X - offset)
 				< 0.001,
 		"Incorrect world offset"
 	)

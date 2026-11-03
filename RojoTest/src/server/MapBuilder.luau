@@ -124,7 +124,7 @@ function MapBuilder.build(): Construction.World
 	tiles(lobby, -106, 112, 228, 224, 0, C(115, 215, 65), C(145, 232, 86))
 	part(lobby, "CentralWalkway", V(16, 0.4, 202), V(0, 0.2, 111), C(185, 205, 224))
 	part(lobby, "CrossWalkway", V(223, 0.4, 12), V(-103.5, 0.2, 175), C(185, 205, 224))
-	part(lobby, "ThrowingApron", V(150, 0.6, 24), V(-115, 0.3, 13), C(255, 215, 70))
+	part(lobby, "KickZoneFloor", V(150, 0.6, 24), V(-115, 0.3, 13), C(255, 215, 70))
 	for _, x in { -182, -48 } do
 		part(lobby, "ApronTrim", V(2, 0.8, 24), V(x, 0.4, 13), C(255, 248, 186))
 	end

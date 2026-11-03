@@ -118,7 +118,7 @@ function Layout.apply(map: Instance): Instance?
 		return existing
 	end
 	local lobby = assert(map:FindFirstChild("Lobby"))
-	local apron = assert(lobby:FindFirstChild("ThrowingApron")) :: BasePart
+	local apron = assert(lobby:FindFirstChild("KickZoneFloor")) :: BasePart
 	local zone = assert(map:FindFirstChild("TrainingZone"))
 	local first = assert(zone:FindFirstChild("TrainingLane1"))
 	local strip = assert(first:FindFirstChild("TrainingStrip")) :: BasePart

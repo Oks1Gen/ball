@@ -67,7 +67,7 @@ for _, world in workspace.Map:GetChildren() do
 	local samples = 0
 	local layout = world:FindFirstChild("TwoAxesLayout")
 	if layout and not compact then
-		local top = world.Lobby.ThrowingApron.Position.Y - 0.3 + 0.26
+		local top = world.Lobby.KickZoneFloor.Position.Y - 0.3 + 0.26
 		for _, p in pieces do
 			assert(math.abs(p.Position.Y + p.Size.Y / 2 - top) < 0.00002, "Uneven paving")
 		end

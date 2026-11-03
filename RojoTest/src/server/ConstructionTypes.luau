@@ -1,11 +1,11 @@
 --!strict
 -- Historical builders run between WorldLayout.prepare and WorldLayout.apply.
 -- These child contracts describe that temporary layout, not runtime world paths.
-export type Lobby = Model & { ThrowingApron: Part, MapSpawn: SpawnLocation }
+export type Lobby = Model & { KickZoneFloor: Part, MapSpawn: SpawnLocation }
 export type Lane = Model & { TrainingStrip: Part, StartingPad: Part, Foundation: Part }
 export type Training = Model
 export type Playfield = Model & {
-	ThrowZonePrint: Part & { ThrowZoneLabel: SurfaceGui & { TextLabel: TextLabel } },
+	KickZonePrint: Part & { KickZoneLabel: SurfaceGui & { TextLabel: TextLabel } },
 }
 export type World = Folder & {
 	Lobby: Lobby,

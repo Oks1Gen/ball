@@ -1,0 +1,8 @@
+{
+  "reference": "chevron.svg",
+  "runtime": "src/server/LobbyPathArrows.luau",
+  "geometryVersion": 2,
+  "motion": "src/shared/PathArrowMotion.luau",
+  "purpose": "Flat chevrons flowing from the lobby hub toward the kick zone",
+  "date": "2026-11-03"
+}

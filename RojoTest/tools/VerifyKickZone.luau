@@ -6,7 +6,7 @@ local Throw = require(game.ServerScriptService.Server.Gameplay.Throw)
 local Data = require(Shared.Core.ProfileData)
 local player = assert(game.Players:GetPlayers()[1], "Run Play with one player")
 local world = workspace.Map.World1
-local apron = Refs.apron(world)
+local apron = Refs.kickZoneFloor(world)
 local checks, origins = 0, {}
 local function check(value, message)
 	assert(value, message)
@@ -43,8 +43,8 @@ local throw = Throw.build({
 	frameFor = function()
 		return Config.arenaFrame(world)
 	end,
-	inApron = function()
-		return Config.inThrowZone(world, root.Position)
+	inKickZone = function()
+		return Config.inKickZone(world, root.Position)
 	end,
 	multiplier = function()
 		return 1
@@ -54,7 +54,7 @@ local height = apron.Size.Y / 2 + 3
 for _, x in { -apron.Size.X / 2 + 0.2, 0, apron.Size.X / 2 - 0.2 } do
 	for _, z in { -apron.Size.Z / 2 + 0.2, 0, apron.Size.Z / 2 - 0.2 } do
 		root.CFrame = apron.CFrame * CFrame.new(x, height, z) * CFrame.Angles(0, 1.2, 0)
-		check(Config.inThrowZone(world, root.Position), "Entire orange surface is active")
+		check(Config.inKickZone(world, root.Position), "Entire orange surface is active")
 		local data = Data.fresh()
 		data.skill = 1000000
 		states[player] = { data = data, busyUntil = 0, friends = 0 }
@@ -81,7 +81,7 @@ for _, offset in
 		Vector3.new(0, 20, 0),
 	}
 do
-	check(not Config.inThrowZone(world, apron.CFrame:PointToWorldSpace(offset)), "Outside the visible zone is inactive")
+	check(not Config.inKickZone(world, apron.CFrame:PointToWorldSpace(offset)), "Outside the visible zone is inactive")
 end
 root:Destroy()
 hum:Destroy()

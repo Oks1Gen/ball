@@ -93,7 +93,7 @@ function Verify.run(): any
 			assert(model and model:FindFirstChild("EggShell"), "Missing egg")
 			eggs += 1
 		end
-		assert(world.Name == "World1" and Refs.apron(world), "Missing remaining world/launch")
+		assert(world.Name == "World1" and Refs.kickZoneFloor(world), "Missing remaining world/launch")
 		assert(not world.Lobby:FindFirstChild("Portal"), "Retired portal remains")
 		assert(Refs.volcanic(world).InteractionAnchor, "Missing special egg")
 		local rankings = Refs.rankings(world)

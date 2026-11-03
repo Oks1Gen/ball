@@ -26,9 +26,54 @@ UpdateLog.MaxVisibleDays = 4
 UpdateLog.Categories = { "New", "Improved", "Fixed" } :: { Category }
 UpdateLog.Authors = {
 	dakemo = { name = "Dakemo555", userId = 11789507527 },
+	team = { name = "Ball team" },
 } :: { [string]: Author }
 
 UpdateLog.Releases = {
+	{
+		id = "2026-11-03-v0.2.1",
+		date = "2026-11-03",
+		version = "0.2.1",
+		title = "Map readability & scenery",
+		published = false,
+		changes = {
+			{
+				id = "stand-readability",
+				category = "Fixed",
+				summary = "Clearer ball and training signs",
+				details = "Ball prices and boosts keep equal spacing above their matching balls as they float and the camera moves. Larger training requirements and multipliers sit above each field's decorations, making them easier to read as you approach.",
+				credits = { { author = "team", role = "Map & UI" } },
+			},
+			{
+				id = "lobby-scenery",
+				category = "Fixed",
+				summary = "Cleaner lobby decoration",
+				details = "Floating flowers now rest on the terraces, blooms stay clear of shrubs and rocks, and the supply chest no longer intersects the map sign. Removed obsolete hanging entrance decoration and restored clipped flowers.",
+				credits = { { author = "team", role = "Map" } },
+			},
+			{
+				id = "lobby-paths",
+				category = "Improved",
+				summary = "Smoother paths & moving arrows",
+				details = "Whole checker squares and larger studs join cleanly across the lobby. The orange Kick Zone has complete tiles and one even border, with its base aligned to remove protruding edges. Bold chevrons flow toward it and fade gently at each end.",
+				credits = { { author = "team", role = "Map & animation" } },
+			},
+			{
+				id = "lobby-walls",
+				category = "Improved",
+				summary = "Even checker patterns on lobby walls",
+				details = "Lobby walls and entrance supports use whole checker squares with aligned stud rows, matching the path's stud scale. Clean terrace edges replace cropped tiles and half studs. Wall shapes and collision stay the same.",
+				credits = { { author = "team", role = "Map" } },
+			},
+			{
+				id = "city-landmarks",
+				category = "Improved",
+				summary = "Distinct landmarks along Football City",
+				details = "Each location has a new sideline landmark, from a park pavilion and dock signal tower to a skyline beacon and championship trophy tower. Cloud borders have more varied shapes and spacing.",
+				credits = { { author = "team", role = "Map" } },
+			},
+		},
+	},
 	{
 		id = "2026-11-02-v0.2.0",
 		date = "2026-11-02",

@@ -4,7 +4,7 @@ assert(RunService:IsStudio(), "This script must run in Studio, not on a live ser
 assert(not RunService:IsRunning(), "This script must run in Edit mode, not during Play")
 local map = assert(workspace:FindFirstChild("Map") and workspace.Map:FindFirstChild("World1"))
 assert(not map:FindFirstChild("CornerRockGarden"), "Garden already exists")
-local apron = map.Lobby.ThrowingApron
+local apron = map.Lobby.KickZoneFloor
 assert((apron.Position - Vector3.new(24.240257, 20.3, 115.847107)).Magnitude < 0.1, "Remeasure map")
 local before = {}
 for _, p in ipairs(map:GetDescendants()) do

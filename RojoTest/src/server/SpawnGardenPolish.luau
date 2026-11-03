@@ -12,7 +12,7 @@ function Polish.apply(map: Construction.World): Instance?
 		return map.SpawnGardenPolish
 	end
 	assert(map.Name == "World1" and map:FindFirstChild("SpawnGarden"), "Spawn garden is missing")
-	local frame = map.Lobby.ThrowingApron.CFrame * CFrame.new(115, -0.3, -13)
+	local frame = map.Lobby.KickZoneFloor.CFrame * CFrame.new(115, -0.3, -13)
 	local protected = {}
 	for _, p in map:GetDescendants() do
 		if p:IsA("BasePart") then

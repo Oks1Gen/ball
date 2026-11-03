@@ -20,7 +20,17 @@ local function inside(p: Vector2, polygon: { Vector2 }): boolean
 	return true
 end
 
-function Regions.build(root: Instance, regions: { Region }, top: number, selected: { [string]: boolean })
+function Regions.build(
+	root: Instance,
+	regions: { Region },
+	top: number,
+	selected: { [string]: boolean },
+	gridOrigin: Vector2?
+)
+	if gridOrigin then
+		require(script.Parent.LobbyPathGrid).build(root, regions, top, selected, gridOrigin)
+		return
+	end
 	local function part(parent: Instance, name: string, size: Vector3, cf: CFrame, color: Color3): Part
 		local p = Instance.new("Part")
 		p.Name, p.Size, p.CFrame, p.Color = name, size, cf, color

@@ -1,5 +1,6 @@
 --!strict
 local suites = {
+	require("../tests/SurfaceGrid.spec"),
 	require("../tests/UpgradeNotices.spec"),
 	require("../tests/UpdateLog.spec"),
 	require("../tests/Tutorial.spec"),

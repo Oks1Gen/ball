@@ -28,7 +28,7 @@ export type Context = {
 	rootFor: (Player) -> (any, any),
 	arenaFor: (Player) -> any,
 	frameFor: (Player) -> any,
-	inApron: (Player) -> boolean,
+	inKickZone: (Player) -> boolean,
 	multiplier: (any) -> number,
 }
 
@@ -38,8 +38,8 @@ function Throw.build(context: Context): (Player, number?, number?, number?) -> (
 		if not s or os.clock() < s.busyUntil then
 			return
 		end
-		if not context.inApron(player) then
-			context.publish(player, "Go to the orange THROW ZONE")
+		if not context.inKickZone(player) then
+			context.publish(player, "Go to the orange KICK ZONE")
 			return
 		end
 		local d = s.data

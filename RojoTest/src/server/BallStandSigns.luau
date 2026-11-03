@@ -1,6 +1,8 @@
 --!strict
 -- Reference-style ball captions. Ownership is rendered per player on the client.
 local Config = require(game.ReplicatedStorage.Shared.GameConfig)
+local Refs = require(game.ReplicatedStorage.Shared.WorldRefs)
+local BallVisuals = require(game.ReplicatedStorage.Shared.BallVisuals)
 local Signs = {}
 
 local function label(gui: BillboardGui, name: string, y: number, height: number, color: Color3): TextLabel
@@ -35,27 +37,29 @@ function Signs.render(gui: BillboardGui, item: any)
 	gui.LightInfluence = 0
 	gui.Active = false
 	gui.Enabled = true
+	-- Identical cards and clearance on both tiers; no hidden per-row offset.
+	gui.Size = UDim2.fromScale(4.8, 2.5)
+	gui.StudsOffsetWorldSpace = Vector3.zero
 	local status = label(
 		gui,
 		"Status",
 		0,
-		0.25,
+		0.23,
 		if item.cost == 0 then Color3.fromRGB(55, 255, 35) else Color3.fromRGB(255, 44, 44)
 	)
 	status.Text = if item.cost == 0 then "UNLOCKED" else "LOCKED"
-	local power = label(gui, "Power", 0.27, 0.38, Color3.fromRGB(255, 239, 215))
+	local power = label(gui, "Power", 0.29, 0.32, Color3.fromRGB(255, 239, 215))
 	power.Text = tostring(item.power) .. "x Skill"
-	local price = label(gui, "Price", 0.69, 0.31, Color3.fromRGB(255, 225, 20))
+	local price = label(gui, "Price", 0.67, 0.30, Color3.fromRGB(255, 225, 20))
 	price.Text = Config.format(item.cost) .. " Wins"
 	gui:SetAttribute("BallId", item.id)
 	gui:SetAttribute("BallName", item.name)
 	gui:AddTag("BallStandSign")
 end
 
--- Refresh only existing linked captions in Edit; do not reposition models,
--- anchors, prompts or the authored stand by rerunning the placement routine.
+-- Refresh linked captions without rebuilding models, pedestals or purchase points.
 function Signs.apply(map: Instance): number
-	local world = map:FindFirstChild("SkippingWorld")
+	local world = Refs.course(map)
 	if not world then
 		return 0
 	end
@@ -69,13 +73,60 @@ function Signs.apply(map: Instance): number
 		local anchor = if link and link:IsA("ObjectValue") then link.Value else nil
 		local gui = anchor and anchor:FindFirstChildOfClass("BillboardGui")
 		local item = Config.find(Config.Stones, model:GetAttribute("BallId"))
-		if anchor and anchor:IsDescendantOf(world) and gui and item then
+		if anchor and anchor:IsDescendantOf(map) and gui and item then
 			Signs.render(gui, item)
 			active[anchor] = true
 			count += 1
 		end
 	end
-	for _, node in world:GetDescendants() do
+	local shop = Refs.balls(map)
+	local displays = shop and shop:FindFirstChild("Displays")
+	if displays then
+		for _, display in displays:GetChildren() do
+			local ball, top = display:FindFirstChild("Ball"), display:FindFirstChild("DisplayTop")
+			local anchor = display:FindFirstChild("LabelAnchor")
+			local localLabel = ball and ball:GetAttribute("DisplayLabelLocal")
+			if
+				ball
+				and ball:IsA("Model")
+				and top
+				and top:IsA("BasePart")
+				and anchor
+				and anchor:IsA("BasePart")
+				and typeof(localLabel) == "Vector3"
+			then
+				local base = BallVisuals.displayOrigin(ball)
+				if not base then
+					continue
+				end
+				-- Yaw leaves these vertical extents unchanged, including rings/spikes.
+				local pivot = ball:GetPivot()
+				local highest = -math.huge
+				for _, part in ball:GetDescendants() do
+					if part:IsA("BasePart") and part.Transparency < 1 then
+						local cf = base * pivot:ToObjectSpace(part.CFrame)
+						local h = part.Size / 2
+						local extent = math.abs(cf.RightVector.Y) * h.X
+							+ math.abs(cf.UpVector.Y) * h.Y
+							+ math.abs(cf.LookVector.Y) * h.Z
+						highest = math.max(highest, cf.Position.Y + extent)
+					end
+				end
+				local gui = anchor:FindFirstChildOfClass("BillboardGui")
+				if not gui or highest == -math.huge then
+					continue
+				end
+				local position = Vector3.new(base.Position.X, highest + 3 + gui.Size.Y.Scale / 2, base.Position.Z)
+				local aligned = top.CFrame:PointToObjectSpace(position)
+				ball:SetAttribute("DisplayLabelLocal", aligned)
+				ball:SetAttribute("DisplayLabelBase", position)
+				ball:SetAttribute("DisplayLabelGap", 3)
+				ball:SetAttribute("DisplayLabelHeight", gui.Size.Y.Scale)
+				anchor.Position = position
+			end
+		end
+	end
+	for _, node in map:GetDescendants() do
 		local parent = node.Parent
 		if node:IsA("BillboardGui") and node:HasTag("BallStandSign") and parent and not active[parent] then
 			node.Enabled = false

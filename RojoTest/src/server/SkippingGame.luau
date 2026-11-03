@@ -261,17 +261,17 @@ function Game.start(map)
 			* (d.perks.DoubleSkill and 2 or 1)
 			* (1 + state.friends * 0.1)
 	end
-	local function inApron(player)
+	local function inKickZone(player)
 		local p, h = rootFor(player)
 		if not p or not h or h.Health <= 0 then
 			return false
 		end
-		return Config.inThrowZone(arenaFor(player), p.Position)
+		return Config.inKickZone(arenaFor(player), p.Position)
 	end
 	local snapshotContext = {
 		states = states,
 		multiplier = multiplier,
-		inApron = inApron,
+		inKickZone = inKickZone,
 		arenaFor = arenaFor,
 	}
 	local function publish(player: Player, notice: string?, forceInventory: boolean?)
@@ -425,7 +425,7 @@ function Game.start(map)
 		rootFor = rootFor,
 		arenaFor = arenaFor,
 		frameFor = frameFor,
-		inApron = inApron,
+		inKickZone = inKickZone,
 		multiplier = multiplier,
 	})
 	if RunService:IsStudio() then
@@ -437,7 +437,7 @@ function Game.start(map)
 		effect = effect,
 		publish = publish,
 		rootFor = rootFor,
-		inApron = inApron,
+		inKickZone = inKickZone,
 		throw = throw,
 	})
 	local receiptContext = {
@@ -487,7 +487,7 @@ function Game.start(map)
 		stopTraining = stopTraining,
 		throw = throw,
 		kickTiming = kickTiming,
-		inApron = inApron,
+		inKickZone = inKickZone,
 		arenaFor = arenaFor,
 		rootFor = rootFor,
 		multiplier = multiplier,

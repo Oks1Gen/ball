@@ -89,4 +89,30 @@ function Visuals.standPose(base: CFrame, time: number, phase: number)
 	return (base + Vector3.new(0, bob, 0)) * CFrame.Angles(0, (time % 22.5) * math.pi * 2 / 22.5, 0), bob
 end
 
+-- Equal visible clearance and text size across both depths of the stand.
+-- Project the animated ball's complete bounds, then place its card directly
+-- above that silhouette on the common camera-facing caption plane.
+function Visuals.captionPosition(model: Model, camera: Camera, depth: number, gap: number, height: number): Vector3?
+	if depth < 1 or depth == math.huge then
+		return nil
+	end
+	local cf, size = model:GetBoundingBox()
+	local left, right, top = math.huge, -math.huge, -math.huge
+	for _, x in { -0.5, 0.5 } do
+		for _, y in { -0.5, 0.5 } do
+			for _, z in { -0.5, 0.5 } do
+				local p = camera.CFrame:PointToObjectSpace(cf:PointToWorldSpace(size * Vector3.new(x, y, z)))
+				if p.Z >= -1 then
+					return nil
+				end
+				left, right = math.min(left, p.X / -p.Z), math.max(right, p.X / -p.Z)
+				top = math.max(top, p.Y / -p.Z)
+			end
+		end
+	end
+	return camera.CFrame:PointToWorldSpace(
+		Vector3.new((left + right) * depth / 2, top * depth + gap + height / 2, -depth)
+	)
+end
+
 return Visuals

@@ -22,7 +22,7 @@ function KickTiming.build(context: any)
 			and root ~= nil
 			and hum ~= nil
 			and hum.Health > 0
-			and context.inApron(player)
+			and context.inKickZone(player)
 			and os.clock() >= s.busyUntil
 			and not s.lane
 	end
@@ -44,9 +44,9 @@ function KickTiming.build(context: any)
 				context.effect:FireClient(player, "KickCancelled")
 				return
 			end
-			if not context.inApron(player) then
+			if not context.inKickZone(player) then
 				context.effect:FireClient(player, "KickCancelled")
-				context.publish(player, "Go to the orange THROW ZONE")
+				context.publish(player, "Go to the orange KICK ZONE")
 				return
 			end
 			local pending = {

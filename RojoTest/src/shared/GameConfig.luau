@@ -35,21 +35,21 @@ end
 -- The apron is a live scene anchor; map movement must also move gameplay coordinates.
 -- The reference origin tracks its front edge when the apron is resized.
 function Config.arenaFrame(arena: any): CFrame
-	local apron = WorldRefs.apron(arena)
+	local apron = WorldRefs.kickZoneFloor(arena)
 	return apron.CFrame * CFrame.new(115, apron.Size.Y / 2 - 0.6, -apron.Size.Z / 2 - 6.68)
 end
 -- `fromFront`: studs from the apron's front edge, positive onto the apron, negative towards the course.
-function Config.apronCharacterPose(arena: any, root: BasePart, humanoid: Humanoid, fromFront: number): CFrame
-	local apron = WorldRefs.apron(arena)
+function Config.kickZoneCharacterPose(arena: any, root: BasePart, humanoid: Humanoid, fromFront: number): CFrame
+	local apron = WorldRefs.kickZoneFloor(arena)
 	local height = root.Size.Y / 2 + (humanoid.RigType == Enum.HumanoidRigType.R6 and 2 or humanoid.HipHeight)
 	return apron.CFrame * CFrame.new(-1, apron.Size.Y / 2 + height + 0.15, -apron.Size.Z / 2 + fromFront)
 end
 -- Legacy admin teleport destination. Gameplay kicks keep the player's current position.
 Config.KickStanceFromFront = -4.68
-Config.ApronStandFromFront = 7.5
+Config.KickZoneStandFromFront = 7.5
 -- Use the visible orange surface as the shared client/server activation boundary.
-function Config.inThrowZone(arena: any, position: Vector3): boolean
-	local apron = WorldRefs.apron(arena)
+function Config.inKickZone(arena: any, position: Vector3): boolean
+	local apron = WorldRefs.kickZoneFloor(arena)
 	if not apron then
 		return false
 	end

@@ -9,6 +9,7 @@ local RunService = game:GetService("RunService")
 assert(RunService:IsStudio(), "This script must run in Studio, not on a live server")
 assert(not RunService:IsRunning(), "This script must run in Edit mode, not during Play")
 local map = workspace.Map.World1
+assert(not map:GetAttribute("WorldLayoutReady"), "Historical builder: use LobbyWalls.apply on the current scene")
 assert(not map:FindFirstChild("TerraceChecker"), "Terrace checker already applied")
 local V = Vector3.new
 local CELL = 4

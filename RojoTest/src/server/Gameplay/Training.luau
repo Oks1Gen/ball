@@ -21,7 +21,7 @@ export type Context = {
 	stopTraining: (Player, boolean?) -> (),
 	throw: (Player, number?) -> (),
 	kickTiming: any,
-	inApron: (Player) -> boolean,
+	inKickZone: (Player) -> boolean,
 	arenaFor: (Player) -> any,
 	rootFor: (Player) -> (any, any),
 	multiplier: (any) -> number,
@@ -124,7 +124,7 @@ function Training.run(context: Context)
 					s.auto
 					and not s.kickTiming
 					and not laneIndex
-					and context.inApron(player)
+					and context.inKickZone(player)
 					and os.clock() >= s.busyUntil
 				then
 					context.throw(player)

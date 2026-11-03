@@ -16,8 +16,10 @@ Workspace/Map/World1
 │  ├─ Geometry
 │  ├─ Paths
 │  ├─ Spawns
-│  ├─ LaunchArea [Model]
-│  │  └─ ThrowingApron
+│  ├─ KickZone [Model]
+│  │  ├─ KickZoneFloor
+│  │  ├─ KickZoneChecker/KickZoneFrame
+│  │  └─ KickZonePrint/KickZoneLabel
 │  ├─ Environment
 │  │  └─ Flowers
 │  ├─ BallShop [Model]
@@ -59,6 +61,11 @@ Workspace/Map/World1
 пересекают зоны: длинная река, ограждения. Локальные объекты принадлежат своей зоне.
 Пустые категории допустимы; произвольные дополнительные корни мира — нет.
 
+Облицовка стен и зелёных верхов находится внутри объектов SideTerraces1,
+SideTerraces2, RearTerraces, EntranceTunnel: собственная Model WallCladding
+с моделями плоскостей. Старого общего TerraceWallChecker в Geometry нет.
+Исходные опоры и коллизии остаются внутри своих объектов без перемещения.
+
 ## Владение и имена
 
 - Группировка: место → законченный объект → составные части. Folder — категория;
@@ -90,7 +97,7 @@ VFX: Attachment, Beam, частицы), `HiddenVisual`. Последнее —
 
 Исправленная видимая поверхность хранится рядом с исходной деталью, внутри
 того же объекта. Невидимый оригинал с физической ролью остаётся локально в
-`Collision`; значимые игровые опоры (Field, ThrowingApron, StartingPad,
+`Collision`; значимые игровые опоры (Field, KickZoneFloor, StartingPad,
 TrainingStrip, DisplayTop) сохраняют своё место в контракте, а их визуальная
 копия получает суффикс Visual. Неактивные скрытые оригиналы парковать вне
 Workspace, сохраняя возможность восстановления.

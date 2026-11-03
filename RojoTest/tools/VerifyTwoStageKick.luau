@@ -13,7 +13,7 @@ local handler = Handler.build({
 	rootFor = function()
 		return {}, { Health = health }
 	end,
-	inApron = function()
+	inKickZone = function()
 		return inside
 	end,
 	publish = function() end,

@@ -9,7 +9,7 @@ function Flowers.apply(map: Construction.World): Instance?
 		return map.SmallMapFlowers
 	end
 	assert(map.Name == "World1" and map:FindFirstChild("SpawnGarden"), "Missing lobby garden")
-	local apron = map.Lobby.ThrowingApron
+	local apron = map.Lobby.KickZoneFloor
 	local random = Random.new(18472)
 	local surfaces, obstacles, protected = {}, {}, {}
 	for _, p in map:GetDescendants() do

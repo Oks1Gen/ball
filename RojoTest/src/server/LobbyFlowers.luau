@@ -97,7 +97,7 @@ function Flowers.apply(map: Construction.World): number?
 		stem.Parent = backup
 		head.Parent = backup
 	end
-	group.WorldPivot = map.Lobby.ThrowingApron.CFrame
+	group.WorldPivot = map.Lobby.KickZoneFloor.CFrame
 	group.Parent = world
 	group:SetAttribute("FlowerCount", #stems)
 	return #stems

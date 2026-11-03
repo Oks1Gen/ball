@@ -80,8 +80,12 @@ function Session.setup(context: Context, player: Player)
 			hum.WalkSpeed = context.Config.CharacterWalkSpeed
 			r.AssemblyLinearVelocity = Vector3.zero
 			r.AssemblyAngularVelocity = Vector3.zero
-			r.CFrame =
-				context.Config.apronCharacterPose(context.arenaFor(player), r, hum, context.Config.ApronStandFromFront)
+			r.CFrame = context.Config.kickZoneCharacterPose(
+				context.arenaFor(player),
+				r,
+				hum,
+				context.Config.KickZoneStandFromFront
+			)
 		end
 		local s = context.states[player]
 		if s then

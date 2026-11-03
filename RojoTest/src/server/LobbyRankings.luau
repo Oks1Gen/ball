@@ -60,7 +60,7 @@ function Rankings.apply(map: Construction.World)
 	if map:FindFirstChild("LobbyRankings") then
 		return
 	end
-	local frame = map.Lobby.ThrowingApron.CFrame * CFrame.new(115, -0.3, -13)
+	local frame = map.Lobby.KickZoneFloor.CFrame * CFrame.new(115, -0.3, -13)
 	local oldPosition = frame:PointToWorldSpace(V(-104, 20, 205))
 	local group = Instance.new("Model")
 	group.Name = "LobbyRankings"
@@ -136,7 +136,7 @@ end
 
 -- Restyle only the ranking stands; keep their authored placement and data paths.
 function Rankings.style(map)
-	local group = map:FindFirstChild("LobbyRankings")
+	local group = WorldRefs.rankings(map)
 	if not group then
 		return
 	end
@@ -281,6 +281,32 @@ function Rankings.style(map)
 			scope.Text = "Рейтинг скоро появится"
 		end
 		board:SetAttribute("RankingStyle", 4)
+	end
+	-- Restore places that received the rejected Coming Soon presentation.
+	for _, board in group:GetChildren() do
+		local panel = board:FindFirstChild("Panel")
+		local gui = panel and panel:FindFirstChild("RankingGui")
+		local message = gui and gui:FindFirstChild("ComingSoon")
+		if not message or not gui then
+			continue
+		end
+		message:Destroy()
+		for _, item in gui:GetChildren() do
+			if item:IsA("GuiObject") then
+				item.Visible = item.Name ~= "Title"
+			end
+		end
+		local original = gui:FindFirstChild("Title")
+		for _, item in board:GetDescendants() do
+			if item:IsA("SurfaceGui") and item.Name == "HeaderGui" then
+				local title = item:FindFirstChild("Title")
+				if title and title:IsA("TextLabel") and original and original:IsA("TextLabel") then
+					title.Text = original.Text
+				end
+			elseif item:IsA("SurfaceGui") and item.Name == "BadgeGui" then
+				item.Enabled = true
+			end
+		end
 	end
 end
 

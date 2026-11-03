@@ -15,7 +15,7 @@ function Cleanup.apply(map: Construction.World)
 		Vector2.new(18.784, 237.774),
 		Vector2.new(22.050, 242.510),
 	}
-	local offset = map.Lobby.ThrowingApron.Position - Vector3.new(24.240257, 20.3, 115.847107)
+	local offset = map.Lobby.KickZoneFloor.Position - Vector3.new(24.240257, 20.3, 115.847107)
 	local backup = game.ServerStorage.WorldBackups:FindFirstChild("RemovedMarkedLobbyDecor")
 	if not backup then
 		backup = Instance.new("Folder")

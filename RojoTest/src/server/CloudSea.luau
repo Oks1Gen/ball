@@ -3,7 +3,7 @@ local Refs = require(game.ReplicatedStorage.Shared.WorldRefs)
 local Shapes = require(game.ServerStorage.CloudShapes)
 local Clouds = {}
 local V = Vector3.new
-local VERSION = 3
+local VERSION = 4
 local CLOUD_SCALE = 0.85
 
 local function archive(parent: Instance, name: string): Folder
@@ -16,15 +16,16 @@ local function archive(parent: Instance, name: string): Folder
 	return folder
 end
 
-local function cloud(parent: Instance, frame: CFrame, scale: number, variant: number, index: number)
+local function cloud(parent: Instance, frame: CFrame, scale: number, variant: number, index: number, stretch: Vector3)
 	local model = Instance.new("Model")
 	model.Name = string.format("Cloud%03d", index)
 	model:SetAttribute("CloudVariant", variant)
+	model:SetAttribute("CloudStretch", stretch)
 	for _, shape in Shapes[variant] do
 		local part = Instance.new("Part")
 		part.Name = "CloudLobe"
-		part.Size = shape.size * scale
-		part.CFrame = frame * CFrame.new(shape.position * scale)
+		part.Size = shape.size * stretch * scale
+		part.CFrame = frame * CFrame.new(shape.position * stretch * scale)
 		part.Anchored, part.CanCollide, part.CanTouch, part.CanQuery = true, false, false, false
 		part.Material, part.Color = Enum.Material.SmoothPlastic, Color3.fromRGB(246, 244, 252)
 		part.CastShadow = false
@@ -122,17 +123,21 @@ function Clouds.apply(world: any): any
 			-- Float rounding of a 180-stud edge must not add another cloud in Play.
 			local steps = math.max(1, math.ceil(length / (if layer == 1 then 45 else 70) - 0.00001))
 			for i = 0, steps - 1 do
-				local along = (i + 0.5) / steps * length
-				local offset = if layer == 1 then 19 else 65 + rng:NextNumber(-7, 7)
-				local y = deckY + (if layer == 1 then -12.6 + rng:NextNumber(-2, 2) else -30.6 + rng:NextNumber(-5, 5))
+				-- Unequal intervals and broad/low silhouettes break the repeated scalloped rim.
+				-- Retain the same cloud budget and cover every side of the island.
+				local along = (i + 0.5 + rng:NextNumber(-0.22, 0.22)) / steps * length
+				local offset = if layer == 1 then rng:NextNumber(17, 25) else rng:NextNumber(59, 76)
+				local y = deckY + (if layer == 1 then -14.6 + rng:NextNumber(-4, 2) else -32.6 + rng:NextNumber(-7, 4))
 				local position = a + tangent * along + outward * offset + V(0, y, 0)
 				count += 1
 				cloud(
 					segment,
-					CFrame.fromMatrix(position, outward, V(0, 1, 0), tangent),
-					CLOUD_SCALE * (if layer == 1 then rng:NextNumber(0.95, 1.14) else rng:NextNumber(1.3, 1.7)),
+					CFrame.fromMatrix(position, outward, V(0, 1, 0), tangent)
+						* CFrame.Angles(0, rng:NextNumber(-0.25, 0.25), 0),
+					CLOUD_SCALE * (if layer == 1 then rng:NextNumber(0.9, 1.15) else rng:NextNumber(1.2, 1.65)),
 					rng:NextInteger(1, #Shapes),
-					count
+					count,
+					V(rng:NextNumber(0.9, 1.12), rng:NextNumber(0.65, 1.1), rng:NextNumber(0.9, 1.25))
 				)
 			end
 		end

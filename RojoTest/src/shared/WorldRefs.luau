@@ -47,10 +47,10 @@ function Refs.training(world: any): any
 	return if area then area:FindFirstChild("Lanes") else world and world:FindFirstChild("TrainingZone")
 end
 
-function Refs.apron(world: any): any
+function Refs.kickZoneFloor(world: any): any
 	local lobby = world and world:FindFirstChild("Lobby")
-	local launch = lobby and lobby:FindFirstChild("LaunchArea")
-	return (launch and launch:FindFirstChild("ThrowingApron")) or (lobby and lobby:FindFirstChild("ThrowingApron"))
+	local launch = lobby and lobby:FindFirstChild("KickZone")
+	return (launch and launch:FindFirstChild("KickZoneFloor")) or (lobby and lobby:FindFirstChild("KickZoneFloor"))
 end
 
 function Refs.spawn(world: any): any

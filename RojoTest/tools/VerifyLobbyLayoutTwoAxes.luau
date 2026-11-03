@@ -1,6 +1,6 @@
 -- Read-only checks in Studio Edit or Server; never touches player progression.
 local map = workspace.Map.World1
-local f = map.Lobby.ThrowingApron.CFrame * CFrame.new(115, -0.3, -13)
+local f = map.Lobby.KickZoneFloor.CFrame * CFrame.new(115, -0.3, -13)
 local n = 0
 local function check(ok, message)
 	assert(ok, message)
@@ -10,8 +10,8 @@ check(map:GetAttribute("LobbyLayoutVersion") == 1, "Approved layout is missing")
 local layout = map.TwoAxesLayout
 check(layout:GetAttribute("CentralClearWidth") == 16, "Central walking width changed")
 local old = game.ServerStorage.WorldBackups.BeforeLobbyLayoutTwoAxes_20261018.ProgressionMap
-check(map.Lobby.ThrowingApron.CFrame == old.Lobby.ThrowingApron.CFrame, "Throwing corridor anchor moved")
-check(map.Lobby.ThrowingApron.Size == old.Lobby.ThrowingApron.Size, "Throwing apron resized")
+check(map.Lobby.KickZoneFloor.CFrame == old.Lobby.KickZoneFloor.CFrame, "Throwing corridor anchor moved")
+check(map.Lobby.KickZoneFloor.Size == old.Lobby.KickZoneFloor.Size, "Kick Zone floor resized")
 local last = math.huge
 for i = 1, 7 do
 	local lane = map.TrainingZone["TrainingLane" .. i]

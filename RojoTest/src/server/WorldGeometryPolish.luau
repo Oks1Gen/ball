@@ -63,7 +63,7 @@ function Polish.apply(map: any)
 	local layout = map:FindFirstChild("TwoAxesLayout")
 	if layout then
 		local paths: { Rect } = {}
-		local top = map.Lobby.ThrowingApron.Position.Y - 0.3 + 0.26
+		local top = map.Lobby.KickZoneFloor.Position.Y - 0.3 + 0.26
 		local selected: { [Instance]: boolean } = {}
 		for _, p in layout.Paving:GetChildren() do
 			if p:IsA("BasePart") then
@@ -153,7 +153,7 @@ function Polish.apply(map: any)
 		end
 	end
 	-- Preserve any authored seam between the apron and the first pitch.
-	local apron, pitch = map.Lobby.ThrowingApron, map.SkippingWorld.Field_1
+	local apron, pitch = map.Lobby.KickZoneFloor, map.SkippingWorld.Field_1
 	local front, back = pitch.Position.Z + pitch.Size.Z / 2, apron.Position.Z - apron.Size.Z / 2
 	if back - front > 0.01 then
 		slab(

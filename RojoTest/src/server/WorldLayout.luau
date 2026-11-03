@@ -146,7 +146,7 @@ function Layout.apply(world: any)
 	local flowers = group(environment, "Flowers")
 	local geometry = group(lobby, "Geometry")
 	local paths = group(lobby, "Paths")
-	local launch = group(lobby, "LaunchArea", "Model")
+	local launch = group(lobby, "KickZone", "Model")
 	local eggs = group(lobby, "EggShop")
 	local volcanic = group(eggs, "VolcanicEgg", "Model")
 	local shop = group(lobby, "BallShop", "Model")
@@ -201,7 +201,7 @@ function Layout.apply(world: any)
 	end
 	for _, node in lobby:GetChildren() do
 		if not node:GetAttribute("LayoutKey") then
-			if node.Name == "ThrowingApron" then
+			if node.Name == "KickZoneFloor" then
 				move(node, launch)
 			elseif node:IsA("SpawnLocation") then
 				move(node, group(lobby, "Spawns"))
@@ -393,7 +393,7 @@ function Layout.apply(world: any)
 				local parent = original.Parent :: Instance
 				move(render, parent)
 				local semantic = original.Name == "Field"
-					or original.Name == "ThrowingApron"
+					or original.Name == "KickZoneFloor"
 					or original.Name == "StartingPad"
 					or original.Name == "TrainingStrip"
 					or original.Name == "DisplayTop"

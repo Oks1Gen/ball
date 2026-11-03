@@ -6,7 +6,7 @@ assert(not RunService:IsRunning(), "This script must run in Edit mode, not durin
 local map = workspace:FindFirstChild("Map") and workspace.Map:FindFirstChild("World1")
 assert(map and map:FindFirstChild("SpawnGarden"), "Expected authored lobby")
 assert(not map:FindFirstChild("LobbyWaterfallGarden"), "Waterfall already exists")
-local apron = map.Lobby.ThrowingApron
+local apron = map.Lobby.KickZoneFloor
 local origin = apron.Position
 assert(math.abs(origin.X - 24.240257) < 0.1 and math.abs(origin.Y - 20.3) < 0.1, "Map moved; remeasure site")
 local before = {}

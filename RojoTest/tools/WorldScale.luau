@@ -1,6 +1,6 @@
 -- Edit migration: shrink World1 (lobby, training area and the whole course) by 0.8 (2026-11-02).
 -- Run once in Edit, then save the place. Every position moves towards ORIGIN — the top of the
--- throw zone's front edge, where the kick happens — and every size shrinks by the same factor,
+-- kick zone's front edge, where the kick happens — and every size shrinks by the same factor,
 -- so the layout is unchanged and the kick spot stays where it is. Gameplay keeps its metres:
 -- GameConfig.DistancePerStud grows by 1/0.8 in the same change.
 -- Material-like detail keeps its size: stud textures (8 studs a tile) and the 4-stud wall
@@ -14,10 +14,10 @@ assert(world:GetAttribute("WorldScale") == nil, "World1 already scaled")
 local K = 0.8
 local ORIGIN = Vector3.new(55, 20.6, 124)
 
-local apron = world.Lobby.LaunchArea.ThrowingApron
+local apron = world.Lobby.KickZone.KickZoneFloor
 local front = apron.CFrame * Vector3.new(0, apron.Size.Y / 2, -apron.Size.Z / 2)
 assert(math.abs(front.Y - ORIGIN.Y) < 0.01 and math.abs(front.Z - ORIGIN.Z) < 0.01, "Throw line moved: remeasure")
-assert(math.abs(front.X - ORIGIN.X) < 0.2, "Throw zone moved off the field axis: remeasure")
+assert(math.abs(front.X - ORIGIN.X) < 0.2, "Kick zone moved off the field axis: remeasure")
 
 local function point(p: Vector3): Vector3
 	return ORIGIN + (p - ORIGIN) * K
@@ -142,13 +142,13 @@ world:SetAttribute("WorldScaled", "2026-11-02")
 local server = game.ServerScriptService.Server
 local fresh = Instance.new("Folder")
 fresh.Name = "WorldScaleMigration"
-for _, name in { "LobbyPalette", "LobbyPathRegions", "LobbyWallCoverage", "LobbyWalls", "LobbyPaths", "ThrowZoneStyle" } do
+for _, name in { "LobbyPalette", "LobbyPathRegions", "LobbyWallCoverage", "LobbyWalls", "LobbyPaths", "KickZoneStyle" } do
 	server[name]:Clone().Parent = fresh
 end
 fresh.Parent = game.ServerScriptService
 local results = {}
 local ok, problem = pcall(function()
-	for _, name in { "LobbyWalls", "LobbyPaths", "ThrowZoneStyle" } do
+	for _, name in { "LobbyWalls", "KickZoneStyle", "LobbyPaths" } do
 		results[name] = require(fresh[name]).apply(world)
 	end
 end)
@@ -166,5 +166,5 @@ return string.format(
 	routeEnd,
 	tostring(type(results.LobbyWalls) == "table" and results.LobbyWalls.rebuilt),
 	tostring(results.LobbyPaths),
-	tostring(results.ThrowZoneStyle)
+	tostring(results.KickZoneStyle)
 )

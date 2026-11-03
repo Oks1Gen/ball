@@ -13,7 +13,7 @@ function Garden.apply(map: Construction.World): Instance?
 		return map.SpawnGarden
 	end
 	assert(map.Name == "World1", "Spawn garden is scoped to World 1")
-	local frame = map.Lobby.ThrowingApron.CFrame * CFrame.new(115, -0.3, -13)
+	local frame = map.Lobby.KickZoneFloor.CFrame * CFrame.new(115, -0.3, -13)
 	local protected = {}
 	for _, p in map:GetDescendants() do
 		if p:IsA("BasePart") then

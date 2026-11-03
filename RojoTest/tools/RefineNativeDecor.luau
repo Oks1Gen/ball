@@ -6,7 +6,7 @@ local V = Vector3.new
 local reports = {}
 for _, map in { workspace.Map.World1, workspace.Map.World2 } do
 	local decor = map.NativeEnvironment
-	local frame = map.Lobby.ThrowingApron.CFrame * CFrame.new(115, -0.3, -13)
+	local frame = map.Lobby.KickZoneFloor.CFrame * CFrame.new(115, -0.3, -13)
 	assert(not decor:GetAttribute("ShapeRefinementVersion"), "Refinement already applied")
 	local rocks, leaves = 0, 0
 	for _, m in decor:GetDescendants() do

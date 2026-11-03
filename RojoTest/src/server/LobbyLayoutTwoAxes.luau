@@ -12,7 +12,7 @@ function Layout.apply(map: Construction.World): Instance?
 	end
 	assert(map.Name == "World1" and map:GetAttribute("Version") == 9, "Unexpected authored map")
 	local lobby, skip, training = map.Lobby, map.SkippingWorld, map.TrainingZone
-	local frame = lobby.ThrowingApron.CFrame * CF(115, -0.3, -13)
+	local frame = lobby.KickZoneFloor.CFrame * CF(115, -0.3, -13)
 	local function localPoint(p: Vector3)
 		return frame:PointToObjectSpace(p)
 	end

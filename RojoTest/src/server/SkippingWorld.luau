@@ -30,11 +30,11 @@ function World.finish(map: Construction.World)
 	bloom.Size = 20
 	bloom.Threshold = 1.6
 	bloom.Parent = lighting
-	local plate = map.SkippingWorld.ThrowZonePrint
+	local plate = map.SkippingWorld.KickZonePrint
 	plate.Size = V(140, 16, 0.05)
 	plate.CFrame = CFrame.new(-115, 0.82, 13) * CFrame.Angles(math.pi / 2, 0, 0)
 	plate.Transparency = 1
-	local gui = plate.ThrowZoneLabel
+	local gui = plate.KickZoneLabel
 	gui.Face = Enum.NormalId.Front
 	gui.CanvasSize = Vector2.new(800, 110)
 	gui.AlwaysOnTop = false
@@ -68,10 +68,10 @@ function World.finish(map: Construction.World)
 			field.Color = Config.Biomes[i].color
 		end
 	end
-	local apron = map.Lobby.ThrowingApron
-	if not apron:FindFirstChild("SkippingApronStuds") then
+	local apron = map.Lobby.KickZoneFloor
+	if not apron:FindFirstChild("KickZoneStuds") then
 		local studs = Instance.new("Texture")
-		studs.Name = "SkippingApronStuds"
+		studs.Name = "KickZoneStuds"
 		studs.Texture = Config.StudTexture
 		studs.Face = Enum.NormalId.Top
 		studs.StudsPerTileU = 8
@@ -233,14 +233,14 @@ function World.refine(map: Construction.World)
 			hide(p)
 		end
 	end
-	local old = map.Lobby.ThrowingApron:FindFirstChild("ThrowZoneLettering")
+	local old = map.Lobby.KickZoneFloor:FindFirstChild("KickZoneLettering")
 	if old and old:IsA("SurfaceGui") then
 		old.Enabled = false
 	end
-	local apron = map.Lobby.ThrowingApron
+	local apron = map.Lobby.KickZoneFloor
 	-- Use the top face's actual X/Z axes to prevent stretched lettering.
 	local plate = Instance.new("Part")
-	plate.Name = "ThrowZonePrint"
+	plate.Name = "KickZonePrint"
 	plate.Anchored = true
 	plate.CanCollide = false
 	plate.CanTouch = false
@@ -250,7 +250,7 @@ function World.refine(map: Construction.World)
 	plate.Position = apron.Position + V(0, 0.36, 0)
 	plate.Parent = map.SkippingWorld
 	local printGui = Instance.new("SurfaceGui")
-	printGui.Name = "ThrowZoneLabel"
+	printGui.Name = "KickZoneLabel"
 	printGui.Face = Enum.NormalId.Top
 	printGui.SizingMode = Enum.SurfaceGuiSizingMode.FixedSize
 	printGui.CanvasSize = Vector2.new(1400, 160)
@@ -259,7 +259,7 @@ function World.refine(map: Construction.World)
 	local title = Instance.new("TextLabel")
 	title.Size = UDim2.fromScale(1, 1)
 	title.BackgroundTransparency = 1
-	title.Text = "THROW ZONE"
+	title.Text = "KICK ZONE"
 	title.TextScaled = true
 	title.Font = Enum.Font.GothamBlack
 	title.TextColor3 = C(255, 252, 239)
@@ -412,9 +412,9 @@ function World.apply(map: Construction.World): Instance?
 		)
 		stone.Shape = Enum.PartType.Ball
 	end
-	local apron = map.Lobby.ThrowingApron
+	local apron = map.Lobby.KickZoneFloor
 	local surface = Instance.new("SurfaceGui")
-	surface.Name = "ThrowZoneLettering"
+	surface.Name = "KickZoneLettering"
 	surface.Face = Enum.NormalId.Top
 	surface.CanvasSize = Vector2.new(1400, 220)
 	surface.LightInfluence = 0
@@ -422,7 +422,7 @@ function World.apply(map: Construction.World): Instance?
 	local txt = Instance.new("TextLabel")
 	txt.Size = UDim2.fromScale(1, 1)
 	txt.BackgroundTransparency = 1
-	txt.Text = "THROW ZONE"
+	txt.Text = "KICK ZONE"
 	txt.TextScaled = true
 	txt.Font = Enum.Font.GothamBlack
 	txt.TextColor3 = C(255, 253, 236)
@@ -433,7 +433,7 @@ function World.apply(map: Construction.World): Instance?
 	line.Color = C(20, 21, 28)
 	line.Parent = txt
 	for _, x in { -175, -57 } do
-		local pad = part("ThrowPad", V(11, 0.15, 9), V(x, 0.73, 12), C(48, 194, 255), false)
+		local pad = part("KickPad", V(11, 0.15, 9), V(x, 0.73, 12), C(48, 194, 255), false)
 		studs(pad)
 	end
 	-- The reference uses open horizons and short, terraced banks.

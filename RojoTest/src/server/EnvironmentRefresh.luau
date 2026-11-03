@@ -30,7 +30,7 @@ function Refresh.apply(map: Construction.World): Instance?
 		return map.NativeEnvironment
 	end
 	assert(not map:FindFirstChild("NativeEnvironment"), "Review incomplete environment refresh")
-	local frame = map.Lobby.ThrowingApron.CFrame * CFrame.new(115, -0.3, -13)
+	local frame = map.Lobby.KickZoneFloor.CFrame * CFrame.new(115, -0.3, -13)
 	local originals = map:GetDescendants()
 	local protected = {}
 	for _, p in originals do

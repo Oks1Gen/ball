@@ -77,7 +77,7 @@ assign(back, rear)
 local rays = RaycastParams.new()
 rays.FilterType = Enum.RaycastFilterType.Exclude
 local function onRearTerrace(item, c)
-	rays.FilterDescendantsInstances = { item, lobby.Geometry.TerraceWallChecker }
+	rays.FilterDescendantsInstances = { item } -- Current wall cladding has CanQuery=false.
 	local hit = workspace:Raycast(c + V(0, 3, 0), V(0, -12, 0), rays)
 	return hit ~= nil and originalOf(hit.Instance):IsDescendantOf(env.RearTerraces)
 end
@@ -229,13 +229,13 @@ end
 local server = game.ServerScriptService.Server
 local fresh = Instance.new("Folder")
 fresh.Name = "RearExtensionMigration"
-for _, name in { "LobbyPalette", "LobbyPathRegions", "LobbyWallCoverage", "LobbyWalls", "LobbyPaths", "ThrowZoneStyle" } do
+for _, name in { "LobbyPalette", "LobbyPathRegions", "LobbyWallCoverage", "LobbyWalls", "LobbyPaths", "KickZoneStyle" } do
 	server[name]:Clone().Parent = fresh
 end
 fresh.Parent = game.ServerScriptService
 local results = {}
 local ok, problem = pcall(function()
-	for _, name in { "LobbyWalls", "LobbyPaths", "ThrowZoneStyle" } do
+	for _, name in { "LobbyWalls", "KickZoneStyle", "LobbyPaths" } do
 		results[name] = require(fresh[name]).apply(world)
 	end
 end)

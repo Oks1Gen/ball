@@ -152,7 +152,7 @@ end
 
 -- Normalize the reference display too, using the lobby's existing ground height.
 local referenceBase = source:GetPivot().Position
-local floorY = workspace.Map.World1.Lobby.ThrowingApron.Position.Y - workspace.Map.World1.Lobby.ThrowingApron.Size.Y / 2
+local floorY = workspace.Map.World1.Lobby.KickZoneFloor.Position.Y - workspace.Map.World1.Lobby.KickZoneFloor.Size.Y / 2
 local referenceCopy = template:Clone()
 referenceCopy.Name = "Oak_ImportPreview"
 referenceCopy:PivotTo(CFrame.new(referenceBase.X, floorY + 0.03, referenceBase.Z))

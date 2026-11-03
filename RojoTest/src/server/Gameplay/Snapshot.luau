@@ -15,7 +15,7 @@ local Snapshot = {}
 export type Context = {
 	states: { [Player]: any },
 	multiplier: (any) -> number,
-	inApron: (Player) -> boolean,
+	inKickZone: (Player) -> boolean,
 	arenaFor: (Player) -> any,
 }
 
@@ -33,7 +33,7 @@ function Snapshot.build(context: Context, player: Player, notice: string?, force
 		dailyReward = ReturnRewards.calendar(d, os.time()),
 		level = level,
 		multiplier = context.multiplier(s),
-		canThrow = context.inApron(player) and os.clock() >= s.busyUntil,
+		canThrow = context.inKickZone(player) and os.clock() >= s.busyUntil,
 		throwReady = os.clock() >= s.busyUntil,
 		rebirthRequiredLevel = rebirthRequiredLevel,
 		rebirthProgress = rebirthProgress,

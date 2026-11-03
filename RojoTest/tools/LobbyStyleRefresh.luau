@@ -13,6 +13,7 @@ assert(RunService:IsStudio(), "This script must run in Studio, not on a live ser
 assert(not RunService:IsRunning(), "This script must run in Edit mode, not during Play")
 local Palette = require(game.ServerScriptService.Server.LobbyPalette)
 local map = workspace.Map.World1
+assert(not map:GetAttribute("WorldLayoutReady"), "Historical builder: use LobbyWalls.apply on the current scene")
 local V = Vector3.new
 local CELL = Palette.CheckerCell
 -- The lobby, its terraces and the tunnel; biome scenery further out keeps its own look.

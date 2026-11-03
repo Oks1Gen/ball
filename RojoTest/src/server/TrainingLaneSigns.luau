@@ -4,8 +4,9 @@ local Config = require(game.ReplicatedStorage.Shared.GameConfig)
 local Goal = require(game.ReplicatedStorage.Shared.TrainingGoal)
 local UIAssets = require(game.StarterPlayer.StarterPlayerScripts.Client.UIAssets)
 local Scale = require(game.ReplicatedStorage.Shared.WorldScale)
+local Refs = require(game.ReplicatedStorage.Shared.WorldRefs)
 local Signs = {}
-local HEIGHT = 4.6 -- authored studs; the sign scales with the world
+local HEIGHT = 7 -- authored studs; leave room for readable status and multiplier
 
 local function top(part: BasePart): number
 	local cf, size = part.CFrame, part.Size
@@ -39,7 +40,7 @@ function Signs.apply(map: Instance, definitions: any?)
 	local lanes = definitions or Config.Lanes
 	local scale = Scale.factor(map)
 	local height = HEIGHT * scale
-	local zone = map:FindFirstChild("TrainingZone")
+	local zone = Refs.training(map)
 	if not zone then
 		return
 	end
@@ -88,6 +89,16 @@ function Signs.apply(map: Instance, definitions: any?)
 				end
 			end
 		end
+		-- The finished crest can be taller than the imported net (crystals,
+		-- palms, crowns). Reserve the entire caption above that visible geometry.
+		local themed = lane:FindFirstChild("BiomeReferenceVisuals")
+		if themed then
+			for _, part in themed:GetDescendants() do
+				if part:IsA("BasePart") and part.Transparency < 1 then
+					goalTop = math.max(goalTop, top(part))
+				end
+			end
+		end
 		local existing = lane:FindFirstChild("GoalSignAnchor")
 		local anchor = if existing and existing:IsA("Part") then existing else Instance.new("Part")
 		anchor.Name = "GoalSignAnchor"
@@ -95,6 +106,7 @@ function Signs.apply(map: Instance, definitions: any?)
 		anchor.Transparency = 1
 		anchor.CanCollide, anchor.CanTouch, anchor.CanQuery = false, false, false
 		anchor.CastShadow = false
+		anchor:SetAttribute("PartRole", "LabelAnchor")
 		anchor.Size = Vector3.one * 0.1
 		anchor.Position = Vector3.new(center.X, goalTop + height / 2 + 0.9 * scale, center.Z)
 		anchor.Parent = lane
@@ -104,7 +116,7 @@ function Signs.apply(map: Instance, definitions: any?)
 			else Instance.new("BillboardGui")
 		gui.Name = "TrainingLaneSign"
 		gui.Adornee = anchor
-		gui.Size = UDim2.fromScale(9 * scale, height)
+		gui.Size = UDim2.fromScale(10.5 * scale, height)
 		gui.StudsOffset = Vector3.zero
 		gui.AlwaysOnTop = false
 		gui.LightInfluence = 0
@@ -116,7 +128,7 @@ function Signs.apply(map: Instance, definitions: any?)
 		local row = if oldRow and oldRow:IsA("Frame") then oldRow else Instance.new("Frame")
 		row.Name = "Requirement"
 		row.Position = UDim2.fromScale(0.06, 0.02)
-		row.Size = UDim2.fromScale(0.88, 0.4)
+		row.Size = UDim2.fromScale(0.88, 0.3)
 		row.BackgroundTransparency = 0.06
 		row.BackgroundColor3 = Color3.fromRGB(30, 14, 9)
 		row.BorderSizePixel = 0
@@ -162,16 +174,16 @@ function Signs.apply(map: Instance, definitions: any?)
 		requirement.TextColor3 = Color3.fromRGB(255, 239, 215)
 		requirement.Text = tostring(definition.rebirths)
 		local status = text(gui, "Status")
-		status.Position = UDim2.fromScale(0, 0.46)
-		status.Size = UDim2.fromScale(1, 0.2)
+		status.Position = UDim2.fromScale(0, 0.36)
+		status.Size = UDim2.fromScale(1, 0.27)
 		-- Each client replaces the starter-lane Edit preview with its own locks.
 		status.Text = if definition.rebirths == 0 then "UNLOCKED" else "LOCKED"
 		status.TextColor3 = if definition.rebirths == 0
 			then Color3.fromRGB(55, 255, 35)
 			else Color3.fromRGB(255, 44, 44)
 		local multiplier = text(gui, "Multiplier")
-		multiplier.Position = UDim2.fromScale(0, 0.7)
-		multiplier.Size = UDim2.fromScale(1, 0.3)
+		multiplier.Position = UDim2.fromScale(0, 0.68)
+		multiplier.Size = UDim2.fromScale(1, 0.32)
 		multiplier.TextColor3 = Color3.fromRGB(255, 239, 215)
 		multiplier.Text = tostring(definition.multiplier) .. "x SKILL"
 		gui:SetAttribute("RequiredRebirths", definition.rebirths)
