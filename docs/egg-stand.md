@@ -1,5 +1,12 @@
 # Shared egg stand
 
+Seat palette now matches the elemental replacements: Common green, Uncommon
+icy blue, Volcanic gold, Rare dark lava burgundy; Rainbow retains its purple.
+`EggStandStyle.colorSeats` colors only SeatRim/SeatInset facets and runs on both
+existing and freshly cloned stands. Gray structure, studs and all geometry,
+materials and physics stay unchanged. The runtime palette supersedes the older
+authoring stand's original seat colors.
+
 The five original egg models now sit on one connected shallow curved stand in
 `Workspace.Map.World1.Lobby.EggShop.EggStand`. Common/Uncommon mirror
 Rainbow/Rare around the lobby axis X=55; Volcanic stays at the center. The

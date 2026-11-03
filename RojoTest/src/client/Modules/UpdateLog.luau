@@ -48,7 +48,7 @@ UpdateLog.Releases = {
 				id = "lobby-scenery",
 				category = "Fixed",
 				summary = "Cleaner lobby & matching egg displays",
-				details = "Flowers rest neatly on the terraces. A shared curved stand displays new Meadow, Glacier, Magma and Void eggs as trophy costs rise, with Celestial replacing the premium egg. Each has its own faceted shape and colors. Egg prices, rewards and purchases stay the same.",
+				details = "Flowers rest neatly on the terraces. A curved stand displays Meadow, Glacier, Magma and Void as trophy costs rise, with Celestial replacing the premium egg. Matching green, icy blue, gold, burgundy and purple seats complete the display. Prices, rewards and purchases stay the same.",
 				credits = { { author = "team", role = "Map & art" } },
 			},
 			{

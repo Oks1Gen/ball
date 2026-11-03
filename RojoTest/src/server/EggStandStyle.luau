@@ -12,6 +12,35 @@ local SLOTS = {
 	{ slot = "Rainbow", model = "Egg_Rainbow" },
 }
 
+local SEAT_COLORS: { [string]: { Color3 } } = {
+	Common = { Color3.fromRGB(72, 193, 16), Color3.fromRGB(121, 231, 43) },
+	Uncommon = { Color3.fromRGB(16, 171, 225), Color3.fromRGB(101, 222, 250) },
+	Volcanic = { Color3.fromRGB(226, 157, 17), Color3.fromRGB(255, 214, 65) },
+	Rare = { Color3.fromRGB(102, 22, 37), Color3.fromRGB(142, 35, 42) },
+}
+
+function Style.colorSeats(stand: Instance): number
+	local changed = 0
+	for slotName, colors in SEAT_COLORS do
+		local slot = stand:FindFirstChild(slotName)
+		if slot then
+			for _, part in slot:GetDescendants() do
+				if part:IsA("BasePart") then
+					local color = if part.Name:find("_SeatRim", 1, true)
+						then colors[1]
+						elseif part.Name:find("_SeatInset", 1, true) then colors[2]
+						else nil
+					if color and part.Color ~= color then
+						part.Color = color
+						changed += 1
+					end
+				end
+			end
+		end
+	end
+	return changed
+end
+
 local function extents(root: Instance, onlyPaving: boolean?): (Vector3, Vector3)
 	local low, high = V(math.huge, math.huge, math.huge), V(-math.huge, -math.huge, -math.huge)
 	for _, p in root:GetDescendants() do
@@ -91,6 +120,7 @@ function Style.apply(world: Instance): number
 		end
 		stand.Parent = shop
 	end
+	Style.colorSeats(stand)
 	-- Position by the visible egg's bounds, not its possibly offset authored pivot.
 	for _, entry in SLOTS do
 		local egg = shop:FindFirstChild(entry.model) :: Model
