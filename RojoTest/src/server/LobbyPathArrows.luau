@@ -42,7 +42,13 @@ local function triangle(parent: Model, a: Vector3, b: Vector3, c: Vector3)
 	end
 end
 
-function Arrows.apply(paths: Instance, start: Vector3, finish: Vector3): Model
+-- Authored chevron spacing; the glyph is 1.5 spacings wide and one spacing long.
+Arrows.Spacing = 10
+
+-- `scale` is the world scale factor.
+function Arrows.apply(paths: Instance, start: Vector3, finish: Vector3, scale: number): Model
+	local spacing = Arrows.Spacing * scale
+	local s = spacing / 8 -- every other length was measured at an 8-stud spacing
 	local found = paths:FindFirstChild("KickPathArrows")
 	local root: Model
 	if found then
@@ -71,13 +77,18 @@ function Arrows.apply(paths: Instance, start: Vector3, finish: Vector3): Model
 		origin = Instance.new("Part")
 		origin.Name, origin.Size, origin.Transparency = "Origin", V(0.2, 0.2, 0.2), 1
 		origin.Anchored, origin.CanCollide, origin.CanTouch, origin.CanQuery = true, false, false, false
-		origin:SetAttribute("PartRole", "AnimationOrigin")
 		origin.Parent = root
 	end
+	origin:SetAttribute("PartRole", "HiddenVisual")
+	origin:SetAttribute("Purpose", "Origin for animated kick direction chevrons")
 	origin.CFrame = CFrame.lookAt(start, finish)
 	local length = (finish - start).Magnitude
-	local count = math.ceil(length / 8)
-	if root:GetAttribute("GeometryVersion") ~= 2 or root:GetAttribute("ArrowCount") ~= count then
+	local count = math.ceil(length / spacing)
+	if
+		root:GetAttribute("GeometryVersion") ~= 2
+		or root:GetAttribute("ArrowCount") ~= count
+		or root:GetAttribute("ArrowSpacing") ~= spacing
+	then
 		for _, child in root:GetChildren() do
 			if child:IsA("Model") and child:GetAttribute("ArrowSlot") ~= nil then
 				child:Destroy()
@@ -92,14 +103,14 @@ function Arrows.apply(paths: Instance, start: Vector3, finish: Vector3): Model
 				local positions = {}
 				for _, id in ids do
 					local p = points[id]
-					table.insert(positions, V((p.X - 128) * 12 / 256, 0, (128 - p.Y) * 8 / 256))
+					table.insert(positions, V((p.X - 128) * 12 * s / 256, 0, (128 - p.Y) * 8 * s / 256))
 				end
 				triangle(arrow, positions[1], positions[2], positions[3])
 			end
-			arrow:PivotTo(origin.CFrame * CFrame.new(0, 0, -2.5 - i * 8))
+			arrow:PivotTo(origin.CFrame * CFrame.new(0, 0, -2.5 * s - i * spacing))
 			for _, p in arrow:GetChildren() do
 				if p:IsA("BasePart") then
-					p.Transparency = if i > 0 and i * 8 < length - 5 then 0 else 1
+					p.Transparency = if i > 0 and i * spacing < length - 5 * s then 0 else 1
 				end
 			end
 			arrow.Parent = root
@@ -107,7 +118,18 @@ function Arrows.apply(paths: Instance, start: Vector3, finish: Vector3): Model
 	end
 	root:SetAttribute("GeometryVersion", 2)
 	root:SetAttribute("ArrowCount", count)
+	root:SetAttribute("ArrowSpacing", spacing)
 	root:SetAttribute("PathLength", length)
+	for _, arrow in root:GetChildren() do
+		if arrow:IsA("Model") and arrow:GetAttribute("ArrowSlot") ~= nil then
+			for _, ink in arrow:GetChildren() do
+				if ink:IsA("BasePart") then
+					ink:SetAttribute("PartRole", "HiddenVisual")
+					ink:SetAttribute("Purpose", "Animated direction chevron; hidden while fading at the path ends")
+				end
+			end
+		end
+	end
 	root:AddTag("LobbyPathArrowRoot")
 	return root
 end

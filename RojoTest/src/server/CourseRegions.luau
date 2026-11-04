@@ -36,7 +36,8 @@ local function hide(p: BasePart): boolean
 	return changed
 end
 
-local function body(bank: BasePart, field: BasePart, color: Color3, bottom: number): BasePart
+-- `tile`: 8 studs a tile in the 0.8 scene, following the world scale.
+local function body(bank: BasePart, field: BasePart, color: Color3, bottom: number, tile: number): BasePart
 	local top = bank.Position.Y - bank.Size.Y / 2
 	local height = top - bottom
 	assert(height > 0, "Bank body must have positive height")
@@ -52,7 +53,7 @@ local function body(bank: BasePart, field: BasePart, color: Color3, bottom: numb
 	for _, face in { Enum.NormalId.Front, Enum.NormalId.Back, Enum.NormalId.Left, Enum.NormalId.Right } do
 		local t = Instance.new("Texture")
 		t.Name, t.Texture, t.Face = "BankStuds", Studs.Studs, face
-		t.StudsPerTileU, t.StudsPerTileV, t.Transparency = 8, 8, Studs.StudsTransparency
+		t.StudsPerTileU, t.StudsPerTileV, t.Transparency = tile, tile, Studs.StudsTransparency
 		t.Parent = p
 	end
 	return p
@@ -155,7 +156,7 @@ function Regions.apply(world: any): any
 			model.Name = "Banks"
 			model:SetAttribute("ZoneIndex", index)
 			for _, bank in banks do
-				body(bank, field, Palette[index].earth, bottom).Parent = model
+				body(bank, field, Palette[index].earth, bottom, 8 * Scale.relative(world)).Parent = model
 			end
 			model:SetAttribute("GeometrySignature", key)
 			model.Parent = zone.Geometry

@@ -8,9 +8,16 @@ local Palette = {
 	Earth = RGB(214, 139, 62),
 	EarthDark = RGB(195, 117, 41),
 	WallCheckerDepth = 0.02,
-	WallCheckerCell = 3.2,
-	WallStudPitch = 1.6,
+	-- Lattice steps are authored studs: builders multiply them by Shared.WorldScale.factor,
+	-- so the checker and the studs shrink together with the world.
+	WallCheckerCell = 4,
+	WallStudPitch = 2,
+	LawnCell = 8,
+	PathCell = 8,
+	GroundStudPitch = 2, -- lawn, paving and the kick zone
 	Grass = RGB(92, 205, 48),
+	Lawn = RGB(119, 210, 65),
+	LawnChecker = RGB(96, 180, 50),
 	Leaf = RGB(47, 166, 55),
 	LeafLight = RGB(125, 217, 62),
 	Stone = RGB(136, 152, 157),
@@ -27,8 +34,10 @@ local Palette = {
 	KickZone = RGB(255, 168, 38),
 	KickZoneChecker = RGB(255, 204, 64),
 	KickZoneEdge = RGB(226, 128, 22),
-	KickZoneCell = 3.2,
-	KickZoneBand = 1.6,
+	KickZoneCell = 4,
+	KickZoneBand = 2,
+	-- One HD studs tile holds four studs; the tile follows the stud pitch.
+	StudsPerTexture = 4,
 
 	Studs = "rbxassetid://88156646156237",
 	StudsTransparency = 0.45,

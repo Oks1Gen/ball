@@ -1,12 +1,17 @@
 --!strict
--- Two-line reference-style captions above the existing eggs. Prices are gameplay data.
+-- Two-line captions above the existing eggs.
 local Config = require(game.ReplicatedStorage.Shared.GameConfig)
-local UIAssets = require(game.StarterPlayer.StarterPlayerScripts.Client.UIAssets)
 local Scale = require(game.ReplicatedStorage.Shared.WorldScale)
 local Signs = {}
 local HEIGHT = 4.2 -- authored studs; the sign scales with the world
 local C = Color3.fromRGB
-local TITLE_COLORS = { Common = C(220, 233, 229), Uncommon = C(46, 255, 35), Rare = C(0, 210, 255) }
+local CAPTIONS = {
+	Common = { title = "Forest Egg", rarity = "Common", color = C(220, 233, 229) },
+	Uncommon = { title = "Frost Egg", rarity = "Uncommon", color = C(46, 255, 35) },
+	AdminEgg = { title = "Solar Crown Egg", rarity = "Legendary", color = C(255, 208, 69) },
+	Rare = { title = "Magma Egg", rarity = "Rare", color = C(0, 210, 255) },
+	Rainbow = { title = "Void Egg", rarity = "Epic", color = C(206, 113, 255) },
+}
 
 local function text(parent: Instance, name: string): TextLabel
 	local old = parent:FindFirstChild(name)
@@ -26,16 +31,11 @@ local function text(parent: Instance, name: string): TextLabel
 	return label
 end
 
-local function caption(
-	parent: Instance,
-	center: Vector3,
-	topY: number,
-	title: string,
-	price: string,
-	currency: string,
-	id: string,
-	scale: number
-)
+local function caption(parent: Instance, center: Vector3, topY: number, id: string, scale: number)
+	local copy = CAPTIONS[id]
+	if not copy then
+		return
+	end
 	local height = HEIGHT * scale
 	local old = parent:FindFirstChild("EggSignAnchor")
 	local anchor = if old and old:IsA("Part") then old else Instance.new("Part")
@@ -60,55 +60,23 @@ local function caption(
 	gui.Parent = anchor
 	local heading = text(gui, "Title")
 	heading.Size = UDim2.fromScale(1, 0.5)
-	heading.Text = title
-	heading.TextColor3 = TITLE_COLORS[id] or Color3.new(1, 1, 1)
-	if id == "Rainbow" or id == "AdminEgg" then
-		local existing = heading:FindFirstChildOfClass("UIGradient")
-		local gradient = existing or Instance.new("UIGradient")
-		gradient.Color = if id == "Rainbow"
-			then ColorSequence.new({
-				ColorSequenceKeypoint.new(0, C(220, 38, 255)),
-				ColorSequenceKeypoint.new(0.2, C(65, 116, 255)),
-				ColorSequenceKeypoint.new(0.4, C(0, 240, 227)),
-				ColorSequenceKeypoint.new(0.6, C(95, 255, 25)),
-				ColorSequenceKeypoint.new(0.8, C(255, 224, 12)),
-				ColorSequenceKeypoint.new(1, C(255, 71, 22)),
-			})
-			else ColorSequence.new(C(255, 219, 60), C(255, 84, 31))
-		gradient.Parent = heading
+	heading.Text = copy.title
+	heading.TextColor3 = copy.color
+	local gradient = heading:FindFirstChildOfClass("UIGradient")
+	if gradient then
+		gradient:Destroy()
 	end
 	local oldRow = gui:FindFirstChild("PriceRow")
-	local row = if oldRow and oldRow:IsA("Frame") then oldRow else Instance.new("Frame")
-	row.Name = "PriceRow"
-	row.BackgroundTransparency = 1
-	row.Position = UDim2.fromScale(0, 0.56)
-	row.Size = UDim2.fromScale(1, 0.44)
-	row.Parent = gui
-	if not row:FindFirstChildOfClass("UIListLayout") then
-		local layout = Instance.new("UIListLayout")
-		layout.FillDirection = Enum.FillDirection.Horizontal
-		layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-		layout.VerticalAlignment = Enum.VerticalAlignment.Center
-		layout.SortOrder = Enum.SortOrder.LayoutOrder
-		layout.Padding = UDim.new(0.02, 0)
-		layout.Parent = row
+	if oldRow then
+		oldRow:Destroy()
 	end
-	local oldIcon = row:FindFirstChild("Currency")
-	local icon = if oldIcon and oldIcon:IsA("ImageLabel") then oldIcon else Instance.new("ImageLabel")
-	icon.Name = "Currency"
-	icon.Size = UDim2.fromScale(0.12, 0.9)
-	icon.BackgroundTransparency = 1
-	icon.LayoutOrder = 1
-	icon.ScaleType = Enum.ScaleType.Fit
-	icon.Image = if currency == "Wins" then UIAssets.Images.Wins else UIAssets.Images.Robux
-	icon.Parent = row
-	local amount = text(row, "Amount")
-	amount.Size = UDim2.fromScale(if currency == "Wins" then 0.5 else 0.25, 1)
-	amount.LayoutOrder = 2
-	amount.Text = price
-	amount.TextColor3 = if currency == "Wins" then C(255, 225, 20) else C(101, 255, 33)
+	local rarity = text(gui, "Rarity")
+	rarity.Position = UDim2.fromScale(0, 0.5)
+	rarity.Size = UDim2.fromScale(1, 0.375)
+	rarity.Text = copy.rarity
+	rarity.TextColor3 = copy.color
 	gui:SetAttribute("EggId", id)
-	gui:SetAttribute("Currency", currency)
+	gui:SetAttribute("Currency", nil)
 end
 
 function Signs.apply(map: Instance, settings: any?)
@@ -117,7 +85,6 @@ function Signs.apply(map: Instance, settings: any?)
 	if not world then
 		return
 	end
-	local worldFactor = 1
 	local scale = Scale.factor(map)
 	for _, egg in config.Eggs do
 		local stand = world:FindFirstChild("Egg_" .. egg.id)
@@ -138,17 +105,7 @@ function Signs.apply(map: Instance, settings: any?)
 				end
 			end
 		end
-		local title = if egg.id == "Rainbow" then egg.name else string.upper((egg.name:gsub(" Egg$", "")))
-		caption(
-			stand,
-			shell.Position,
-			center.Position.Y + size.Y / 2,
-			title,
-			config.format(egg.cost * worldFactor) .. " Wins",
-			"Wins",
-			egg.id,
-			scale
-		)
+		caption(stand, shell.Position, center.Position.Y + size.Y / 2, egg.id, scale)
 	end
 	local admin = world:FindFirstChild("HackedAdminEgg")
 	local visual = world:FindFirstChild("VolcanicEggFallback")
@@ -182,16 +139,7 @@ function Signs.apply(map: Instance, settings: any?)
 		local holder: Instance = world:FindFirstChild("AdminEggCaption") or Instance.new("Folder")
 		holder.Name = "AdminEggCaption"
 		holder.Parent = world
-		caption(
-			holder,
-			admin.Position,
-			visual.Position.Y + visual.Size.Y / 2,
-			"Volcanic Inferno Egg",
-			config.format(config.Products.AdminEgg.price),
-			"Robux",
-			"AdminEgg",
-			scale
-		)
+		caption(holder, admin.Position, visual.Position.Y + visual.Size.Y / 2, "AdminEgg", scale)
 	end
 end
 

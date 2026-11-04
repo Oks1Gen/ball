@@ -14,15 +14,17 @@ function Rewards.claim(data: any, definition: any, uid: string): any
 		rarity = definition.rarity,
 	}
 	table.insert(data.pets, pet)
-	data.perks.AdminEggPending = nil
+	local remaining = math.max(0, (data.adminEggPendingCount or 1) - 1)
+	data.adminEggPendingCount = remaining
+	data.perks.AdminEggPending = if remaining > 0 then true else nil
 	return pet
 end
 
 function Rewards.reserve(data: any)
-	if not data.perks.AdminEgg then
-		data.perks.AdminEgg = true
-		data.perks.AdminEggPending = true
-	end
+	local pending = if data.perks.AdminEggPending then data.adminEggPendingCount or 1 else 0
+	data.adminEggPendingCount = pending + 1
+	data.perks.AdminEgg = true
+	data.perks.AdminEggPending = true
 end
 
 return Rewards

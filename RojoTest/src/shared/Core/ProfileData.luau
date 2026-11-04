@@ -23,6 +23,8 @@ function Data.fresh(): any
 		wins = 0,
 		rebirths = 0,
 		best = 0,
+		-- Robux spent on this game's products; the ДОНАТ leaderboard ranks it.
+		donated = 0,
 		tutorialStage = 0,
 		tutorialSkill = 0,
 		stone = "Pebble",
@@ -36,6 +38,8 @@ function Data.fresh(): any
 		receipts = {},
 		trainingBoosts = { ["67"] = 0, ["69"] = 0, ["144"] = 0 },
 		settings = { sound = 100, music = 100, shake = true, effects = true, upgradeNotices = true },
+		-- The strongest upgrade alert already shown per kind; each alert appears once.
+		notices = { Training = 0, Rebirth = 0, Ball = 0, Trail = 0 },
 		daily = 0,
 		dailyCount = 0,
 		lastSeen = 0,
@@ -69,7 +73,7 @@ function Data.normalize(input: any, catalog: any): any
 	if type(input) ~= "table" then
 		return data
 	end
-	for _, key in { "skill", "wins", "rebirths", "best", "daily", "lastSeen", "offlinePending" } do
+	for _, key in { "skill", "wins", "rebirths", "best", "donated", "daily", "lastSeen", "offlinePending" } do
 		data[key] = bounded(input[key], 0, Data.MaxProgress)
 	end
 	data.dailyCount = bounded(input.dailyCount, if data.daily > 0 then 1 else 0, 7)
@@ -86,6 +90,9 @@ function Data.normalize(input: any, catalog: any): any
 		data.trail = input.trail
 	end
 	data.perks, data.receipts = flags(input.perks), flags(input.receipts)
+	if data.perks.AdminEggPending then
+		data.adminEggPendingCount = math.max(1, bounded(input.adminEggPendingCount, 1, Data.MaxProgress))
+	end
 	if type(input.trainingBoosts) == "table" then
 		for key in data.trainingBoosts do
 			data.trainingBoosts[key] = bounded(input.trainingBoosts[key], 0, 1000000)
@@ -126,6 +133,12 @@ function Data.normalize(input: any, catalog: any): any
 				equipped[uid] = true
 				table.insert(data.equipped, uid)
 			end
+		end
+	end
+	if type(input.notices) == "table" then
+		for key in data.notices do
+			local rank = input.notices[key]
+			data.notices[key] = if Data.finite(rank) then math.clamp(rank, 0, Data.MaxProgress) else 0
 		end
 	end
 	if type(input.settings) == "table" then

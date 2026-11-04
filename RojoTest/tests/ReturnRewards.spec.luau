@@ -4,16 +4,18 @@ local Data = require("../src/shared/Core/ProfileData")
 local catalog = { stones = { Pebble = true }, trails = { None = true }, pets = {} }
 
 return {
-	["offline accrual starts only with a real prior timestamp and caps at twelve hours"] = function()
+	["offline accrual needs a real prior timestamp and an hour away, and caps at eight hours"] = function()
 		local data = Data.fresh()
-		data.offlineRate = 2.1875
+		data.offlineRate = 2
 		Rewards.arrive(data, 100000)
 		assert(data.offlinePending == 0)
-		Rewards.arrive(data, 100004)
-		assert(data.offlinePending == 8)
+		Rewards.arrive(data, 100000 + 3599)
+		assert(data.offlinePending == 0)
+		Rewards.arrive(data, data.lastSeen + 3600)
+		assert(data.offlinePending == 7200)
 		data.offlinePending = 0
-		Rewards.arrive(data, 100004 + 86400 * 10)
-		assert(data.offlinePending == math.floor(2.1875 * 43200))
+		Rewards.arrive(data, data.lastSeen + 86400 * 10)
+		assert(data.offlinePending == 2 * 8 * 3600)
 		local pending = data.offlinePending
 		Rewards.arrive(data, data.lastSeen - 100)
 		assert(data.offlinePending == pending)
@@ -63,13 +65,13 @@ return {
 	["offline rate uses the best unlocked lane and permanent boosts"] = function()
 		local data = Data.fresh()
 		local lanes = { { multiplier = 1, rebirths = 0 }, { multiplier = 2, rebirths = 2 } }
-		assert(Rewards.offlineRate(data, lanes, 1) == 7 / 0.8 * 0.25)
+		assert(Rewards.offlineRate(data, lanes, 1) == 7 / 0.8 * Rewards.OfflineFraction)
 		data.rebirths = 2
 		data.world = 2
 		data.perks.DoubleSkill = true
 		data.pets = { { uid = "pet", boost = 2 } }
 		data.equipped = { "pet" }
-		assert(Rewards.offlineRate(data, lanes, 5) == 2 * 3 * 2 * 2 * 5 * 7 / 0.8 * 0.25)
+		assert(Rewards.offlineRate(data, lanes, 5) == 2 * 3 * 2 * 2 * 5 * 7 / 0.8 * Rewards.OfflineFraction)
 	end,
 	["return rewards use the same progression cap as every other accrual"] = function()
 		local data = Data.fresh()

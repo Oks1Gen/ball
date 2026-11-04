@@ -76,16 +76,9 @@ function Session.setup(context: Context, player: Player)
 		context.FlightStreaming.stop(player)
 		local r: any = char:WaitForChild("HumanoidRootPart", 10)
 		local hum: any = char:WaitForChild("Humanoid", 10)
-		if r and hum then
+		if r and hum and player.Character == char then
 			hum.WalkSpeed = context.Config.CharacterWalkSpeed
-			r.AssemblyLinearVelocity = Vector3.zero
-			r.AssemblyAngularVelocity = Vector3.zero
-			r.CFrame = context.Config.kickZoneCharacterPose(
-				context.arenaFor(player),
-				r,
-				hum,
-				context.Config.KickZoneStandFromFront
-			)
+			-- CharacterSpawn owns placement, before the client checks its floor.
 		end
 		local s = context.states[player]
 		if s then

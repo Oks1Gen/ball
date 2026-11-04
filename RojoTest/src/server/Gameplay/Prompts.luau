@@ -6,11 +6,14 @@
 -- must never raise, or the whole server would start without a single session.
 local Prompts = {}
 local WorldRefs = require(game.ReplicatedStorage.Shared.WorldRefs)
+local BallPurchases = require(game.ReplicatedStorage.Shared.BallPurchases)
+local Tutorial = require(game.ReplicatedStorage.Shared.Core.Tutorial)
 
 export type Context = {
 	states: { [Player]: any },
 	Config: any,
 	effect: RemoteEvent,
+	kickTiming: any,
 	publish: (Player, string?) -> (),
 	stopTraining: (Player, boolean?) -> (),
 	arenaFor: (Player) -> any,
@@ -18,6 +21,30 @@ export type Context = {
 }
 
 function Prompts.install(context: Context, map: any)
+	-- The stand buys or equips on the spot. A new ball gets the unlock reveal
+	-- instead of a text notice; the price check stays in BallPurchases.
+	local function buyBall(player: Player, id: any)
+		local s = context.states[player]
+		if type(id) ~= "string" then
+			return
+		end
+		if os.clock() < s.busyUntil then
+			context.publish(player, "Wait for your throw to finish")
+			return
+		end
+		context.kickTiming.cancel(player)
+		local owned = s.data.stones[id] == true
+		local success, message = BallPurchases.buyOrEquip(s.data, id)
+		if success then
+			Tutorial.ball(s.data, id)
+		end
+		if success and not owned then
+			context.publish(player)
+			context.effect:FireClient(player, "BallUnlocked", id)
+		else
+			context.publish(player, message)
+		end
+	end
 	for _, arena in { map } do
 		local label = "World1"
 		local scenery = WorldRefs.eggs(arena)
@@ -49,7 +76,7 @@ function Prompts.install(context: Context, map: any)
 						if context.states[player] and context.arenaFor(player) == arena then
 							local root = context.rootFor(player)
 							if root and (root.Position - p.Parent.Position).Magnitude <= 15 then
-								context.effect:FireClient(player, "OpenBall", p:GetAttribute("BallId"))
+								buyBall(player, p:GetAttribute("BallId"))
 							end
 						end
 					end)

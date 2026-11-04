@@ -3,9 +3,6 @@
 -- buttons (E for one egg, R for three). Only one egg shows at a time; the
 -- panel takes the place of that egg's sign and pops like the other windows.
 -- The egg prompts are switched off on this client: the panel replaces them.
--- The look follows the user's reference: a dark glass plate, the egg name in
--- its colour, rarity tiles with rays and the pet picture, big key buttons
--- under the plate and the price under the buttons.
 local React = require(game.ReplicatedStorage.Packages.React)
 local ReactRoblox = require(game.ReplicatedStorage.Packages.ReactRoblox)
 local Config = require(game.ReplicatedStorage.Shared.GameConfig)
@@ -50,17 +47,12 @@ local ADMIN = "AdminEgg"
 local ENTER, LEAVE = 14, 17
 -- A neighbour takes the panel over only when it is clearly closer.
 local SWITCH = 1.5
+local PANEL_WIDTH_STUDS = 8
 local SIGN_HALF = 2.1 -- half the height of an egg sign
 local CARD, GAP, PAD, TOP, COLUMNS = 108, 10, 14, 38, 3
 local BUTTON_H, PRICE_H = 84, 42
-local GLASS = C(24, 26, 34)
 local LAVA = C(255, 112, 38)
 local MARGIN = 48 -- room around the content for the title and the button motion
--- HUD design pixels the panel keeps clear of: Auto Kick under the topbar, the menu
--- buttons on the left, the offers on the right and the level bar at the bottom.
-local CLEAR_TOP, CLEAR_LEFT, CLEAR_RIGHT, CLEAR_BOTTOM = 90, 175, 200, 225
-local SCALE = 0.85 -- of the HUD design scale: the egg itself stays partly in view
-
 local PLATE_W = COLUMNS * CARD + (COLUMNS - 1) * GAP + PAD * 2
 local function plateHeight(id: string): number
 	local rows = if id == ADMIN then 1 else math.ceil(#Config.eggPets(id) / COLUMNS)
@@ -316,37 +308,30 @@ local function Panel(p: PanelProps)
 		Size = UDim2.fromOffset(PLATE_W, size(id).Y),
 		ZIndex = 2,
 	}, {
-		Plate = e("Frame", {
+		Plate = e(U.Surface, {
 			Name = "EggPreviewPlate",
-			BackgroundColor3 = GLASS,
-			-- Dark enough that the HUD behind it does not read through the tiles.
-			BackgroundTransparency = 0.18,
-			BorderSizePixel = 0,
+			Color = T.Body,
+			Radius = T.PanelRadius,
+			Outline = T.WindowStroke,
 			Size = UDim2.fromOffset(PLATE_W, plateH),
 			ZIndex = 2,
-		}, {
-			Corner = U.corner(18),
-			Edge = e("UIStroke", {
-				Color = T.Outline,
-				Thickness = 3,
-				Transparency = 0.25,
-				ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
-			}),
-			Title = outlined({
-				Name = "Title",
-				Text = title,
-				Position = UDim2.fromOffset(0, -32),
-				Size = UDim2.fromOffset(PLATE_W, 60),
-				TextSize = 50,
-				TextColor3 = titleColor,
-				ZIndex = 40,
-			}, 4),
-			Tiles = e("Frame", {
-				Name = "Tiles",
-				BackgroundTransparency = 1,
-				Size = UDim2.fromScale(1, 1),
-				ZIndex = 10,
-			}, tiles),
+			Children = {
+				Title = outlined({
+					Name = "Title",
+					Text = title,
+					Position = UDim2.fromOffset(0, -32),
+					Size = UDim2.fromOffset(PLATE_W, 60),
+					TextSize = 42,
+					TextColor3 = titleColor,
+					ZIndex = 40,
+				}, 4),
+				Tiles = e("Frame", {
+					Name = "Tiles",
+					BackgroundTransparency = 1,
+					Size = UDim2.fromScale(1, 1),
+					ZIndex = 10,
+				}, tiles),
+			},
 		}),
 		Hatch = buttons.Hatch,
 		Multi = buttons.Multi,
@@ -564,30 +549,24 @@ function Preview.mount(context: Context): Handle
 
 	local function place(station: Station)
 		local camera = workspace.CurrentCamera
-		local area = Insets.area(camera.ViewportSize, probe)
-		local hud = math.max(0.05, math.min(area.size.X / 1280, area.size.Y / 720))
-		local scale = hud * SCALE
-		fit.Scale = scale
-		local content = size(station.id)
-		group.Size =
-			UDim2.fromOffset(math.round((content.X + MARGIN * 2) * scale), math.round((content.Y + MARGIN * 2) * scale))
-		local sign = station.sign
-		local adornee = sign and sign.Adornee
+		local adornee = station.sign and station.sign.Adornee
 		local anchor = if adornee and adornee:IsA("BasePart")
 			then adornee.Position - Vector3.new(0, SIGN_HALF, 0)
 			else station.position + Vector3.new(0, 8, 0)
 		local point = camera:WorldToViewportPoint(anchor)
-		group.Visible = point.Z > 0
-		local halfW = content.X * scale / 2
-		-- An egg off to the side keeps its panel in the free middle of the HUD.
-		local left = area.offset.X + CLEAR_LEFT * hud + halfW
-		local right = area.offset.X + area.size.X - CLEAR_RIGHT * hud - halfW
-		-- The title stands half above the plate.
-		local top = area.offset.Y + CLEAR_TOP * hud + (content.Y + 32) * scale
-		local bottom = area.offset.Y + area.size.Y - CLEAR_BOTTOM * hud
-		local x = math.clamp(point.X, left, math.max(left, right))
-		local y = math.clamp(point.Y - 4 * scale, top, math.max(top, bottom))
-		group.Position = UDim2.fromOffset(math.round(x), math.round(y + MARGIN * scale))
+		group.Visible = point.Z > 0.5
+		if not group.Visible then
+			return
+		end
+
+		-- Project a fixed width at the egg's depth. Keep the controls in
+		-- PlayerGui so their clicks and existing button motion work as usual.
+		local edge = camera:WorldToViewportPoint(anchor + camera.CFrame.RightVector * PANEL_WIDTH_STUDS)
+		local scale = (edge.X - point.X) / PLATE_W
+		fit.Scale = scale
+		local content = size(station.id)
+		group.Size = UDim2.fromOffset((content.X + MARGIN * 2) * scale, (content.Y + MARGIN * 2) * scale)
+		group.Position = UDim2.fromOffset(point.X, point.Y + MARGIN * scale)
 	end
 
 	return {

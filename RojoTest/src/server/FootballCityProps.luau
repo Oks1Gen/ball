@@ -2,6 +2,7 @@
 -- Native plastic architecture. Every returned Model owns all of its details.
 local Props = {}
 local Palette = require(script.Parent.LobbyPalette)
+local Scale = require(game.ReplicatedStorage.Shared.WorldScale)
 local V, C = Vector3.new, Color3.fromRGB
 local WHITE, DARK = C(245, 246, 235), C(67, 93, 121)
 local SMOOTH = {
@@ -21,14 +22,15 @@ local SMOOTH = {
 	CargoLogo = true,
 }
 
-local function studs(p: BasePart, face: Enum.NormalId)
+-- `tile`: Palette.StudsPerTile was measured in the 0.8 scene and follows the world scale.
+local function studs(p: BasePart, face: Enum.NormalId, tile: number)
 	local t = Instance.new("Texture")
 	t.Name, t.Texture, t.Face = "CityStuds", Palette.Studs, face
-	t.StudsPerTileU, t.StudsPerTileV = Palette.StudsPerTile, Palette.StudsPerTile
+	t.StudsPerTileU, t.StudsPerTileV = tile, tile
 	t.Transparency = Palette.StudsTransparency
 	if face == Enum.NormalId.Top then
-		t.OffsetStudsU = (p.Position.X - p.Size.X / 2) % Palette.StudsPerTile
-		t.OffsetStudsV = (p.Position.Z - p.Size.Z / 2) % Palette.StudsPerTile
+		t.OffsetStudsU = (p.Position.X - p.Size.X / 2) % tile
+		t.OffsetStudsV = (p.Position.Z - p.Size.Z / 2) % tile
 	end
 	t.Parent = p
 end
@@ -38,6 +40,7 @@ function Props.context(field: BasePart, k: number): any
 	local ctx: any = {}
 	ctx.frame, ctx.scale = frame, k
 	ctx.length = field.Size.Z / (270 * k)
+	local tile = Palette.StudsPerTile * k / Scale.Measured
 	function ctx.ground(x: number): number
 		return if math.abs(x) < 78 then 3.74 else 8.74
 	end
@@ -64,10 +67,10 @@ function Props.context(field: BasePart, k: number): any
 		p.CastShadow = size.Y > 2 and size.X > 1 and size.Z > 1
 		if not SMOOTH[name] and math.min(size.X, size.Y, size.Z) >= 0.7 then
 			for _, face in Enum.NormalId:GetEnumItems() do
-				studs(p, face)
+				studs(p, face, tile)
 			end
 		elseif name == "CheckerTile" or name == "PavingBase" then
-			studs(p, Enum.NormalId.Top)
+			studs(p, Enum.NormalId.Top, tile)
 		end
 		p.Parent = parent
 		return p

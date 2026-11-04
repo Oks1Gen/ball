@@ -20,6 +20,11 @@ local NAMES = {
 }
 local HEIGHTS = { 27, 32, 39, 52, 60, 70, 44, 56 }
 
+-- A restyled zone (CourseVoxelStyle) keeps its own landmark under the same signature.
+function Landmarks.signature(field: BasePart): string
+	return tostring(field.CFrame) .. tostring(field.Size) .. ":" .. VERSION
+end
+
 function Landmarks.apply(world: Instance): number
 	local course = Refs.course(world)
 	local k = Scale.factor(world)
@@ -28,7 +33,7 @@ function Landmarks.apply(world: Instance): number
 		local zone = course.Zones[string.format("Zone%02d", index)]
 		local city = zone.Environment.Cityscape
 		local field = Refs.field(world, index)
-		local signature = tostring(field.CFrame) .. tostring(field.Size) .. ":" .. VERSION
+		local signature = Landmarks.signature(field)
 		local old = city:FindFirstChild(NAMES[index])
 		if old and old:GetAttribute("LandmarkSignature") == signature then
 			continue

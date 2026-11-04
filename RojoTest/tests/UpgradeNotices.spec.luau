@@ -89,6 +89,34 @@ return {
 		state:update(info, config)
 		assert(state:step(0, false).kind == "Rebirth")
 	end,
+	["an alert shown in an earlier session never returns, a stronger one still does"] = function()
+		local info = snapshot()
+		info.data.wins = 2500
+		info.rebirthReady = true
+		local reported = {}
+		local first = Notices.new()
+		first.onAnnounce = function(kind: string, rank: number)
+			reported[kind] = rank
+		end
+		first:update(info, config)
+		assert(first:step(0, false).kind == "Rebirth" and reported.Rebirth == 1)
+		info.data.notices.Rebirth = reported.Rebirth
+		info.data.notices.Ball = 10
+		info.data.notices.Trail = 2
+		local rejoined = Notices.new()
+		rejoined:update(info, config)
+		assert(rejoined:step(20, false) == nil)
+		info.data.rebirths = 1
+		rejoined:update(info, config)
+		assert(rejoined:step(20, false).kind == "Rebirth")
+		local catalog = { stones = { Pebble = true }, trails = { None = true }, pets = {} }
+		info.data.notices.Ball = 0 / 0
+		local loaded = Data.normalize(info.data, catalog)
+		assert(loaded.notices.Rebirth == 1 and loaded.notices.Ball == 0 and loaded.notices.Trail == 2)
+		assert(Net.validAction("NoticeSeen", "Ball", 1.15))
+		assert(not Net.validAction("NoticeSeen", "Pets", 1))
+		assert(not Net.validAction("NoticeSeen", "Ball", -1))
+	end,
 	["disabling alerts clears a live notice and the boolean survives normalization"] = function()
 		local info = snapshot()
 		assert(info.data.settings.upgradeNotices == true)

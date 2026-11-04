@@ -102,6 +102,8 @@ Coordinates below are local to `GameConfig.arenaFrame(ProgressionMap)`:
 - The rear hall has a U arrangement of four boards. The original three ranking
   categories still work; `ReservedFourthBoard` is a clearly marked placeholder.
   Robux/donation metrics are deferred at the user's request.
+  (Historical: since 2026-11-04 the fourth board is the live `donated` Robux
+  ranking; see `docs/leaderboards.md`.)
 
 `BallStand.luau` now derives purchase positions from each display tile's facing
 and disables detached duplicate labels without deleting them. Its normal startup

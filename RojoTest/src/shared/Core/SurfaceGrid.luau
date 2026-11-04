@@ -108,4 +108,40 @@ function Grid.merge(cells: { Cell }): { Rect }
 	return rectangles
 end
 
+-- Complete coarse squares plus disjoint, whole-stud boundary strips.
+function Grid.partition(
+	rectangles: { Rect },
+	cell: number,
+	pitch: number,
+	originU: number,
+	originV: number
+): ({ Cell }, { Rect })
+	local ratio = math.round(cell / pitch)
+	assert(pitch > 0 and ratio > 0 and math.abs(cell / pitch - ratio) < 0.00001, "Checker must contain whole studs")
+	local union = Grid.union(rectangles)
+	local fine = Grid.wholeCells(union, pitch, originU, originV)
+	local area, perimeter = 0, 0
+	for _, r in union do
+		area += (r[2] - r[1]) * (r[4] - r[3])
+		perimeter += (r[2] - r[1]) + (r[4] - r[3])
+	end
+	assert(math.abs(area - #fine * pitch * pitch) <= perimeter * 0.0001, "Surface boundary leaves a partial stud strip")
+	local checker = Grid.wholeCells(union, cell, originU, originV)
+	local occupied = {}
+	for _, c in checker do
+		for du = 0, ratio - 1 do
+			for dv = 0, ratio - 1 do
+				occupied[(c.u * ratio + du) .. ":" .. (c.v * ratio + dv)] = true
+			end
+		end
+	end
+	local edge = {}
+	for _, c in fine do
+		if not occupied[c.u .. ":" .. c.v] then
+			table.insert(edge, c)
+		end
+	end
+	return checker, Grid.merge(edge)
+end
+
 return Grid

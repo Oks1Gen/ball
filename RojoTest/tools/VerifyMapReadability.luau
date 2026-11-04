@@ -104,11 +104,11 @@ for _, lane in Refs.training(world):GetChildren() do
 	end
 end
 
-local placeholder = Refs.rankings(world).ReservedFourthBoard
-assert(not placeholder.Panel.RankingGui:FindFirstChild("ComingSoon"), "Coming Soon change was not reverted")
-assert(placeholder.Panel.RankingGui.Row1.Visible, "Original donation board rows were not restored")
-assert(placeholder.CartoonTrim.Header.HeaderGui.Title.Text == "ДОНАТ", "Original donation title missing")
-assert(placeholder.CartoonTrim.Badge.BadgeGui.Enabled, "Original donation icon missing")
+-- The fourth stand is the live Robux ranking (docs/leaderboards.md).
+local donation = Refs.rankings(world).donated
+assert(donation.Panel.RankingGui.Row1.Visible, "Donation board rows missing")
+assert(donation.HeaderSurface.HeaderGui.Band.Title.Text == "ДОНАТ", "Donation title missing")
+assert(donation.HeaderSurface.HeaderGui.Band.CategoryIcon.Image ~= "", "Donation icon missing")
 
 if game:GetService("RunService"):IsRunning() and game:GetService("RunService"):IsClient() then
 	local liveCamera = workspace.CurrentCamera

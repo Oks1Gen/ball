@@ -232,7 +232,7 @@ function Guide.mount(context: any)
 					key = "Ball"
 					local ballName = Config.find(Config.Stones, "Smooth").name
 					title.Text = if d.stones.Smooth
-						then "Open Balls and select " .. ballName .. " to continue"
+						then "Equip " .. ballName .. " at the ball stand to continue"
 						else "Buy " .. ballName .. " for " .. Config.format(cost) .. " Wins to train faster"
 					if panel == "Inventory" then
 						key = ""

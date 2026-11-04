@@ -1,6 +1,9 @@
 --!strict
 local Refs = require(game.ReplicatedStorage.Shared.WorldRefs)
+local Scale = require(game.ReplicatedStorage.Shared.WorldScale)
 local Style = {}
+-- Egg height and seat clearance, measured in the 0.8 scene; both follow the world scale.
+local HEIGHT, GAP = 10, 0.08
 local ENTRIES = {
 	{ model = "Egg_Common", slot = "Common", theme = "Meadow" },
 	{ model = "Egg_Uncommon", slot = "Uncommon", theme = "Glacier" },
@@ -20,6 +23,8 @@ function Style.apply(world: Instance): number
 	local templates = (eggs and eggs:FindFirstChild("Elemental")) or storage:FindFirstChild("ElementalEggTemplates")
 	assert(templates, "Missing elemental egg templates")
 	local stand = assert(shop:FindFirstChild("EggStand"))
+	local s = Scale.relative(world)
+	local height, gap = HEIGHT * s, GAP * s
 	for _, entry in ENTRIES do
 		assert(templates:FindFirstChild(entry.theme), "Missing elemental theme")
 		assert(shop:FindFirstChild(entry.model), "Missing egg stand")
@@ -61,18 +66,18 @@ function Style.apply(world: Instance): number
 		local seat = slot:FindFirstChild("SeatCenter") :: BasePart
 		local anchor = egg:FindFirstChild(if premium then "InteractionAnchor" else "EggShell") :: BasePart
 		local _, size = visual:GetBoundingBox()
-		if math.abs(size.Y - 10) > 0.0001 then
-			visual:ScaleTo(visual:GetScale() * 10 / size.Y)
+		if math.abs(size.Y - height) > 0.0001 then
+			visual:ScaleTo(visual:GetScale() * height / size.Y)
 		end
 		visual:PivotTo(
-			CFrame.new(seat.Position + Vector3.new(0, 0.08, 0)) * anchor.CFrame.Rotation * CFrame.Angles(0, math.pi, 0)
+			CFrame.new(seat.Position + Vector3.new(0, gap, 0)) * anchor.CFrame.Rotation * CFrame.Angles(0, math.pi, 0)
 		)
 		local cf, bounds = visual:GetBoundingBox()
 		visual:PivotTo(
 			visual:GetPivot()
 				+ Vector3.new(
 					seat.Position.X - cf.X,
-					seat.Position.Y + 0.08 - cf.Y + bounds.Y / 2,
+					seat.Position.Y + gap - cf.Y + bounds.Y / 2,
 					seat.Position.Z - cf.Z
 				)
 		)
@@ -86,6 +91,11 @@ function Style.apply(world: Instance): number
 			end
 		end
 		egg:SetAttribute("ElementalEggTheme", entry.theme)
+		local caption = egg:FindFirstChild("EggSignAnchor", true)
+		if caption and caption:IsA("BasePart") then
+			caption.Position = seat.Position + Vector3.new(0, gap + height + 2.5 * s, 0)
+		end
+		visual:AddTag("FloatingDisplayEgg")
 	end
 	return #ENTRIES
 end

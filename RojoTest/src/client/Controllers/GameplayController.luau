@@ -33,6 +33,7 @@ function Controller:Start()
 	local TrainingBoost = require(clientRoot.Controllers:WaitForChild("TrainingBoost"))
 	local BallHolder = require(clientRoot.Controllers:WaitForChild("BallHolder"))
 	local WorldVisuals = require(clientRoot.Controllers:WaitForChild("WorldVisuals"))
+	local EggDisplay = require(clientRoot.Controllers:WaitForChild("EggDisplay"))
 	task.spawn(function()
 		require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("VolcanicEggVisual")).start()
 	end)
@@ -109,6 +110,9 @@ function Controller:Start()
 	local effectsFolder = Instance.new("Folder")
 	effectsFolder.Name = "SkippingClientEffects"
 	effectsFolder.Parent = workspace
+	EggDisplay.mount(effectsFolder, function()
+		return latest == nil or latest.data.settings.effects ~= false
+	end)
 
 	local hudRefs = HudBuilder.build({
 		canvas = canvas,
@@ -395,6 +399,12 @@ function Controller:Start()
 
 	local upgradeNotices = UpgradeNotices.mount({
 		parent = player:WaitForChild("PlayerGui"),
+		send = send,
+		-- Absolute Y of the Auto Kick bottom: the top cluster stacks under it.
+		top = function(): number
+			local auto = hudRefs.auto
+			return auto.AbsolutePosition.Y + auto.AbsoluteSize.Y
+		end,
 		blocked = function()
 			return currentPanel ~= nil
 				or flight ~= nil
@@ -442,12 +452,23 @@ function Controller:Start()
 			return flight ~= nil or player:GetAttribute("MapIntroActive") == true
 		end,
 	})
+	local reveal = require(clientRoot.Controllers.UnlockReveal).mount({
+		player = player,
+		reduced = function()
+			return latest ~= nil and latest.data.settings.effects == false
+		end,
+		playSound = effects.playSound,
+	})
 	notifications = require(clientRoot.Controllers.Notifications).mount({
 		parent = player:WaitForChild("PlayerGui"),
 		snapshot = function()
 			return latest
 		end,
 		playSound = effects.playSound,
+		anchor = function(): Vector2
+			local auto = hudRefs.auto
+			return Vector2.new(auto.AbsolutePosition.X + auto.AbsoluteSize.X / 2, upgradeNotices.bottom())
+		end,
 	})
 	local followers = PetFollowers.mount({
 		effectsFolder = effectsFolder,
@@ -681,12 +702,17 @@ function Controller:Start()
 			end)
 		elseif kind == "Open" then
 			openPanel(info)
-		elseif kind == "OpenBall" then
-			openCollector("Inventory", "Inventory", info)
+		elseif kind == "BallUnlocked" and type(info) == "string" then
+			reveal.show(info)
 		elseif kind == "Rebirth" then
-			notice("REBIRTH! Your skill multiplier increased!", "Success")
 			closePanel()
 			levelUp.rebirth()
+			local count = type(info) == "table" and info.rebirths
+			if type(count) == "number" then
+				reveal.rebirth(count)
+			else
+				notice("REBIRTH! Your skill multiplier increased!", "Success")
+			end
 		elseif kind == "AdminResetView" or kind == "ShotCancelled" then
 			kickTiming.cancel()
 			if flight then
@@ -716,6 +742,7 @@ function Controller:Start()
 		topbar.setAdmin(info.isAdmin == true)
 		collectorUI:update(info)
 		collectorUI:setHidden(flight ~= nil)
+		reveal.update(info)
 		local d = info.data
 		gui:SetAttribute("ReducedMotion", d.settings.effects == false)
 		upgradeNotices.update(info)
@@ -797,6 +824,8 @@ function Controller:Start()
 	RunService.RenderStepped:Connect(function(dt: number)
 		local now = os.clock()
 		upgradeNotices.frame(dt)
+		notifications.frame(dt)
+		-- Welcome Back opens only when an hour-long break left Skill to claim.
 		if
 			not welcomeShown
 			and latest
@@ -806,7 +835,7 @@ function Controller:Start()
 			and not flight
 		then
 			welcomeShown = true
-			if not latest.welcome.claimed then
+			if not latest.welcome.claimed and (latest.welcome.skill or 0) > 0 then
 				panels.open("Offline")
 			end
 		end

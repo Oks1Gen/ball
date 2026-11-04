@@ -21,6 +21,9 @@ local paletteSource = sourceRoot.LobbyPalette:Clone()
 paletteSource.Parent = sourceRoot
 local Palette = require(paletteSource)
 paletteSource:Destroy()
+local PITCH = Palette.GroundStudPitch * k
+local CELL, TILE = Palette.PathCell * k, PITCH * Palette.StudsPerTexture
+local KICK_CELL = Palette.KickZoneCell * k
 local lanes = refs.training(world)
 local apron = refs.kickZoneFloor(world)
 local spawn = refs.spawn(world)
@@ -63,15 +66,15 @@ for _, group in paths:GetChildren() do
 				assert(not p.CanCollide and not p.CanTouch and not p.CanQuery, "Paving affects physics")
 				assert(math.abs(p.Position.Y + p.Size.Y / 2 - height) < 0.001, "Uneven paving level")
 				for _, length in { p.Size.X, p.Size.Z } do
-					assert(math.abs(length / 1.6 - math.round(length / 1.6)) < 0.001, "Partial stud row")
+					assert(math.abs(length / PITCH - math.round(length / PITCH)) < 0.001, "Partial stud row")
 				end
 				local bounds = rect(p)
 				for _, edge in { bounds[1] - gridBounds[1], bounds[3] - gridBounds[3] } do
-					assert(math.abs(edge / 1.6 - math.round(edge / 1.6)) < 0.001, "Shifted stud lattice")
+					assert(math.abs(edge / PITCH - math.round(edge / PITCH)) < 0.001, "Shifted stud lattice")
 				end
 				if p:GetAttribute("CheckerCell") then
 					assert(
-						math.abs(p.Size.X - 6.4) < 0.001 and math.abs(p.Size.Z - 6.4) < 0.001,
+						math.abs(p.Size.X - CELL) < 0.001 and math.abs(p.Size.Z - CELL) < 0.001,
 						"Clipped checker square"
 					)
 					checkerCount += 1
@@ -82,7 +85,7 @@ for _, group in paths:GetChildren() do
 				assert(
 					texture
 						and texture.StudsPerTileU == texture.StudsPerTileV
-						and math.abs(texture.StudsPerTileU - 6.4) < 0.001,
+						and math.abs(texture.StudsPerTileU - TILE) < 0.001,
 					"Stretched studs"
 				)
 				assert(texture.OffsetStudsU == 0 and texture.OffsetStudsV == 0, "Cut stud phase")
@@ -199,14 +202,22 @@ local ok, result = pcall(function()
 	)
 	-- Centre lines: hub to the kick zone, training, ball stand and north plaza.
 	local cx, cz = (h[1] + h[2]) / 2, (h[3] + h[4]) / 2
+	local standCentre = refs.balls(world).Structure.LowerTier.Position.Z
+	local ballPath, ballCourt = rect(paths.BallShopPath), rect(paths.BallCourt)
+	assert(math.abs(cz - standCentre) < 0.001, "Hub is not centred on the ball stand")
+	assert(math.abs((ballPath[3] + ballPath[4]) / 2 - standCentre) < 0.001, "Ball approach misses stand centre")
+	assert(math.abs((ballCourt[3] + ballCourt[4]) / 2 - standCentre) < 0.001, "Ball court has uneven end margins")
 	local apronEdge = apron.Position.Z + apron.Size.Z / 2
 	-- The path ends at the outer face of the closed kick zone curb, never on top of it.
 	local curbFace = apronEdge + curbWidth
 	local kickPath = rect(paths.KickZonePath)
-	assert(kickPath[3] <= curbFace and curbFace - kickPath[3] < 1.6, "Threshold must tuck below the orange curb")
+	assert(kickPath[3] <= curbFace and curbFace - kickPath[3] < PITCH, "Threshold must tuck below the orange curb")
 	for _, part in paths.KickZonePath:GetDescendants() do
 		if part:IsA("BasePart") then
-			assert(part.Position.Z - part.Size.Z / 2 > curbFace - 1.61, "Path part runs into the kick zone curb")
+			assert(
+				part.Position.Z - part.Size.Z / 2 > curbFace - PITCH - 0.01,
+				"Path part runs into the kick zone curb"
+			)
 		end
 	end
 	for z = curbFace + 0.5, cz, 1 do
@@ -252,7 +263,7 @@ local ok, result = pcall(function()
 							}
 						do
 							local point = copy.Origin.CFrame:PointToObjectSpace(p.CFrame:PointToWorldSpace(half * q))
-							assert(math.abs(point.X) < 6.4, "Arrow leaves road sideways")
+							assert(math.abs(point.X) < CELL, "Arrow leaves road sideways")
 							assert(-point.Z >= -0.01 and -point.Z <= length + 0.01, "Arrow clipped at endpoint")
 						end
 					end
@@ -312,7 +323,7 @@ local ok, result = pcall(function()
 		boardFront = math.min(boardFront, z0)
 	end
 	assert(
-		plaza[4] >= boardFront and plaza[4] - boardFront < 6.4,
+		plaza[4] >= boardFront and plaza[4] - boardFront < CELL,
 		"Full-cell plaza must reach below the leaderboard bases"
 	)
 	for _, egg in refs.eggs(world):GetChildren() do
@@ -404,7 +415,7 @@ local ok, result = pcall(function()
 		assert(math.abs(tile.Position.Y + tile.Size.Y / 2 - apronTop - 0.04) < 0.001, "Uneven Kick Zone panel")
 		local t = assert(tile:FindFirstChild("KickZoneStuds"))
 		assert(
-			math.abs(t.StudsPerTileU - 6.4) < 0.001 and math.abs(t.StudsPerTileV - 6.4) < 0.001,
+			math.abs(t.StudsPerTileU - TILE) < 0.001 and math.abs(t.StudsPerTileV - TILE) < 0.001,
 			"Wrong Kick Zone stud scale"
 		)
 		assert(t.OffsetStudsU == 0 and t.OffsetStudsV == 0, "Cut Kick Zone stud phase")
@@ -415,16 +426,16 @@ local ok, result = pcall(function()
 			"Panel extends past active floor"
 		)
 		for _, edgeLength in { tile.Size.X, tile.Size.Z } do
-			assert(math.abs(edgeLength / 1.6 - math.round(edgeLength / 1.6)) < 0.001, "Partial Kick Zone stud row")
+			assert(math.abs(edgeLength / PITCH - math.round(edgeLength / PITCH)) < 0.001, "Partial Kick Zone stud row")
 		end
 		if tile.Name == "EdgeCurb" then
 			assert(tile.Color == Palette.KickZoneEdge, "Curb colour")
-			assert(math.abs(math.min(tile.Size.X, tile.Size.Z) - 1.6) < 0.001, "Rim cannot fit one stud")
+			assert(math.abs(math.min(tile.Size.X, tile.Size.Z) - PITCH) < 0.001, "Rim cannot fit one stud")
 			curbs += 1
 		else
 			assert(tile.Name == "CheckerTile", "Unexpected Kick Zone layer")
 			assert(
-				math.abs(tile.Size.X - 3.2) < 0.001 and math.abs(tile.Size.Z - 3.2) < 0.001,
+				math.abs(tile.Size.X - KICK_CELL) < 0.001 and math.abs(tile.Size.Z - KICK_CELL) < 0.001,
 				"Clipped Kick Zone cell"
 			)
 			local x, z = tile:GetAttribute("GridX"), tile:GetAttribute("GridZ")

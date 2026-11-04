@@ -4,8 +4,11 @@ local ReplicatedFirst = game:GetService("ReplicatedFirst")
 local StarterGui = game:GetService("StarterGui")
 local ContextActionService = game:GetService("ContextActionService")
 local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
 local LoadingConfig = require(script.Config)
 local player = Players.LocalPlayer
+local SpawnReadiness = require(script.SpawnReadiness)
+task.spawn(SpawnReadiness.start)
 player:SetAttribute("MapIntroActive", true)
 
 local playerGui = player:WaitForChild("PlayerGui")
@@ -78,6 +81,7 @@ ContextActionService:BindActionAtPriority(
 	Enum.PlayerActions.CharacterJump
 )
 
+local skipRequested = false
 local function cleanup()
 	if finished then
 		return
@@ -104,53 +108,88 @@ local function cleanup()
 	-- Welcome Back / Daily continue to use this lifecycle signal.
 	player:SetAttribute("MapIntroActive", false)
 end
-table.insert(connections, cover.Activated:Connect(cleanup))
+local function closeWhenReady()
+	while not finished and not SpawnReadiness.isReady() do
+		RunService.Heartbeat:Wait()
+	end
+	cleanup()
+end
+
+table.insert(
+	connections,
+	UserInputService.InputBegan:Connect(function(input)
+		local kind = input.UserInputType
+		if skipRequested or (kind ~= Enum.UserInputType.MouseButton1 and kind ~= Enum.UserInputType.Touch) then
+			return
+		end
+		skipRequested = true
+		if view and not SpawnReadiness.isReady() then
+			view.waiting(true)
+		end
+		task.spawn(closeWhenReady)
+	end)
+)
 
 local completion = table.pack(xpcall(function()
 	local View = require(script.View)
 	local Preloader = require(script.AssetPreloader)
 	local Config = require(script.Config)
 	local function cancelled(): boolean
-		return finished
+		return finished or skipRequested
 	end
 	local packages = Preloader.waitFor(game:GetService("ReplicatedStorage"), "Packages", cancelled)
 	if not packages then
 		return
 	end
-	view = View.mount(screen, cleanup)
+	view = View.mount(screen)
 	if finished then
 		view.destroy()
 		return
 	end
 	cover.BackgroundTransparency = 1
-	while not game:IsLoaded() and not finished do
+	if skipRequested then
+		view.waiting(true)
+	end
+	while not game:IsLoaded() and not cancelled() do
 		RunService.Heartbeat:Wait()
 	end
-	if finished then
+	if cancelled() then
 		return
 	end
 	local entries = Preloader.collect(player, Config.Icon, cancelled)
-	if finished then
+	if cancelled() then
 		Preloader.destroy(entries)
 		return
 	end
 	local result = Preloader.load(entries, cancelled, function(loaded: number, total: number, failed: number)
-		if not finished then
+		if not cancelled() then
 			view.update(loaded, total, failed)
 		end
 	end)
-	if finished then
+	if cancelled() then
 		return
 	end
 	if result.failed > 0 or result.pending > 0 then
 		warn(string.format("[Loading] %d loaded, %d failed, %d pending", result.loaded, result.failed, result.pending))
+	end
+	-- The screen also waits for the avatar to stand on its real floor.
+	if not SpawnReadiness.isReady() then
+		view.waiting()
+		while not SpawnReadiness.isReady() and not cancelled() do
+			RunService.Heartbeat:Wait()
+		end
+	end
+	if cancelled() then
+		return
 	end
 	-- Only the completed screen fades; progress never advances on a timer.
 	view.finish()
 	task.wait(Config.FadeTime)
 end, debug.traceback))
 local ok, failure = completion[1], completion[2]
-cleanup()
+if not skipRequested then
+	closeWhenReady()
+end
 if not ok then
 	warn("Loading screen ended safely: " .. tostring(failure))
 end

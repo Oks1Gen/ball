@@ -55,7 +55,11 @@ function Audit.run(): any
 						table.insert(parts, { part = p, owner = object, e = extent(p) })
 					end
 				end
-				if object.Name == "TeamBench" or object.Name == "Floodlight" or object.Name == "Scoreboard" then
+				-- Voxel zones stand furniture on their own levels (tools/VerifyCourseVoxel.luau).
+				if
+					not zone:GetAttribute("VoxelStyleVersion")
+					and (object.Name == "TeamBench" or object.Name == "Floodlight" or object.Name == "Scoreboard")
+				then
 					local bottom, x = math.huge, 0
 					for _, p in object:GetDescendants() do
 						if p:IsA("BasePart") then

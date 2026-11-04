@@ -8,6 +8,7 @@ for _, name in { "LobbyPalette", "LobbyWallCoverage" } do
 end
 local plan = require(modules.LobbyWallCoverage).plan(world)
 modules:Destroy()
+local studArea = plan.pitch * plan.pitch
 local temporary = Instance.new("Folder")
 temporary.Name = "WallAuditQuery"
 local params = RaycastParams.new()
@@ -47,7 +48,7 @@ local ok, result = pcall(function()
 		for _, cell in surface.cells do
 			expected[cell.u .. ":" .. cell.v] = true
 		end
-		local covered = 0
+		local covered, edgeStuds = 0, 0
 		for _, p in group:GetChildren() do
 			local a, b = component(p.Size, surface.u), component(p.Size, surface.v)
 			local u0, v0 = component(p.Position, surface.u) - a / 2, component(p.Position, surface.v) - b / 2
@@ -64,12 +65,14 @@ local ok, result = pcall(function()
 				string.format("Cell crosses boundary: %s area %.9f expected %.9f", p:GetFullName(), area, a * b)
 			)
 			if surface.cap then
-				covered += math.round(a * b / (1.6 * 1.6))
-			else
+				covered += math.round(a * b / studArea)
+			elseif p.Name == "WallCell" then
 				local id = p:GetAttribute("GridU") .. ":" .. p:GetAttribute("GridV")
 				assert(expected[id], "Unexpected/repeated cell")
 				expected[id] = nil
 				cells += 1
+			else
+				edgeStuds += math.round(a * b / studArea)
 			end
 			local normal = Vector3.FromNormalId(p.WallStuds.Face)
 			local hit = workspace:Raycast(p.Position + normal * 0.2, -normal * 0.5, params)
@@ -86,6 +89,11 @@ local ok, result = pcall(function()
 			assert(covered == #surface.cells, "Incomplete cap")
 		else
 			assert(next(expected) == nil, "Missing complete checker cells")
+			local expectedEdge = 0
+			for _, r in surface.edges do
+				expectedEdge += (r[2] - r[1]) * (r[4] - r[3])
+			end
+			assert(edgeStuds == expectedEdge, "Missing complete stud rows at wall edges")
 		end
 	end
 	return { cells = cells, backingProbes = probes, faces = faces, sources = #plan.sources }

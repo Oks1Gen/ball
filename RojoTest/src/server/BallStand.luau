@@ -8,13 +8,15 @@ local Tags = game:GetService("CollectionService")
 local Signs = require(script.Parent.BallStandSigns)
 local Stand = {}
 local DISPLAY_FILL = 0.405
--- Rest height above the pad: the standPose bob (0.45) plus clear air at its lowest point.
+-- Rest height above the pad: the standPose bob (0.45 in the 0.8 scene) plus clear air at its
+-- lowest point.
 local BOB = 0.45
 
 function Stand.apply(map: Construction.World)
 	require(script.Parent.BallStandStyle).apply(map)
 	local stand = assert(map:FindFirstChild("EmptyItemStand")) :: Model
 	local displayScale = ((stand:GetAttribute("BallDisplayScale") :: number?) or 1) * Scale.factor(map)
+	local bob = BOB * Scale.relative(map)
 	local root = assert(map:FindFirstChild("SkippingWorld"))
 	local imported = map.Name == "World1" and workspace:FindFirstChild("AllBalls_NoTextures")
 	local container = imported or stand:FindFirstChild("DisplayBalls")
@@ -78,7 +80,7 @@ function Stand.apply(map: Construction.World)
 			-- Float above the pad; even at the bottom of the bob the ball keeps visible air below it.
 			local center = Vector3.new(
 				top.Position.X,
-				top.Position.Y + top.Size.Y / 2 + size.Y / 2 + BOB + 0.75 * displayScale,
+				top.Position.Y + top.Size.Y / 2 + size.Y / 2 + bob + 0.75 * displayScale,
 				top.Position.Z
 			)
 			model:PivotTo(model:GetPivot() + (center - cf.Position))
@@ -86,6 +88,7 @@ function Stand.apply(map: Construction.World)
 		end
 		model:SetAttribute("BallId", item.id)
 		model:SetAttribute("DisplaySlot", item.displaySlot)
+		model:SetAttribute("DisplayBob", bob)
 		for _, part in model:GetDescendants() do
 			if part:IsA("BasePart") then
 				part.Anchored = true
@@ -158,7 +161,7 @@ function Stand.apply(map: Construction.World)
 		local pp = purchaseAnchor:FindFirstChildWhichIsA("ProximityPrompt") or Instance.new("ProximityPrompt")
 		pp.Name = "BallPurchasePrompt"
 		pp.ObjectText = item.name
-		pp.ActionText = "View ball"
+		pp.ActionText = "Buy ball"
 		pp.MaxActivationDistance = 13
 		pp.RequiresLineOfSight = false
 		pp.HoldDuration = 0

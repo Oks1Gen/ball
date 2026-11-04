@@ -26,10 +26,46 @@ UpdateLog.MaxVisibleDays = 4
 UpdateLog.Categories = { "New", "Improved", "Fixed" } :: { Category }
 UpdateLog.Authors = {
 	dakemo = { name = "Dakemo555", userId = 11789507527 },
-	team = { name = "Ball team" },
 } :: { [string]: Author }
 
 UpdateLog.Releases = {
+	{
+		id = "2026-11-04-v0.2.2",
+		date = "2026-11-04",
+		version = "0.2.2",
+		title = "Leaderboards, eggs & loading",
+		published = false,
+		changes = {
+			{
+				id = "leaderboards",
+				category = "New",
+				summary = "New leaderboards with a Donate ranking",
+				details = "Dakemo555 rebuilt the four lobby leaderboards with bold colour frames, category icons, player avatars and gold, silver and bronze top places. The new Donate board ranks the Robux players have spent in the game.",
+				credits = { { author = "dakemo", role = "Map, UI & code" } },
+			},
+			{
+				id = "egg-preview-world-size",
+				category = "Improved",
+				summary = "Egg previews centered above each egg",
+				details = "Dakemo555 centered previews above the eggs, sized them in world studs and restyled them with the game's studded panels.",
+				credits = { { author = "dakemo", role = "Egg preview layout & styling" } },
+			},
+			{
+				id = "loading-skip",
+				category = "Fixed",
+				summary = "Click anywhere to skip asset loading",
+				details = "Dakemo555 fixed the skip control and added a confirmation while your character and ground finish loading.",
+				credits = { { author = "dakemo", role = "Loading screen fix" } },
+			},
+			{
+				id = "stand-rims",
+				category = "Improved",
+				summary = "Matching ball and egg stands",
+				details = "Dakemo555 gave the ball stand the egg stand's look: path-grey tiers with whole studs, a dark studded rim around each tread and dark frames under the ball pads. The egg seats turn with the stand beneath them and sit centred on it, and the steps up to the eggs got the same dark rim.",
+				credits = { { author = "dakemo", role = "Map & art" } },
+			},
+		},
+	},
 	{
 		id = "2026-11-03-v0.2.1",
 		date = "2026-11-03",
@@ -39,38 +75,40 @@ UpdateLog.Releases = {
 		changes = {
 			{
 				id = "stand-readability",
-				category = "Fixed",
-				summary = "Clearer ball and training signs",
-				details = "Ball prices and boosts keep equal spacing above their matching balls as they float and the camera moves. Larger training requirements and multipliers sit above each field's decorations, making them easier to read as you approach.",
-				credits = { { author = "team", role = "Map & UI" } },
+				category = "Improved",
+				summary = "Instant ball buying, reveals & compact alerts",
+				details = "Dakemo555 made E at the ball stand buy or equip on the spot and added 3D reveals for new balls and rebirths. Messages and upgrade alerts are compact, stack under Auto Kick and each alert appears once; Welcome Back shows only after an hour away. Ball prices and training requirements sit neatly above their stands.",
+				credits = {
+					{ author = "dakemo", role = "Code, map & UI" },
+				},
 			},
 			{
 				id = "lobby-scenery",
 				category = "Fixed",
-				summary = "Cleaner lobby & matching egg displays",
-				details = "Flowers rest neatly on the terraces. A curved stand displays Meadow, Glacier, Magma and Void as trophy costs rise, with Celestial replacing the premium egg. Matching green, icy blue, gold, burgundy and purple seats complete the display. Prices, rewards and purchases stay the same.",
-				credits = { { author = "team", role = "Map & art" } },
+				summary = "Matching egg displays & city landmarks",
+				details = "Dakemo555 built a lower curved stand in path grey with a dark studded rim, displaying Meadow, Glacier, Magma, Void and Celestial eggs on matching raised studded seats, gave each Football City location a distinct sideline landmark and varied the cloud borders. Prices, rewards and purchases stay the same.",
+				credits = { { author = "dakemo", role = "Map & art" } },
 			},
 			{
 				id = "lobby-paths",
 				category = "Improved",
 				summary = "Smoother paths & moving arrows",
-				details = "Whole checker squares and larger studs join cleanly across the lobby. The orange Kick Zone has complete tiles and one even border, with its base aligned to remove protruding edges. Bold chevrons flow toward it and fade gently at each end.",
-				credits = { { author = "team", role = "Map & animation" } },
+				details = "Dakemo555 joined whole checker squares and larger studs cleanly across the lobby, gave the orange Kick Zone complete tiles and one even border without protruding edges, and added bold chevrons that flow toward it and fade gently at each end.",
+				credits = { { author = "dakemo", role = "Map & animation" } },
 			},
 			{
 				id = "lobby-walls",
 				category = "Improved",
-				summary = "Even checker patterns on lobby walls",
-				details = "Lobby walls and entrance supports use whole checker squares with aligned stud rows, matching the path's stud scale. Clean terrace edges replace cropped tiles and half studs. Wall shapes and collision stay the same.",
-				credits = { { author = "team", role = "Map" } },
+				summary = "A more compact, cleaner map",
+				details = "Dakemo555 made the whole map about a quarter smaller in proportion, so stations and locations are closer together; textures shrank with it and distances and rewards stay the same. Dakemo555 also removed loose lobby props, centred the approaches on the ball stand and added a recessed upper terrace to the studded walls.",
+				credits = { { author = "dakemo", role = "Map" } },
 			},
 			{
-				id = "city-landmarks",
-				category = "Improved",
-				summary = "Distinct landmarks along Football City",
-				details = "Each location has a new sideline landmark, from a park pavilion and dock signal tower to a skyline beacon and championship trophy tower. Cloud borders have more varied shapes and spacing.",
-				credits = { { author = "team", role = "Map" } },
+				id = "spawn-loading",
+				category = "Fixed",
+				summary = "Safer joins with solid ground underfoot",
+				details = "Dakemo555 improved joining and respawning: the loading screen counts the assets as they load and stays until your character stands on the loaded floor, so you never fall through the map.",
+				credits = { { author = "dakemo", role = "Code & gameplay" } },
 			},
 		},
 	},

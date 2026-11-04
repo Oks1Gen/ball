@@ -109,7 +109,7 @@ migrationFailure("malformed old record", function()
 	return { wrong = true }
 end)
 
-local player = { UserId = -42 }
+local player = { UserId = -42, Parent = game:GetService("Players") }
 local data = Data.fresh()
 for i = 1, 60 do
 	table.insert(data.pets, { uid = tostring(i), id = "AdminDragon", boost = 1 })
@@ -168,23 +168,27 @@ saveOk = true
 state.data.skill = 500
 state.data.rebirths = 0
 state.lane = 2
-local busy = true
+state.busyUntil = math.huge
 context.Config.Products.SkipRebirth = { id = 1002 }
 context.rebirth = function(_, skip)
 	assert(skip)
-	if busy then
-		return false
-	end
+	assert(os.clock() >= state.busyUntil)
 	state.lane = nil
 	state.data.skill = 0
 	state.data.rebirths += 1
 	return true
 end
 local rebirthReceipt = { ProductId = 1002, PurchaseId = "audit-rebirth" }
-assert(Receipts.process(context, player, rebirthReceipt) == deferred)
-assert(state.data.skill == 500 and state.data.rebirths == 0 and not state.data.receipts[rebirthReceipt.PurchaseId])
-busy = false
+local waitedForShot = false
+task.defer(function()
+	waitedForShot = state.paidRebirthWaiting
+		and state.data.skill == 500
+		and state.data.rebirths == 0
+		and not state.data.receipts[rebirthReceipt.PurchaseId]
+	state.busyUntil = 0
+end)
 assert(Receipts.process(context, player, rebirthReceipt) == granted)
+assert(waitedForShot)
 assert(state.data.skill == 0 and state.data.rebirths == 1 and state.lane == nil)
 assert(Receipts.process(context, player, rebirthReceipt) == granted and state.data.rebirths == 1)
 table.insert(report, { check = "paid rebirth waits and retries once" })

@@ -69,6 +69,13 @@ function Net.validAction(command: any, value: any, extra: any): boolean
 	if command == "Gift" then
 		return typeof(value) == "number" and value >= 1 and value <= 6 and value % 1 == 0 and extra == nil
 	end
+	if command == "NoticeSeen" then
+		return (value == "Training" or value == "Rebirth" or value == "Ball" or value == "Trail")
+			and typeof(extra) == "number"
+			and extra == extra
+			and extra >= 0
+			and extra < math.huge
+	end
 	if command == "Setting" then
 		if value == "sound" or value == "music" then
 			return typeof(extra) == "number" and extra == extra and math.abs(extra) < math.huge

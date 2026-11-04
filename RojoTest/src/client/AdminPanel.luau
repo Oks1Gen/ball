@@ -103,6 +103,7 @@ function Panel.mount(context: Context)
 	local status: any = {}
 	local rows: any = nil
 	local tab = "Проверки"
+	local confirmingReset = false
 	local selectedEgg = "Uncommon"
 	local clientLogs: { { ok: boolean, title: string, detail: string } } = {}
 	local gui: ScreenGui? = nil
@@ -142,6 +143,7 @@ function Panel.mount(context: Context)
 	end
 
 	local function close(immediate: boolean?)
+		confirmingReset = false
 		if windowGroup and windowAnimation and not immediate then
 			local group = windowGroup
 			windowClosing = true
@@ -192,7 +194,7 @@ function Panel.mount(context: Context)
 		refreshSummary()
 		if window and window.Parent then
 			showStatus(result.message or "Готово.", result.ok and Style.Colors.Green or Style.Colors.Red)
-			if command == "Diagnostics" or command == "Logs" then
+			if command == "Diagnostics" or command == "Logs" or command == "ResetProgress" then
 				renderPage()
 			end
 		end
@@ -288,7 +290,16 @@ function Panel.mount(context: Context)
 				item.color or Style.Colors.Blue,
 				18,
 				function()
-					request(item.command, item.value)
+					if item.command == "ConfirmReset" or item.command == "CancelReset" then
+						confirmingReset = item.command == "ConfirmReset"
+						renderPage()
+					else
+						if item.command == "ResetProgress" then
+							confirmingReset = false
+							renderPage()
+						end
+						request(item.command, item.value)
+					end
 				end
 			)
 		end
@@ -419,6 +430,26 @@ function Panel.mount(context: Context)
 				{ label = "Rebirths: 16", command = "SetStat", value = { key = "rebirths", amount = 16 } },
 				{ label = "Открыть всё", command = "Unlock", color = Style.Colors.Green },
 			}, y, 170, 42)
+			y = label("Сброс только твоего профиля", y + 8)
+			if confirmingReset then
+				y = grid({
+					{
+						label = "Подтвердить сброс",
+						command = "ResetProgress",
+						value = true,
+						color = Style.Colors.Red,
+					},
+					{ label = "Отмена", command = "CancelReset" },
+				}, y, 220, 42)
+			else
+				y = grid({
+					{
+						label = "Сбросить мой прогресс",
+						command = "ConfirmReset",
+						color = Style.Colors.Red,
+					},
+				}, y, 240, 42)
+			end
 			y = label("Проверка броска", y + 8)
 			y = grid({
 				{ label = "Бросок: 60 м", command = "Throw", value = 60 },
@@ -690,6 +721,7 @@ function Panel.mount(context: Context)
 				18,
 				function()
 					tab = name
+					confirmingReset = false
 					rows = tab == "Проверки" and rows or nil
 					build(false)
 				end

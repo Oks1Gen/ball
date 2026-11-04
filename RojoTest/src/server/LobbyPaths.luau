@@ -10,19 +10,18 @@ local KickZone = require(script.Parent.KickZoneStyle)
 local Hub = {}
 local V, P = Vector3.new, Vector2.new
 
-local VERSION = "lobby-hub-grid-9"
+local VERSION = "lobby-hub-grid-10-centred-ball-stand"
 -- Layout numbers are in the authored (unscaled) lobby and map through Shared.WorldScale like the
--- rest of the scene. Paving trim (curbs, checker cells, studs, the 0.26 rise) keeps its size,
--- like a material.
-local HUB = { x0 = 39, x1 = 71, z0 = 198, z1 = 230 } -- 32 x 32, centred on the field axis X 55
+-- rest of the scene, and so do the checker cells and studs. Thin trim (curbs, the 0.26 rise)
+-- keeps its size.
+local HUB = { x0 = 39, x1 = 71 } -- 32 x 32; X follows the field, Z follows the ball stand
 local SPINE = { x0 = 47, x1 = 63 } -- kick zone and north paths
-local SIDE = { z0 = 206, z1 = 222 } -- ball stand and training paths
 local FRAME_FRONT = 6 -- path in front of the lane entrances
 local FRAME_MARGIN = 4 -- path around the other lane sides
 local BALL_COURT_WIDTH = 16.4
 local BALL_COURT_MARGIN = 3 -- past either end of the ball stand
 -- Flat vector chevrons scroll from the hub to the kick zone.
-local ARROW_END_INSET = 2 -- arrows fade out this far before either end of the path
+local ARROW_END_INSET = 2.5 -- arrows fade out this far before either end of the path
 local PLAZA_SIDE = 2 -- egg plaza past the outer leaderboards
 local PLAZA_FRONT = 6 -- egg plaza in front of the front-most egg
 -- Replaced layers: the old boulevard, the removed portal, per-lane approaches and the compact
@@ -85,13 +84,19 @@ function Hub.apply(world: Instance): number
 	-- The kick zone curb frames the apron; the path stops at its outer face.
 	local apronEdge = apron.Position.Z + apron.Size.Z / 2 + KickZone.CurbWidth
 	local k = Scale.factor(world)
-	local c0, c1 = Scale.point(world, V(HUB.x0, 0, HUB.z0)), Scale.point(world, V(HUB.x1, 0, HUB.z1))
-	local hub = { x0 = c0.X, x1 = c1.X, z0 = c0.Z, z1 = c1.Z }
-	c0, c1 = Scale.point(world, V(SPINE.x0, 0, SIDE.z0)), Scale.point(world, V(SPINE.x1, 0, SIDE.z1))
+	local structure = assert(shop:FindFirstChild("Structure"), "Missing ball stand structure")
+	local lower = assert(structure:FindFirstChild("LowerTier"), "Missing stable ball stand centre")
+	assert(lower:IsA("BasePart") and math.abs(lower.CFrame.RightVector.X) > 0.999, "Measure rotated ball stand")
+	-- Use the fixed stand, never the animated balls or their changing bounds.
+	local centreZ = lower.Position.Z
+	local c0, c1 = Scale.point(world, V(HUB.x0, 0, 0)), Scale.point(world, V(HUB.x1, 0, 0))
+	local hub = { x0 = c0.X, x1 = c1.X, z0 = centreZ - 16 * k, z1 = centreZ + 16 * k }
+	c0, c1 = Scale.point(world, V(SPINE.x0, 0, 0)), Scale.point(world, V(SPINE.x1, 0, 0))
 	local spine = { x0 = c0.X, x1 = c1.X }
-	local side = { z0 = c0.Z, z1 = c1.Z }
+	local side = { z0 = centreZ - 8 * k, z1 = centreZ + 8 * k }
 	local gridOrigin = P(hub.x0, hub.z0)
-	local cell = 6.4
+	local cell = Palette.PathCell * k
+	local tile = Palette.GroundStudPitch * k * Palette.StudsPerTexture
 	local function down(value: number, axis: number): number
 		return axis + math.floor((value - axis) / cell + 0.0001) * cell
 	end
@@ -201,7 +206,13 @@ function Hub.apply(world: Instance): number
 		end
 	end
 
-	local signature = { VERSION, tostring(Palette.Path), tostring(Palette.PathChecker), tostring(Palette.PathArrow) }
+	local signature = {
+		VERSION,
+		tostring(cell),
+		tostring(Palette.Path),
+		tostring(Palette.PathChecker),
+		tostring(Palette.PathArrow),
+	}
 	for _, region in regions do
 		local lo, hi = region.polygon[1], region.polygon[3]
 		table.insert(signature, string.format("%s:%.3f:%.3f:%.3f:%.3f:%.3f", region.name, lo.X, hi.X, lo.Y, hi.Y, top))
@@ -213,11 +224,12 @@ function Hub.apply(world: Instance): number
 	if (spawn.Position - centre).Magnitude > 0.001 then
 		spawn.CFrame = CFrame.new(centre) * spawn.CFrame.Rotation
 	end
-	local from, to = hub.z0 - ARROW_END_INSET, apronEdge + ARROW_END_INSET
+	local from, to = hub.z0 - ARROW_END_INSET * k, apronEdge + ARROW_END_INSET * k
 	require(script.Parent.LobbyPathArrows).apply(
 		paths,
 		V((spine.x0 + spine.x1) / 2, top + 0.08, from),
-		V((spine.x0 + spine.x1) / 2, top + 0.08, to)
+		V((spine.x0 + spine.x1) / 2, top + 0.08, to),
+		k
 	)
 
 	if paths:GetAttribute("HubLayout") == key then
@@ -237,7 +249,7 @@ function Hub.apply(world: Instance): number
 						local texture = p:FindFirstChild("PathStuds")
 						if texture and texture:IsA("Texture") then
 							texture.OffsetStudsU, texture.OffsetStudsV = 0, 0
-							texture.StudsPerTileU, texture.StudsPerTileV = 6.4, 6.4
+							texture.StudsPerTileU, texture.StudsPerTileV = tile, tile
 							texture.Texture, texture.Transparency = Palette.Studs, Palette.StudsTransparency
 						end
 					end
@@ -249,7 +261,7 @@ function Hub.apply(world: Instance): number
 
 	-- Stage the replacement before touching the existing cosmetic layer.
 	local staging = Instance.new("Folder")
-	Regions.build(staging, regions, top, selected, gridOrigin)
+	Regions.build(staging, regions, top, selected, gridOrigin, k)
 	for _, group in staging:GetChildren() do
 		group:SetAttribute("HubPath", true)
 	end

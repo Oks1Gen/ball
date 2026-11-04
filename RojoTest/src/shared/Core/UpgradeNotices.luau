@@ -103,6 +103,15 @@ end
 function Notices.new(): any
 	local state: any = { current = nil, remaining = 0, cooldown = 0, candidates = {}, announced = {} }
 	function state:update(info: any, config: any)
+		-- Alerts shown in earlier sessions stay announced: each one appears once.
+		local seen = info and info.data.notices
+		if type(seen) == "table" then
+			for kind, rank in seen do
+				if type(rank) == "number" then
+					self.announced[kind] = math.max(self.announced[kind] or 0, rank)
+				end
+			end
+		end
 		self.candidates = Notices.available(info, config)
 		self.enabled = info ~= nil
 			and info.data.settings.upgradeNotices ~= false
@@ -139,6 +148,9 @@ function Notices.new(): any
 					self.current = candidate
 					self.remaining = Notices.Duration
 					self.announced[candidate.kind] = candidate.rank
+					if self.onAnnounce then
+						self.onAnnounce(candidate.kind, candidate.rank)
+					end
 					break
 				end
 			end

@@ -2,10 +2,10 @@
 -- One aligned footprint for the gameplay floor, whole cells and studded rim.
 local Refs = require(game.ReplicatedStorage.Shared.WorldRefs)
 local Palette = require(script.Parent.LobbyPalette)
+local Scale = require(game.ReplicatedStorage.Shared.WorldScale)
 local Style = {}
 local V = Vector3.new
 Style.CurbWidth = 0 -- The rim is inside the floor; paths meet the physical edge.
-local PITCH, TILE = 1.6, 6.4
 
 function Style.apply(world: Instance): number
 	if world.Name ~= "World1" then
@@ -16,7 +16,17 @@ function Style.apply(world: Instance): number
 		return 0
 	end
 	local owner = floor.Parent
-	local cell, band = Palette.KickZoneCell, Palette.KickZoneBand
+	local field = assert(Refs.field(world, 1))
+	if math.abs(floor.Position.X - field.Position.X) > 0.0001 then
+		if floor:GetAttribute("BeforeLawnAlignment") == nil then
+			floor:SetAttribute("BeforeLawnAlignment", floor.CFrame)
+		end
+		floor.CFrame += V(field.Position.X - floor.Position.X, 0, 0)
+	end
+	local k = Scale.factor(world)
+	local cell, band = Palette.KickZoneCell * k, Palette.KickZoneBand * k
+	local PITCH = Palette.GroundStudPitch * k
+	local TILE = PITCH * Palette.StudsPerTexture
 	local columns = math.round((floor.Size.X - 2 * band) / cell)
 	local rows = math.round((floor.Size.Z - 2 * band) / cell)
 	assert(columns > 0 and rows > 0, "Kick Zone needs complete checker cells")

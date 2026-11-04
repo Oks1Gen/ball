@@ -41,7 +41,13 @@ function Commands.install(context: Context)
 			return
 		end
 		s.tokens -= 1
-		if command ~= "Throw" and command ~= "KickRelease" and command ~= "Snapshot" and command ~= "Setting" then
+		if
+			command ~= "Throw"
+			and command ~= "KickRelease"
+			and command ~= "Snapshot"
+			and command ~= "Setting"
+			and command ~= "NoticeSeen"
+		then
 			context.kickTiming.cancel(player)
 		end
 		if command == "Snapshot" then
@@ -171,6 +177,12 @@ function Commands.install(context: Context)
 				)
 			else
 				context.publish(player, "Daily gift already claimed")
+			end
+		elseif command == "NoticeSeen" and type(value) == "string" and type(extra) == "number" then
+			-- Only hides the player's own alerts, so the client's rank is trusted.
+			local notices = s.data.notices
+			if notices[value] ~= nil then
+				notices[value] = math.max(notices[value], math.min(extra, Data.MaxProgress))
 			end
 		elseif command == "Setting" and type(value) == "string" then
 			if (value == "sound" or value == "music") and type(extra) == "number" and extra == extra then

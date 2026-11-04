@@ -3,6 +3,7 @@
 -- pad inside a light curb-coloured frame, so the stand reads as part of the paving.
 -- Idempotent: colours, studs and pad height are recomputed from the authored parts every run.
 local Palette = require(script.Parent.LobbyPalette)
+local Scale = require(game.ReplicatedStorage.Shared.WorldScale)
 local Style = {}
 local V = Vector3.new
 local STUDS = Palette.Studs
@@ -12,7 +13,8 @@ local step = Palette.Path
 local frame = Palette.PathCurb
 local pad = Palette.PathChecker
 
-local function studs(part: BasePart, faces: { Enum.NormalId })
+-- `tile`: 8 studs a tile in the 0.8 scene, following the world scale.
+local function studs(part: BasePart, faces: { Enum.NormalId }, tile: number)
 	for _, t in part:GetChildren() do
 		if t:IsA("Texture") then
 			t:Destroy()
@@ -23,8 +25,8 @@ local function studs(part: BasePart, faces: { Enum.NormalId })
 		t.Name = "Studs" .. face.Name
 		t.Texture = STUDS
 		t.Face = face
-		t.StudsPerTileU = 8
-		t.StudsPerTileV = 8
+		t.StudsPerTileU = tile
+		t.StudsPerTileV = tile
 		t.Color3 = part.Color
 		t.Transparency = 0.22
 		t.Parent = part
@@ -72,22 +74,23 @@ function Style.apply(map)
 	if old then
 		old:Destroy()
 	end
+	local tile = 8 * Scale.relative(map)
 	for _, name in { "LowerTier", "UpperTier" } do
 		local tier = assert(stand:FindFirstChild(name))
 		paint(tier, step)
-		studs(tier, STUD_FACES)
+		studs(tier, STUD_FACES, tile)
 	end
 	for slot = 1, 10 do
 		local top = assert(stand:FindFirstChild("DisplayTop" .. slot))
 		local base = assert(stand:FindFirstChild("EmptyPedestal" .. slot))
 		paint(base, frame)
-		studs(base, {})
+		studs(base, {}, tile)
 		paint(top, pad)
 		-- A visibly raised inner pad sitting on the frame, as in the reference.
 		local height = base.Size.Y * 1.5
 		top.Size = V(top.Size.X, height, top.Size.Z)
 		top.CFrame = base.CFrame * CFrame.new(0, base.Size.Y / 2 + height / 2, 0)
-		studs(top, { Enum.NormalId.Top })
+		studs(top, { Enum.NormalId.Top }, tile)
 	end
 end
 

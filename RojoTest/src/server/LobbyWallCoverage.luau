@@ -1,14 +1,15 @@
 --!strict
--- Both checker colours share one complete-cell lattice; thin cap sides stay smooth.
+-- Both checker colours and every exposed grass face share a complete-stud lattice.
 local Palette = require(script.Parent.LobbyPalette)
 local Refs = require(game.ReplicatedStorage.Shared.WorldRefs)
 local Grid = require(game.ReplicatedStorage.Shared.Core.SurfaceGrid)
+local Scale = require(game.ReplicatedStorage.Shared.WorldScale)
 local Coverage = {}
 local V = Vector3.new
 local function component(vector: Vector3, axis: string): number
 	return if axis == "X" then vector.X elseif axis == "Y" then vector.Y else vector.Z
 end
-local VERSION = "whole-wall-1"
+local VERSION = "whole-wall-5"
 local EARTH = { TerraceEarth = true, RearEarthLedge = true, LeftAbutment = true, RightAbutment = true }
 local CAPS = { GrassShelf = true, RearGrassLedge = true, LeftAbutmentGrassCap = true, RightAbutmentGrassCap = true }
 local OLD = {
@@ -22,14 +23,16 @@ local OLD = {
 function Coverage.plan(world: any): any
 	local environment = world.Lobby.Environment
 	local owners, sources, solids = {}, {}, {}
+	local k = Scale.factor(world)
+	local checkerCell, pitch = Palette.WallCheckerCell * k, Palette.WallStudPitch * k
 	local signature = {
 		VERSION,
 		tostring(Palette.Earth),
 		tostring(Palette.EarthDark),
 		Palette.Studs,
 		tostring(Palette.StudsTransparency),
-		tostring(Palette.WallCheckerCell),
-		tostring(Palette.WallStudPitch),
+		tostring(checkerCell),
+		tostring(pitch),
 	}
 	for _, name in { "SideTerraces1", "SideTerraces2", "RearTerraces", "EntranceTunnel" } do
 		local owner = environment:FindFirstChild(name)
@@ -68,12 +71,12 @@ function Coverage.plan(world: any): any
 	for _, source in sources do
 		local p, lo, hi = source.part, source.lo, source.hi
 		local directions: { Enum.NormalId } = if source.cap
-			then { Enum.NormalId.Top }
-			elseif source.owner.Name == "RearTerraces" then { Enum.NormalId.Front }
+			then { Enum.NormalId.Top, Enum.NormalId.Front, Enum.NormalId.Back, Enum.NormalId.Left, Enum.NormalId.Right }
 			else {
 				Enum.NormalId.Front,
 				Enum.NormalId.Back,
-				if p.Position.X < origin.X then Enum.NormalId.Right else Enum.NormalId.Left,
+				Enum.NormalId.Right,
+				Enum.NormalId.Left,
 			}
 		for _, face in directions do
 			local normal = Vector3.FromNormalId(face)
@@ -81,7 +84,7 @@ function Coverage.plan(world: any): any
 			local u, v = if axis == "X" then "Z" else "X", if axis == "Y" then "Z" else "Y"
 			local sign = component(normal, axis)
 			local plane = if sign > 0 then hi[axis] else lo[axis]
-			local bottom = if source.cap then lo[v] else math.max(ground, lo[v])
+			local bottom = lo[v]
 			local visible = { { lo[u], hi[u], bottom, hi[v] } }
 			for _, solid in solids do
 				if solid.part == p then
@@ -102,7 +105,12 @@ function Coverage.plan(world: any): any
 			if #visible == 0 then
 				continue
 			end
-			local key = source.owner.Name .. ":" .. face.Name .. ":" .. math.round(plane * 1000)
+			local key = source.owner.Name
+				.. ":"
+				.. (if source.cap then "Grass:" else "Earth:")
+				.. face.Name
+				.. ":"
+				.. math.round(plane * 1000)
 			local surface = byKey[key]
 			if not surface then
 				surface = {
@@ -119,7 +127,7 @@ function Coverage.plan(world: any): any
 					rectangles = {},
 					originU = component(origin, u),
 					originV = component(origin, v),
-					parity = math.floor((plane - component(origin, axis)) / Palette.WallCheckerCell - sign * 0.0001),
+					parity = math.floor((plane - component(origin, axis)) / checkerCell - sign * 0.0001),
 				}
 				byKey[key] = surface
 				table.insert(planes, surface)
@@ -132,12 +140,55 @@ function Coverage.plan(world: any): any
 	table.sort(planes, function(a, b)
 		return a.key < b.key
 	end)
+	local claimed = {}
 	for _, surface in planes do
 		surface.rectangles = Grid.union(surface.rectangles)
-		local step = if surface.cap then Palette.WallStudPitch else Palette.WallCheckerCell
+		-- Different objects can share the same grass-top plane at the entrance.
+		-- Assign each coplanar area once, including across owner models.
+		local planeKey = surface.face.Name .. ":" .. math.round(surface.plane * 1000)
+		local previous = claimed[planeKey] or {}
+		for _, cut in previous do
+			local rest = {}
+			for _, r in surface.rectangles do
+				for _, piece in Grid.subtract(r, cut) do
+					table.insert(rest, piece)
+				end
+			end
+			surface.rectangles = rest
+		end
+		local combined = table.clone(previous)
+		for _, r in surface.rectangles do
+			table.insert(combined, r)
+		end
+		claimed[planeKey] = Grid.union(combined)
+		local step = if surface.cap then pitch else checkerCell
 		surface.cells = Grid.wholeCells(surface.rectangles, step, surface.originU, surface.originV)
+		local area, perimeter = 0, 0
+		for _, r in surface.rectangles do
+			area += (r[2] - r[1]) * (r[4] - r[3])
+			perimeter += (r[2] - r[1]) + (r[4] - r[3])
+		end
+		local fine = Grid.wholeCells(surface.rectangles, pitch, surface.originU, surface.originV)
+		assert(math.abs(area - #fine * pitch ^ 2) <= perimeter * 0.0001, "Untextured wall strip: " .. surface.key)
 		surface.step = step
 		surface.pieces = if surface.cap then Grid.merge(surface.cells) else nil
+		if not surface.cap then
+			local occupied = {}
+			for _, cell in surface.cells do
+				for du = 0, 1 do
+					for dv = 0, 1 do
+						occupied[(cell.u * 2 + du) .. ":" .. (cell.v * 2 + dv)] = true
+					end
+				end
+			end
+			local edge = {}
+			for _, cell in fine do
+				if not occupied[cell.u .. ":" .. cell.v] then
+					table.insert(edge, cell)
+				end
+			end
+			surface.edges = Grid.merge(edge)
+		end
 	end
 	table.sort(signature)
 	return {
@@ -145,6 +196,7 @@ function Coverage.plan(world: any): any
 		sources = sources,
 		planes = planes,
 		origin = origin,
+		pitch = pitch,
 		signature = table.concat(signature, "|"),
 	}
 end
@@ -164,8 +216,10 @@ end
 
 function Coverage.apply(world: any): any
 	local plan = Coverage.plan(world)
+	local pitch, tile = plan.pitch, plan.pitch * Palette.StudsPerTexture
 	local legacy = {}
-	for _, root in world.Lobby.Geometry:GetChildren() do
+	-- WorldLayout may have assigned old entrance skins to the course by position.
+	for _, root in world:GetDescendants() do
 		if OLD[root.Name] then
 			table.insert(legacy, root)
 		end
@@ -192,16 +246,17 @@ function Coverage.apply(world: any): any
 				if group:GetAttribute("PlaneKey") == surface.key then
 					for _, p in group:GetChildren() do
 						if p:IsA("BasePart") then
-							local u, v = p:GetAttribute("GridU") :: number, p:GetAttribute("GridV") :: number
+							local u, v = p:GetAttribute("GridU") or 0, p:GetAttribute("GridV") or 0
 							p.Color = if surface.cap
 								then surface.color
+								elseif p.Name == "WallEdge" then Palette.Earth
 								elseif (u + v + surface.parity) % 2 == 0 then Palette.Earth
 								else Palette.EarthDark
 							local t = p:FindFirstChild("WallStuds")
 							if t and t:IsA("Texture") then
 								t.Texture, t.Color3, t.Transparency =
 									Palette.Studs, Color3.new(1, 1, 1), Palette.StudsTransparency
-								t.StudsPerTileU, t.StudsPerTileV = Palette.WallStudPitch * 4, Palette.WallStudPitch * 4
+								t.StudsPerTileU, t.StudsPerTileV = tile, tile
 								t.OffsetStudsU, t.OffsetStudsV = 0, 0
 							end
 						end
@@ -259,7 +314,7 @@ function Coverage.apply(world: any): any
 			else
 				part.Size, part.Position = V(u1 - u0, v1 - v0, depth), V(along, up, out)
 			end
-			part.Name = if surface.cap then "CapSurface" else "WallCell"
+			part.Name = if surface.cap then "CapSurface" elseif cell then "WallCell" else "WallEdge"
 			part.Color, part.Material = color, Enum.Material.Plastic
 			part.Anchored, part.CanCollide, part.CanTouch, part.CanQuery, part.CastShadow =
 				true, false, false, false, false
@@ -270,7 +325,7 @@ function Coverage.apply(world: any): any
 			end
 			local t = Instance.new("Texture")
 			t.Name, t.Texture, t.Face = "WallStuds", Palette.Studs, surface.face
-			t.StudsPerTileU, t.StudsPerTileV = Palette.WallStudPitch * 4, Palette.WallStudPitch * 4
+			t.StudsPerTileU, t.StudsPerTileV = tile, tile
 			t.OffsetStudsU, t.OffsetStudsV = 0, 0
 			t.Transparency, t.Parent = Palette.StudsTransparency, part
 			part.Parent = group
@@ -288,6 +343,16 @@ function Coverage.apply(world: any): any
 				)
 			end
 		else
+			for _, r in surface.edges do
+				make(
+					surface.originU + r[1] * pitch,
+					surface.originU + r[2] * pitch,
+					surface.originV + r[3] * pitch,
+					surface.originV + r[4] * pitch,
+					Palette.Earth,
+					nil
+				)
+			end
 			for i, cell in surface.cells do
 				local u, v = surface.originU + cell.u * surface.step, surface.originV + cell.v * surface.step
 				make(

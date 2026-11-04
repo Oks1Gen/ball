@@ -84,8 +84,9 @@ function Visuals.displayOrigin(model: Model): (CFrame?, Vector3?)
 	return model:GetAttribute("DisplayBasePivot") :: CFrame?, model:GetAttribute("DisplayLabelBase") :: Vector3?
 end
 
-function Visuals.standPose(base: CFrame, time: number, phase: number)
-	local bob = 0.45 * math.sin((time % 2.5) * math.pi * 2 / 2.5 + phase)
+-- `amplitude`: the stand's DisplayBob attribute, which follows the world scale.
+function Visuals.standPose(base: CFrame, time: number, phase: number, amplitude: number?)
+	local bob = (amplitude or 0.45) * math.sin((time % 2.5) * math.pi * 2 / 2.5 + phase)
 	return (base + Vector3.new(0, bob, 0)) * CFrame.Angles(0, (time % 22.5) * math.pi * 2 / 22.5, 0), bob
 end
 

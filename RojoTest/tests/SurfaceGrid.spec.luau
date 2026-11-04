@@ -2,6 +2,35 @@
 local Grid = require("../src/shared/Core/SurfaceGrid")
 
 return {
+	["checker partition covers an L-shaped lawn with whole squares and disjoint stud strips"] = function()
+		local checker, edge = Grid.partition({ { 0, 8, 0, 8 }, { 8, 11.2, 0, 3.2 } }, 6.4, 1.6, 0, 0)
+		assert(#checker == 1 and checker[1].u == 0 and checker[1].v == 0)
+		local area, seen = #checker * 6.4 * 6.4, {}
+		for _, r in edge do
+			for u = r[1], r[2] - 1 do
+				for v = r[3], r[4] - 1 do
+					assert(not (u < 4 and v < 4), "Boundary overlaps a checker square")
+					assert(not seen[u .. ":" .. v], "Duplicate boundary coverage")
+					seen[u .. ":" .. v] = true
+					area += 1.6 * 1.6
+				end
+			end
+		end
+		assert(math.abs(area - (64 + 3.2 * 3.2)) < 0.00001)
+	end,
+	["checker partition rejects a sub-stud leftover instead of hiding it"] = function()
+		local ok = pcall(Grid.partition, { { 0, 6.45, 0, 6.4 } }, 6.4, 1.6, 0, 0)
+		assert(not ok)
+	end,
+	["checker partition keeps one phase around a hole and shifted negative coordinates"] = function()
+		local rects = Grid.subtract({ -9.6, 9.6, 20.12, 39.32 }, { -3.2, 3.2, 26.52, 32.92 })
+		local checker, edge = Grid.partition(rects, 6.4, 1.6, -9.6, 20.12)
+		local area = #checker * 6.4 * 6.4
+		for _, r in edge do
+			area += (r[2] - r[1]) * (r[4] - r[3]) * 1.6 * 1.6
+		end
+		assert(math.abs(area - (19.2 * 19.2 - 6.4 * 6.4)) < 0.00001)
+	end,
 	["surface grid merges a cap without filling its missing corner"] = function()
 		local cells = Grid.wholeCells({ { 0, 3.2, 0, 1.6 }, { 0, 1.6, 1.6, 3.2 } }, 1.6, 0, 0)
 		local rectangles = Grid.merge(cells)

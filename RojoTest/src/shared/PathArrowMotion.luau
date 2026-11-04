@@ -11,14 +11,17 @@ function Motion.update(root: Model, time: number)
 	if not length or not count then
 		return
 	end
-	local period = count * 8
-	local visibleLength = length - 5
+	-- Lengths and speed were tuned at an 8-stud spacing and follow the world scale.
+	local spacing = (root:GetAttribute("ArrowSpacing") :: number?) or 8
+	local s = spacing / 8
+	local period = count * spacing
+	local visibleLength = length - 5 * s
 	for _, arrow in root:GetChildren() do
 		local slot = arrow:GetAttribute("ArrowSlot")
 		if arrow:IsA("Model") and typeof(slot) == "number" then
-			local travel = (time * 2.56 + slot * 8) % period
-			local opacity = math.clamp(math.min(travel, visibleLength - travel) / 1.5, 0, 1)
-			arrow:PivotTo(origin.CFrame * CFrame.new(0, 0, -2.5 - travel))
+			local travel = (time * 2.56 * s + slot * spacing) % period
+			local opacity = math.clamp(math.min(travel, visibleLength - travel) / (1.5 * s), 0, 1)
+			arrow:PivotTo(origin.CFrame * CFrame.new(0, 0, -2.5 * s - travel))
 			for _, part in arrow:GetChildren() do
 				if part:IsA("BasePart") then
 					part.Transparency = 1 - opacity

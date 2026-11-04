@@ -1,11 +1,15 @@
 -- Read-only audit of the final wall and grass-cap facade.
 local world = workspace.Map.World1
+-- Lattice measured in the 0.8 scene; follows the world scale.
+local relative = world:GetAttribute("WorldScale") / 0.8
+local PITCH, CELL, TILE = 1.6 * relative, 3.2 * relative, 6.4 * relative
 local sources = game.ServerScriptService.Server
 local paletteModule = sources.LobbyPalette:Clone()
 paletteModule.Parent = game.ServerStorage
 local palette = require(paletteModule)
 paletteModule:Destroy()
-local total, caps, faces = 0, 0, 0
+local total, caps, edges, faces = 0, 0, 0, 0
+local physicalPlanes = {}
 local function component(v, axis)
 	return if axis == "X" then v.X elseif axis == "Y" then v.Y else v.Z
 end
@@ -17,7 +21,10 @@ for _, name in { "SideTerraces1", "SideTerraces2", "RearTerraces", "EntranceTunn
 		local axis, sign = group:GetAttribute("Axis"), group:GetAttribute("Sign")
 		local isCap = group:GetAttribute("IsCap")
 		local u, v = if axis == "X" then "Z" else "X", if axis == "Y" then "Z" else "Y"
-		local seen, rectangles = {}, {}
+		local physicalKey = axis .. ":" .. sign .. ":" .. math.round(group:GetAttribute("Plane") * 1000)
+		local rectangles = physicalPlanes[physicalKey] or {}
+		physicalPlanes[physicalKey] = rectangles
+		local seen = {}
 		faces += 1
 		for _, p in group:GetChildren() do
 			assert(p:IsA("BasePart") and p.Anchored and p.Transparency == 0, "Invalid facade geometry")
@@ -34,7 +41,7 @@ for _, name in { "SideTerraces1", "SideTerraces2", "RearTerraces", "EntranceTunn
 					textures += 1
 					assert(t.Name == "WallStuds" and t.Texture == palette.Studs, "Wrong wall texture")
 					assert(
-						math.abs(t.StudsPerTileU - 6.4) < 0.001 and math.abs(t.StudsPerTileV - 6.4) < 0.001,
+						math.abs(t.StudsPerTileU - TILE) < 0.001 and math.abs(t.StudsPerTileV - TILE) < 0.001,
 						"Studs stretched or wrongly scaled"
 					)
 					assert(t.OffsetStudsU == 0 and t.OffsetStudsV == 0, "Cut stud phase")
@@ -43,15 +50,19 @@ for _, name in { "SideTerraces1", "SideTerraces2", "RearTerraces", "EntranceTunn
 			end
 			assert(textures == 1, "Duplicate or missing stud layer")
 			local a, b = component(p.Size, u), component(p.Size, v)
-			if isCap then
-				assert(p.Name == "CapSurface")
+			if isCap or p.Name == "WallEdge" then
+				assert(p.Name == "CapSurface" or p.Name == "WallEdge")
 				for _, size in { a, b } do
-					assert(math.abs(size / 1.6 - math.round(size / 1.6)) < 0.001, "Partial cap stud row")
+					assert(math.abs(size / PITCH - math.round(size / PITCH)) < 0.001, "Partial cap stud row")
 				end
-				caps += 1
+				if isCap then
+					caps += 1
+				else
+					edges += 1
+				end
 			else
 				assert(
-					p.Name == "WallCell" and math.abs(a - 3.2) < 0.001 and math.abs(b - 3.2) < 0.001,
+					p.Name == "WallCell" and math.abs(a - CELL) < 0.001 and math.abs(b - CELL) < 0.001,
 					"Clipped wall checker"
 				)
 				local gu, gv = p:GetAttribute("GridU"), p:GetAttribute("GridV")
@@ -59,11 +70,11 @@ for _, name in { "SideTerraces1", "SideTerraces2", "RearTerraces", "EntranceTunn
 				assert(not seen[id], "Overlapping wall checker cells")
 				seen[id] = true
 				assert(
-					math.abs(component(p.Position, u) - a / 2 - group:GetAttribute("OriginU") - gu * 3.2) < 0.001,
+					math.abs(component(p.Position, u) - a / 2 - group:GetAttribute("OriginU") - gu * CELL) < 0.001,
 					"Shifted checker column"
 				)
 				assert(
-					math.abs(component(p.Position, v) - b / 2 - group:GetAttribute("OriginV") - gv * 3.2) < 0.001,
+					math.abs(component(p.Position, v) - b / 2 - group:GetAttribute("OriginV") - gv * CELL) < 0.001,
 					"Shifted checker row"
 				)
 				local color = if (gu + gv + group:GetAttribute("Parity")) % 2 == 0
@@ -90,8 +101,11 @@ for _, name in { "SideTerraces1", "SideTerraces2", "RearTerraces", "EntranceTunn
 		task.wait()
 	end
 end
-for _, name in { "TerraceWallChecker", "LeftAbutmentChecker", "RightAbutmentChecker" } do
-	assert(not world.Lobby.Geometry:FindFirstChild(name), "Retired checker fragments remain")
+for _, p in world:GetDescendants() do
+	assert(
+		p.Name ~= "TerraceWallChecker" and p.Name ~= "LeftAbutmentChecker" and p.Name ~= "RightAbutmentChecker",
+		"Retired checker fragments remain: " .. p:GetFullName()
+	)
 end
 assert(total > 2000 and caps > 0, "Missing wall facade")
-return { cells = total, capParts = caps, faces = faces, studPitch = 1.6 }
+return { cells = total, capParts = caps, edgeParts = edges, faces = faces, studPitch = PITCH }

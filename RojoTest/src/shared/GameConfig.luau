@@ -11,15 +11,15 @@ Config.TrainingCycle = 1.2
 Config.KickContact = 0.42
 -- The training contact and the shot windup are the same moment of the kick.
 Config.KickWindup = Config.KickContact
--- World1 was scaled by 0.8 on 2026-11-02. CourseLength then doubled only
--- the route: each current 432-stud location is 2250 m at the same conversion.
-Config.DistancePerStud = 750 / 144
+-- World1 was scaled by 0.8 on 2026-11-02 and by 0.75 more on 2026-11-03 (0.6 in all).
+-- CourseLength doubled only the route: each current 324-stud location is 2250 m.
+Config.DistancePerStud = 1000 / 144
 -- One ball size for the hand, the training lane and the kick.
 Config.BallDiameter = 1.1
 -- Reference origin for progression limits; live shots start at the player's kicking foot.
 Config.ShotStartLocal = Vector3.new(-115.6, 1.27, 0.3)
 Config.WorldShotProgression = {
-	[1] = { requiredPower = 1000000, routeStuds = 3456 },
+	[1] = { requiredPower = 1000000, routeStuds = 2592 },
 }
 Config.RebirthBaseSkill = Economy.RebirthBaseSkill
 Config.RebirthSkillGrowth = Economy.RebirthSkillGrowth
@@ -46,7 +46,8 @@ function Config.kickZoneCharacterPose(arena: any, root: BasePart, humanoid: Huma
 end
 -- Legacy admin teleport destination. Gameplay kicks keep the player's current position.
 Config.KickStanceFromFront = -4.68
-Config.KickZoneStandFromFront = 7.5
+-- Spawn point on the apron (7.2 studs deep since the 2026-11-03 scale), clear of the back rim.
+Config.KickZoneStandFromFront = 5.6
 -- Use the visible orange surface as the shared client/server activation boundary.
 function Config.inKickZone(arena: any, position: Vector3): boolean
 	local apron = WorldRefs.kickZoneFloor(arena)

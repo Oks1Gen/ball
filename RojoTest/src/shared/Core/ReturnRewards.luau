@@ -3,8 +3,11 @@
 local Data = require("./ProfileData")
 local Rewards = {}
 
-Rewards.OfflineFraction = 0.25
-Rewards.OfflineCapSeconds = 12 * 60 * 60
+-- A small bonus for a real break: nothing for short absences, so rejoining
+-- never hands out a popup or an instant rebirth.
+Rewards.OfflineFraction = 0.05
+Rewards.OfflineMinSeconds = 60 * 60
+Rewards.OfflineCapSeconds = 8 * 60 * 60
 Rewards.Days = {
 	{ skill = 100, wins = 0 },
 	{ skill = 0, wins = 500 },
@@ -39,7 +42,9 @@ end
 
 function Rewards.arrive(data: any, now: number)
 	local elapsed = if data.lastSeen > 0 then math.clamp(now - data.lastSeen, 0, Rewards.OfflineCapSeconds) else 0
-	Data.add(data, "offlinePending", elapsed * data.offlineRate)
+	if elapsed >= Rewards.OfflineMinSeconds then
+		Data.add(data, "offlinePending", elapsed * data.offlineRate)
+	end
 	data.lastSeen = now
 end
 

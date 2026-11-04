@@ -25,10 +25,11 @@ function Regions.build(
 	regions: { Region },
 	top: number,
 	selected: { [string]: boolean },
-	gridOrigin: Vector2?
+	gridOrigin: Vector2?,
+	scale: number?
 )
 	if gridOrigin then
-		require(script.Parent.LobbyPathGrid).build(root, regions, top, selected, gridOrigin)
+		require(script.Parent.LobbyPathGrid).build(root, regions, top, selected, gridOrigin, scale or 1)
 		return
 	end
 	local function part(parent: Instance, name: string, size: Vector3, cf: CFrame, color: Color3): Part

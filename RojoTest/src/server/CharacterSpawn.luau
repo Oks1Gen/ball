@@ -1,39 +1,74 @@
 --!strict
--- Characters load only after the lobby floor has streamed to the client. An
--- auto-loaded character is simulated by its client and falls through ground
--- that has not replicated yet; the loading screen hid it until it was skipped.
+-- Spawn the avatar immediately, but keep physics paused until its client has
+-- confirmed the actual standing surface. Streaming requests alone are not proof.
 local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local WorldRefs = require(game.ReplicatedStorage.Shared.WorldRefs)
+local Config = require(game.ReplicatedStorage.Shared.GameConfig)
+local SpawnProtocol = require(game.ReplicatedStorage.Shared.SpawnProtocol)
 local CharacterSpawn = {}
 
 function CharacterSpawn.start(map: Instance)
 	Players.CharacterAutoLoads = false
-	-- The spawn pad and the apron the session moves the character onto.
-	local points: { Vector3 } = {}
-	for _, part in { WorldRefs.spawn(map), WorldRefs.kickZoneFloor(map) } do
-		table.insert(points, part.Position)
-	end
-	local function load(player: Player)
-		if workspace.StreamingEnabled then
-			for _, position in points do
-				if not player.Parent then
-					return
-				end
-				local ok, failure = pcall(player.RequestStreamAroundAsync, player, position, 15)
-				if not ok then
-					warn("[CharacterSpawn] streaming request failed: " .. tostring(failure))
-				end
-			end
+	local floor = WorldRefs.kickZoneFloor(map)
+	local remote = Instance.new("RemoteEvent")
+	remote.Name = SpawnProtocol.Remote
+	remote.Parent = ReplicatedStorage
+	local pending: { [Player]: Model } = {}
+	remote.OnServerEvent:Connect(function(player, character, ...)
+		if
+			select("#", ...) ~= 0
+			or typeof(character) ~= "Instance"
+			or not character:IsA("Model")
+			or pending[player] ~= character
+			or player.Character ~= character
+		then
+			return
 		end
+		local root = character:FindFirstChild("HumanoidRootPart")
+		if not root or not root:IsA("BasePart") or character:GetAttribute(SpawnProtocol.Positioned) ~= true then
+			return
+		end
+		pending[player] = nil -- One acknowledgement per server-created character.
+		root.AssemblyLinearVelocity = Vector3.zero
+		root.AssemblyAngularVelocity = Vector3.zero
+		root.Anchored = false
+		player.ReplicationFocus = nil
+		character:SetAttribute(SpawnProtocol.Ready, true)
+	end)
+	Players.PlayerRemoving:Connect(function(player)
+		pending[player] = nil
+	end)
+	local function load(player: Player)
 		if player.Parent then
-			player:LoadCharacterAsync()
+			player.ReplicationFocus = floor
+			local ok, failure = pcall(player.LoadCharacterAsync, player)
+			if not ok and player.Parent then
+				warn("[CharacterSpawn] avatar load failed: " .. tostring(failure))
+				player:Kick("Your character could not load. Please rejoin.")
+			end
 		end
 	end
 	local function watch(player: Player, character: Model)
-		local humanoid = character:WaitForChild("Humanoid", 10) :: Humanoid?
-		if not humanoid then
+		local root = character:WaitForChild("HumanoidRootPart", 10) :: BasePart?
+		if not root or player.Character ~= character then
 			return
 		end
+		root.Anchored = true
+		local humanoid = character:WaitForChild("Humanoid", 10) :: Humanoid?
+		if not humanoid or player.Character ~= character then
+			return
+		end
+		root.CFrame = Config.kickZoneCharacterPose(map, root, humanoid, Config.KickZoneStandFromFront)
+		root.AssemblyLinearVelocity = Vector3.zero
+		root.AssemblyAngularVelocity = Vector3.zero
+		pending[player] = character
+		character:SetAttribute(SpawnProtocol.Positioned, true)
+		task.delay(60, function()
+			if pending[player] == character and player.Parent then
+				player:Kick("The starting area could not load. Please rejoin.")
+			end
+		end)
 		humanoid.Died:Once(function()
 			task.wait(Players.RespawnTime)
 			if player.Parent and player.Character == character then

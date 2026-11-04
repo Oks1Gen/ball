@@ -1,5 +1,6 @@
 --!strict
 local Refs = require(game.ReplicatedStorage.Shared.WorldRefs)
+local Scale = require(game.ReplicatedStorage.Shared.WorldScale)
 local Shapes = require(game.ServerStorage.CloudShapes)
 local Clouds = {}
 local V = Vector3.new
@@ -110,6 +111,8 @@ function Clouds.apply(world: any): any
 	}
 	local rng = Random.new(71481)
 	local count = 0
+	-- Spacing, offsets and cloud sizes were tuned in the 0.8 scene and follow the world scale.
+	local s = Scale.relative(world)
 	for edge, a in outline do
 		local b = outline[edge % #outline + 1]
 		local tangent = (b - a).Unit
@@ -121,20 +124,21 @@ function Clouds.apply(world: any): any
 		local length = (b - a).Magnitude
 		for layer = 1, 2 do
 			-- Float rounding of a 180-stud edge must not add another cloud in Play.
-			local steps = math.max(1, math.ceil(length / (if layer == 1 then 45 else 70) - 0.00001))
+			local steps = math.max(1, math.ceil(length / ((if layer == 1 then 45 else 70) * s) - 0.00001))
 			for i = 0, steps - 1 do
 				-- Unequal intervals and broad/low silhouettes break the repeated scalloped rim.
 				-- Retain the same cloud budget and cover every side of the island.
 				local along = (i + 0.5 + rng:NextNumber(-0.22, 0.22)) / steps * length
-				local offset = if layer == 1 then rng:NextNumber(17, 25) else rng:NextNumber(59, 76)
-				local y = deckY + (if layer == 1 then -14.6 + rng:NextNumber(-4, 2) else -32.6 + rng:NextNumber(-7, 4))
+				local offset = s * (if layer == 1 then rng:NextNumber(17, 25) else rng:NextNumber(59, 76))
+				local y = deckY
+					+ s * (if layer == 1 then -14.6 + rng:NextNumber(-4, 2) else -32.6 + rng:NextNumber(-7, 4))
 				local position = a + tangent * along + outward * offset + V(0, y, 0)
 				count += 1
 				cloud(
 					segment,
 					CFrame.fromMatrix(position, outward, V(0, 1, 0), tangent)
 						* CFrame.Angles(0, rng:NextNumber(-0.25, 0.25), 0),
-					CLOUD_SCALE * (if layer == 1 then rng:NextNumber(0.9, 1.15) else rng:NextNumber(1.2, 1.65)),
+					CLOUD_SCALE * s * (if layer == 1 then rng:NextNumber(0.9, 1.15) else rng:NextNumber(1.2, 1.65)),
 					rng:NextInteger(1, #Shapes),
 					count,
 					V(rng:NextNumber(0.9, 1.12), rng:NextNumber(0.65, 1.1), rng:NextNumber(0.9, 1.25))

@@ -4,7 +4,7 @@ local GuiService = game:GetService("GuiService")
 local Config = require(script.Parent.Config)
 local View = {}
 
-function View.mount(screen: ScreenGui, skip: () -> ())
+function View.mount(screen: ScreenGui)
 	local packages = game:GetService("ReplicatedStorage"):WaitForChild("Packages")
 	local React = require(packages:WaitForChild("React"))
 	local ReactRoblox = require(packages:WaitForChild("ReactRoblox"))
@@ -12,6 +12,7 @@ function View.mount(screen: ScreenGui, skip: () -> ())
 	local e = React.createElement
 	local progress, setProgress = React.createBinding(0)
 	local count, setCount = React.createBinding("0/0 assets loaded")
+	local hintText, setHint = React.createBinding("Click anywhere to skip!")
 	local rotation, setRotation = React.createBinding(0)
 	local fade, setFade = React.createBinding(0)
 	local viewport, setViewport = React.createBinding(Vector2.new(1280, 720))
@@ -160,18 +161,7 @@ function View.mount(screen: ScreenGui, skip: () -> ())
 		}),
 		Loading = label("LoadingLabel", "Loading..", "loading", 0.025),
 		Count = label("AssetCount", count, "count", 0.017),
-		Hint = label("SkipHint", "Click anywhere to skip!", "hint", 0.017),
-		-- The entire screen is one fixed hit target. The hint is decoration.
-		Skip = e("TextButton", {
-			Name = "SkipAnywhere",
-			Size = UDim2.fromScale(1, 1),
-			BackgroundTransparency = 1,
-			Text = "",
-			AutoButtonColor = false,
-			Modal = true,
-			ZIndex = 5,
-			[React.Event.Activated] = skip,
-		}),
+		Hint = label("SkipHint", hintText, "hint", 0.017),
 	}))
 	return {
 		update = function(loaded: number, total: number, failed: number)
@@ -185,6 +175,14 @@ function View.mount(screen: ScreenGui, skip: () -> ())
 						if failed > 0 then string.format(" · %d failed", failed) else ""
 					)
 				)
+			end
+		end,
+		waiting = function(skipped: boolean?)
+			if alive then
+				setCount("Loading character & ground...")
+				if skipped then
+					setHint("Asset loading skipped")
+				end
 			end
 		end,
 		finish = function()

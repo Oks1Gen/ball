@@ -35,7 +35,7 @@ export type Context = {
 function Throw.build(context: Context): (Player, number?, number?, number?) -> ()
 	return function(player: Player, adminDistance: number?, timingMultiplier: number?, perfectCount: number?)
 		local s = context.states[player]
-		if not s or os.clock() < s.busyUntil then
+		if not s or s.paidRebirthWaiting or os.clock() < s.busyUntil then
 			return
 		end
 		if not context.inKickZone(player) then

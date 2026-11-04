@@ -410,8 +410,9 @@ function Game.start(map)
 		stopTraining(player, true)
 		s.data.skill = 0
 		ProfileData.add(s.data, "rebirths", 1)
-		effect:FireClient(player, "Rebirth", {})
-		publish(player, "REBIRTH! ×" .. (s.data.rebirths + 1) .. " SKILL")
+		-- The Rebirth reveal names the new multiplier; no second text notice.
+		effect:FireClient(player, "Rebirth", { rebirths = s.data.rebirths })
+		publish(player)
 		return true
 	end
 	local throw = Throw.build({
@@ -471,6 +472,7 @@ function Game.start(map)
 		states = states,
 		Config = Config,
 		effect = effect,
+		kickTiming = kickTiming,
 		publish = publish,
 		stopTraining = stopTraining,
 		arenaFor = arenaFor,

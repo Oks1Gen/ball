@@ -15,6 +15,7 @@ local Style = require(script.Parent.Parent.UiStyle)
 local e = React.createElement
 local UpgradeNotices = {}
 local WIDTH, HEIGHT = 480, 128
+local SCALE = 0.75 -- Compact card; half size made the small text unreadable.
 
 function UpgradeNotices.mount(context: any)
 	local gui = Instance.new("ScreenGui")
@@ -32,10 +33,18 @@ function UpgradeNotices.mount(context: any)
 	probe.Parent = gui
 	local root = ReactRoblox.createRoot(probe)
 	local state = Notices.new()
+	state.onAnnounce = function(kind: string, rank: number)
+		context.send("NoticeSeen", kind, rank)
+	end
 	local slide, setSlide = React.createBinding(0)
 	local timer, setTimer = React.createBinding(1)
 	local motion = Ripple.createMotion(0, { start = true })
-	local disconnect = motion:onChange(setSlide)
+	local slideValue = 0
+	local disconnect = motion:onChange(function(value: number)
+		slideValue = value
+		setSlide(value)
+	end)
+	local top, factor = 0, SCALE
 	local displayed: any = nil
 	local info: any = nil
 	local guiding: number? = nil
@@ -78,8 +87,9 @@ function UpgradeNotices.mount(context: any)
 			return
 		end
 		local area = Insets.area(workspace.CurrentCamera.ViewportSize, probe)
-		local factor = math.min(1, (area.size.X - 32) / WIDTH)
-		local top = area.offset.Y + 76
+		factor = math.min(1, (area.size.X - 32) / WIDTH) * SCALE
+		-- Directly under the top HUD cluster (Auto Kick), not in the screen middle.
+		top = context.top() - probe.AbsolutePosition.Y + 6
 		local notice = displayed
 		local children = {}
 		if notice then
@@ -199,10 +209,10 @@ function UpgradeNotices.mount(context: any)
 			children.Stop = e(U.Button, {
 				Name = "StopGuide",
 				Text = "FOLLOW THE ARROWS  ·  STOP",
-				TextSize = 17,
+				TextSize = 15,
 				AnchorPoint = Vector2.new(0.5, 0),
 				Position = UDim2.fromOffset(area.offset.X + area.size.X / 2, top),
-				Size = UDim2.fromOffset(330, 36),
+				Size = UDim2.fromOffset(300, 32),
 				Color = Style.Panel,
 				OnActivated = function()
 					guiding = nil
@@ -235,6 +245,10 @@ function UpgradeNotices.mount(context: any)
 			guide:update(os.clock(), reduced())
 			setTimer(state.remaining / Notices.Duration)
 			local key = (if current then current.id else "") .. ":" .. tostring(guiding) .. ":" .. tostring(reduced())
+			local moved = math.abs(context.top() - probe.AbsolutePosition.Y + 6 - top) > 0.5
+			if moved and key == lastKey then
+				render()
+			end
 			if key ~= lastKey then
 				lastKey = key
 				if current then
@@ -249,6 +263,15 @@ function UpgradeNotices.mount(context: any)
 				end
 				motion:tween(goal, { duration = if reduced() then 0 else 0.25, easing = "quadOut" })
 			end
+		end,
+		-- Absolute Y below whatever this module shows, so toasts stack under it.
+		bottom = function(): number
+			local base = probe.AbsolutePosition.Y + top
+			if not gui.Enabled then
+				return base - 6
+			end
+			local extra = if guiding and not state.current then 32 + 6 else 0
+			return base + math.max(extra, (HEIGHT * factor + 6) * math.clamp(slideValue, 0, 1)) - 6
 		end,
 		destroy = function()
 			alive = false

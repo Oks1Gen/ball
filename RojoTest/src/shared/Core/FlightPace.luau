@@ -4,9 +4,9 @@
 local Pace = {}
 
 -- Average ball speed (studs/s) where speed effects start and where they peak. Scaled with World1
--- (0.8 on 2026-11-02), so a shot of the same length in metres gets the same effects.
-Pace.Slow = 56
-Pace.Fast = 160
+-- (0.6 since 2026-11-03), so a shot of the same length in metres gets the same effects.
+Pace.Slow = 42
+Pace.Fast = 120
 -- Ball speed at a contact relative to an unwarped shot, at full pace.
 Pace.ContactSpeed = 0.2
 

@@ -18,8 +18,17 @@ return {
 		table.remove(data.pets)
 		local pet = Rewards.claim(data, definition, "paid")
 		assert(pet and pet.uid == "paid" and #data.pets == 60 and not data.perks.AdminEggPending)
+		assert(Rewards.claim(data, definition, "unreserved") == nil)
+	end,
+	["separate paid egg reservations survive a reload and each grant one pet"] = function()
+		local data = Data.fresh()
+		data.perks.AdminEgg = true
+		data.perks.AdminEggPending = true
 		Rewards.reserve(data)
-		assert(Rewards.claim(data, definition, "duplicate") == nil)
+		data = Data.normalize(data, catalog)
+		assert(Rewards.claim(data, definition, "legacy"))
+		assert(Rewards.claim(data, definition, "second"))
+		assert(not Rewards.claim(data, definition, "unreserved"))
 	end,
 	["a paid pet with a free slot is issued once"] = function()
 		local data = Data.fresh()

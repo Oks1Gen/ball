@@ -1,18 +1,22 @@
--- Edit migration: shrink World1 (lobby, training area and the whole course) by 0.8 (2026-11-02).
+-- Edit migration: shrink World1 (lobby, training area and the whole course) by one more STEP.
+-- History: 0.8 on 2026-11-02, then 0.75 on 2026-11-03 (0.6 of the authored size in all).
 -- Run once in Edit, then save the place. Every position moves towards ORIGIN — the top of the
 -- kick zone's front edge, where the kick happens — and every size shrinks by the same factor,
 -- so the layout is unchanged and the kick spot stays where it is. Gameplay keeps its metres:
--- GameConfig.DistancePerStud grows by 1/0.8 in the same change.
--- Material-like detail keeps its size: stud textures (8 studs a tile) and the 4-stud wall
--- checker, which LobbyWalls redraws on the smaller walls. The pre-scale state is the inverse
--- transform (factor 1.25 about the same origin) or Ctrl+Z to "Before world scale".
+-- GameConfig.DistancePerStud grows by 1/STEP in the same change, FlightPace and routeStuds shrink.
+-- Since 2026-11-03 the stud textures and checker cells shrink too: the lobby lattice builders
+-- multiply authored cells by Shared.WorldScale.factor and are rebuilt below, so every surface
+-- keeps whole cells and whole stud rows. The pre-scale state is the inverse transform
+-- (1/STEP about the same origin) or Ctrl+Z to "Before world scale".
 -- The layout journal's retired visuals in ServerStorage are scaled too: WorldLayout returns them
 -- to the world during startup. WorldBackups keep their historical coordinates.
 assert(not game:GetService("RunService"):IsRunning(), "Run in Edit")
 local world = workspace.Map.World1
-assert(world:GetAttribute("WorldScale") == nil, "World1 already scaled")
-local K = 0.8
+local PREVIOUS, STEP, DATE = 0.8, 0.75, "2026-11-03"
+assert(world:GetAttribute("WorldScale") == PREVIOUS, "World1 is not at the expected scale")
+local K = STEP
 local ORIGIN = Vector3.new(55, 20.6, 124)
+assert(world:GetAttribute("WorldScaleOrigin") == ORIGIN, "Scale origin moved: remeasure")
 
 local apron = world.Lobby.KickZone.KickZoneFloor
 local front = apron.CFrame * Vector3.new(0, apron.Size.Y / 2, -apron.Size.Z / 2)
@@ -37,12 +41,26 @@ local function sequence(s: NumberSequence): NumberSequence
 end
 
 -- Attributes the game reads as geometry. "Before*" attributes are history and stay as recorded.
-local WORLD_FRAMES = { DisplayBasePivot = true, MossSupportFrame = true, SnowSupportFrame = true, MapPivot = true }
-local WORLD_POINTS = { DisplayLabelBase = true }
+local WORLD_FRAMES = {
+	DisplayBasePivot = true,
+	MossSupportFrame = true,
+	SnowSupportFrame = true,
+	MapPivot = true,
+	WallGridBaseCFrame = true,
+	CityBankOriginalFrame = true,
+}
+local WORLD_POINTS = { DisplayLabelBase = true, ShotFinishPosition = true }
 local LOCAL_FRAMES = { DisplayBaseLocal = true }
-local LOCAL_VECTORS = { DisplayLabelLocal = true, MossSupportSize = true, SnowSupportSize = true }
-local LENGTHS = { DisplayDiameter = true, LaneLength = true }
-local WORLD_HEIGHTS = { CrestWorldY = true }
+local LOCAL_VECTORS = {
+	DisplayLabelLocal = true,
+	MossSupportSize = true,
+	SnowSupportSize = true,
+	WallGridBaseSize = true,
+	WallGridBasePosition = true,
+	CityBankOriginalSize = true,
+}
+local LENGTHS = { DisplayDiameter = true, LaneLength = true, PathLength = true }
+local WORLD_HEIGHTS = { CrestWorldY = true, PavingTop = true }
 
 local function attributes(item: Instance)
 	for name, value in item:GetAttributes() do
@@ -70,7 +88,7 @@ if journal then
 end
 
 game:GetService("ChangeHistoryService"):SetWaypoint("Before world scale")
-local counts = { parts = 0, models = 0, other = 0 }
+local counts = { parts = 0, models = 0, textures = 0, other = 0 }
 for _, root in roots do
 	local items = root:GetDescendants()
 	-- Pivots first: a model whose pivot was never set follows its parts.
@@ -90,6 +108,21 @@ for _, root in roots do
 			item.Size *= K
 			item.CFrame = frame(cf)
 			counts.parts += 1
+		elseif item:IsA("Texture") then
+			item.StudsPerTileU, item.StudsPerTileV = item.StudsPerTileU * K, item.StudsPerTileV * K
+			item.OffsetStudsU, item.OffsetStudsV = item.OffsetStudsU * K, item.OffsetStudsV * K
+			counts.textures += 1
+		elseif item:IsA("SpecialMesh") then
+			-- Sphere/brick scales are relative to the part; file meshes are absolute.
+			if item.MeshType == Enum.MeshType.FileMesh then
+				item.Scale *= K
+			end
+			item.Offset *= K
+			counts.other += 1
+		elseif item:IsA("SurfaceGui") then
+			if item.SizingMode == Enum.SurfaceGuiSizingMode.PixelsPerStud then
+				item.PixelsPerStud /= K
+			end
 		elseif item:IsA("Attachment") then
 			item.CFrame = scaleLocal(item.CFrame)
 			counts.other += 1
@@ -124,6 +157,12 @@ for _, root in roots do
 	end
 end
 attributes(world)
+for _, name in { "LobbyWallUpperRise", "LobbyWallUpperSetback" } do
+	local value = world:GetAttribute(name)
+	if typeof(value) == "number" then
+		world:SetAttribute(name, value * K)
+	end
+end
 
 -- Route description of the course: front edge stays at the throw line.
 local first, last = world.FootballCourse.Zones.Zone01.Field, world.FootballCourse.Zones.Zone08.Field
@@ -133,22 +172,36 @@ world:SetAttribute("RouteFrontZ", routeFront)
 world:SetAttribute("RouteEndZ", routeEnd)
 world:SetAttribute("RouteLengthStuds", routeFront - routeEnd)
 world:SetAttribute("BiomeLengthStuds", first.Size.Z)
-world:SetAttribute("WorldScale", K)
+world:SetAttribute("WorldScale", PREVIOUS * STEP)
 world:SetAttribute("WorldScaleOrigin", ORIGIN)
-world:SetAttribute("WorldScaled", "2026-11-02")
+world:SetAttribute("WorldScaled", DATE)
 
--- Redraw the cosmetic layers from the scaled geometry. Fresh copies of the modules and the
--- palette they share bypass Studio's require cache from earlier Edit runs.
+-- Redraw the lattice layers from the scaled geometry with the new factor. Fresh copies of the
+-- modules and the palette they share bypass Studio's require cache from earlier Edit runs.
 local server = game.ServerScriptService.Server
 local fresh = Instance.new("Folder")
 fresh.Name = "WorldScaleMigration"
-for _, name in { "LobbyPalette", "LobbyPathRegions", "LobbyWallCoverage", "LobbyWalls", "LobbyPaths", "KickZoneStyle" } do
+for _, name in
+	{
+		"LobbyPalette",
+		"LobbyPathRegions",
+		"LobbyPathGrid",
+		"LobbyPathArrows",
+		"LobbyWallCoverage",
+		"LobbyWallGeometry",
+		"LobbyWallDecor",
+		"LobbyWalls",
+		"LobbyPaths",
+		"KickZoneStyle",
+		"LobbyLawn",
+	}
+do
 	server[name]:Clone().Parent = fresh
 end
 fresh.Parent = game.ServerScriptService
 local results = {}
 local ok, problem = pcall(function()
-	for _, name in { "LobbyWalls", "KickZoneStyle", "LobbyPaths" } do
+	for _, name in { "LobbyWalls", "KickZoneStyle", "LobbyPaths", "LobbyLawn" } do
 		results[name] = require(fresh[name]).apply(world)
 	end
 end)
@@ -157,14 +210,16 @@ assert(ok, problem)
 
 game:GetService("ChangeHistoryService"):SetWaypoint("After world scale")
 return string.format(
-	"scaled %d parts, %d models, %d other; route %.1f studs (%.1f..%.1f); walls rebuilt=%s, paving regions %s, throw tiles %s",
+	"scaled %d parts, %d models, %d textures, %d other; route %.1f studs (%.1f..%.1f); walls rebuilt=%s, paving regions %s, throw tiles %s, lawn rebuilt=%s",
 	counts.parts,
 	counts.models,
+	counts.textures,
 	counts.other,
 	routeFront - routeEnd,
 	routeFront,
 	routeEnd,
 	tostring(type(results.LobbyWalls) == "table" and results.LobbyWalls.rebuilt),
 	tostring(results.LobbyPaths),
-	tostring(results.KickZoneStyle)
+	tostring(results.KickZoneStyle),
+	tostring(type(results.LobbyLawn) == "table" and results.LobbyLawn.rebuilt)
 )

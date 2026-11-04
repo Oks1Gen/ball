@@ -325,11 +325,14 @@ function City.apply(world: any)
 					typeof(originalSize) == "Vector3" and typeof(originalFrame) == "CFrame",
 					"Missing shore source geometry"
 				)
-				body.Size = originalSize + V(0, 0.12, 0)
-				body.CFrame = originalFrame - V(0, 0.06, 0)
+				local drop = 0.12 * k / Scale.Measured
+				body.Size = originalSize + V(0, drop, 0)
+				body.CFrame = originalFrame - V(0, drop / 2, 0)
 			end
 		end
-		for _, stripe in zone.Geometry.PitchMarkings:GetChildren() do
+		-- A voxel-styled zone (CourseVoxelStyle) retires its old markings.
+		local markings = zone.Geometry:FindFirstChild("PitchMarkings")
+		for _, stripe in if markings then markings:GetChildren() else {} do
 			if stripe:IsA("BasePart") and stripe.Name == "MownGrassStripe" then
 				stripe.Color = theme.pitch:Lerp(Color3.new(0, 0, 0), 0.09)
 			end

@@ -80,6 +80,12 @@ function Layout.prepare(world: any)
 	world:SetAttribute("WorldLayoutVersion", nil)
 end
 
+-- Park an inert original whose look a restyle replaced. No journal entry records
+-- this move, so a later prepare never brings it back into the live map.
+function Layout.retire(world: any, node: Instance)
+	node.Parent = folder(state(world), "RetiredVisuals")
+end
+
 function Layout.apply(world: any)
 	if world:GetAttribute("WorldLayoutReady") == true then
 		return

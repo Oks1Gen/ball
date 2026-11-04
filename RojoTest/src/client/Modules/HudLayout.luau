@@ -103,7 +103,9 @@ function HudLayout.landscape(): Spec
 	local offerWidth = math.floor((592 - offerGap * 2) / 3)
 	local elements: { [string]: Entry } = {
 		HUD = entry(0, 0, BOARD_WIDTH, BOARD_HEIGHT),
-		AutoThrow = entry(540, 3, 200, 52),
+		-- Raised into the empty middle of the Roblox top bar row, which frees
+		-- the strip under it for the upgrade card and the toasts.
+		AutoThrow = entry(540, -34, 200, 52),
 		StarterPack = entry(1038.4, 133, 119, 83),
 		DoubleSkill = entry(1030, 303, 125, 53),
 		DoubleWins = entry(1030, 401, 125, 53),

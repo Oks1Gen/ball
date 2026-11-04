@@ -1,4 +1,7 @@
 --!strict
+-- Compact notices. Up to two plates sit in a column under the top HUD cluster
+-- (Auto Kick and the upgrade card), centred on Auto Kick.
+local TextService = game:GetService("TextService")
 local React = require(game.ReplicatedStorage.Packages.React)
 local ReactRoblox = require(game.ReplicatedStorage.Packages.ReactRoblox)
 local Ripple = require(game.ReplicatedStorage.Packages.Ripple)
@@ -10,10 +13,39 @@ local Insets = require(script.Parent.Parent.Modules.GuiInsets)
 local e = React.createElement
 local Notifications = {}
 
+local HEIGHT = 42
+local GAP = 10
+local TEXT_SIZE = 20
+local ICON = 30
+-- The same inset on both sides of the icon + caption group keeps it centred.
+local PAD = 12
+local SPACING = 8
+local MAX_STACK = 2
+local LIFETIME = 2.8
+local LEAVE_TIME = 0.25
+
 export type Context = {
 	parent: Instance,
 	snapshot: () -> any?,
 	playSound: (string, number?, number?) -> (),
+	-- Absolute GUI position: X of the column centre, Y of the top cluster bottom.
+	anchor: () -> Vector2,
+}
+
+type Toast = {
+	id: number,
+	text: string,
+	category: string,
+	gain: number?,
+	count: number,
+	expires: number,
+	leaving: boolean,
+	appear: any,
+	slot: any,
+	setSlot: (number) -> (),
+	slotValue: number,
+	scale: any,
+	setScale: (number) -> (),
 }
 
 -- Existing server notices are plain strings. Keep their presentation policy here.
@@ -53,7 +85,6 @@ function Notifications.mount(context: Context)
 	local gui = Instance.new("ScreenGui")
 	gui.Name = "Notifications"
 	Insets.prepare(gui)
-	-- Draw the transition beyond device insets; position the resting banner in the safe area.
 	gui.ScreenInsets = Enum.ScreenInsets.None
 	gui.DisplayOrder = 80
 	gui.ResetOnSpawn = false
@@ -65,89 +96,130 @@ function Notifications.mount(context: Context)
 	probe.Size = UDim2.fromScale(1, 1)
 	probe.Parent = gui
 	local root = ReactRoblox.createRoot(probe)
-	local progress, updateProgress = React.createBinding(0)
-	local motion = Ripple.createMotion(0, { start = true })
-	local changed = motion:onChange(updateProgress)
-	local alive, visible = true, false
-	local leaving = false
+	local anchor, setAnchor = React.createBinding(Vector2.zero)
+	local toasts: { Toast } = {}
+	local alive = true
 	local revision = 0
-	local message, category = "", "Info"
 	local lastRaw, lastRawTime = "", -math.huge
 	local lastSound = -math.huge
-	local gain: number? = nil
-	local count = 0
+
 	local function reduced(): boolean
 		local snapshot = context.snapshot()
 		return snapshot ~= nil and snapshot.data.settings.effects == false
 	end
-	local function render()
-		if not alive then
-			return
-		end
-		local area = Insets.area(workspace.CurrentCamera.ViewportSize, probe)
-		local width = math.min(area.size.X - 24, math.clamp(area.size.X * 0.48, 300, 500))
-		local height = 48
-		-- The centre of the Roblox top bar is empty. Use the device-safe top strip
-		-- above Auto Kick; CoreUISafeInsets would push the toast into the phone counters.
-		local top = Insets.insets().top + 6
-		local color = if category == "Error"
+
+	local function textWidth(text: string): number
+		return TextService:GetTextSize(text, TEXT_SIZE, Enum.Font.GothamBlack, Vector2.new(2000, HEIGHT)).X + 4
+	end
+
+	local function plate(toast: Toast)
+		local color = if toast.category == "Error"
 			then Style.Colors.Red
-			elseif category == "Success" then Style.Colors.Green
+			elseif toast.category == "Success" then Style.Colors.Green
 			else Style.Colors.Blue
-		local icon = if category == "Error"
+		local icon = if toast.category == "Error"
 			then "Alert"
-			elseif gain ~= nil then "Wins"
-			elseif category == "Success" then "Check"
+			elseif toast.gain ~= nil then "Wins"
+			elseif toast.category == "Success" then "Check"
 			else "Ball"
-		root:render(e("Frame", {
-			Name = "Banner",
-			Visible = visible,
+		local area = Insets.area(workspace.CurrentCamera.ViewportSize, probe)
+		local limit = math.min(480, area.size.X - 24)
+		local caption = math.min(textWidth(toast.text), limit - PAD * 2 - ICON - SPACING)
+		local width = PAD * 2 + ICON + SPACING + caption
+		-- The same brick plate as the HUD buttons: studs, top light, ink edge,
+		-- drop shadow and a white caption with its outline. It pops in and out
+		-- by scale; a CanvasGroup fade dulled all of it.
+		return e("Frame", {
+			Name = "Toast" .. toast.id,
 			BackgroundTransparency = 1,
-			AnchorPoint = Vector2.new(0.5, 0),
-			Position = progress:map(function(value)
-				return UDim2.fromOffset(area.offset.X + area.size.X / 2, -height - 12 + (top + height + 12) * value)
+			-- Centre anchor: UIScale grows the pop from the middle of the plate.
+			AnchorPoint = Vector2.new(0.5, 0.5),
+			Size = UDim2.fromOffset(width, HEIGHT),
+			Position = React.joinBindings({ anchor = anchor, slot = toast.slot }):map(function(values: any)
+				local origin = values.anchor - probe.AbsolutePosition
+				return UDim2.fromOffset(
+					math.round(origin.X),
+					math.round(origin.Y + 8 + HEIGHT / 2 + values.slot * (HEIGHT + GAP))
+				)
 			end),
-			Size = UDim2.fromOffset(width, height),
 		}, {
-			Shadow = e("Frame", {
-				Position = UDim2.fromOffset(0, 4),
-				Size = UDim2.fromScale(1, 1),
-				BackgroundColor3 = Style.Ink,
-				BackgroundTransparency = 0.35,
-				BorderSizePixel = 0,
-				ZIndex = 1,
-			}, { Corner = U.corner(12) }),
+			Scale = e("UIScale", {
+				Scale = toast.scale:map(function(value: number)
+					return math.max(value, 0.001)
+				end),
+			}),
 			Plate = e(U.Surface, {
-				Color = color,
-				Radius = 12,
-				NoShadow = true,
-				ZIndex = 2,
+				Color = color:Lerp(Style.Ink, 0.12),
+				Radius = 10,
 				Children = {
-					Accent = e("Frame", {
-						Position = UDim2.fromOffset(9, 10),
-						Size = UDim2.fromOffset(4, height - 20),
-						BackgroundColor3 = color,
-						BorderSizePixel = 0,
-						ZIndex = 10,
-					}, { Corner = U.corner(2) }),
-					Icon = e(
-						U.Icon,
-						{ Kind = icon, Position = UDim2.fromOffset(21, 6), Size = UDim2.fromOffset(36, 36) }
-					),
+					Icon = e(U.Icon, {
+						Kind = icon,
+						AnchorPoint = Vector2.new(0, 0.5),
+						Position = UDim2.new(0, PAD, 0.5, 0),
+						Size = UDim2.fromOffset(ICON, ICON),
+					}),
 					Message = e(U.Label, {
 						Name = "Message",
-						Text = message,
-						Position = UDim2.fromOffset(68, 4),
-						Size = UDim2.fromOffset(width - 82, height - 8),
-						TextSize = if area.size.Y < 500 then 18 else 20,
-						Color = if gain ~= nil then Style.Gold else Style.Text,
-						Wrap = true,
+						Text = toast.text,
+						AnchorPoint = Vector2.new(0, 0.5),
+						Position = UDim2.new(0, PAD + ICON + SPACING, 0.5, 0),
+						Size = UDim2.fromOffset(caption, HEIGHT - 8),
+						TextSize = TEXT_SIZE,
+						Color = if toast.gain ~= nil then Style.Gold else Style.Text,
 						Align = Enum.TextXAlignment.Left,
 					}),
 				},
 			}),
-		}))
+		})
 	end
+
+	local function render()
+		if not alive then
+			return
+		end
+		local children = {}
+		for _, toast in toasts do
+			children["Toast" .. toast.id] = plate(toast)
+		end
+		root:render(e(React.Fragment, nil, children))
+	end
+
+	local function newToast(text: string, category: string, gain: number?): Toast
+		revision += 1
+		local scale, setScale = React.createBinding(0)
+		local slot, setSlot = React.createBinding(0)
+		local toast: Toast = {
+			id = revision,
+			text = text,
+			category = category,
+			gain = gain,
+			count = 1,
+			expires = os.clock() + LIFETIME,
+			leaving = false,
+			appear = Ripple.createMotion(0, { start = true }),
+			slot = slot,
+			setSlot = setSlot,
+			slotValue = 0,
+			scale = scale,
+			setScale = setScale,
+		}
+		-- The spring overshoots a little: the bouncy pop of the game's windows.
+		toast.appear:onChange(function(value: number)
+			if not toast.leaving then
+				setScale(math.max(value, 0))
+			end
+		end)
+		return toast
+	end
+
+	local function leave(toast: Toast)
+		if toast.leaving then
+			return
+		end
+		toast.leaving = true
+		toast.expires = os.clock() + (if reduced() then 0 else LEAVE_TIME)
+	end
+
 	local function show(raw: string?, kind: string?, wins: number?, distance: number?)
 		if not alive or raw == nil or raw == "" then
 			return
@@ -158,70 +230,105 @@ function Notifications.mount(context: Context)
 			return
 		end
 		lastRaw, lastRawTime = raw, now
-		local same = visible and raw == message
-		local merging = visible and gain ~= nil and wins ~= nil
-		if merging then
-			gain = (gain or 0) + (wins or 0)
-			count += 1
-		else
-			gain, count = wins, 1
+		local category = kind or classify(raw)
+		local text = raw
+		if distance then
+			text = "+" .. Config.format(wins or 0) .. " Wins • " .. Config.format(distance) .. " m"
 		end
-		category = kind or classify(raw)
-		message = if gain ~= nil and count > 1
-			then "+" .. Config.format(gain) .. " Wins • " .. count .. " kicks"
-			else raw
-		if distance and count == 1 then
-			message = "+" .. Config.format(wins or 0) .. " Wins • " .. Config.format(distance) .. " m"
+		-- Kick results that arrive while one is shown merge into it; a repeated
+		-- message only stays longer.
+		local newest = toasts[1]
+		if newest and not newest.leaving and newest.gain ~= nil and wins ~= nil then
+			newest.gain = (newest.gain :: number) + wins
+			newest.count += 1
+			newest.text = "+" .. Config.format(newest.gain :: number) .. " Wins • " .. newest.count .. " kicks"
+			newest.expires = now + LIFETIME
+			render()
+			return
 		end
-		visible = true
-		leaving = false
-		revision += 1
-		local id = revision
+		if newest and not newest.leaving and newest.text == text then
+			newest.expires = now + LIFETIME
+			return
+		end
+		local toast = newToast(text, category, wins)
+		table.insert(toasts, 1, toast)
+		while #toasts > MAX_STACK + 1 do
+			local dropped = table.remove(toasts)
+			if dropped then
+				dropped.appear:destroy()
+			end
+		end
+		for index, item in toasts do
+			if index > MAX_STACK then
+				leave(item)
+			end
+		end
 		render()
 		if reduced() then
-			motion:setPosition(1)
-			motion:tween(1, { duration = 0 })
+			toast.appear:setPosition(1)
+			toast.appear:tween(1, { duration = 0 })
 		else
-			motion:spring(1, { frequency = 4, dampingRatio = 0.85 })
+			toast.appear:spring(1, { frequency = 4, dampingRatio = 0.55 })
 		end
-		if not same and not merging and now - lastSound >= 0.4 then
+		if now - lastSound >= 0.4 then
 			lastSound = now
 			local sound = Sounds[category]
 			context.playSound(sound.id, sound.volume)
 		end
-		task.delay(2.8, function()
-			if not alive or revision ~= id then
-				return
-			end
-			leaving = true
-			motion:tween(0, { duration = if reduced() then 0 else 0.25, easing = "quadIn" })
-			task.delay(if reduced() then 0 else 0.26, function()
-				if alive and revision == id then
-					visible = false
-					gain = nil
-					render()
-				end
-			end)
-		end)
 	end
+
+	-- Leaving toasts shrink away; the rest glide to their slot under the
+	-- current bottom of the top cluster.
+	local function frame(dt: number)
+		if not alive then
+			return
+		end
+		setAnchor(context.anchor())
+		local now = os.clock()
+		local quick = reduced()
+		local changed = false
+		for index = #toasts, 1, -1 do
+			local toast = toasts[index]
+			if not toast.leaving and now >= toast.expires then
+				leave(toast)
+			end
+			if toast.leaving then
+				local progress = if quick then 1 else math.clamp(1 - (toast.expires - now) / LEAVE_TIME, 0, 1)
+				toast.setScale(1 - progress * progress)
+				if progress >= 1 then
+					toast.appear:destroy()
+					table.remove(toasts, index)
+					changed = true
+				end
+			end
+		end
+		local slot = 0
+		for _, toast in toasts do
+			toast.slotValue = if quick then slot else toast.slotValue + (slot - toast.slotValue) * math.min(1, dt * 14)
+			toast.setSlot(toast.slotValue)
+			if not toast.leaving then
+				slot += 1
+			end
+		end
+		if changed then
+			render()
+		end
+	end
+
 	local resize = probe:GetPropertyChangedSignal("AbsoluteSize"):Connect(render)
 	render()
 	return {
 		show = show,
+		frame = frame,
 		setReduced = function(value: boolean)
 			gui:SetAttribute("ReducedMotion", value)
-			if value then
-				local goal = if visible and not leaving then 1 else 0
-				motion:setPosition(goal)
-				motion:tween(goal, { duration = 0 })
-			end
 		end,
 		destroy = function()
 			alive = false
-			revision += 1
 			resize:Disconnect()
-			changed()
-			motion:destroy()
+			for _, toast in toasts do
+				toast.appear:destroy()
+			end
 			root:unmount()
 			gui:Destroy()
 		end,

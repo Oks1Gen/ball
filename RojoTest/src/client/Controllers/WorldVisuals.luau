@@ -176,7 +176,8 @@ function World.mount(context: Context): Handle
 					local pose, bob = BallVisuals.standPose(
 						base,
 						workspace:GetServerTimeNow(),
-						0 -- A shared phase keeps the two caption tiers separated throughout the cycle.
+						0, -- A shared phase keeps the two caption tiers separated throughout the cycle.
+						model:GetAttribute("DisplayBob") :: number?
 					)
 					model:PivotTo(pose)
 					local link = model:FindFirstChild("DisplayLabel")

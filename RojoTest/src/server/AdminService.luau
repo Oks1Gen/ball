@@ -198,7 +198,32 @@ function Service.dispatch(self: Admin, player: Player, command: string, value: a
 		return "Журнал сервера.", rows
 	end
 	local d = s.data
-	if command == "SetStat" then
+	if command == "ResetProgress" then
+		assert(value == true, "Подтверди сброс прогресса")
+		assert(os.clock() >= s.busyUntil, "Дождись окончания броска")
+		assert(not s.awaitingReceipt and not s.paidRebirthWaiting, "Дождись завершения покупки")
+		local fresh = c.fresh()
+		fresh.settings = d.settings
+		fresh.receipts = d.receipts
+		fresh.perks = d.perks
+		fresh.trainingBoosts = d.trainingBoosts
+		fresh.adminEggPendingCount = d.adminEggPendingCount
+		-- Real Robux already spent is not game progress.
+		fresh.donated = d.donated
+		s.data = fresh
+		if not c.save(player) then
+			s.data = d
+			error("Не удалось сохранить сброс")
+		end
+		c.stopTraining(player)
+		s.auto = false
+		s.kickTiming = nil
+		s.gifts = {}
+		s.joined = os.clock()
+		s.inventoryVersion += 1
+		c.effect:FireClient(player, "AdminResetView")
+		return "Твой прогресс сброшен.", nil
+	elseif command == "SetStat" then
 		assert(
 			type(value) == "table" and ({ wins = true, skill = true, rebirths = true })[value.key],
 			"Неизвестный параметр"

@@ -4,17 +4,24 @@ local Rankings = {}
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local DataStoreService = game:GetService("DataStoreService")
+local TextService = game:GetService("TextService")
 local Config = require(game.ReplicatedStorage.Shared.GameConfig)
 local WorldRefs = require(game.ReplicatedStorage.Shared.WorldRefs)
+local Scale = require(game.ReplicatedStorage.Shared.WorldScale)
 local Data = require(game.ReplicatedStorage.Shared.Core.ProfileData)
+local Palette = require(script.Parent.LobbyPalette)
+local Layout = require(script.Parent.WorldLayout)
 local C, V = Color3.fromRGB, Vector3.new
+-- `reserved` names the placeholder the lobby layout cloned for a board the original
+-- builder never had; the style takes it over under the category key.
 local categories = {
 	{ key = "skill", title = "TOP SKILL", color = C(66, 219, 255) },
 	{ key = "wins", title = "TOP WINS", color = C(255, 209, 65) },
 	{ key = "best", title = "BEST THROW", color = C(184, 116, 255), suffix = " m" },
+	{ key = "donated", title = "ДОНАТ", color = C(255, 101, 152), reserved = "ReservedFourthBoard" },
 }
 local stores, cached, names = {}, {}, {}
--- Every profile save would write three ordered data stores, but Roblox refuses
+-- Every profile save would write the ordered data stores, but Roblox refuses
 -- a second write to the same key within six seconds. The last written value is
 -- remembered per user and category, so an unchanged board costs no write.
 local written: { [number]: { [string]: number }? } = {}
@@ -84,6 +91,9 @@ function Rankings.apply(map: Construction.World)
 		return label
 	end
 	for index, category in categories do
+		if category.reserved then
+			continue
+		end
 		local board = Instance.new("Model")
 		board.Name = category.key
 		board.Parent = group
@@ -134,179 +144,494 @@ function Rankings.apply(map: Construction.World)
 	return group
 end
 
--- Restyle only the ranking stands; keep their authored placement and data paths.
+-- Stand look: docs/leaderboards.md. Sizes are studs of the 0.6 scene and follow
+-- Shared.WorldScale like the rest of the lobby.
+local STYLE = 9
+local MEASURED = 0.6
+local SIZE = {
+	-- Every stand stays centred on its egg; neighbours and the waterfall keep a 0.2 gap,
+	-- and the egg plaza measured from the stands keeps its approved cells.
+	width = 17.6,
+	rim = 0.2, -- dark outline of the body and the header
+	-- Rounded outer corners (bottom of the body, top of the header), concentric with
+	-- the rounded title band and table drawn on them.
+	corner = 1,
+	border = 1, -- coloured frame around the table
+	-- Short legs, as the user asked (2026-11-04): the table starts low behind the eggs.
+	bodyBottom = 3.6,
+	bodyHeight = 21.6,
+	headerHeight = 5.2,
+	headerOverlap = 0.8,
+	-- Two short legs near the sides, joined below by one base under the whole stand
+	-- (user's sample, 2026-11-04).
+	legX = 6,
+	plinthWidth = 14, -- lobby studs
+	-- The plinth front keeps the old stand foot's line: the egg plaza ends at the
+	-- front-most stand part (LobbyPaths), so its cells stay the same.
+	plinthFront = 2.1,
+	-- SurfaceGui pixels per stud of the table and the title.
+	canvas = 50,
+}
+local INK = C(16, 19, 31)
+local WHITE = C(255, 255, 255)
+local THEMES = {
+	skill = {
+		accent = C(38, 178, 246),
+		rim = C(12, 92, 170),
+		band = C(16, 104, 186),
+		icon = "rbxassetid://121378767438034",
+	},
+	wins = {
+		accent = C(255, 186, 30),
+		rim = C(178, 98, 6),
+		band = C(196, 112, 10),
+		icon = "rbxassetid://114161247280750",
+	},
+	best = {
+		accent = C(152, 84, 240),
+		rim = C(84, 36, 158),
+		band = C(98, 46, 182),
+		icon = "rbxassetid://81860763257111",
+	},
+	donated = {
+		accent = C(244, 72, 152),
+		rim = C(150, 22, 90),
+		band = C(176, 30, 108),
+		icon = "rbxassetid://90468580391337",
+	},
+}
+-- Gold, silver and bronze plates for the first three places.
+local MEDALS = { C(255, 197, 31), C(196, 206, 220), C(236, 132, 46) }
+
+local function solid(
+	parent: Instance,
+	name: string,
+	size: Vector3,
+	cf: CFrame,
+	color: Color3,
+	shape: Enum.PartType?
+): BasePart
+	local p = Instance.new("Part")
+	p.Shape = shape or Enum.PartType.Block
+	p.Name, p.Size, p.CFrame, p.Color = name, size, cf, color
+	p.Anchored, p.CanCollide, p.CanTouch, p.CanQuery = true, false, false, false
+	p.Material = Enum.Material.SmoothPlastic
+	p.TopSurface, p.BottomSurface = Enum.SurfaceType.Smooth, Enum.SurfaceType.Smooth
+	p.Parent = parent
+	return p
+end
+
+-- A plate with rounded corners of `radius` at the chosen ends. The corner cylinders
+-- are 0.01 thinner on each face, so they never share a face plane with the blocks.
+local function plate(
+	parent: Instance,
+	name: string,
+	cf: CFrame,
+	size: Vector3,
+	radius: number,
+	top: boolean,
+	bottom: boolean,
+	color: Color3,
+	collide: boolean
+)
+	local model = Instance.new("Model")
+	model.Name = name
+	local w, h, d = size.X, size.Y, size.Z
+	local parts = { solid(model, "Centre", V(w - 2 * radius, h, d), cf, color) }
+	local roundTop, roundBottom = if top then radius else 0, if bottom then radius else 0
+	for _, sx in { -1, 1 } do
+		local side = cf * CFrame.new(sx * (w - radius) / 2, (roundBottom - roundTop) / 2, 0)
+		table.insert(parts, solid(model, "Side", V(radius, h - roundTop - roundBottom, d), side, color))
+		for _, sy in { -1, 1 } do
+			if (sy > 0 and top) or (sy < 0 and bottom) then
+				-- A cylinder's axis is its X: turn it to run through the plate's depth.
+				local corner = CFrame.new(sx * (w / 2 - radius), sy * (h / 2 - radius), 0)
+					* CFrame.Angles(0, math.pi / 2, 0)
+				table.insert(
+					parts,
+					solid(
+						model,
+						"Corner",
+						V(d - 0.02, 2 * radius, 2 * radius),
+						cf * corner,
+						color,
+						Enum.PartType.Cylinder
+					)
+				)
+			end
+		end
+	end
+	for _, p in parts do
+		p.CanCollide, p.CanQuery = collide, collide
+	end
+	model.WorldPivot = cf
+	model.Parent = parent
+end
+
+-- Lobby studs; stand sizes are whole studs, so every face shows complete rows.
+local function studs(p: BasePart, pitch: number)
+	for _, face in Enum.NormalId:GetEnumItems() do
+		if face ~= Enum.NormalId.Bottom then
+			local t = Instance.new("Texture")
+			t.Name, t.Texture, t.Face = "StandStuds", Palette.Studs, face
+			t.StudsPerTileU = pitch * Palette.StudsPerTexture
+			t.StudsPerTileV = pitch * Palette.StudsPerTexture
+			t.Transparency, t.Parent = Palette.StudsTransparency, p
+		end
+	end
+end
+
+-- An invisible face that only carries a SurfaceGui in front of the visible plates.
+local function surface(parent: Instance, name: string, size: Vector3, cf: CFrame, purpose: string): BasePart
+	local p = solid(parent, name, size, cf, INK)
+	p.Transparency, p.CastShadow = 1, false
+	p:SetAttribute("PartRole", "LabelAnchor")
+	p:SetAttribute("Purpose", purpose)
+	return p
+end
+
+local function round(parent: Instance, radius: UDim)
+	local corner = Instance.new("UICorner")
+	corner.CornerRadius, corner.Parent = radius, parent
+end
+
+local function stroke(parent: Instance, color: Color3, thickness: number): UIStroke
+	local line = Instance.new("UIStroke")
+	line.Color, line.Thickness, line.Parent = color, thickness, parent
+	return line
+end
+
+local function label(
+	parent: Instance,
+	name: string,
+	value: string,
+	position: UDim2,
+	size: UDim2,
+	textSize: number,
+	font: Enum.Font,
+	alignment: Enum.TextXAlignment?
+): TextLabel
+	local item = Instance.new("TextLabel")
+	item.Name, item.Text = name, value
+	item.Position, item.Size = position, size
+	item.BackgroundTransparency = 1
+	item.Font, item.TextSize, item.TextColor3 = font, textSize, WHITE
+	item.TextXAlignment = alignment or Enum.TextXAlignment.Left
+	item.TextTruncate = Enum.TextTruncate.AtEnd
+	item.Parent = parent
+	return item
+end
+
+local function surfaceGui(part: BasePart, name: string, canvas: Vector2): SurfaceGui
+	local gui = Instance.new("SurfaceGui")
+	gui.Name, gui.Face, gui.CanvasSize = name, Enum.NormalId.Front, canvas
+	gui.LightInfluence, gui.Brightness, gui.Active = 0, 1, false
+	-- Children always draw above their parent, rows above the screen behind them.
+	gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+	gui.Parent = part
+	return gui
+end
+
+-- Ten dark rows: medal or number, avatar, name and result (filled by render).
+-- `canvas` follows the panel's proportions; rows share its height evenly.
+local function tableGui(panel: BasePart, canvas: Vector2)
+	local gui = surfaceGui(panel, "RankingGui", canvas)
+	local screen = Instance.new("Frame")
+	screen.Name = "Screen"
+	screen.Position, screen.Size = UDim2.fromOffset(5, 5), UDim2.fromOffset(canvas.X - 10, canvas.Y - 10)
+	screen.BackgroundColor3, screen.BorderSizePixel = C(21, 26, 43), 0
+	screen.Parent = gui
+	round(screen, UDim.new(0, 24))
+	stroke(screen, INK, 5)
+	local pad, gap = 26, 10
+	local width = canvas.X - 40
+	local height = math.floor((canvas.Y - 2 * pad - 9 * gap) / 10)
+	local function middle(size: number): number
+		return math.floor((height - size) / 2)
+	end
+	for rank = 1, 10 do
+		local row = Instance.new("Frame")
+		row.Name = "Row" .. rank
+		row.Position = UDim2.fromOffset(20, pad + (rank - 1) * (height + gap))
+		row.Size = UDim2.fromOffset(width, height)
+		row.BackgroundColor3 = if rank % 2 == 1 then C(38, 47, 73) else C(31, 39, 61)
+		row.BorderSizePixel, row.ZIndex = 0, 2
+		row.Parent = gui
+		round(row, UDim.new(0, 14))
+		local medal = MEDALS[rank]
+		local number = label(
+			row,
+			"Rank",
+			tostring(rank),
+			UDim2.fromOffset(10, middle(62)),
+			UDim2.fromOffset(62, 62),
+			40,
+			Enum.Font.GothamBlack,
+			Enum.TextXAlignment.Center
+		)
+		if medal then
+			number.BackgroundTransparency, number.BackgroundColor3, number.TextColor3 = 0, medal, INK
+			round(number, UDim.new(0, 12))
+			stroke(number, INK, 3).ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+		end
+		local avatar = Instance.new("ImageLabel")
+		avatar.Name, avatar.Image, avatar.ScaleType = "Avatar", "", Enum.ScaleType.Crop
+		avatar.Position, avatar.Size = UDim2.fromOffset(86, middle(66)), UDim2.fromOffset(66, 66)
+		avatar.BackgroundColor3, avatar.BorderSizePixel = C(54, 64, 96), 0
+		avatar.Parent = row
+		round(avatar, UDim.new(1, 0))
+		stroke(avatar, INK, 3)
+		local value = 220
+		label(
+			row,
+			"Entry",
+			"—",
+			UDim2.fromOffset(168, 0),
+			UDim2.fromOffset(width - 168 - value - 22, height),
+			40,
+			Enum.Font.GothamBold
+		)
+		-- Up to 999,999,999 must fit: a long number gets smaller instead of cut off.
+		local result = label(
+			row,
+			"Value",
+			"",
+			UDim2.fromOffset(width - value - 14, middle(44)),
+			UDim2.fromOffset(value, 44),
+			40,
+			Enum.Font.GothamBlack,
+			Enum.TextXAlignment.Right
+		)
+		result.TextScaled, result.TextTruncate = true, Enum.TextTruncate.None
+		local limit = Instance.new("UITextSizeConstraint")
+		limit.MaxTextSize, limit.Parent = 40, result
+	end
+end
+
+local function headerGui(part: BasePart, canvas: Vector2, title: string, theme: any)
+	local gui = surfaceGui(part, "HeaderGui", canvas)
+	local band = Instance.new("Frame")
+	band.Name = "Band"
+	band.Position, band.Size = UDim2.fromOffset(24, 24), UDim2.fromOffset(canvas.X - 48, canvas.Y - 48)
+	band.BackgroundColor3, band.BorderSizePixel = theme.band, 0
+	band.Parent = gui
+	round(band, UDim.new(0, 28))
+	stroke(band, theme.rim, 4)
+	-- The category icon stands just left of the title (user's request); the pair is
+	-- centred on the band.
+	-- The largest text size that leaves room for the icon is measured, not scaled.
+	local inner = band.Size.Y.Offset
+	local iconSize, gap, outline = inner - 50, 18, 7
+	local room = band.Size.X.Offset - 40 - iconSize - gap - 2 * outline
+	local size, bounds = 100, Vector2.zero -- 100 is the largest TextSize
+	repeat
+		bounds = TextService:GetTextSize(title, size, Enum.Font.GothamBlack, Vector2.new(10000, 1000))
+		size -= 2
+	until bounds.X <= room or size < 40
+	local textWidth = bounds.X + 2 * outline
+	local left = math.floor((band.Size.X.Offset - iconSize - gap - textWidth) / 2)
+	local icon = Instance.new("ImageLabel")
+	icon.Name, icon.Image, icon.ScaleType = "CategoryIcon", theme.icon, Enum.ScaleType.Fit
+	icon.Position = UDim2.fromOffset(left, math.floor((inner - iconSize) / 2))
+	icon.Size = UDim2.fromOffset(iconSize, iconSize)
+	icon.BackgroundTransparency = 1
+	icon.Parent = band
+	local heading = label(
+		band,
+		"Title",
+		title,
+		UDim2.fromOffset(left + iconSize + gap, 0),
+		UDim2.fromOffset(textWidth, inner),
+		size + 2,
+		Enum.Font.GothamBlack,
+		Enum.TextXAlignment.Center
+	)
+	heading.TextTruncate = Enum.TextTruncate.None
+	stroke(heading, INK, outline).LineJoinMode = Enum.LineJoinMode.Round
+end
+
+-- Ground centre of a stand facing the lobby: the old Frame gives the centre and the
+-- facing, the lowest old part gives the ground. A stand built by an earlier style
+-- keeps that ground pivot as its WorldPivot.
+local function anchor(board: Model): CFrame
+	local frame = board:FindFirstChild("Frame")
+	if not frame and board:GetAttribute("RankingStyle") ~= nil then
+		return board.WorldPivot
+	end
+	assert(frame and frame:IsA("BasePart"), "Leaderboard frame missing: " .. board.Name)
+	local ground = math.huge
+	for _, p in board:GetDescendants() do
+		if p:IsA("BasePart") then
+			local cf, s = p.CFrame, p.Size / 2
+			local extent = math.abs(cf.RightVector.Y) * s.X
+				+ math.abs(cf.UpVector.Y) * s.Y
+				+ math.abs(cf.LookVector.Y) * s.Z
+			ground = math.min(ground, p.Position.Y - extent)
+		end
+	end
+	local at = V(frame.Position.X, ground, frame.Position.Z)
+	local look = frame.CFrame.LookVector
+	return CFrame.lookAt(at, at + V(look.X, 0, look.Z))
+end
+
+-- Body, table and header with icon and title; returns the ground pivot.
+local function build(board: Model, title: string, theme: any, u: number): CFrame
+	local base = anchor(board)
+	board:ClearAllChildren()
+	local function at(x: number, y: number, z: number): CFrame
+		return base * CFrame.new(x * u, y * u, z * u)
+	end
+	local w, r, corner = SIZE.width, SIZE.rim, SIZE.corner
+	local face = w - 2 * r
+	-- A concentric outline corner keeps one outline width around the curve.
+	local rimCorner = corner + r
+	local bodyY = SIZE.bodyBottom + SIZE.bodyHeight / 2
+	local headerBottom = SIZE.bodyBottom + SIZE.bodyHeight - SIZE.headerOverlap
+	local headerY = headerBottom + SIZE.headerHeight / 2
+
+	-- Body: a dark outline plate behind the coloured one; the table is drawn on Panel.
+	plate(
+		board,
+		"BodyRim",
+		at(0, bodyY, 0.2),
+		V(w, SIZE.bodyHeight + 2 * r, 1.6) * u,
+		rimCorner * u,
+		false,
+		true,
+		theme.rim,
+		true
+	)
+	plate(
+		board,
+		"Body",
+		at(0, bodyY, 0),
+		V(face, SIZE.bodyHeight, 1.6) * u,
+		corner * u,
+		false,
+		true,
+		theme.accent,
+		false
+	)
+	local inner = face - 2 * SIZE.border
+	local panelBottom, panelTop = SIZE.bodyBottom + SIZE.border, headerBottom - 0.5
+	local panel = surface(
+		board,
+		"Panel",
+		V(inner, panelTop - panelBottom, 0.04) * u,
+		at(0, (panelBottom + panelTop) / 2, -0.825),
+		"Carries the leaderboard table (RankingGui)"
+	)
+	tableGui(panel, Vector2.new(inner, panelTop - panelBottom) * SIZE.canvas)
+
+	-- Header cap, slightly in front of the body, with the title on a darker band.
+	plate(
+		board,
+		"HeaderRim",
+		at(0, headerY, 0.1),
+		V(w, SIZE.headerHeight + 2 * r, 1.9) * u,
+		rimCorner * u,
+		true,
+		false,
+		theme.rim,
+		true
+	)
+	plate(
+		board,
+		"Header",
+		at(0, headerY, -0.1),
+		V(face, SIZE.headerHeight, 1.9) * u,
+		corner * u,
+		true,
+		false,
+		theme.accent,
+		false
+	)
+	local heading = surface(
+		board,
+		"HeaderSurface",
+		V(face, SIZE.headerHeight, 0.04) * u,
+		at(0, headerY, -1.075),
+		"Carries the leaderboard title (HeaderGui)"
+	)
+	headerGui(heading, Vector2.new(face, SIZE.headerHeight) * SIZE.canvas, title, theme)
+	return base
+end
+
+local function stand(board: Model, base: CFrame, u: number, pitch: number)
+	local model = Instance.new("Model")
+	model.Name = "Stand"
+	-- Whole studs: the legs reach 0.4 into the body from the plinth top.
+	local rows = math.ceil(((SIZE.bodyBottom + 0.4) * u - pitch) / pitch)
+	local z = 0.1 * u
+	local parts = {
+		solid(
+			model,
+			"Plinth",
+			V(SIZE.plinthWidth, 1, 3) * pitch,
+			base * CFrame.new(0, pitch / 2, -SIZE.plinthFront * u + 1.5 * pitch),
+			Palette.PathEdge
+		),
+	}
+	for _, side in { -1, 1 } do
+		local x = side * SIZE.legX * u
+		table.insert(
+			parts,
+			solid(
+				model,
+				"Leg",
+				V(2 * pitch, rows * pitch, pitch),
+				base * CFrame.new(x, pitch + rows * pitch / 2, z),
+				Palette.Stone
+			)
+		)
+	end
+	for _, p in parts do
+		p.CanCollide, p.CanQuery = true, true
+		studs(p, pitch)
+	end
+	model.WorldPivot = base
+	model.Parent = board
+end
+
+-- Rebuild every stand once per style version; the board names and Panel.RankingGui
+-- rows are the data paths render() fills.
 function Rankings.style(map)
 	local group = WorldRefs.rankings(map)
 	if not group then
 		return
 	end
-	local accents = { skill = C(37, 177, 255), wins = C(255, 187, 26), best = C(164, 90, 248) }
-	local ink = C(24, 29, 44)
-	local function label(parent, name, value, x, y, width, height, size, color, alignment: Enum.TextXAlignment?)
-		local item = Instance.new("TextLabel")
-		item.Name, item.Text = name, value
-		item.Position, item.Size = UDim2.fromOffset(x, y), UDim2.fromOffset(width, height)
-		item.BackgroundTransparency = 1
-		item.Font, item.TextSize, item.TextColor3 = Enum.Font.GothamBold, size, color
-		item.TextXAlignment = alignment or Enum.TextXAlignment.Left
-		item.TextTruncate = Enum.TextTruncate.AtEnd
-		item.Parent = parent
-		return item
-	end
-	for _, board in group:GetChildren() do
-		local panel = board:FindFirstChild("Panel")
-		if not panel or not panel:IsA("BasePart") or board:GetAttribute("RankingStyle") == 4 then
+	local k = Scale.factor(map)
+	local u = k / MEASURED
+	local pitch = Palette.GroundStudPitch * k
+	for _, category in categories do
+		local board = group:FindFirstChild(category.key)
+		if not board and category.reserved then
+			board = group:FindFirstChild(category.reserved)
+			if board then
+				board.Name = category.key
+				board:SetAttribute("LayoutPlaceholder", nil)
+			end
+		end
+		if not board or not board:IsA("Model") then
 			continue
 		end
-		local accent = accents[board.Name] or C(255, 101, 152)
-		local oldGui = panel:FindFirstChild("RankingGui")
-		local title = oldGui and oldGui:FindFirstChild("Title")
-		local titleText = title and title:IsA("TextLabel") and title.Text or "LEADERBOARD"
-		for _, item in board:GetChildren() do
-			if item.Name == "CrownBase" or item.Name == "CrownPoint" or item.Name == "CartoonTrim" then
-				item:Destroy()
-			elseif item:IsA("BasePart") then
-				item.Material = Enum.Material.SmoothPlastic
-				item.Reflectance = 0
-				item.Color = item == panel and C(230, 241, 250) or ink
+		-- WorldLayout.prepare returns the old stand's hidden originals (their visible
+		-- copies are gone with the restyle); park them outside Workspace again.
+		for _, child in board:GetChildren() do
+			if child:IsA("BasePart") and child.Transparency == 1 and child:GetAttribute("SurfaceSeparationId") then
+				Layout.retire(map, child)
 			end
 		end
-		local trim = Instance.new("Folder")
-		trim.Name, trim.Parent = "CartoonTrim", board
-		local frame = board:FindFirstChild("Frame")
-		assert(frame and frame:IsA("BasePart"), "Ranking frame missing")
-		local cf = frame.CFrame
-		local function brick(name, size, offset, color, angle: number?)
-			local p = Instance.new("Part")
-			p.Name, p.Size = name, size
-			p.CFrame = cf * CFrame.new(offset) * CFrame.Angles(0, 0, math.rad(angle or 0))
-			p.Anchored, p.CanCollide, p.CanTouch, p.CanQuery = true, false, false, false
-			p.Material, p.Color = Enum.Material.Plastic, color
-			p.TopSurface, p.BottomSurface = Enum.SurfaceType.Studs, Enum.SurfaceType.Smooth
-			p.Parent = trim
-			if color ~= ink then
-				for _, face in { Enum.NormalId.Front, Enum.NormalId.Left, Enum.NormalId.Right } do
-					local studs = Instance.new("Texture")
-					studs.Name, studs.Texture = "Studs", "rbxassetid://88156646156237"
-					studs.Face, studs.Color3 = face, color
-					studs.StudsPerTileU, studs.StudsPerTileV = 8, 8
-					studs.Transparency = 0.15
-					studs.Parent = p
-				end
-			end
-			return p
-		end
-		for _, side in { -1, 1 } do
-			brick("SideRail", V(1.7, 29, 3), V(side * 12.5, 0, -0.1), accent)
-			for _, y in { -13, 11.8 } do
-				brick("CornerOutline", V(2.9, 3.8, 3.4), V(side * 12.2, y, -0.2), ink, 0)
-				brick("CornerCap", V(2.3, 3.2, 3.7), V(side * 12.2, y, -0.3), accent:Lerp(C(255, 255, 255), 0.3), 0)
-			end
-			brick("ShoeOutline", V(7, 1.4, 5.5), V(side * 8, -16.6, 0), ink)
-			brick("Shoe", V(6.2, 1.1, 5), V(side * 8, -16.3, -0.1), accent)
-		end
-		brick("BottomRail", V(24, 1.5, 3), V(0, -14.5, -0.15), accent)
-		local tilt = 0
-		brick("HeaderOutline", V(28, 6.2, 3.8), V(0, 15.3, -0.4), ink, tilt)
-		local header = brick("Header", V(27, 5.2, 4.1), V(0, 15.3, -0.6), accent, tilt)
-		local headerGui = Instance.new("SurfaceGui")
-		headerGui.Name, headerGui.Face = "HeaderGui", Enum.NormalId.Front
-		headerGui.CanvasSize, headerGui.LightInfluence = Vector2.new(675, 130), 0
-		headerGui.Parent = header
-		local headerText =
-			label(headerGui, "Title", titleText, 14, 7, 647, 116, 72, C(255, 255, 255), Enum.TextXAlignment.Center)
-		headerText.Font = Enum.Font.GothamBlack
-		headerText.TextStrokeColor3, headerText.TextStrokeTransparency = ink, 0
-		-- Reuse the game's original icons on a raised round brick.
-		local badgeBack = brick("BadgeOutline", V(1.4, 6.5, 6.5), V(0, 21, -0.2), ink)
-		badgeBack.Shape = Enum.PartType.Cylinder
-		badgeBack.CFrame = cf * CFrame.new(0, 21, -0.2) * CFrame.Angles(0, math.pi / 2, 0)
-		local badge = brick("Badge", V(1.7, 5.7, 5.7), V(0, 21, -0.4), accent)
-		badge.Shape = Enum.PartType.Cylinder
-		badge.CFrame = cf * CFrame.new(0, 21, -0.4) * CFrame.Angles(0, math.pi / 2, 0)
-		local badgeGui = Instance.new("SurfaceGui")
-		badgeGui.Name, badgeGui.Face = "BadgeGui", Enum.NormalId.Right
-		badgeGui.CanvasSize, badgeGui.LightInfluence = Vector2.new(160, 160), 0
-		badgeGui.Parent = badge
-		local icon = Instance.new("ImageLabel")
-		icon.Name, icon.BackgroundTransparency = "CategoryIcon", 1
-		icon.Size, icon.Position = UDim2.fromOffset(136, 136), UDim2.fromOffset(12, 12)
-		icon.Image = ({
-			skill = "rbxassetid://121378767438034",
-			wins = "rbxassetid://114161247280750",
-			best = "rbxassetid://81860763257111",
-		})[board.Name] or "rbxassetid://90468580391337"
-		icon.Parent = badgeGui
-		if oldGui then
-			oldGui:Destroy()
-		end
-		local gui = Instance.new("SurfaceGui")
-		gui.Name = "RankingGui"
-		gui.Face = Enum.NormalId.Front
-		gui.CanvasSize = Vector2.new(620, 745)
-		gui.LightInfluence, gui.Brightness = 0, 1
-		gui.Active = false
-		gui.Parent = panel
-		local stripe = Instance.new("Frame")
-		stripe.Name = "CategoryLine"
-		stripe.Size = UDim2.new(1, 0, 0, 6)
-		stripe.BackgroundColor3, stripe.BorderSizePixel = accent, 0
-		stripe.Parent = gui
-		local heading = label(gui, "Title", titleText, 28, 24, 564, 52, 38, C(239, 237, 228))
-		heading.Visible = false -- The title is on the raised brick above the panel.
-		local scope = label(gui, "Scope", "GLOBAL TOP 10", 30, 80, 560, 30, 22, ink, Enum.TextXAlignment.Center)
-		label(gui, "RankHeading", "#", 30, 129, 44, 26, 18, ink)
-		label(gui, "PlayerHeading", "PLAYER", 91, 129, 300, 26, 18, ink)
-		label(gui, "ValueHeading", "RESULT", 413, 129, 177, 26, 18, ink, Enum.TextXAlignment.Right)
-		for rank = 1, 10 do
-			local row = Instance.new("Frame")
-			row.Name = "Row" .. rank
-			row.Position, row.Size = UDim2.fromOffset(20, 165 + (rank - 1) * 49), UDim2.fromOffset(580, 47)
-			row.BackgroundColor3 = rank % 2 == 0 and C(242, 248, 255) or accent:Lerp(C(255, 255, 255), 0.84)
-			row.BorderSizePixel = 0
-			row.Parent = gui
-			local corner = Instance.new("UICorner")
-			corner.CornerRadius, corner.Parent = UDim.new(0, 9), row
-			local number = label(row, "Rank", tostring(rank), 5, 4, 46, 39, 25, ink, Enum.TextXAlignment.Center)
-			number.BackgroundTransparency = 0
-			number.BackgroundColor3 = ({ C(255, 211, 55), C(199, 218, 237), C(239, 166, 106) })[rank] or accent
-			local badgeCorner = Instance.new("UICorner")
-			badgeCorner.CornerRadius, badgeCorner.Parent = UDim.new(0, 9), number
-			label(row, "Entry", "—", 71, 0, 300, 47, 25, ink)
-			label(row, "Value", "", 393, 0, 177, 47, 25, ink, Enum.TextXAlignment.Right)
-		end
-		local placeholder = board:GetAttribute("LayoutPlaceholder") == true
-		label(gui, "Status", placeholder and "Скоро" or "Waiting for players", 30, 687, 560, 30, 18, ink)
-		if placeholder then
-			scope.Text = "Рейтинг скоро появится"
-		end
-		board:SetAttribute("RankingStyle", 4)
-	end
-	-- Restore places that received the rejected Coming Soon presentation.
-	for _, board in group:GetChildren() do
-		local panel = board:FindFirstChild("Panel")
-		local gui = panel and panel:FindFirstChild("RankingGui")
-		local message = gui and gui:FindFirstChild("ComingSoon")
-		if not message or not gui then
+		if board:GetAttribute("RankingStyle") == STYLE then
 			continue
 		end
-		message:Destroy()
-		for _, item in gui:GetChildren() do
-			if item:IsA("GuiObject") then
-				item.Visible = item.Name ~= "Title"
-			end
-		end
-		local original = gui:FindFirstChild("Title")
-		for _, item in board:GetDescendants() do
-			if item:IsA("SurfaceGui") and item.Name == "HeaderGui" then
-				local title = item:FindFirstChild("Title")
-				if title and title:IsA("TextLabel") and original and original:IsA("TextLabel") then
-					title.Text = original.Text
-				end
-			elseif item:IsA("SurfaceGui") and item.Name == "BadgeGui" then
-				item.Enabled = true
-			end
-		end
+		local theme = THEMES[category.key]
+		local base = build(board, category.title, theme, u)
+		stand(board, base, u, pitch)
+		board.WorldPivot = base
+		-- The stand draws its own non-overlapping parts; old surface records do not apply.
+		board:SetAttribute("SurfaceSeparationSkip", true)
+		board:SetAttribute("RankingStyle", STYLE)
 	end
 end
 
@@ -340,9 +665,28 @@ function Rankings.record(userId, data)
 	end
 end
 
+-- Whole numbers with thousands separators; huge values use the game's short form.
+local function amount(value: number): string
+	if value >= 1e9 then
+		return Config.format(value)
+	end
+	local grouped = tostring(math.floor(value)):reverse():gsub("(%d%d%d)", "%1,"):reverse()
+	return (grouped:gsub("^,", ""))
+end
+
+local function headshot(userId: number): string
+	return if userId > 0 then string.format("rbxthumb://type=AvatarHeadShot&id=%d&w=150&h=150", userId) else ""
+end
+
 function Rankings.render(map, states)
 	local group = assert(WorldRefs.rankings(map))
 	for _, category in categories do
+		local board: any = group:FindFirstChild(category.key)
+		local panel: any = board and board:FindFirstChild("Panel")
+		local gui: any = panel and panel:FindFirstChild("RankingGui")
+		if not gui then
+			continue
+		end
 		local entries = {}
 		for _, entry in cached[category.key] or {} do
 			entries[entry.userId] = table.clone(entry)
@@ -354,9 +698,12 @@ function Rankings.render(map, states)
 					{ userId = player.UserId, name = player.DisplayName, value = math.floor(data[category.key] or 0) }
 			end
 		end
+		-- A zero result is not a place on the board (most players never donate).
 		local sorted = {}
 		for _, entry in entries do
-			table.insert(sorted, entry)
+			if entry.value > 0 then
+				table.insert(sorted, entry)
+			end
 		end
 		table.sort(sorted, function(a, b)
 			if a.value == b.value then
@@ -364,22 +711,19 @@ function Rankings.render(map, states)
 			end
 			return a.value > b.value
 		end)
-		local gui = group[category.key].Panel.RankingGui
-		gui.Scope.Text = RunService:IsStudio() and "STUDIO • LIVE TOP 10" or "GLOBAL TOP 10"
 		for rank = 1, 10 do
 			local entry = sorted[rank]
-			local row = gui["Row" .. rank]
+			local row = gui:FindFirstChild("Row" .. rank)
+			if not row then
+				continue
+			end
 			row.Entry.Text = entry and (entry.name or names[entry.userId] or ("User " .. entry.userId)) or "—"
-			row.Value.Text = entry and (Config.format(entry.value) .. (category.suffix or "")) or ""
+			row.Value.Text = entry and (amount(entry.value) .. (category.suffix or "")) or ""
+			local avatar = row:FindFirstChild("Avatar")
+			if avatar then
+				avatar.Image = if entry then headshot(entry.userId) else ""
+			end
 		end
-		gui.Status.Text = #sorted == 0 and "Be the first to reach the top!"
-			or (
-				RunService:IsStudio() and "Live session • updates every 10s"
-				or (
-					cached[category.key] and "Global rankings • refresh every 2 min"
-					or "Live server • global rankings loading"
-				)
-			)
 	end
 end
 

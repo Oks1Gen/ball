@@ -3,10 +3,19 @@
 local Palette = require(script.Parent.LobbyPalette)
 local Grid = {}
 local V = Vector3.new
-local CELL, STEP = 6.4, 1.6
-local STUDS_PER_CELL = math.round(CELL / STEP)
+local STUDS_PER_CELL = math.round(Palette.PathCell / Palette.GroundStudPitch)
 
-function Grid.build(root: Instance, regions: { any }, top: number, selected: { [string]: boolean }, origin: Vector2)
+-- `scale` is the world scale factor: cells and studs are authored studs.
+function Grid.build(
+	root: Instance,
+	regions: { any },
+	top: number,
+	selected: { [string]: boolean },
+	origin: Vector2,
+	scale: number
+)
+	local CELL, STEP = Palette.PathCell * scale, Palette.GroundStudPitch * scale
+	local TILE = STEP * Palette.StudsPerTexture
 	local groups: { [string]: Model } = {}
 	local fill: { [string]: any } = {}
 	local checker: { [string]: any } = {}
@@ -32,7 +41,7 @@ function Grid.build(root: Instance, regions: { any }, top: number, selected: { [
 		p.TopSurface, p.BottomSurface = Enum.SurfaceType.Smooth, Enum.SurfaceType.Smooth
 		local t = Instance.new("Texture")
 		t.Name, t.Texture, t.Face = "PathStuds", Palette.Studs, Enum.NormalId.Top
-		t.StudsPerTileU, t.StudsPerTileV = 6.4, 6.4 -- Four-by-four source: pitch 1.6.
+		t.StudsPerTileU, t.StudsPerTileV = TILE, TILE -- Four-by-four source: one tile per four studs.
 		-- Face-edge UV origin: whole-pitch rectangles need no offset. A half-pitch
 		-- shift cuts the single stud row on a narrow rim.
 		t.OffsetStudsU, t.OffsetStudsV = 0, 0
