@@ -49,11 +49,12 @@ function Grid.rectangles(width: number, height: number, keyAt: (number, number) 
 				local rect = open[id]
 				if rect then
 					rect.y1 = y
+					nextOpen[id] = rect
 				else
-					rect = { x0 = x, x1 = last, y0 = y, y1 = y, key = key }
-					table.insert(out, rect)
+					local made: Rect = { x0 = x, x1 = last, y0 = y, y1 = y, key = key }
+					table.insert(out, made)
+					nextOpen[id] = made
 				end
-				nextOpen[id] = rect
 			end
 			x = last + 1
 		end

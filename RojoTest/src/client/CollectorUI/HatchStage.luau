@@ -38,6 +38,7 @@ type Props = {
 	-- Open again sends the same hatch; the reply replaces this stage.
 	Request: ((string, any?, any?) -> ())?,
 	Busy: boolean?,
+	PaidRandomRestricted: boolean?,
 	Variant: number?,
 	-- Offline capture: a fixed clock with synthetic clicks.
 	PreviewTime: number?,
@@ -194,7 +195,7 @@ local function againOf(p: Props, eggs: { EggEntry }): { egg: string, count: numb
 	if not egg or not data or data.wins == nil then
 		return nil
 	end
-	local cost = egg.cost * count
+	local cost = Config.eggCost(egg, data.world) * count
 	local pets = if p.Inventory then #p.Inventory.pets else 0
 	if data.wins < cost or pets + count > 60 then
 		return nil
@@ -282,8 +283,8 @@ return function(p: Props)
 		local eggs: { EggEntry } = {}
 		for i, pet in p.Hatched do
 			local pool, final, eggId = Roulette.pool(pet, p.EggId or "Common")
-			if p.Reduced then
-				-- Effects off shows only the granted pet: no extra viewports.
+			if p.Reduced or p.PaidRandomRestricted then
+				-- Guaranteed regional rewards never suggest other random outcomes.
 				pool, final = { pool[final] }, 1
 			end
 			local tier = Sequence.tierOf(pet.rarity)

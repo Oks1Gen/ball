@@ -13,6 +13,7 @@ local function at(x, y, z)
 	return Scale.point(world, Vector3.new(x, y, z))
 end
 local sourceRoot = game.ServerScriptService.Server
+local HDStuds = require(sourceRoot.HDStuds)
 local fresh = sourceRoot.KickZoneStyle:Clone()
 fresh.Parent = sourceRoot
 local curbWidth = require(fresh).CurbWidth
@@ -81,14 +82,9 @@ for _, group in paths:GetChildren() do
 				elseif p.Name == "PathCurb" then
 					rimCount += 1
 				end
-				local texture = p:FindFirstChild("PathStuds")
-				assert(
-					texture
-						and texture.StudsPerTileU == texture.StudsPerTileV
-						and math.abs(texture.StudsPerTileU - TILE) < 0.001,
-					"Stretched studs"
-				)
-				assert(texture.OffsetStudsU == 0 and texture.OffsetStudsV == 0, "Cut stud phase")
+				local variant = HDStuds.variant(p.Material, TILE)
+				assert(variant and p.MaterialVariant == variant.Name, "Missing HD Studs on path")
+				assert(not p:FindFirstChild("PathStuds"), "Duplicate path texture")
 				table.insert(floorParts, p)
 			end
 		end
@@ -413,12 +409,9 @@ local ok, result = pcall(function()
 		end
 		assert(not tile.CanCollide and not tile.CanTouch and not tile.CanQuery, "Kick Zone overlay affects physics")
 		assert(math.abs(tile.Position.Y + tile.Size.Y / 2 - apronTop - 0.04) < 0.001, "Uneven Kick Zone panel")
-		local t = assert(tile:FindFirstChild("KickZoneStuds"))
-		assert(
-			math.abs(t.StudsPerTileU - TILE) < 0.001 and math.abs(t.StudsPerTileV - TILE) < 0.001,
-			"Wrong Kick Zone stud scale"
-		)
-		assert(t.OffsetStudsU == 0 and t.OffsetStudsV == 0, "Cut Kick Zone stud phase")
+		local variant = HDStuds.variant(tile.Material, TILE)
+		assert(variant and tile.MaterialVariant == variant.Name, "Missing HD Studs on Kick Zone")
+		assert(not tile:FindFirstChild("KickZoneStuds"), "Duplicate Kick Zone texture")
 		local p = apron.CFrame:PointToObjectSpace(tile.Position)
 		assert(
 			math.abs(p.X) + tile.Size.X / 2 <= apron.Size.X / 2 + 0.001

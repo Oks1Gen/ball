@@ -1,10 +1,14 @@
 # Logs
 *.log
 
-# Keep current UI and ball authoring sources; ignore other old asset copies.
+# Keep current UI, ball and Ocean Depths sources; ignore other old asset copies.
 /Assets/*
 !/Assets/UI/
 !/Assets/Balls/
+!/Assets/OceanDepths/
+!/Assets/Materials/
+/Assets/Materials/*
+!/Assets/Materials/HDStuds/
 /Asets/
 
 # Local upload lock; journals and dependency locks remain versioned.

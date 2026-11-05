@@ -1,0 +1,118 @@
+{
+  "source": {
+    "mesh_count": 24,
+    "triangles": 11692,
+    "bounds_min": [
+      -3.427351474761963,
+      -2.36899995803833,
+      0.0
+    ],
+    "bounds_max": [
+      3.427351474761963,
+      2.36899995803833,
+      1.9926743507385254
+    ],
+    "issues": []
+  },
+  "glb": {
+    "mesh_count": 24,
+    "triangles": 11692,
+    "bounds_min": [
+      -3.427351474761963,
+      -2.36899995803833,
+      0.0
+    ],
+    "bounds_max": [
+      3.427351474761963,
+      2.36899995803833,
+      1.9926743507385254
+    ],
+    "issues": [
+      {
+        "mesh": "Base_OctagonalBlueStone.001",
+        "nonmanifold_edges": 112,
+        "degenerate_faces": 0
+      },
+      {
+        "mesh": "Base_SoleInset.001",
+        "nonmanifold_edges": 112,
+        "degenerate_faces": 0
+      },
+      {
+        "mesh": "Base_TurquoiseInsetBand.001",
+        "nonmanifold_edges": 112,
+        "degenerate_faces": 0
+      },
+      {
+        "mesh": "Base_UpperBlueCollar.001",
+        "nonmanifold_edges": 112,
+        "degenerate_faces": 0
+      },
+      {
+        "mesh": "Shell_ContinuousThickBasin.001",
+        "nonmanifold_edges": 1104,
+        "degenerate_faces": 0
+      }
+    ],
+    "materials": [
+      "Nautilus_AquaInlay.001",
+      "Nautilus_BlueFacet.001",
+      "Nautilus_BlueLimestone.001",
+      "Nautilus_CreamFlutes.001",
+      "Nautilus_PearlBlush.001",
+      "Nautilus_TurquoiseTrim.001",
+      "Nautilus_UndersideBlue.001",
+      "Nautilus_WarmIvory.001"
+    ],
+    "same_light_render": "C:\\Users\\dakem\\Documents\\RobloxGames\\ball\\Assets\\OceanDepths\\EggShellStand\\work\\shell-glb.png",
+    "self_contained": true,
+    "welded_topology": {
+      "issues": [],
+      "split_boundary_vertices": 884,
+      "tolerance": 1e-05
+    },
+    "split_topology_note": "Raw glTF vertices are split at material/normal boundaries. Welding confirms a closed surface."
+  },
+  "fbx": {
+    "mesh_count": 24,
+    "triangles": 11692,
+    "bounds_min": [
+      -3.427351474761963,
+      -2.369000196456909,
+      -2.8820392117268057e-07
+    ],
+    "bounds_max": [
+      3.427351474761963,
+      2.368999719619751,
+      1.992674708366394
+    ],
+    "issues": [],
+    "materials": [
+      "Nautilus_AquaInlay.002",
+      "Nautilus_BlueFacet.002",
+      "Nautilus_BlueLimestone.002",
+      "Nautilus_CreamFlutes.002",
+      "Nautilus_PearlBlush.002",
+      "Nautilus_TurquoiseTrim.002",
+      "Nautilus_UndersideBlue.002",
+      "Nautilus_WarmIvory.002"
+    ],
+    "same_light_render": "C:\\Users\\dakem\\Documents\\RobloxGames\\ball\\Assets\\OceanDepths\\EggShellStand\\work\\shell-fbx.png"
+  },
+  "blend_reopened": true,
+  "final": {
+    "mesh_count": 24,
+    "triangles": 11692,
+    "bounds_min": [
+      -3.427351474761963,
+      -2.36899995803833,
+      0.0
+    ],
+    "bounds_max": [
+      3.427351474761963,
+      2.36899995803833,
+      1.9926743507385254
+    ],
+    "issues": []
+  }
+}

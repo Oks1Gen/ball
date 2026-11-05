@@ -25,6 +25,7 @@ function Snapshot.build(context: Context, player: Player, notice: string?, force
 	local level, rebirthRequiredLevel, rebirthProgress = Config.rebirthProgress(d.skill, d.rebirths)
 	local view = table.clone(d)
 	view.receipts = nil
+	view.passGrants = nil
 	view.pets = nil
 	view.equipped = nil
 	local payload: any = {
@@ -51,6 +52,8 @@ function Snapshot.build(context: Context, player: Player, notice: string?, force
 		nextLevel = Config.threshold(math.min(level + 1, Config.MaxLevel), d.rebirths),
 		levelStart = Config.threshold(level, d.rebirths),
 		isAdmin = AdminAccess.isAuthorized(player.UserId),
+		paidRandomRestricted = s.paidRandomRestricted ~= false,
+		purchasePolicyReady = s.purchasePolicyReady == true,
 	}
 	-- The inventory travels only when it changed. A forced snapshot sends it
 	-- anyway, so a client that lost its cache can ask for the pets again.

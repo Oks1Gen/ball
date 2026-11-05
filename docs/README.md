@@ -1,6 +1,23 @@
 # Документация Ball
 
+- [monetization.md](monetization.md): 4 Game Pass, 8 Developer Products, ID и цены, выдача, полный Dev Reset и порядок включения продаж.
+
+- [ocean-eggs.md](ocean-eggs.md): морские яйца, порядок редкости, импорт Blender, подписи, левитация, обводка и VFX.
+
+- [hd-studs.md](hd-studs.md): строительный материал HD Studs, варианты и переход со старого покрытия.
+
+- [ocean-atmosphere.md](ocean-atmosphere.md): ближние стаи, звуковая атмосфера, световые блики, течение, события и дальние рифы Ocean Depths.
+
+- [dev-navigation.md](dev-navigation.md): переход между мирами и свободный полёт с noclip в Dev Panel.
+
+- [ocean-wildlife.md](ocean-wildlife.md): ригованные обитатели Ocean Depths, живые стаи, безопасные маршруты и восстановление ассетов.
+
+- [ocean-depths-location-plan.md](ocean-depths-location-plan.md): утверждённые эскизы, построенное Studio-превью всех восьми локаций Ocean Depths и инструкции для продолжения из нового чата.
+- [ocean-depths.md](ocean-depths.md): фактическая сцена Ocean Depths, модули, ассеты и проверки.
+
 - [lobby-composition.md](lobby-composition.md): лобби без свободного декора, центр Hub по оси стенда мячей, сохранность станций и маршруты.
+
+- [lobby-club-decor.md](lobby-club-decor.md): клубное оформление лобби — гирлянды, баннеры, табло, тренировочный угол, скамейка, деревья и кубок; измерение от стен и станций, проверки.
 
 - [lobby-lawn.md](lobby-lawn.md): целые клетки и studs газона, стыки с дорожками и проверка полной площади покрытия.
 
@@ -21,6 +38,7 @@
 - [architecture.md](architecture.md): стек, структура, запуск и синхронизация.
 - [world-structure.md](world-structure.md): обязательная структура мира, владение объектами, невидимые части, совместимость старых генераторов и проверка миграции.
 - [football-course.md](football-course.md): восемь локаций Football City, сборка, границы, сохранение Lobby и пересечения зон при ударе.
+- [course-voxel.md](course-voxel.md): воксельный вид локаций курса — сетка, облицовка, декор со studs на всех гранях, ориентиры и проверки.
 - [transparent-cleanup.md](transparent-cleanup.md): удаление проверенного прозрачного мусора, защита функциональных опор и результаты чистки.
 - [ui-style.md](ui-style.md): единый стиль интерфейса — палитра, форма, типографика, окно и движение.
 - [update-log.md](update-log.md): версии, группировка обновлений по дате, краткие пункты с подробностями, авторы и правила ведения журнала.

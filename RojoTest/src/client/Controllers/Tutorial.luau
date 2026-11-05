@@ -171,6 +171,7 @@ function Guide.mount(context: any)
 			local hum = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
 			if
 				stage >= 5
+				or d.world ~= 1
 				or not root
 				or not root:IsA("BasePart")
 				or not hum

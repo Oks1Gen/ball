@@ -4,6 +4,40 @@ local Net = require("../src/shared/Net")
 local Data = require("../src/shared/Core/ProfileData")
 
 return {
+	["a queued free boost preserves every remaining paid bounce"] = function()
+		local s = {
+			data = { trainingBoosts = { ["144"] = 2 } },
+		}
+		assert(Boost.beginCycle(s, 1) == 144)
+		s.trainingPendingBoostCycle = 2
+		s.trainingPendingBoostMultiplier = 9.3
+		for _ = 1, 4 do
+			assert(Boost.reward(100, s.trainingBoostCycle, 1, s.trainingBoostMultiplier) == 14400)
+		end
+		assert(s.data.trainingBoosts["144"] == 1)
+		assert(Boost.beginCycle(s, 2) == 9.3)
+		assert(s.trainingPendingBoostCycle == nil and s.trainingPendingBoostMultiplier == nil)
+		assert(s.data.trainingBoosts["144"] == 1)
+		for _ = 1, 4 do
+			assert(Boost.reward(100, s.trainingBoostCycle, 2, s.trainingBoostMultiplier) == 930)
+		end
+		assert(Boost.beginCycle(s, 3) == 144)
+		assert(Boost.beginCycle(s, 3) == nil)
+		assert(s.data.trainingBoosts["144"] == 0)
+	end,
+	["a future free boost does not skip paid charges in earlier cycles"] = function()
+		local s = {
+			data = { trainingBoosts = { ["67"] = 1 } },
+			trainingPendingBoostCycle = 4,
+			trainingPendingBoostMultiplier = 5,
+		}
+		assert(Boost.beginCycle(s, 2) == 67)
+		assert(Boost.beginCycle(s, 3) == nil)
+		assert(s.trainingBoostCycle == nil and s.trainingBoostMultiplier == nil)
+		assert(s.trainingPendingBoostCycle == 4)
+		assert(Boost.beginCycle(s, 4) == 5)
+		assert(Boost.beginCycle(s, 5) == nil)
+	end,
 	["free offers cover 5.0 to 15.0 with reproducible tenth steps"] = function()
 		local minimum, maximum = math.huge, 0
 		local colors = {}

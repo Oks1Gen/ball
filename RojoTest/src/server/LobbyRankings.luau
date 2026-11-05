@@ -679,7 +679,10 @@ local function headshot(userId: number): string
 end
 
 function Rankings.render(map, states)
-	local group = assert(WorldRefs.rankings(map))
+	local group = WorldRefs.rankings(map)
+	if not group then
+		return
+	end
 	for _, category in categories do
 		local board: any = group:FindFirstChild(category.key)
 		local panel: any = board and board:FindFirstChild("Panel")
@@ -727,12 +730,18 @@ function Rankings.render(map, states)
 	end
 end
 
-function Rankings.start(map, states)
+function Rankings.start(map, states, secondWorld: Instance?)
 	if started then
 		return
 	end
 	started = true
-	Rankings.render(map, states)
+	local function render()
+		Rankings.render(map, states)
+		if secondWorld then
+			Rankings.render(secondWorld, states)
+		end
+	end
+	render()
 	task.spawn(function()
 		while map.Parent do
 			if not RunService:IsStudio() then
@@ -760,14 +769,14 @@ function Rankings.start(map, states)
 					end
 				end
 			end
-			Rankings.render(map, states)
+			render()
 			task.wait(120)
 		end
 	end)
 	task.spawn(function()
 		while map.Parent do
 			task.wait(10)
-			Rankings.render(map, states)
+			render()
 		end
 	end)
 end

@@ -10,7 +10,12 @@
 -- The second release consumes the token and multiplies power by accuracy. KickCancel has no payload.
 -- Result.zone/zoneMultiplier: server-selected furthest zone and Wins factor; no client reward inputs.
 -- TrainingBoost(seed, offer): claim a scheduled UI bubble; server owns its value/window.
+-- Product(key): request native checkout for a configured offer; never grants anything.
+-- PurchasePrompt(key): server -> owner via Effect; client opens GamePass/Product checkout.
+-- paidRandomRestricted/purchasePolicyReady: server policy results for random Wins eggs.
+-- TravelWorld(worldIndex): only from the player's current portal zone.
 -- Admin: client -> server RemoteFunction, command:string/value?; authorized and rate-limited server-side.
+-- Admin.Flight(boolean): session-only flight. Teleport("World1"|"World2"): preview travel, no saved-world change.
 local Net = {}
 Net.Folder = "SkippingRemotes"
 -- The gameplay remotes exist for every player. The admin remote is created
@@ -44,6 +49,9 @@ function Net.validAction(command: any, value: any, extra: any): boolean
 	end
 	if identifiers[command] then
 		return typeof(value) == "string" and #value <= 100 and extra == nil
+	end
+	if command == "TravelWorld" then
+		return (value == 1 or value == 2) and extra == nil
 	end
 	if command == "KickRelease" then
 		return typeof(value) == "string"

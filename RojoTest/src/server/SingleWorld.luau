@@ -1,6 +1,5 @@
 --!strict
--- Retire the second arena and its transfer gate; historical ServerStorage archives stay intact.
--- Run before historical builders so no returning profile or scene can revive it.
+-- Remove remnants of the retired second arena while preserving the authored Ocean Depths.
 local Single = {}
 
 function Single.apply(): any
@@ -10,7 +9,7 @@ function Single.apply(): any
 		for i, node in root:GetDescendants() do
 			local name = node.Name
 			if
-				name == "World2"
+				(name == "World2" and node:GetAttribute("OceanDepthsPreview") ~= true)
 				or name == "World2Map"
 				or name:match("^World2Map_")
 				or name == "World2Portal"

@@ -24,7 +24,7 @@ function Boost.claim(context: any, player: Player, seed: number, offer: number):
 	end
 	local definition = Rules.offer(seed, offer)
 	local now = workspace:GetServerTimeNow()
-	local set = s.lanes and s.lanes[1]
+	local set = s.lanes and s.lanes[s.data.world]
 	local entry = set and set[s.lane]
 	if
 		definition.product
@@ -45,8 +45,8 @@ function Boost.claim(context: any, player: Player, seed: number, offer: number):
 		cycle += 1
 	end
 	s.trainingBoostOffer = offer
-	s.trainingBoostCycle = cycle
-	s.trainingBoostMultiplier = definition.multiplier
+	s.trainingPendingBoostCycle = cycle
+	s.trainingPendingBoostMultiplier = definition.multiplier
 	context.effect:FireClient(player, "TrainingBoost", {
 		seed = seed,
 		cycle = cycle,

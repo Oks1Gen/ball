@@ -1,0 +1,19 @@
+{
+  "tool": "ImageGen",
+  "banners": [
+    {
+      "world": "Football City",
+      "source": "FootballCity-studio.jpg",
+      "image": "FootballCity.png",
+      "robloxImageId": "134218720041114",
+      "prompt": "Regrade the attached actual Roblox Studio screenshot into a premium, wide panoramic 3:1 world-selection banner. Faithfully preserve the camera angle, exact playable geometry, recognizable layout, checker tile scale and square Roblox studs. Render a clean crisp real-time game screenshot with polished shader lighting, soft contact shadows, subtle ambient occlusion, carefully controlled bloom and sharper materials. Remove floating in-world text and prices. No added objects, typography, framing, UI, branding or watermark. Compose the key geometry in the horizontal center band so it still works in a 3.3:1 center crop. Football City: bright grass and blue waterfall, warm sun shafts, richly dimensional golden-brown stepped walls, vivid colorful pitches. Clear daylight, bright arcade palette."
+    },
+    {
+      "world": "Ocean Depths",
+      "source": "OceanDepths-studio.jpg",
+      "image": "OceanDepths.png",
+      "robloxImageId": "72479154074171",
+      "prompt": "Regrade the attached actual Roblox Studio screenshot into a premium, wide panoramic 3:1 world-selection banner. Faithfully preserve the camera angle, exact playable geometry, recognizable layout, checker tile scale and square Roblox studs. Render a clean crisp real-time game screenshot with polished shader lighting, soft contact shadows, subtle ambient occlusion, carefully controlled bloom and sharper materials. Remove floating in-world text and prices. No added objects, typography, framing, UI, branding or watermark. Compose the key geometry in the horizontal center band so it still works in a 3.3:1 center crop. Ocean Depths: introduce convincing underwater caustic patterns on the sand and turquoise terraces, soft blue volumetric sunrays, coral colors, marine-blue depth haze and sparse fine water particulates. Keep the lobby readable and turquoise, with warm sand contrast."
+    }
+  ]
+}

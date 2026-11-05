@@ -4,5 +4,6 @@
 return {
 	Remote = "CharacterSpawnReady",
 	Positioned = "SpawnPositioned",
+	World = "SpawnWorld",
 	Ready = "SpawnReady",
 }

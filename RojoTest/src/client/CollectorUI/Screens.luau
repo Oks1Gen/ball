@@ -10,6 +10,7 @@ local Presentation = require(script.Parent.Parent.Modules.UiPresentation)
 local TextService = game:GetService("TextService")
 local e = React.createElement
 local S = {}
+local OceanCatalog = require(game.ReplicatedStorage.Shared.OceanEggCatalog)
 type InventoryPet = { uid: string, id: string, name: string, rarity: string, boost: number }
 -- The delete confirmation covers the whole screen content and opens a dialog
 -- on top of it. The overlay has to stay above the content it dims and the
@@ -383,13 +384,30 @@ function S.Eggs(p)
 	local compact = w < 730
 	local egg = Config.find(Config.Eggs, p.EggId) or Config.Eggs[1]
 	local pool = Config.eggPets(egg.id)
-	local cost = egg.cost
+	if p.PaidRandomRestricted then
+		pool = { pool[1] }
+	end
+	local world = p.Data.world
+	local cost = Config.eggCost(egg, world)
+	local ocean = OceanCatalog.find(egg.id, world)
 	local tabs = {}
 	local tabW, tabGap = Spacing.row(w - 32, 4, 44)
 	for i, item in Config.Eggs do
-		tabs[item.id] = button("EggTab" .. item.id, item.id, 16 + (i - 1) * (tabW + tabGap), 0, tabW, 44, function()
-			p.SelectEgg(item.id)
-		end, item.id == egg.id and T.Colors.Eggs or T.Colors.Slate, false, p.Phone and 13 or compact and 15 or 18)
+		local itemOcean = OceanCatalog.find(item.id, world)
+		tabs[item.id] = button(
+			"EggTab" .. item.id,
+			if itemOcean then itemOcean.rarity else item.id,
+			16 + (i - 1) * (tabW + tabGap),
+			0,
+			tabW,
+			44,
+			function()
+				p.SelectEgg(item.id)
+			end,
+			item.id == egg.id and T.Colors.Eggs or T.Colors.Slate,
+			false,
+			p.Phone and 13 or compact and 15 or 18
+		)
 	end
 	local leftW = w >= 1000 and math.floor(w * 0.24) or 0
 	local rightX = leftW == 0 and 0 or leftW + 20
@@ -422,7 +440,7 @@ function S.Eggs(p)
 		total += item.weight
 	end
 	for i, item in pool do
-		local boost = item.boost * egg.boost
+		local boost = Config.eggPetBoost(egg, item.boost, world)
 		cards[item.id] = e(U.Surface, {
 			Name = "EggPet" .. item.id,
 			Color = T.plate(rarity(item.rarity)),
@@ -456,7 +474,8 @@ function S.Eggs(p)
 	local hatchWidth, hatchGap = Spacing.row(w - 32, 2, 46)
 	local result = {
 		Tabs = childrenFrame(tabs, 0, 0, w, 44),
-		Name = not p.Phone and label(egg.name, 8, 52, w - 16, 30, 25, T.Gold) or nil,
+		Name = not p.Phone and label(if ocean then ocean.theme .. " Egg" else egg.name, 8, 52, w - 16, 30, 25, T.Gold)
+			or nil,
 		-- The pool stays a scroll in every window size: it clips the cards, so
 		-- they can never cover the hatch buttons, and scrolls the rows that
 		-- do not fit.
@@ -478,7 +497,7 @@ function S.Eggs(p)
 				request("Hatch", egg.id, 1)
 			end,
 			nil,
-			p.Busy or #p.Inventory.pets >= 60,
+			p.Busy or not p.PurchasePolicyReady or #p.Inventory.pets >= 60,
 			compact and 16 or 21
 		),
 		Triple = button(
@@ -492,11 +511,21 @@ function S.Eggs(p)
 				request("Hatch", egg.id, 3)
 			end,
 			T.Colors.Eggs,
-			p.Busy or #p.Inventory.pets > 57,
+			p.Busy or not p.PurchasePolicyReady or #p.Inventory.pets > 57,
 			compact and 16 or 21
 		),
-		Hint = not p.Phone and label("Hatch teleports you to the selected egg", 5, h - 27, w - 10, 24, 17, T.Muted)
-			or nil,
+		Hint = not p.Phone and label(
+			if not p.PurchasePolicyReady
+				then "Checking egg availability..."
+				elseif p.PaidRandomRestricted then "Guaranteed pet • no random reward"
+				else "Possible rewards & odds shown above",
+			5,
+			h - 27,
+			w - 10,
+			24,
+			17,
+			T.Muted
+		) or nil,
 	}
 	if p.UnifiedInventory then
 		result.Pool = e(U.Slot, {
@@ -622,6 +651,8 @@ function S.Trails(p)
 end
 
 function S.Shop(p)
+	local MarketplaceCatalog = require(script.Parent.Parent.Modules.MarketplaceCatalog)
+	local PassRewards = require(game.ReplicatedStorage.Shared.Core.PassRewards)
 	local request: (string, string?, number?) -> () = p.Request
 	local w: number, h: number = p.Width, p.Height
 	local children = {}
@@ -632,8 +663,9 @@ function S.Shop(p)
 	end
 	local function buyButton(key, x, y, width, height)
 		local product = Config.Products[key]
-		local owned = p.Data.perks[key] == true
-		local disabled = p.Busy
+		local owned = PassRewards.owned(p.Data, key, product.kind)
+		local quote = MarketplaceCatalog.get(key)
+		local disabled = p.Busy or owned or not (MarketplaceCatalog.available(key) or (quote and quote.error))
 		return e(U.Button, {
 			Name = "Buy" .. key,
 			Position = UDim2.fromOffset(x, y),
@@ -642,19 +674,19 @@ function S.Shop(p)
 			Disabled = disabled,
 			OnActivated = purchase(key),
 			Children = {
-				Currency = not owned and e(U.Icon, {
+				Currency = not owned and MarketplaceCatalog.available(key) and e(U.Icon, {
 					Kind = "Robux",
 					Position = UDim2.fromOffset(8, 6),
 					Size = UDim2.fromOffset(height - 12, height - 12),
 					ZIndex = 32,
 				}) or nil,
 				Price = label(
-					owned and "Owned" or tostring(product.price),
+					MarketplaceCatalog.label(key, p.Data),
 					owned and 5 or height,
 					2,
 					width - (owned and 10 or height + 4),
 					height - 4,
-					28
+					owned and 23 or MarketplaceCatalog.available(key) and 28 or 16
 				),
 			},
 		})
@@ -710,6 +742,27 @@ function S.Shop(p)
 				title = "Skip Rebirth",
 				detail = "Skip the level requirement",
 				icon = "Rebirth",
+				color = T.Colors.Purple,
+			},
+			{
+				key = "TrainingBoost67",
+				title = "67× Training",
+				detail = "One complete training kick",
+				icon = "Skill",
+				color = T.Colors.Green,
+			},
+			{
+				key = "TrainingBoost69",
+				title = "69× Training",
+				detail = "One complete training kick",
+				icon = "Skill",
+				color = T.Colors.Blue,
+			},
+			{
+				key = "TrainingBoost144",
+				title = "144× Training",
+				detail = "One complete training kick",
+				icon = "Skill",
 				color = T.Colors.Purple,
 			},
 		}
@@ -775,7 +828,8 @@ function S.Shop(p)
 				U.Icon,
 				{ Kind = "Skill", Position = UDim2.fromOffset(116, 72), Size = UDim2.fromOffset(92, 116) }
 			),
-			Contents = label("10K WINS + 2× SKILL", 216, 68, w - 244, 38, 25),
+			Contents = label("10K WINS + 2× SKILL", 216, 64, w - 244, 28, 25),
+			Note = label("Permanent Skill • does not stack with 2× Skill", 216, 94, w - 244, 17, 12),
 			Wins = e(U.Slot, {
 				Position = UDim2.fromOffset(230, 111),
 				Size = UDim2.fromOffset(104, 91),
@@ -807,7 +861,7 @@ function S.Shop(p)
 			Buy = buyButton("StarterPack", w - 187, 146, 151, 52),
 		},
 	})
-	children.LimitedHeading = label("~ Limited Offer ~", 0, 296, w, 40, 30)
+	children.LimitedHeading = label("~ Guaranteed Pet ~", 0, 296, w, 40, 30)
 	children.AdminEgg = e(U.Surface, {
 		Name = "AdminEggOffer",
 		Position = UDim2.fromOffset(6, 350),
@@ -840,6 +894,9 @@ function S.Shop(p)
 		{ key = "Skill100M", title = "+100M Skill", icon = "Skill", color = T.Colors.Red },
 		{ key = "Skill1B", title = "+1B Skill", icon = "Skill", color = T.Colors.Purple },
 		{ key = "SkipRebirth", title = "Skip Rebirth", icon = "Rebirth", color = T.Colors.Purple },
+		{ key = "TrainingBoost67", title = "67× Training Kick", icon = "Skill", color = T.Colors.Green },
+		{ key = "TrainingBoost69", title = "69× Training Kick", icon = "Skill", color = T.Colors.Blue },
+		{ key = "TrainingBoost144", title = "144× Training Kick", icon = "Skill", color = T.Colors.Purple },
 	}
 	local cw = math.floor((w - 34) / 3)
 	for i, info in offers do
@@ -851,10 +908,22 @@ function S.Shop(p)
 			Radius = 2,
 			Outline = 3,
 			Children = {
-				Title = label(info.title, 4, 6, cw - 8, 29, 22),
+				Title = label(info.title, 4, 6, cw - 8, 29, info.key:find("TrainingBoost", 1, true) and 18 or 22),
 				Icon = e(
 					U.Icon,
-					{ Kind = info.icon, Position = UDim2.fromOffset(32, 39), Size = UDim2.fromOffset(cw - 64, 93) }
+					{ Kind = info.icon, Position = UDim2.fromOffset(32, 34), Size = UDim2.fromOffset(cw - 64, 84) }
+				),
+				Duration = label(
+					if Config.Products[info.key].kind == "GamePass"
+						then "Permanent"
+						elseif info.key:find("TrainingBoost", 1, true) then "One training kick"
+						elseif info.key == "SkipRebirth" then "One rebirth"
+						else "Instant Skill",
+					4,
+					121,
+					cw - 8,
+					18,
+					13
 				),
 				Buy = buyButton(info.key, 10, 143, cw - 20, 42),
 			},

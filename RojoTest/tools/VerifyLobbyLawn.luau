@@ -1,8 +1,9 @@
 -- Read-only surface-area audit from physical floor and mask geometry, not generated cells.
 local world = workspace.Map.World1
+local HDStuds = require(game.ServerScriptService.Server.HDStuds)
 local modules = Instance.new("Folder")
 modules.Parent = game.ServerStorage
-for _, name in { "LobbyPalette", "LobbyLawn" } do
+for _, name in { "LobbyPalette", "LobbyLawn", "HDStuds" } do
 	game.ServerScriptService.Server[name]:Clone().Parent = modules
 end
 game.ReplicatedStorage.Shared.Core.SurfaceGrid:Clone().Parent = modules
@@ -64,16 +65,9 @@ for _, p in root:GetChildren() do
 		local origin = if i <= 2 then plan.origin.X else plan.origin.Y
 		assert(math.abs((value - origin) / PITCH - math.round((value - origin) / PITCH)) < 0.0001, "Cut lawn stud row")
 	end
-	local textures = 0
-	for _, t in p:GetChildren() do
-		if t:IsA("Texture") then
-			textures += 1
-			assert(t.Name == "LawnStuds" and t.Face == Enum.NormalId.Top and t.Texture == palette.Studs)
-			assert(math.abs(t.StudsPerTileU - TILE) < 0.001 and math.abs(t.StudsPerTileV - TILE) < 0.001)
-			assert(t.OffsetStudsU == 0 and t.OffsetStudsV == 0)
-		end
-	end
-	assert(textures == 1, "Missing or duplicate lawn texture")
+	local variant = HDStuds.variant(p.Material, TILE)
+	assert(variant and p.MaterialVariant == variant.Name, "Missing HD Studs on lawn")
+	assert(not p:FindFirstChildWhichIsA("Texture"), "Duplicate lawn texture")
 	assert(p.Name == "LawnCell", "One-colour repair strip breaks the continuous lawn checker")
 	do
 		assert(math.abs(p.Size.X - CELL) < 0.001 and math.abs(p.Size.Z - CELL) < 0.001, "Clipped lawn checker")

@@ -3,6 +3,7 @@
 local Refs = require(game.ReplicatedStorage.Shared.WorldRefs)
 local Scale = require(game.ReplicatedStorage.Shared.WorldScale)
 local Palette = require(script.Parent.LobbyPalette)
+local HDStuds = require(script.Parent.HDStuds)
 local Style = {}
 local VERSION = "arc-native-v1"
 local V = Vector3.new
@@ -114,8 +115,8 @@ local function lower(stand: Model, pitch: number)
 	stand:SetAttribute("EggStandLowered", f)
 end
 
--- Lobby studs on every upward face; the one-row front bands also carry them on their sides.
--- Seats carry their own lattice texture (see `seats`).
+-- The stand top and the one-row front bands share the lobby stud material.
+-- Seats use their own lattice (see `seats`).
 local function studs(stand: Model, pitch: number)
 	local tile = pitch * Palette.StudsPerTexture
 	for _, p in stand:GetDescendants() do
@@ -131,11 +132,9 @@ local function studs(stand: Model, pitch: number)
 			continue
 		end
 		local band = math.abs(height(p) - pitch) < 0.001
-		local function add(face: Enum.NormalId, v: number)
-			local t = Instance.new("Texture")
-			t.Name, t.Texture, t.Face = "StandStuds", Palette.Studs, face
-			t.StudsPerTileU, t.StudsPerTileV = tile, v
-			t.Transparency, t.Parent = Palette.StudsTransparency, p
+		if band and p:IsA("WedgePart") then
+			HDStuds.apply(p, tile)
+			continue
 		end
 		for _, face in Enum.NormalId:GetEnumItems() do
 			-- A wedge's Top and Front are its slope, drawn below.
@@ -144,13 +143,9 @@ local function studs(stand: Model, pitch: number)
 			end
 			local normal = p.CFrame:VectorToWorldSpace(Vector3.FromNormalId(face))
 			if normal.Y > 0.999 or (band and math.abs(normal.Y) < 0.001) then
-				add(face, tile)
+				HDStuds.apply(p, tile)
+				break
 			end
-		end
-		-- The slope is the arc's front. Top projects local Z onto the longer slope, so V is
-		-- shortened by Z/slope to keep studs square (measured in Studio).
-		if band and p:IsA("WedgePart") then
-			add(Enum.NormalId.Top, tile * p.Size.Z / math.sqrt(p.Size.Y ^ 2 + p.Size.Z ^ 2))
 		end
 	end
 end
@@ -654,10 +649,8 @@ local function seats(stand: Model, pitch: number, loops: { { Vector2 } })
 				p.Size = V(math.abs(x1 - x0), h, math.abs(z1 - z0))
 				local w = c + at((x0 + x1) / 2, (z0 + z1) / 2)
 				p.CFrame = CFrame.fromMatrix(V(w.X, y, w.Y), V(ex.X, 0, ex.Y), Vector3.yAxis)
-				local t = Instance.new("Texture")
-				t.Name, t.Texture, t.Face = "SeatStuds", Palette.Studs, Enum.NormalId.Top
-				t.StudsPerTileU, t.StudsPerTileV = tile, tile
-				t.Transparency, t.Parent = Palette.StudsTransparency, p
+				p.Material = Enum.Material.SmoothPlastic
+				HDStuds.apply(p, tile)
 				p.Parent = pad
 				table.insert(pieces, p)
 			end

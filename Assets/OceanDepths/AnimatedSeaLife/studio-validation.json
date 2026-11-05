@@ -1,0 +1,64 @@
+{
+  "date": "2026-11-05",
+  "templates": 11,
+  "status": "verified-studio-preview",
+  "motionSimulation": {
+    "ok": true,
+    "seconds": 60,
+    "minGap": 0.27003748029815533,
+    "steps": 104400,
+    "blockedSteps": 2,
+    "running": false,
+    "groups": 58,
+    "membersReshuffled": 261,
+    "maxEnvelopeRatio": 1.000000238418579
+  },
+  "fullCheck": {
+    "newTypeErrors": 0,
+    "gateTests": 5,
+    "relativeRequires": 243,
+    "unitTests": 120
+  },
+  "individualCreatures": 28,
+  "limitations": [
+    "Studio preview only; World2 travel/progression separate",
+    "Route certificates must be renewed after geometry/animation-envelope changes",
+    "Mobile/release profiling not performed"
+  ],
+  "schools": 30,
+  "import": {
+    "atomicRoutes": 58,
+    "packageLinks": 0,
+    "rootError": 0.0003710836172103882,
+    "pivotError": 0.0003710538148880005
+  },
+  "bones": 2093,
+  "animalMeshParts": 290,
+  "routeCertificate": {
+    "routes": 58,
+    "failures": [],
+    "obstacles": 30249
+  },
+  "schoolFish": 262,
+  "pcPlay": {
+    "allEightZones": true,
+    "newWildlifeErrors": 0,
+    "updateLogOpenExpandClose": true
+  },
+  "activePackageLinks": 0,
+  "preservation": {
+    "missing": 0,
+    "baselineParts": 83038,
+    "archivedOriginalFaunaParts": 630,
+    "changed": 0
+  },
+  "landscape": {
+    "zones": 8,
+    "passed": true,
+    "failures": [],
+    "textures": 8940,
+    "grounded": 444,
+    "walkSamples": 231,
+    "tiers": 394
+  }
+}

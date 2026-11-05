@@ -1,5 +1,8 @@
 --!strict
 local suites = {
+	require("../tests/Commerce.spec"),
+	require("../tests/OceanAtmosphere.spec"),
+	require("../tests/OceanSwimming.spec"),
 	require("../tests/SurfaceGrid.spec"),
 	require("../tests/VoxelGrid.spec"),
 	require("../tests/UpgradeNotices.spec"),

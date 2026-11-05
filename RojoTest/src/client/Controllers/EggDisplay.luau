@@ -65,6 +65,62 @@ local THEMES = {
 	},
 }
 
+THEMES.Kelp = {
+	name = "GoldenPlankton",
+	texture = 9997556038,
+	bright = C(255, 220, 110),
+	faded = C(60, 199, 155),
+	rate = 4,
+	size = 0.4,
+	rise = 0.6,
+	phase = 0,
+	accent = { name = "DriftingKelp", texture = 7096972007, rate = 5, size = 0.8, rise = -0.8, height = 6 },
+}
+THEMES.Leviathan = {
+	name = "ScaleGlints",
+	texture = 4963436775,
+	bright = C(255, 215, 84),
+	faded = C(35, 217, 230),
+	rate = 5,
+	size = 0.5,
+	rise = 0.4,
+	phase = 1.2,
+	accent = { name = "OceanCrown", texture = 8037777212, rate = 5, size = 0.7, rise = 0.7, height = 7 },
+}
+THEMES.Treasure = {
+	name = "GoldDust",
+	texture = 9997556038,
+	bright = C(255, 224, 128),
+	faded = C(224, 168, 46),
+	rate = 5,
+	size = 0.4,
+	rise = 0.6,
+	phase = 2.4,
+	accent = { name = "GemGlints", texture = 4963436775, rate = 6, size = 0.7, rise = 0.35, height = 5 },
+}
+THEMES.Abyss = {
+	name = "DeepSeaMotes",
+	texture = 10598374841,
+	bright = C(35, 217, 246),
+	faded = C(88, 72, 155),
+	rate = 4,
+	size = 0.5,
+	rise = 0.3,
+	phase = 3.6,
+	accent = { name = "AbyssShards", texture = 8037777212, rate = 5, size = 0.8, rise = 0.5, height = 5.5 },
+}
+THEMES.Jelly = {
+	name = "JellyGlow",
+	texture = 9997556038,
+	bright = C(85, 235, 255),
+	faded = C(194, 130, 255),
+	rate = 6,
+	size = 0.5,
+	rise = 0.8,
+	phase = 4.8,
+	accent = { name = "BioluminescentStars", texture = 4963436775, rate = 7, size = 0.85, rise = 0.55, height = 6.5 },
+}
+
 local function particleSize(size: number): NumberSequence
 	return NumberSequence.new({
 		NumberSequenceKeypoint.new(0, 0),
@@ -97,7 +153,8 @@ function Display.mount(folder: Folder, effectsEnabled: () -> boolean)
 		if not spec then
 			return
 		end
-		local scale = instance:GetScale()
+		local effectScale = instance:GetAttribute("DisplayEffectScale")
+		local scale = if typeof(effectScale) == "number" then effectScale else instance:GetScale()
 		local source = Instance.new("Part")
 		source.Name = spec.name
 		source.Size = Vector3.one * 0.1
@@ -107,6 +164,21 @@ function Display.mount(folder: Folder, effectsEnabled: () -> boolean)
 		source.CastShadow = false
 		source.CFrame = instance:GetPivot()
 		source.Parent = folder
+		local forge = game.ReplicatedStorage:FindFirstChild("OceanEggVFX")
+		local recipe = forge and forge:FindFirstChild(theme :: string)
+		local forgeEmitters: { ParticleEmitter } = {}
+		if recipe then
+			for _, node in recipe:GetChildren() do
+				local copy = node:Clone()
+				copy.Parent = source
+				for _, child in copy:GetDescendants() do
+					if child:IsA("ParticleEmitter") then
+						child.Enabled = false
+						table.insert(forgeEmitters, child)
+					end
+				end
+			end
+		end
 
 		local emitter = Instance.new("ParticleEmitter")
 		emitter.Enabled = false
@@ -159,7 +231,7 @@ function Display.mount(folder: Folder, effectsEnabled: () -> boolean)
 			phase = spec.phase,
 			scale = scale,
 			source = source,
-			emitters = { emitter, accentEmitter },
+			emitters = { emitter, accentEmitter, table.unpack(forgeEmitters) },
 			accent = accent,
 			accentHeight = accentSpec.height,
 			shell = shell,

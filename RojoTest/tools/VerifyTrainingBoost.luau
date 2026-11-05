@@ -15,8 +15,8 @@ local function check(value, message)
 	assert(value, message)
 	checks += 1
 end
-for world = 1, 1 do
-	local arena = workspace.Map:FindFirstChild("World1")
+for world = 1, 2 do
+	local arena = WorldRefs.world(world)
 	local zone = arena and WorldRefs.training(arena)
 	for index = 1, 7 do
 		local lane = zone and zone:FindFirstChild("TrainingLane" .. index)
@@ -57,10 +57,14 @@ for world = 1, 1 do
 		check(Handler.claim(context, player, 73123, 0), "Landed bubble accepted")
 		check(not Handler.claim(context, player, 73123, 0), "Duplicate click rejected")
 		check(acknowledgements == 1, "Exactly one acknowledgement")
-		local cycle = s.trainingBoostCycle
+		local cycle = s.trainingPendingBoostCycle
 		check(
 			s.trainingStarted + cycle * Config.TrainingCycle + Config.KickContact > workspace:GetServerTimeNow(),
 			"Bonus starts at a future contact"
+		)
+		check(
+			Rules.beginCycle(s, cycle) == Rules.offer(s.trainingSeed, 0).multiplier,
+			"Free bonus activates on its kick"
 		)
 		for _ = 1, Motion.hitCount(index) do
 			check(
@@ -70,6 +74,24 @@ for world = 1, 1 do
 			)
 			check(Rules.reward(100, cycle, cycle + 1, s.trainingBoostMultiplier) == 100, "Following kick is normal")
 		end
+		-- Reproduce a free claim between the contacts of an already-paid kick.
+		s.trainingBoostOffer = nil
+		s.trainingStarted = workspace:GetServerTimeNow() - 1.9
+		s.trainingCycle, s.trainingHit = 1, 2
+		s.trainingBoostCycle, s.trainingBoostMultiplier = nil, nil
+		s.data.trainingBoosts = { ["144"] = 1 }
+		check(Rules.beginCycle(s, 1) == 144, "Paid kick consumes its reserved charge")
+		check(Handler.claim(context, player, 73123, 0), "Free claim during paid kick accepted")
+		check(s.trainingBoostCycle == 1 and s.trainingBoostMultiplier == 144, "Active paid boost is unchanged")
+		for _ = 2, Motion.hitCount(index) do
+			check(
+				Rules.reward(100, s.trainingBoostCycle, 1, s.trainingBoostMultiplier) == 14400,
+				"Remaining paid bounce preserved"
+			)
+		end
+		check(s.trainingPendingBoostCycle == 2, "Free offer waits for next complete kick")
+		check(Rules.beginCycle(s, 2) == Rules.offer(s.trainingSeed, 0).multiplier, "Next kick receives free offer")
+		check(s.data.trainingBoosts["144"] == 0, "One paid charge consumed exactly once")
 		s.trainingBoostOffer = nil
 		s.trainingStarted = workspace:GetServerTimeNow() - Rules.Delay - Rules.Lifetime - 1
 		check(not Handler.claim(context, player, 73123, 0), "Expired bubble rejected")

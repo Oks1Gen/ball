@@ -1,0 +1,30 @@
+{
+  "thicknessStuds": 0.008,
+  "eggs": [
+    {
+      "name": "Kelp",
+      "parts": 8420,
+      "heightStuds": 10
+    },
+    {
+      "name": "Leviathan",
+      "parts": 7148,
+      "heightStuds": 10
+    },
+    {
+      "name": "Treasure",
+      "parts": 17072,
+      "heightStuds": 10
+    },
+    {
+      "name": "Abyss",
+      "parts": 7796,
+      "heightStuds": 10
+    },
+    {
+      "name": "Jelly",
+      "parts": 17260,
+      "heightStuds": 10
+    }
+  ]
+}

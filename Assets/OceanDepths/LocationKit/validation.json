@@ -1,0 +1,13 @@
+{
+  "triangles": {
+    "AmberKelp": 1540,
+    "GoldenSeahorse": 390,
+    "ReefJellyfish": 648,
+    "AbyssSquid": 976,
+    "Anglerfish": 308,
+    "MintCrystals": 160,
+    "PearlShellValve": 384
+  },
+  "closedGeometry": true,
+  "palette": "selected Ocean Depths concepts"
+}

@@ -7,26 +7,28 @@ local Refs = require(game.ReplicatedStorage.Shared.WorldRefs)
 local Themes = require(game.ReplicatedStorage.Shared.FootballCity)
 local Kit = require(script.Parent.CourseVoxelKit)
 local Ground = require(script.Parent.CourseVoxelGround)
-local Props = require(script.Parent.CourseVoxelProps)
 local Layout = require(script.Parent.WorldLayout)
-local VERSION = 1
+-- Bump when ground or props change so every styled zone rebuilds on the next start.
+local VERSION = 6
 
--- Location name -> prop builder. Add a name here to restyle that location.
-Style.Locations = {
-	["Football Field"] = Props.footballField,
-}
+-- Location name -> { ground, props }. A location missing here keeps the old scenery.
+Style.Locations = require(script.Parent.CourseVoxelLocations)
 
-function Style.apply(world: any): any
+-- `only` limits the pass to one zone index (Studio refreshes); startup styles every zone.
+function Style.apply(world: any, only: number?): any
 	assert(world.Name == "World1" and world:GetAttribute("WorldLayoutReady"), "Final World1 layout required")
 	local course = Refs.course(world)
 	local styled, rebuilt = {}, 0
 	for index, theme in Themes do
+		if only and index ~= only then
+			continue
+		end
 		local zone = course.Zones[string.format("Zone%02d", index)]
 		local field = Refs.field(world, index)
 		local city = zone.Environment.Cityscape
 		local ground = zone.Geometry:FindFirstChild("GroundCladding")
-		local builder = Style.Locations[theme.name]
-		if not builder then
+		local location = Style.Locations[theme.name]
+		if not location then
 			-- Rollback: drop the cladding; FootballCityScenery restores the old props on the next start.
 			if zone:GetAttribute("VoxelStyleVersion") then
 				if ground then
@@ -39,17 +41,21 @@ function Style.apply(world: any): any
 			continue
 		end
 		local kit = Kit.new(world, zone, field)
+		kit.rowOffset = (index - 1) * kit.rows
 		local signature = tostring(field.CFrame) .. tostring(field.Size) .. ":" .. VERSION
 		if not ground or ground:GetAttribute("GeometrySignature") ~= signature then
 			if ground then
 				ground:Destroy()
 			end
+			local look = location.ground(theme, kit.colors)
+			look.pitch = look.pitch or theme.pitch
+			look.frontEnd, look.backEnd = index == 1, index == #Themes
 			local root = Instance.new("Model")
 			root.Name = "GroundCladding"
 			root.WorldPivot = kit.frame
 			root:SetAttribute("Location", theme.name)
 			root.Parent = zone.Geometry
-			Ground.build(kit, theme, index == 1, root)
+			Ground.build(kit, look, root)
 			root:SetAttribute("GeometrySignature", signature)
 			rebuilt += 1
 		end
@@ -62,7 +68,7 @@ function Style.apply(world: any): any
 			for _, node in city:GetChildren() do
 				node:Destroy()
 			end
-			builder(kit, city, theme, index, field)
+			location.props(kit, city, theme, index, field)
 			city:SetAttribute("VoxelStyleSignature", signature)
 		end
 		zone:SetAttribute("VoxelStyleVersion", VERSION)

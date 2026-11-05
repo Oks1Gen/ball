@@ -1,0 +1,127 @@
+--!strict
+-- Prices are fetched on this client, including Roblox's personal discounts.
+-- Config prices are base metadata and are never checkout price fallbacks.
+local Marketplace = game:GetService("MarketplaceService")
+local Players = game:GetService("Players")
+local Products = require(game.ReplicatedStorage.Shared.CommerceCatalog)
+local PassRewards = require(game.ReplicatedStorage.Shared.Core.PassRewards)
+local Catalog = {}
+local entries: { [string]: any } = {}
+local started = false
+local prompting = false
+
+function Catalog.get(key: string): any
+	return entries[key]
+end
+
+function Catalog.label(key: string, data: any?): string
+	local product = Products[key]
+	if product and data and PassRewards.owned(data, key, product.kind) then
+		return "Owned"
+	end
+	local entry = entries[key]
+	if not entry or entry.loading then
+		return "..."
+	elseif entry.error then
+		return "Retry"
+	elseif not entry.available then
+		return "Off Sale"
+	end
+	return tostring(entry.price)
+end
+
+function Catalog.available(key: string): boolean
+	local entry = entries[key]
+	return entry ~= nil and entry.available == true and not entry.loading
+end
+
+function Catalog.load(key: string): any
+	local product = Products[key]
+	if not product then
+		return nil
+	end
+	if entries[key] and entries[key].loading then
+		return nil
+	end
+	entries[key] = { loading = true }
+	local infoType = if product.kind == "GamePass" then Enum.InfoType.GamePass else Enum.InfoType.Product
+	for attempt = 1, 3 do
+		local ok, info = pcall(function()
+			return Marketplace:GetProductInfoAsync(product.id, infoType)
+		end)
+		if ok and type(info) == "table" and (info.IsForSale == false or type(info.PriceInRobux) == "number") then
+			entries[key] = {
+				price = info.PriceInRobux,
+				available = info.IsForSale == true,
+				loadedAt = os.clock(),
+			}
+			return entries[key]
+		end
+		if attempt < 3 then
+			task.wait(attempt)
+		end
+	end
+	entries[key] = { error = true, available = false }
+	warn("[Ball purchases] Could not load Roblox offer: " .. key)
+	return entries[key]
+end
+
+function Catalog.start()
+	if started then
+		return
+	end
+	started = true
+	for key in Products do
+		task.spawn(Catalog.load, key)
+	end
+	-- These events only release the local checkout lock. They never grant rewards.
+	Marketplace.PromptProductPurchaseFinished:Connect(function(userId)
+		if userId == Players.LocalPlayer.UserId then
+			prompting = false
+		end
+	end)
+	Marketplace.PromptGamePassPurchaseFinished:Connect(function(player)
+		if player == Players.LocalPlayer then
+			prompting = false
+		end
+	end)
+end
+
+function Catalog.prompt(key: string, data: any?, notice: (string) -> ())
+	local item = Products[key]
+	if prompting or not item then
+		return
+	end
+	if data and PassRewards.owned(data, key, item.kind) then
+		notice("Already owned")
+		return
+	end
+	prompting = true
+	local entry = entries[key]
+	if not entry or entry.error or os.clock() - (entry.loadedAt or 0) > 60 then
+		entry = Catalog.load(key)
+	end
+	if not entry or not entry.available then
+		prompting = false
+		notice(
+			if entry and entry.loading
+				then "Loading price. Please try again."
+				else "This offer is currently unavailable."
+		)
+		return
+	end
+	local ok, err = pcall(function()
+		if item.kind == "GamePass" then
+			Marketplace:PromptGamePassPurchase(Players.LocalPlayer, item.id)
+		else
+			Marketplace:PromptProductPurchase(Players.LocalPlayer, item.id)
+		end
+	end)
+	if not ok then
+		prompting = false
+		warn("[Ball purchases] Checkout could not open: " .. tostring(err))
+		notice("Could not open checkout. Please try again.")
+	end
+end
+
+return Catalog

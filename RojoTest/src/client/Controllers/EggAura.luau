@@ -59,6 +59,37 @@ local THEMES: { [string]: { Layer } } = {
 	},
 }
 
+THEMES.Kelp = {
+	{
+		asset = 7096972007,
+		color = C(236, 190, 52),
+		accent = C(56, 184, 139),
+		size = 0.19,
+		speed = 11,
+		travel = 0.025,
+		opacity = 0.85,
+		copies = 6,
+		radius = 0.35,
+	},
+	{ asset = 6862984716, color = C(52, 211, 175), size = 0.8, speed = 0, travel = 0.07, opacity = 0.65 },
+}
+THEMES.Leviathan = {
+	{ asset = 10176632695, color = C(255, 213, 84), size = 0.95, speed = 16, travel = 0.04, opacity = 0.9 },
+	{ asset = 4963436775, color = C(35, 217, 230), size = 0.65, speed = -13, travel = 0.05, opacity = 0.85 },
+}
+THEMES.Treasure = {
+	{ asset = 10176632695, color = C(255, 209, 69), size = 0.92, speed = -14, travel = 0.04, opacity = 0.85 },
+	{ asset = 4963436775, color = C(112, 239, 240), size = 0.6, speed = 20, travel = 0.04, opacity = 0.8 },
+}
+THEMES.Abyss = {
+	{ asset = 12318428842, color = C(45, 84, 180), size = 1.05, speed = -22, travel = -0.08, opacity = 0.85 },
+	{ asset = 5726444189, color = C(35, 217, 246), size = 0.85, speed = 25, travel = -0.06, opacity = 0.85 },
+}
+THEMES.Jelly = {
+	{ asset = 6862984716, color = C(103, 230, 255), size = 0.8, speed = 0, travel = 0.3, opacity = 0.85 },
+	{ asset = 5726444189, color = C(195, 139, 255), size = 0.97, speed = 17, travel = 0.08, opacity = 0.8 },
+}
+
 function Aura.create(folder: Folder, theme: string, position: Vector3, scale: number)
 	local specs = THEMES[theme]
 	local plane = Instance.new("Part")

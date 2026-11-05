@@ -1,0 +1,185 @@
+{
+  "modelAssetId": "70791212451135",
+  "universeId": 10770268214,
+  "creatorUserId": 11789507527,
+  "grantToDependencies": true,
+  "meshParts": {
+    "1": {
+      "color": "345679",
+      "meshId": "rbxassetid://110072336651763",
+      "name": "Base_OctagonalBlueStone",
+      "textureId": ""
+    },
+    "2": {
+      "color": "517b9b",
+      "meshId": "rbxassetid://133111865766642",
+      "name": "Base_OctagonalBlueStone_Material2",
+      "textureId": ""
+    },
+    "3": {
+      "color": "29445f",
+      "meshId": "rbxassetid://88832437088094",
+      "name": "Base_SoleInset",
+      "textureId": ""
+    },
+    "4": {
+      "color": "3da7af",
+      "meshId": "rbxassetid://93750424629729",
+      "name": "Base_TurquoiseInsetBand",
+      "textureId": ""
+    },
+    "5": {
+      "color": "88dbd5",
+      "meshId": "rbxassetid://130634439163462",
+      "name": "Base_TurquoiseInsetBand_Material2",
+      "textureId": ""
+    },
+    "6": {
+      "color": "345679",
+      "meshId": "rbxassetid://90990483068556",
+      "name": "Base_UpperBlueCollar",
+      "textureId": ""
+    },
+    "7": {
+      "color": "517b9b",
+      "meshId": "rbxassetid://84671632018477",
+      "name": "Base_UpperBlueCollar_Material2",
+      "textureId": ""
+    },
+    "8": {
+      "color": "88dbd5",
+      "meshId": "rbxassetid://85020149942380",
+      "name": "InnerNautilusHeart",
+      "textureId": ""
+    },
+    "9": {
+      "color": "88dbd5",
+      "meshId": "rbxassetid://96937976433241",
+      "name": "InnerSpiralRib_01",
+      "textureId": ""
+    },
+    "10": {
+      "color": "88dbd5",
+      "meshId": "rbxassetid://71160423173429",
+      "name": "InnerSpiralRib_02",
+      "textureId": ""
+    },
+    "11": {
+      "color": "88dbd5",
+      "meshId": "rbxassetid://83954415171489",
+      "name": "InnerSpiralRib_03",
+      "textureId": ""
+    },
+    "12": {
+      "color": "88dbd5",
+      "meshId": "rbxassetid://106205749199935",
+      "name": "InnerSpiralRib_04",
+      "textureId": ""
+    },
+    "13": {
+      "color": "88dbd5",
+      "meshId": "rbxassetid://89711296471525",
+      "name": "InnerSpiralRib_05",
+      "textureId": ""
+    },
+    "14": {
+      "color": "88dbd5",
+      "meshId": "rbxassetid://137099656761791",
+      "name": "InnerSpiralRib_06",
+      "textureId": ""
+    },
+    "15": {
+      "color": "88dbd5",
+      "meshId": "rbxassetid://117855460221373",
+      "name": "InnerSpiralRib_07",
+      "textureId": ""
+    },
+    "16": {
+      "color": "88dbd5",
+      "meshId": "rbxassetid://91742390295130",
+      "name": "InnerSpiralRib_08",
+      "textureId": ""
+    },
+    "17": {
+      "color": "88dbd5",
+      "meshId": "rbxassetid://105304862169331",
+      "name": "InnerSpiralRib_09",
+      "textureId": ""
+    },
+    "18": {
+      "color": "88dbd5",
+      "meshId": "rbxassetid://94291562556369",
+      "name": "InnerSpiralRib_10",
+      "textureId": ""
+    },
+    "19": {
+      "color": "88dbd5",
+      "meshId": "rbxassetid://90396714774387",
+      "name": "InnerSpiralRib_11",
+      "textureId": ""
+    },
+    "20": {
+      "color": "88dbd5",
+      "meshId": "rbxassetid://115938800352834",
+      "name": "InnerSpiralRib_12",
+      "textureId": ""
+    },
+    "21": {
+      "color": "88dbd5",
+      "meshId": "rbxassetid://128664779556217",
+      "name": "Shell_ContinuousAquaLipSeam",
+      "textureId": ""
+    },
+    "22": {
+      "color": "fff1db",
+      "meshId": "rbxassetid://114943952822442",
+      "name": "Shell_ContinuousThickBasin",
+      "textureId": ""
+    },
+    "23": {
+      "color": "f2d9d4",
+      "meshId": "rbxassetid://105702991607235",
+      "name": "Shell_ContinuousThickBasin_Material2",
+      "textureId": ""
+    },
+    "24": {
+      "color": "ebd2b7",
+      "meshId": "rbxassetid://126992474409972",
+      "name": "Shell_ContinuousThickBasin_Material3",
+      "textureId": ""
+    },
+    "25": {
+      "color": "fff1db",
+      "meshId": "rbxassetid://124008918750178",
+      "name": "Shell_RolledIvoryLip",
+      "textureId": ""
+    },
+    "26": {
+      "color": "88dbd5",
+      "meshId": "rbxassetid://107584666194985",
+      "name": "Volute_Left_AquaInlay",
+      "textureId": ""
+    },
+    "27": {
+      "color": "fff1db",
+      "meshId": "rbxassetid://92368053657499",
+      "name": "Volute_Left_IvoryScroll",
+      "textureId": ""
+    },
+    "28": {
+      "color": "88dbd5",
+      "meshId": "rbxassetid://103407152242806",
+      "name": "Volute_Right_AquaInlay",
+      "textureId": ""
+    },
+    "29": {
+      "color": "fff1db",
+      "meshId": "rbxassetid://140420809701421",
+      "name": "Volute_Right_IvoryScroll",
+      "textureId": ""
+    }
+  },
+  "imageAssets": [],
+  "grantedAction": "Use",
+  "geometryKind": "UploadedGLBMesh"
+}

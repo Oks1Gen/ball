@@ -1,0 +1,79 @@
+[
+  {
+    "name": "Clownfish",
+    "sampledMaximumRadius": 2.456134072588791,
+    "conservativeRadius": 3.47366377762547,
+    "cycleSeam": 2.83857836253036e-16,
+    "frames": 31
+  },
+  {
+    "name": "BlueTang",
+    "sampledMaximumRadius": 2.456134072588791,
+    "conservativeRadius": 3.47366377762547,
+    "cycleSeam": 2.9661378846143306e-16,
+    "frames": 31
+  },
+  {
+    "name": "Butterflyfish",
+    "sampledMaximumRadius": 2.456134072588791,
+    "conservativeRadius": 3.47366377762547,
+    "cycleSeam": 2.9019724847190377e-16,
+    "frames": 31
+  },
+  {
+    "name": "SilverSprat",
+    "sampledMaximumRadius": 3.415005425815776,
+    "conservativeRadius": 4.838796487561682,
+    "cycleSeam": 1.5512848453999859e-16,
+    "frames": 31
+  },
+  {
+    "name": "MantaRay",
+    "sampledMaximumRadius": 14.292953365053881,
+    "conservativeRadius": 19.036817685832638,
+    "cycleSeam": 2.92996715629335e-16,
+    "frames": 31
+  },
+  {
+    "name": "ReefJellyfish",
+    "sampledMaximumRadius": 8.200550494884137,
+    "conservativeRadius": 10.322614080055782,
+    "cycleSeam": 5.915006959311124e-17,
+    "frames": 31
+  },
+  {
+    "name": "GoldenSeahorse",
+    "sampledMaximumRadius": 6.306061357468708,
+    "conservativeRadius": 7.260668611349474,
+    "cycleSeam": 1.2687340307994735e-15,
+    "frames": 31
+  },
+  {
+    "name": "YellowTang",
+    "sampledMaximumRadius": 2.454997258610904,
+    "conservativeRadius": 3.7242623820145337,
+    "cycleSeam": 3.510082891172739e-16,
+    "frames": 31
+  },
+  {
+    "name": "Anglerfish",
+    "sampledMaximumRadius": 3.860148493769222,
+    "conservativeRadius": 5.504215323545839,
+    "cycleSeam": 1.4202794476723043e-16,
+    "frames": 31
+  },
+  {
+    "name": "AbyssSquid",
+    "sampledMaximumRadius": 14.497361063800659,
+    "conservativeRadius": 15.69171067203112,
+    "cycleSeam": 2.6746288631076224e-16,
+    "frames": 31
+  },
+  {
+    "name": "MoonJellyfish",
+    "sampledMaximumRadius": 8.319263298659108,
+    "conservativeRadius": 10.522329020866056,
+    "cycleSeam": 8.476474236334002e-17,
+    "frames": 31
+  }
+]

@@ -1,5 +1,6 @@
 -- Complete-cell coverage and physical backing of the actual facade.
 local world = workspace.Map.World1
+local HDStuds = require(game.ServerScriptService.Server.HDStuds)
 local modules = Instance.new("Folder")
 modules.Name = "WallAuditModules"
 modules.Parent = game.ServerStorage
@@ -15,6 +16,9 @@ local params = RaycastParams.new()
 params.FilterType = Enum.RaycastFilterType.Include
 params.FilterDescendantsInstances = { temporary }
 for _, source in plan.sources do
+	local part = source.part
+	local variant = HDStuds.variant(part.Material, 4 * plan.pitch)
+	assert(variant and part.MaterialVariant == variant.Name, "Missing HD Studs on backing: " .. part:GetFullName())
 	local p = Instance.new("Part")
 	p.Size, p.CFrame = source.part.Size, source.part.CFrame
 	p.Anchored, p.CanCollide, p.CanTouch, p.CanQuery, p.Transparency = true, false, false, true, 1
@@ -74,7 +78,7 @@ local ok, result = pcall(function()
 			else
 				edgeStuds += math.round(a * b / studArea)
 			end
-			local normal = Vector3.FromNormalId(p.WallStuds.Face)
+			local normal = Vector3.FromNormalId(surface.face)
 			local hit = workspace:Raycast(p.Position + normal * 0.2, -normal * 0.5, params)
 			assert(
 				hit and math.abs(component(hit.Position, surface.axis) - surface.plane) < 0.001,

@@ -1,0 +1,71 @@
+{
+  "location": "Pearl Grotto",
+  "date": "2026-11-05",
+  "generator": "Built-in image_gen",
+  "reference": "Assets/OceanDepths/KelpForest/03-amber-grove.png",
+  "inspectedReferences": [
+    "Assets/OceanDepths/KelpForest/03-amber-grove.png",
+    "Assets/OceanDepths/SunkenFleet/01-galleon-bay.png",
+    "Assets/OceanDepths/KelpForest/coral-reef-reference.png"
+  ],
+  "selection": {
+    "key": "03-mint-crystal-vault",
+    "name": "Мятный свод",
+    "date": "2026-11-05",
+    "userQuote": "3 — Мятный свод"
+  },
+  "status": "Concept selected, construction pending separate user instruction",
+  "variants": [
+    {
+      "key": "01-pearl-cathedral",
+      "name": "Перламутровый собор",
+      "prompt": "Use case: stylized-concept. Generate ONE whole wide landscape scene, polished game concept art for Roblox Ball Ocean Depths, PEARL GROTTO. Reference image 1 is only camera/lane scale/toy-brick art direction; replace its kelp landscape with pearlescent underwater cave. Elevated three-quarter view, long straight generously WIDE football lane from large lower foreground to far upper right, uninterrupted pale cream and soft sand checker surface with orderly small square studs, thin pale game markings, cyan-turquoise edges. Central corridor AND entire flight airspace above remain empty: no shells/cave ribs/rocks protruding over route. Cave roof very high beyond visible gameplay corridor. HUGE OPEN CLAMSHELL behind the END of lane as a distant finale landmark, visibly open valves and a bright pearl clearly visible in bowl. Shell fully supported on broad visible solid rocky/sandy dais beyond playing plane, its lower lip cannot intrude onto field. The pearl illuminates pearlescent cave. Toy-brick handmade faceted 3D, large clean readable shapes, carefully applied studs on building surfaces, pearlescent shell ribs geometric and attractive, softly iridescent cream mother-of-pearl, mint/cyan/light pink, blue shadows. All grounded objects fully supported across their complete footprint. Underwater haze and small bubbles, polished delightful family-friendly beauty, no photoreal scans, no text/logo/UI/collage, no characters. Distinct composition A: a tall soaring grotto like an organic cathedral, enormous cream and icy mint vertical shell-rib rock pillars rooted in broad layered blue side terraces, generous open central volume. Distant giant symmetrical fan-shaped white clam shell rises as upright scalloped halo around luminous pearl behind lane end. Soft bright pearl-white main light from final landmark, cool cyan secondary light from high clefts, tiny rose coral fans grounded on side terraces. Palette pearl ivory, icy mint, turquoise, blue-violet shadows with discreet blush. Clearly enclosed high cave above and behind, no visible sea surface. Preserve long lane depth and open overhead corridor.",
+      "image": "01-pearl-cathedral.png",
+      "description": "Высокие перламутровые рёбра образуют соборный грот; по бокам синие террасы, розовые кораллы, радужные кристаллы и малые раковины. Огромная раскрытая раковина с яркой жемчужиной возвышается на отдельном пьедестале за концом трассы.",
+      "palette": [
+        "pearl ivory",
+        "icy mint",
+        "cyan",
+        "blue",
+        "blush pink"
+      ]
+    },
+    {
+      "key": "02-rose-bowl",
+      "name": "Розовая чаша",
+      "prompt": "Use case: stylized-concept. Generate ONE whole wide landscape scene, polished game concept art for Roblox Ball Ocean Depths, PEARL GROTTO. Reference image 1 is only camera/lane scale/toy-brick art direction; replace its kelp landscape with pearlescent underwater cave. Elevated three-quarter view, long straight generously WIDE football lane from large lower foreground to far upper right, uninterrupted pale cream and soft sand checker surface with orderly small square studs, thin pale game markings, cyan-turquoise edges. Central corridor AND entire flight airspace above remain empty: no shells/cave ribs/rocks protruding over route. Cave roof very high beyond visible gameplay corridor. HUGE OPEN CLAMSHELL behind the END of lane as a distant finale landmark, visibly open valves and a bright pearl clearly visible in bowl. Shell fully supported on broad visible solid rocky/sandy dais beyond playing plane, its lower lip cannot intrude onto field. The pearl illuminates pearlescent cave. Toy-brick handmade faceted 3D, large clean readable shapes, carefully applied studs on building surfaces, pearlescent shell ribs geometric and attractive, softly iridescent cream mother-of-pearl, mint/cyan/light pink, blue shadows. All grounded objects fully supported across their complete footprint. Underwater haze and small bubbles, polished delightful family-friendly beauty, no photoreal scans, no text/logo/UI/collage, no characters. Distinct composition B: broad low-sided rounded grotto viewed from open near entrance, warm blush-pink and cream terraced mineral walls shaped like layered scallop petals sweep around BOTH sides, roof dome high and outside flight corridor. Large clam at rear is a low broad open bowl with huge spread fan valves, pearl a clear glowing orb between valves, cream-pink inner ribs. A gentle warm pinkish pearl glow spreads along lateral mother-of-pearl tide pools completely beyond cyan field borders; mint-blue shadows contrast warm shell. Sparse small closed shells and branching pale corals sit on wide side shelves. Broad side scenery rather than tall pillars. Lane remains perfectly straight, long, wide and unobstructed.",
+      "image": "02-rose-bowl.png",
+      "description": "Розово-кремовые круглые террасы и лепестковые стенки окружают широкий грот. Боковые неглубокие чаши переливаются розовыми и мятными бликами; дальняя раскрытая раковина даёт тёплое сияние.",
+      "palette": [
+        "cream",
+        "blush pink",
+        "peach",
+        "mint",
+        "turquoise"
+      ]
+    },
+    {
+      "key": "03-mint-crystal-vault",
+      "name": "Мятный свод",
+      "prompt": "Use case: stylized-concept. Generate ONE whole wide landscape scene, polished game concept art for Roblox Ball Ocean Depths, PEARL GROTTO. Reference image 1 is only camera/lane scale/toy-brick art direction; replace its kelp landscape with pearlescent underwater cave. Elevated three-quarter view, long straight generously WIDE football lane from large lower foreground to far upper right, uninterrupted pale cream and soft sand checker surface with orderly small square studs, thin pale game markings, cyan-turquoise edges. Central corridor AND entire flight airspace above remain empty: no shells/cave ribs/rocks protruding over route. Cave roof very high beyond visible gameplay corridor. HUGE OPEN CLAMSHELL behind the END of lane as a distant finale landmark, visibly open valves and a bright pearl clearly visible in bowl. Shell fully supported on broad visible solid rocky/sandy dais beyond playing plane, its lower lip cannot intrude onto field. The pearl illuminates pearlescent cave. Toy-brick handmade faceted 3D, large clean readable shapes, carefully applied studs on building surfaces, pearlescent shell ribs geometric and attractive, softly iridescent cream mother-of-pearl, mint/cyan/light pink, blue shadows. All grounded objects fully supported across their complete footprint. Underwater haze and small bubbles, polished delightful family-friendly beauty, no photoreal scans, no text/logo/UI/collage, no characters. Distinct composition C: angular faceted mint and turquoise crystalline grotto, large slanting blue-rock masses with pearlescent cream seams form high asymmetric vault. Strong tall cyan mineral fins are ROOTED in continuous side terraces, never crossing overhead playing lane. Final monumental clam shell has side-opening silhouette, one tall upright ivory valve and one lower broad bowl, offset slightly right beyond far field end but pearl plainly visible from center. Pearl emits cool white light with subtle rainbow rim, broad cyan shafts fall from high left cleft, a few pale pink shell accents on grounded side rock. Foreground right has a broad pale cream stepped rock dais with three small pearls, all outside lane. Crisp cyan/mint dominant, white cream highlights, deep blue cave shadows, small blush accents. Different silhouette and cooler lighting from rose bowl and cathedral.",
+      "image": "03-mint-crystal-vault.png",
+      "description": "Грот с массивными синими наклонными стенами, кремовыми минеральными полосами и крупными мятно-циановыми кристаллами. Холодный белый свет жемчужины, малые розовые раковины; справа спереди отдельная полностью опёртая площадка с тремя жемчужинами.",
+      "palette": [
+        "cobalt",
+        "mint",
+        "cyan",
+        "ivory",
+        "pale pink"
+      ]
+    }
+  ],
+  "stage": "Built in Studio World2 preview; travel and progression pending",
+  "construction": {
+    "date": "2026-11-05",
+    "overview": "studio-overview.png",
+    "groundCheck": "studio-ground-check.png",
+    "builder": "RojoTest/src/server/OceanCourseLocations.luau",
+    "assetPack": "Assets/OceanDepths/LocationKit",
+    "studPitch": 1.2
+  }
+}

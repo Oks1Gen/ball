@@ -20,6 +20,10 @@ local OLD = {
 	RightAbutmentChecker = true,
 }
 
+function Coverage.isBacking(part: BasePart): boolean
+	return EARTH[part.Name] == true or CAPS[part.Name] == true
+end
+
 function Coverage.plan(world: any): any
 	local environment = world.Lobby.Environment
 	local owners, sources, solids = {}, {}, {}
@@ -39,7 +43,7 @@ function Coverage.plan(world: any): any
 		if owner then
 			table.insert(owners, owner)
 			for _, p in owner:GetDescendants() do
-				if p:IsA("BasePart") and p.Transparency < 1 and (EARTH[p.Name] or CAPS[p.Name]) then
+				if p:IsA("BasePart") and p.Transparency < 1 and Coverage.isBacking(p) then
 					assert(
 						p.CFrame.RightVector:Dot(Vector3.xAxis) > 0.9999
 							and p.CFrame.UpVector:Dot(Vector3.yAxis) > 0.9999,

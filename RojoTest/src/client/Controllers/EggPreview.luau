@@ -6,7 +6,9 @@
 local React = require(game.ReplicatedStorage.Packages.React)
 local ReactRoblox = require(game.ReplicatedStorage.Packages.ReactRoblox)
 local Config = require(game.ReplicatedStorage.Shared.GameConfig)
+local MarketplaceCatalog = require(script.Parent.Parent.Modules.MarketplaceCatalog)
 local Motion = require(game.ReplicatedStorage.Shared.UiMotion)
+local WorldRefs = require(game.ReplicatedStorage.Shared.WorldRefs)
 local U = require(script.Parent.Parent.CollectorUI.Components)
 local T = require(script.Parent.Parent.CollectorUI.Theme)
 local Art = require(script.Parent.Parent.CollectorUI.Art)
@@ -15,6 +17,7 @@ local Insets = require(script.Parent.Parent.Modules.GuiInsets)
 local Presentation = require(script.Parent.Parent.Modules.UiPresentation)
 local Input = game:GetService("UserInputService")
 local e, C = React.createElement, Color3.fromRGB
+local OceanCatalog = require(game.ReplicatedStorage.Shared.OceanEggCatalog)
 local Preview = {}
 
 export type Context = {
@@ -200,6 +203,8 @@ local function KeyButton(p)
 end
 
 type PanelProps = {
+	PaidRandomRestricted: boolean?,
+	PurchasePolicyReady: boolean?,
 	Egg: string,
 	World: number,
 	Wins: number,
@@ -215,6 +220,7 @@ local function Panel(p: PanelProps)
 	local admin = id == ADMIN
 	local plateH = plateHeight(id)
 	local buttonY = plateH + 10
+	local ocean = OceanCatalog.find(id, p.World)
 	local buttonW = math.floor((PLATE_W - GAP) / 2)
 	local keyboard = p.Input == "Keyboard"
 	local gamepad = p.Input == "Gamepad"
@@ -224,8 +230,9 @@ local function Panel(p: PanelProps)
 	local buttons: { [string]: any } = {}
 	if admin then
 		local pet = Config.AdminPet
-		title, titleColor = "Volcanic Inferno", LAVA
-		currency, price, affordable = "Robux", Config.format(assert(Config.Products.AdminEgg.price)), true
+		title, titleColor = if ocean then ocean.theme else "Volcanic Inferno", if ocean then ocean.color else LAVA
+		currency, price, affordable =
+			"Robux", MarketplaceCatalog.label("AdminEgg"), MarketplaceCatalog.available("AdminEgg")
 		tiles.Card = e(PetTile, {
 			Item = pet,
 			Chance = "100%",
@@ -256,13 +263,18 @@ local function Panel(p: PanelProps)
 			Position = UDim2.fromOffset(math.floor((PLATE_W - buttonW) / 2), buttonY),
 			Size = UDim2.fromOffset(buttonW, BUTTON_H),
 			OnActivated = p.BuyAdmin,
+			Disabled = not MarketplaceCatalog.available("AdminEgg"),
 		})
 	else
 		local egg = assert(Config.find(Config.Eggs, id), "Unknown egg " .. id)
-		title, titleColor = string.gsub(egg.name, " Egg$", ""), egg.color
-		local cost = egg.cost
+		title, titleColor =
+			if ocean then ocean.theme else string.gsub(egg.name, " Egg$", ""), if ocean then ocean.color else egg.color
+		local cost = Config.eggCost(egg, p.World)
 		currency, price, affordable = "Wins", Config.format(cost), p.Wins >= cost
 		local pool = Config.eggPets(id)
+		if p.PaidRandomRestricted then
+			pool = { pool[1] }
+		end
 		local total = 0
 		for _, item in pool do
 			total += item.weight
@@ -278,12 +290,12 @@ local function Panel(p: PanelProps)
 		end
 		buttons.Hatch = e(KeyButton, {
 			Name = "EggPreviewHatch",
-			Text = "Hatch",
+			Text = if p.PaidRandomRestricted then "Get Pet" else "Hatch",
 			Key = if keyboard then "E" elseif gamepad then "Y" else nil,
 			Color = T.Colors.Green,
 			Position = UDim2.fromOffset(0, buttonY),
 			Size = UDim2.fromOffset(buttonW, BUTTON_H),
-			Disabled = p.Pets + 1 > 60,
+			Disabled = not p.PurchasePolicyReady or p.Pets + 1 > 60,
 			OnActivated = function()
 				p.Hatch(id, 1)
 			end,
@@ -295,7 +307,7 @@ local function Panel(p: PanelProps)
 			Color = T.Colors.Gold,
 			Position = UDim2.fromOffset(PLATE_W - buttonW, buttonY),
 			Size = UDim2.fromOffset(buttonW, BUTTON_H),
-			Disabled = p.Pets + 3 > 60,
+			Disabled = not p.PurchasePolicyReady or p.Pets + 3 > 60,
 			OnActivated = function()
 				p.Hatch(id, 3)
 			end,
@@ -424,9 +436,16 @@ function Preview.mount(context: Context): Handle
 	local open = false
 
 	local function scan(arena: Instance)
+		if stationArena ~= arena then
+			for _, station in stations do
+				if station.sign then
+					station.sign.Enabled = true
+				end
+			end
+		end
 		stations = {}
 		stationArena = arena
-		local scenery = require(game.ReplicatedStorage.Shared.WorldRefs).eggs(arena)
+		local scenery = WorldRefs.eggs(arena)
 		if not scenery then
 			return
 		end
@@ -451,7 +470,7 @@ function Preview.mount(context: Context): Handle
 			local model = scenery:FindFirstChild("Egg_" .. egg.id)
 			add(egg.id, model and model:FindFirstChild("EggShell"), model)
 		end
-		local volcanic = require(game.ReplicatedStorage.Shared.WorldRefs).volcanic(arena)
+		local volcanic = WorldRefs.volcanic(arena)
 		add(
 			ADMIN,
 			volcanic and (volcanic:FindFirstChild("InteractionAnchor") or volcanic:FindFirstChild("HackedAdminEgg")),
@@ -472,6 +491,8 @@ function Preview.mount(context: Context): Handle
 				Egg = shown,
 				World = snapshot and snapshot.data.world or 1,
 				Wins = snapshot and snapshot.data.wins or 0,
+				PaidRandomRestricted = snapshot and snapshot.paidRandomRestricted ~= false,
+				PurchasePolicyReady = snapshot and snapshot.purchasePolicyReady == true,
 				Pets = #context.pets(),
 				Input = inputKind(),
 				Reduced = reduced(),
@@ -519,8 +540,7 @@ function Preview.mount(context: Context): Handle
 		if not rootPart or not rootPart:IsA("BasePart") or not humanoid or humanoid.Health <= 0 or not snapshot then
 			return nil
 		end
-		local map = workspace:FindFirstChild("Map")
-		local arena = map and map:FindFirstChild("World1")
+		local arena = WorldRefs.world(snapshot.data.world)
 		if not arena then
 			return nil
 		end

@@ -3,8 +3,11 @@ local Access = require(script.Parent.AdminAccess)
 local Construction = require(script.Parent.ConstructionTypes)
 local Diagnostics = require(script.Parent.AdminDiagnostics)
 local Config = require(game.ReplicatedStorage.Shared.GameConfig)
+local ProfileData = require(game.ReplicatedStorage.Shared.Core.ProfileData)
 local Economy = require(game.ReplicatedStorage.Shared.Core.Economy)
 local Net = require(game.ReplicatedStorage.Shared.Net)
+local Flight = require(script.Parent.AdminFlight)
+local Refs = require(game.ReplicatedStorage.Shared.WorldRefs)
 local H = game:GetService("HttpService")
 local Service = {}
 Service.__index = Service
@@ -29,6 +32,8 @@ type Status = {
 	skill: number,
 	rebirths: number,
 	world: number,
+	previewWorld: number,
+	flight: boolean,
 	pets: number,
 	equipped: number,
 	shot: number,
@@ -140,6 +145,8 @@ function Service.status(self: Admin, player: Player): Status?
 		skill = d.skill,
 		rebirths = d.rebirths,
 		world = d.world,
+		previewWorld = (player:GetAttribute("DevPreviewWorld") :: number?) or d.world,
+		flight = player:GetAttribute("AdminFlight") == true,
 		pets = #d.pets,
 		equipped = #d.equipped,
 		shot = Config.shotDistance(
@@ -157,6 +164,7 @@ function Service.move(self: Admin, player: Player, target: CFrame)
 	local c = self.context
 	local s = c.states[player]
 	c.stopTraining(player)
+	s.kickTiming = nil
 	s.auto = false
 	s.busyUntil = 0
 	s.blockedLane = nil
@@ -198,18 +206,29 @@ function Service.dispatch(self: Admin, player: Player, command: string, value: a
 		return "Журнал сервера.", rows
 	end
 	local d = s.data
-	if command == "ResetProgress" then
+	if command == "Flight" then
+		assert(typeof(value) == "boolean", "Выбери включение или выключение полёта")
+		c.stopTraining(player)
+		s.kickTiming = nil
+		s.auto = false
+		s.busyUntil = 0
+		c.effect:FireClient(player, "AdminResetView")
+		Flight.set(player, value)
+		return if value
+			then "Полёт / Noclip включён: WASD, Space вверх, Ctrl вниз, Shift быстрее."
+			else "Полёт выключен.",
+			nil
+	elseif command == "ResetProgress" then
 		assert(value == true, "Подтверди сброс прогресса")
 		assert(os.clock() >= s.busyUntil, "Дождись окончания броска")
-		assert(not s.awaitingReceipt and not s.paidRebirthWaiting, "Дождись завершения покупки")
-		local fresh = c.fresh()
-		fresh.settings = d.settings
-		fresh.receipts = d.receipts
-		fresh.perks = d.perks
-		fresh.trainingBoosts = d.trainingBoosts
-		fresh.adminEggPendingCount = d.adminEggPendingCount
-		-- Real Robux already spent is not game progress.
-		fresh.donated = d.donated
+		assert(
+			not s.awaitingReceipt and not s.paidRebirthWaiting and not s.receiptProcessing,
+			"Дождись завершения покупки"
+		)
+		local fresh = ProfileData.resetProgress(d)
+		-- Invalidate ownership checks started before the reset. Real Roblox pass
+		-- ownership remains on the account and is restored on its next join.
+		s.purchaseGeneration = (s.purchaseGeneration or 0) + 1
 		s.data = fresh
 		if not c.save(player) then
 			s.data = d
@@ -221,6 +240,14 @@ function Service.dispatch(self: Admin, player: Player, command: string, value: a
 		s.gifts = {}
 		s.joined = os.clock()
 		s.inventoryVersion += 1
+		if d.world == 2 or player:GetAttribute("DevPreviewWorld") ~= nil then
+			player:SetAttribute("DevPreviewWorld", nil)
+			local root, hum = c.rootFor(player)
+			if root and hum and hum.Health > 0 then
+				self:move(player, Config.kickZoneCharacterPose(c.map, root, hum, Config.KickZoneStandFromFront))
+				return "Твой прогресс сброшен.", nil
+			end
+		end
 		c.effect:FireClient(player, "AdminResetView")
 		return "Твой прогресс сброшен.", nil
 	elseif command == "SetStat" then
@@ -299,15 +326,39 @@ function Service.dispatch(self: Admin, player: Player, command: string, value: a
 		)
 		local root, hum = c.rootFor(player)
 		assert(root and hum, "Нет персонажа")
-		self:move(player, Config.kickZoneCharacterPose(c.arenaFor(player), root, hum, Config.KickStanceFromFront))
+		self:move(player, Config.kickZoneCharacterPose(c.arenaFor(player), root, hum, Config.KickZoneStandFromFront))
 		c.throw(player, distance)
 	elseif command == "Teleport" then
 		local root, hum = c.rootFor(player)
 		assert(root and hum, "Нет персонажа")
-		assert(value ~= "World2", "Второй мир удалён")
+		if value == "World1" or value == "World2" then
+			local target = c.map
+			if value == "World2" then
+				assert(
+					game:GetService("RunService"):IsStudio(),
+					"Ocean Depths пока доступен для просмотра в Studio"
+				)
+				local worlds = c.map.Parent
+				local preview = worlds and worlds:FindFirstChild("World2")
+				assert(
+					preview and preview:GetAttribute("OceanDepthsPreview") == true,
+					"Ocean Depths не загружен"
+				)
+				target = preview
+			end
+			assert(Refs.kickZoneFloor(target), "Нет точки прибытия")
+			self:move(player, Config.kickZoneCharacterPose(target, root, hum, Config.KickZoneStandFromFront))
+			local index = if value == "World2" then 2 else 1
+			player:SetAttribute("DevPreviewWorld", if index ~= d.world then index else nil)
+			return if value == "World2"
+				then "Ocean Depths — свободный просмотр карты."
+				else "Возвращение в Football City.",
+				nil
+		end
 		d.world = 1
+		player:SetAttribute("DevPreviewWorld", nil)
 		local map = c.arenaFor(player)
-		if value == "Lobby" or value == "World1" then
+		if value == "Lobby" then
 			self:move(player, Config.kickZoneCharacterPose(map, root, hum, Config.KickZoneStandFromFront))
 		elseif value == "Sakura" then
 			d.world = 1
@@ -354,6 +405,8 @@ function Service.dispatch(self: Admin, player: Player, command: string, value: a
 		assert(n and n % 1 == 0 and n >= 1 and n <= 7, "Неизвестная площадка")
 		local root, hum = c.rootFor(player)
 		assert(root and hum, "Нет персонажа")
+		d.world = 1
+		player:SetAttribute("DevPreviewWorld", nil)
 		local arena = c.arenaFor(player)
 		local pad = require(game.ReplicatedStorage.Shared.WorldRefs).training(arena)["TrainingLane" .. n].StartingPad
 		local h = root.Size.Y / 2 + (hum.RigType == Enum.HumanoidRigType.R6 and 2 or hum.HipHeight)

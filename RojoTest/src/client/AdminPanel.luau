@@ -15,6 +15,7 @@ local Kit = require(script.Parent.Controllers.HudKit)
 local Style = require(script.Parent.UiStyle)
 local GuiInsets = require(script.Parent.Modules.GuiInsets)
 local Net = require(game.ReplicatedStorage.Shared.Net)
+local FlightController = require(script.Parent.Controllers.AdminFlightController)
 
 local Panel = {}
 local C = Color3.fromRGB
@@ -110,6 +111,7 @@ function Panel.mount(context: Context)
 	local probe: Frame? = nil
 	local connections: { RBXScriptConnection } = {}
 	local pending: any = nil
+	local destroyFlight: (() -> ())? = nil
 	local remote: RemoteFunction? = nil
 	local width, height, bodyWidth = 980, 620, 948
 	local build, renderPage, request, open
@@ -172,11 +174,13 @@ function Panel.mount(context: Context)
 		end
 		local mode = window:FindFirstChild("Mode")
 		if mode and mode:IsA("TextLabel") then
-			mode.Text = "Изменения сохраняются в прогресс"
+			mode.Text = if tab == "Карта"
+				then "Просмотр карты · перемещение и свободный полёт"
+				else "Изменения сохраняются в прогресс"
 		end
 		summary.Text = string.format(
 			"Мир %s · Wins %s · Skill %s · RB %s · Петов %s/60",
-			status.world or 1,
+			status.previewWorld or status.world or 1,
 			Config.format(status.wins or 0),
 			Config.format(status.skill or 0),
 			status.rebirths or 0,
@@ -192,9 +196,13 @@ function Panel.mount(context: Context)
 			rows = result.rows
 		end
 		refreshSummary()
+		if result.ok and (command == "Teleport" or (command == "Flight" and status.flight)) then
+			context.closePanel()
+			return
+		end
 		if window and window.Parent then
 			showStatus(result.message or "Готово.", result.ok and Style.Colors.Green or Style.Colors.Red)
-			if command == "Diagnostics" or command == "Logs" or command == "ResetProgress" then
+			if command == "Diagnostics" or command == "Logs" or command == "ResetProgress" or command == "Flight" then
 				renderPage()
 			end
 		end
@@ -430,7 +438,7 @@ function Panel.mount(context: Context)
 				{ label = "Rebirths: 16", command = "SetStat", value = { key = "rebirths", amount = 16 } },
 				{ label = "Открыть всё", command = "Unlock", color = Style.Colors.Green },
 			}, y, 170, 42)
-			y = label("Сброс только твоего профиля", y + 8)
+			y = label("Сброс твоего прогресса, покупок и доната", y + 8)
 			if confirmingReset then
 				y = grid({
 					{
@@ -553,6 +561,34 @@ function Panel.mount(context: Context)
 				},
 			}, y, 260, 42)
 		elseif tab == "Карта" then
+			y = label("Миры и свободный полёт", y)
+			y = grid({
+				{ label = "Мир 1 · Football City", command = "Teleport", value = "World1" },
+				{
+					label = "Мир 2 · Ocean Depths",
+					command = "Teleport",
+					value = "World2",
+					color = Style.Colors.Green,
+				},
+				{
+					label = if status.flight then "Полёт / Noclip: ВКЛ" else "Полёт / Noclip: ВЫКЛ",
+					command = "Flight",
+					value = status.flight ~= true,
+					color = Style.Colors.Purple,
+				},
+			}, y, 260, 42)
+			Kit.text(
+				body,
+				"FlightControls",
+				"Полёт: WASD · Space вверх · Ctrl вниз · Shift быстрее",
+				16,
+				y,
+				bodyWidth - 32,
+				28,
+				16,
+				Style.Muted
+			)
+			y = label("Локации мира 1", y + 36)
 			local items = {}
 			for i, biome in Config.Biomes do
 				table.insert(items, {
@@ -575,7 +611,6 @@ function Panel.mount(context: Context)
 					value = "Sakura",
 					color = Style.Colors.Purple,
 				},
-				{ label = "Мир 1", command = "Teleport", value = "World1" },
 			}, y + 10, 210, 42)
 			y = label("Тренировочные площадки", y + 8)
 			local lanes = {}
@@ -811,6 +846,10 @@ function Panel.mount(context: Context)
 		body = nil
 		pending = nil
 		busy = false
+		if destroyFlight then
+			destroyFlight()
+			destroyFlight = nil
+		end
 		if created and created.Parent then
 			created:Destroy()
 		end
@@ -831,6 +870,7 @@ function Panel.mount(context: Context)
 		created.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 		created.Parent = Players.LocalPlayer.PlayerGui
 		gui = created
+		destroyFlight = FlightController.mount(Players.LocalPlayer)
 		-- Keep the test-mode indicator inside the granted gameplay area.
 		local area = Instance.new("Frame")
 		area.Name = "SafeArea"
@@ -845,9 +885,14 @@ function Panel.mount(context: Context)
 		top.Parent = area
 		indicatorAnimation = Motion.slide(top, "Top")
 		indicatorAnimation.setHidden(indicatorHidden, true)
-		indicator = Kit.text(top, "TestIndicator", "● ТЕСТ", 16, 6, 130, 30, 19, Style.Gold)
+		indicator = Kit.text(top, "TestIndicator", "● ПОЛЁТ / NOCLIP", 16, 6, 210, 30, 16, Style.Gold)
 		indicator.TextXAlignment = Enum.TextXAlignment.Left
-		indicator.Visible = false
+		local function flightStatus()
+			status.flight = Players.LocalPlayer:GetAttribute("AdminFlight") == true
+			indicator.Visible = status.flight
+		end
+		flightStatus()
+		table.insert(connections, Players.LocalPlayer:GetAttributeChangedSignal("AdminFlight"):Connect(flightStatus))
 		local function placeIndicator()
 			local granted = GuiInsets.area(workspace.CurrentCamera.ViewportSize, area)
 			indicator.Position = UDim2.fromOffset(16, granted.offset.Y + 6)
@@ -909,6 +954,7 @@ function Panel.mount(context: Context)
 			status.skill = data.skill
 			status.rebirths = data.rebirths
 			status.world = data.world
+			status.previewWorld = Players.LocalPlayer:GetAttribute("DevPreviewWorld")
 			local inventory = info.inventory
 			status.pets = inventory and inventory.pets and #inventory.pets or 0
 		end

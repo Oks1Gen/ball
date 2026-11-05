@@ -52,7 +52,7 @@ function Receipts.process(context: Context, player: Player?, receipt: any): Enum
 	end
 	local name, product
 	for key, p in context.Config.Products do
-		if p.id > 0 and p.id == receipt.ProductId then
+		if p.kind == "DeveloperProduct" and p.id > 0 and p.id == receipt.ProductId then
 			name = key
 			product = p
 			break
@@ -82,10 +82,6 @@ function Receipts.process(context: Context, player: Player?, receipt: any): Enum
 		if not context.rebirth(player, true) then
 			return Enum.ProductPurchaseDecision.NotProcessedYet
 		end
-	elseif name == "StarterPack" then
-		Data.add(s.data, "wins", 10000)
-		s.data.perks.DoubleSkill = true
-		s.data.perks.StarterPack = true
 	elseif name == "AdminEgg" then
 		PaidRewards.reserve(s.data)
 		granted = PaidRewards.claim(s.data, context.Config.AdminPet, HttpService:GenerateGUID(false))
@@ -98,7 +94,8 @@ function Receipts.process(context: Context, player: Player?, receipt: any): Enum
 			context.publish(player, notice)
 		end
 	else
-		s.data.perks[name] = true
+		warn("[Ball purchases] No reward handler for product " .. tostring(name))
+		return Enum.ProductPurchaseDecision.NotProcessedYet
 	end
 	-- Counted together with the receipt mark, so a repeated receipt never adds twice.
 	local spent = receipt.CurrencySpent
@@ -120,14 +117,66 @@ function Receipts.process(context: Context, player: Player?, receipt: any): Enum
 	return Enum.ProductPurchaseDecision.PurchaseGranted
 end
 
+-- Archive adapter also permits isolated failure/retry verification without
+-- invoking MarketplaceService or writing a real player's profile.
+function Receipts.fulfill(context: Context, player: Player, receipt: any, archive: any): Enum.ProductPurchaseDecision
+	local state = context.states[player]
+	local granted = Enum.ProductPurchaseDecision.PurchaseGranted
+	local deferred = Enum.ProductPurchaseDecision.NotProcessedYet
+	if not state then
+		return deferred
+	end
+	local id = receipt.PurchaseId
+	local archived = archive.read(id)
+	if archived == true or (type(archived) == "table" and archived.granted == true) then
+		if type(archived) == "table" and archived.playerId ~= receipt.PlayerId then
+			warn("[Ball purchases] Receipt archive ownership mismatch")
+			return deferred
+		end
+		state.data.receipts[id] = nil
+		return granted
+	end
+	if context.states[player] ~= state or player.Parent ~= Players then
+		return deferred
+	end
+	if Receipts.process(context, player, receipt) ~= granted then
+		return deferred
+	end
+	-- The reward and receipt are durable before the independent audit record.
+	archive.write(id, {
+		granted = true,
+		playerId = receipt.PlayerId,
+		productId = receipt.ProductId,
+		robux = if receipt.CurrencyType == Enum.CurrencyType.Robux then receipt.CurrencySpent else 0,
+		grantedAt = os.time(),
+	})
+	state.data.receipts[id] = nil
+	return granted
+end
+
 function Receipts.install(context: Context)
 	local archive =
 		DataStoreService:GetDataStore(if RunService:IsStudio() then "BallReceipts_Studio_v1" else "BallReceipts_v1")
 	local readOptions = Instance.new("DataStoreGetOptions")
 	readOptions.UseCache = false
+	local storage = {
+		read = function(id: string)
+			return archive:GetAsync(id, readOptions)
+		end,
+		write = function(id: string, record: any)
+			archive:SetAsync(id, record)
+		end,
+	}
 	local processing: { [Player]: boolean } = {}
 	local deferred = Enum.ProductPurchaseDecision.NotProcessedYet
-	local granted = Enum.ProductPurchaseDecision.PurchaseGranted
+	for key, item in context.Config.Products do
+		if item.kind == "DeveloperProduct" then
+			assert(
+				item.id > 0 and (item.skill or item.trainingBoost or key == "SkipRebirth" or key == "AdminEgg"),
+				"Product reward missing: " .. key
+			)
+		end
+	end
 	MarketplaceService.ProcessReceipt = function(receipt)
 		local player = Players:GetPlayerByUserId(receipt.PlayerId)
 		if not player then
@@ -141,26 +190,12 @@ function Receipts.install(context: Context)
 			return deferred
 		end
 		processing[player] = true
-		local id = receipt.PurchaseId
+		state.receiptProcessing = true
 		local ok, decision = pcall(function()
-			local archived = archive:GetAsync(id, readOptions)
-			if archived == true then
-				state.data.receipts[id] = nil
-				return granted
-			end
-			if context.states[player] ~= state or player.Parent ~= Players then
-				return deferred
-			end
-			if Receipts.process(context, player, receipt) ~= granted then
-				return deferred
-			end
-			-- The profile already durably contains both the reward and the receipt.
-			-- Keep that marker until the independent archive is durable too.
-			archive:SetAsync(id, true)
-			state.data.receipts[id] = nil
-			return granted
+			return Receipts.fulfill(context, player, receipt, storage)
 		end)
 		processing[player] = nil
+		state.receiptProcessing = nil
 		if not ok then
 			warn("[Ball purchases] Receipt processing or archival failed")
 			return deferred

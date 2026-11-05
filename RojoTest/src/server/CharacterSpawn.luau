@@ -8,9 +8,11 @@ local Config = require(game.ReplicatedStorage.Shared.GameConfig)
 local SpawnProtocol = require(game.ReplicatedStorage.Shared.SpawnProtocol)
 local CharacterSpawn = {}
 
-function CharacterSpawn.start(map: Instance)
+function CharacterSpawn.start(map: Instance, world2: Instance?)
 	Players.CharacterAutoLoads = false
-	local floor = WorldRefs.kickZoneFloor(map)
+	local function arenaFor(player: Player): Instance
+		return if world2 and player:GetAttribute("SkippingWorld") == 2 then world2 else map
+	end
 	local remote = Instance.new("RemoteEvent")
 	remote.Name = SpawnProtocol.Remote
 	remote.Parent = ReplicatedStorage
@@ -41,7 +43,7 @@ function CharacterSpawn.start(map: Instance)
 	end)
 	local function load(player: Player)
 		if player.Parent then
-			player.ReplicationFocus = floor
+			player.ReplicationFocus = WorldRefs.kickZoneFloor(arenaFor(player))
 			local ok, failure = pcall(player.LoadCharacterAsync, player)
 			if not ok and player.Parent then
 				warn("[CharacterSpawn] avatar load failed: " .. tostring(failure))
@@ -59,10 +61,12 @@ function CharacterSpawn.start(map: Instance)
 		if not humanoid or player.Character ~= character then
 			return
 		end
-		root.CFrame = Config.kickZoneCharacterPose(map, root, humanoid, Config.KickZoneStandFromFront)
+		local arena = arenaFor(player)
+		root.CFrame = Config.kickZoneCharacterPose(arena, root, humanoid, Config.KickZoneStandFromFront)
 		root.AssemblyLinearVelocity = Vector3.zero
 		root.AssemblyAngularVelocity = Vector3.zero
 		pending[player] = character
+		character:SetAttribute(SpawnProtocol.World, if arena == world2 then 2 else 1)
 		character:SetAttribute(SpawnProtocol.Positioned, true)
 		task.delay(60, function()
 			if pending[player] == character and player.Parent then

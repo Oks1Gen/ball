@@ -1,0 +1,73 @@
+{
+  "generator": "Built-in image_gen",
+  "use_case": "stylized-concept",
+  "created": "2026-11-05",
+  "reference": [
+    "C:/Users/dakem/Documents/RobloxGames/ball/Assets/OceanDepths/KelpForest/03-amber-grove.png",
+    "C:/Users/dakem/Documents/RobloxGames/ball/Assets/OceanDepths/KelpForest/coral-reef-reference.png"
+  ],
+  "variants": [
+    {
+      "key": "01-black-smoker-gardens",
+      "name": "Сады чёрных курильщиков",
+      "description": "Ритм небольших труб на светлых минеральных террасах и крупная группа слева.",
+      "palette": [
+        "basalt black",
+        "turquoise",
+        "ivory",
+        "vermillion"
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: single landscape 16:9 polished Roblox Ball Ocean Depths environment concept. Input images are STYLE AND LAYOUT REFERENCES ONLY: retain their very long straight wide football lane in diagonal perspective from large lower-left foreground to distant upper-right endpoint, elevated 3/4 view, blocky handmade faceted toy-brick forms with square studs. Create a NEW Vent Fields underwater hydrothermal environment; remove ships, kelp and ordinary coral landmarks. Main landmarks are hollow BLACK BASALT STONE CHIMNEYS emitting dense underwater dark blue-grey mineral PLUMES from their open mouths, and white tubular worms with vivid RED feathered tops clustered at bases. Every chimney and all terrain stand on full broad visible bases integrated into seabed, no floating rocks or half-supported objects. Thick plumes rise vertically over SIDE banks only; central lane and all space above it remain completely unobstructed, no smoke across lane. Light pale mineral/sand checked central lane, thin white football markings and turquoise edges maintain Ocean Depths visual connection. Cool saturated blue water, clear readable terrain, localized restrained warm copper-orange mineral stains near vents. NO glowing lava, magma rivers, volcanic eruption, fire, burning worms, grey apocalypse, photorealism, text, labels, UI, logos, collage, crossing bridge. Plumes are underwater particulate fluid columns, not flames or surface steam. COMPOSITION A: relatively low open basin, a large cluster of varied short and medium black octagonal smoking chimney tubes at left foreground and midground, smaller spaced clusters on right, wide white and cream mineral rims on low BLUE rock terraces, pale sand between clusters. Distinct giant flared chimney in left third, thick blue-grey plumes into clear bright azure water. Rich white red-tipped worm gardens wrap bases, bright cool daylight and subtle warm ochre stains.",
+      "image": "01-black-smoker-gardens.png"
+    },
+    {
+      "key": "02-basalt-cathedral",
+      "name": "Базальтовый собор",
+      "description": "Высокие башни-курильщики на массивном едином основании, низкий противоположный берег.",
+      "palette": [
+        "charcoal",
+        "slate blue",
+        "mineral white",
+        "rust red"
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: single landscape 16:9 polished Roblox Ball Ocean Depths environment concept. Input images are STYLE AND LAYOUT REFERENCES ONLY: retain their very long straight wide football lane in diagonal perspective from large lower-left foreground to distant upper-right endpoint, elevated 3/4 view, blocky handmade faceted toy-brick forms with square studs. Create a NEW Vent Fields underwater hydrothermal environment; remove ships, kelp and ordinary coral landmarks. Main landmarks are hollow BLACK BASALT STONE CHIMNEYS emitting dense underwater dark blue-grey mineral PLUMES from their open mouths, and white tubular worms with vivid RED feathered tops clustered at bases. Every chimney and all terrain stand on full broad visible bases integrated into seabed, no floating rocks or half-supported objects. Thick plumes rise vertically over SIDE banks only; central lane and all space above it remain completely unobstructed, no smoke across lane. Light pale mineral/sand checked central lane, thin white football markings and turquoise edges maintain Ocean Depths visual connection. Cool saturated blue water, clear readable terrain, localized restrained warm copper-orange mineral stains near vents. NO glowing lava, magma rivers, volcanic eruption, fire, burning worms, grey apocalypse, photorealism, text, labels, UI, logos, collage, crossing bridge. Plumes are underwater particulate fluid columns, not flames or surface steam. COMPOSITION B: dramatic asymmetrical tall basalt cathedral of connected multi-height hollow vertical chimneys along LEFT bank, tallest dark towers about half frame height, continuous massive stepped basalt foundation fully grounded. Big billowing blue-grey mineral plumes above towers. RIGHT bank stays low, open and sandy with several tiny vents and white red-tipped worm patches. Lane pale ivory/steel blue checker, cold blue top light, crisp white chalky mineral ledges on dark tower bases, subtle copper stains, strong silhouette difference from small scattered vents.",
+      "image": "02-basalt-cathedral.png"
+    },
+    {
+      "key": "03-mineral-calderas",
+      "name": "Минеральные кратеры",
+      "description": "Широкие слоистые минеральные чаши с короткими трубами и спокойными густыми шлейфами.",
+      "palette": [
+        "graphite",
+        "chalk white",
+        "aqua",
+        "copper"
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: single landscape 16:9 polished Roblox Ball Ocean Depths environment concept. Input images are STYLE AND LAYOUT REFERENCES ONLY: retain their very long straight wide football lane in diagonal perspective from large lower-left foreground to distant upper-right endpoint, elevated 3/4 view, blocky handmade faceted toy-brick forms with square studs. Create a NEW Vent Fields underwater hydrothermal environment; remove ships, kelp and ordinary coral landmarks. Main landmarks are hollow BLACK BASALT STONE CHIMNEYS emitting dense underwater dark blue-grey mineral PLUMES from their open mouths, and white tubular worms with vivid RED feathered tops clustered at bases. Every chimney and all terrain stand on full broad visible bases integrated into seabed, no floating rocks or half-supported objects. Thick plumes rise vertically over SIDE banks only; central lane and all space above it remain completely unobstructed, no smoke across lane. Light pale mineral/sand checked central lane, thin white football markings and turquoise edges maintain Ocean Depths visual connection. Cool saturated blue water, clear readable terrain, localized restrained warm copper-orange mineral stains near vents. NO glowing lava, magma rivers, volcanic eruption, fire, burning worms, grey apocalypse, photorealism, text, labels, UI, logos, collage, crossing bridge. Plumes are underwater particulate fluid columns, not flames or surface steam. COMPOSITION C: broad low MULTILAYERED MINERAL CALDERAS on both side banks, large concentric stepped charcoal and chalk-white rims, squat wide hollow black chimneys emerging from centers of mineral bowls, distinctly wide and low silhouette instead of tall towers. One huge caldera at RIGHT foreground and long staggered caldera ridge at LEFT midground. Copper ochre staining and dense cream tubular worms tipped scarlet decorate inner base margins, no lava or fire. Dense soft blue-black underwater plume columns rise narrowly beside lane; bright turquoise water and pearly diffuse caustics on ivory lane. Warm mineral stains only, no emitting orange glow.",
+      "image": "03-mineral-calderas.png"
+    }
+  ],
+  "selection": {
+    "key": "02-basalt-cathedral",
+    "name": "Базальтовый собор",
+    "date": "2026-11-05",
+    "userQuote": "2 — Базальтовый собор"
+  },
+  "status": "Concept selected, construction pending separate user instruction",
+  "stage": "Built in Studio World2 preview; travel and progression pending",
+  "construction": {
+    "date": "2026-11-05",
+    "overview": "studio-overview.png",
+    "groundCheck": "studio-ground-check.png",
+    "builder": "RojoTest/src/server/OceanCourseLocations.luau",
+    "assetPack": "Assets/OceanDepths/LocationKit",
+    "studPitch": 1.2
+  },
+  "layoutRevision": {
+    "date": "2026-11-05",
+    "source": "User review of built scene; overrides one-sided concept layout",
+    "description": "Large chimney groups alternate between both banks; tall ridges occupy different course segments.",
+    "overview": "studio-balanced-overview.png",
+    "rightView": "studio-balanced-right.png"
+  }
+}

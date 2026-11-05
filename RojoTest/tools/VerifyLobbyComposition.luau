@@ -10,6 +10,8 @@ local allowed = {
 	EntranceTunnel = true,
 	CornerWaterfall1 = true,
 	SideWaterfall = true,
+	-- Curated club dressing (docs/lobby-club-decor.md), checked by VerifyLobbyClubDecor.
+	ClubDecor = true,
 }
 for _, owner in lobby.Environment:GetChildren() do
 	assert(allowed[owner.Name], "Loose lobby decoration returned: " .. owner.Name)

@@ -26,6 +26,8 @@ return {
 			result.stone == "Smooth" and result.trail == "White" and result.world == 1 and result.unlockedWorld2 == nil
 		)
 		check(result.pets[1].boost == 1.2 and result.equipped[1] == "one" and result.receipts.paid)
+		check(result.oceanUnlocked == true and Data.normalize(result, catalog).oceanUnlocked == true)
+		check(Data.normalize({ world = 2, oceanUnlocked = "true" }, catalog).oceanUnlocked == false)
 		check(result ~= old and result.pets ~= old.pets and old.pets[1].boost == 1.2)
 	end,
 	["active and malformed legacy records cannot become fresh live profiles"] = function()

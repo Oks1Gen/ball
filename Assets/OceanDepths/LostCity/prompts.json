@@ -1,0 +1,68 @@
+{
+  "generator": "Built-in image_gen",
+  "reference": "C:/Users/dakem/Documents/RobloxGames/ball/Assets/OceanDepths/KelpForest/03-amber-grove.png",
+  "variants": [
+    {
+      "key": "01-open-plaza",
+      "name": "Мозаичная площадь",
+      "image": "01-open-plaza.png",
+      "description": "Открытые низкие руины вокруг широкой площади; раковинный фонтан сбоку, редкие колонны и дальние ступенчатые здания.",
+      "palette": [
+        "pale turquoise",
+        "cream",
+        "blue stone",
+        "soft coral"
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: single landscape concept image for Lost City, location four of a Roblox underwater football world. Input image is ONLY a style, scale and camera reference: retain its beautiful toy block construction, studs, elevated three-quarter view and extremely long wide straight football lane receding from lower-left foreground to upper-right distance; replace the kelp forest environment completely with a sunken ancient city. Render a polished, very beautiful hand-modelable Roblox 3D toy environment with big clear forms and consistent studs. The central lane is flat pale turquoise mosaic tiles with subtle cream squares, fine white football markings and turquoise edging. Keep the entire lane and the wide volume directly above it completely empty for ball flight. Side scenery is on broad cream sand banks and blue block stone terraces, all objects fully visibly supported. Cyan turquoise underwater atmosphere, luminous sun shafts and soft caustics, readable bright palette, small bubbles. Architecture is large simple cream stone blockwork with turquoise mosaic trim, stepped roofs, shell statues. A shoal of silver fish swims well above the very distant arch, beyond the playing zone. A distant gateway may sit beyond the far boundary only and must have a very high clear opening. No bridges or overhead structures across the playing corridor. No UI, lettering, words, logos, watermark, real-world photography, photogrammetry or excessive tiny clutter. One single wide landscape picture, not a collage. Composition: OPEN SUNKEN CIVIC PLAZA, unusually open airy low silhouette. Broad low blue-stone platforms spread far to both sides. Left foreground contains a large circular stepped basin with a simple shell sculpture, dry sand-filled underwater fountain; behind it a few broken square columns and low wall fragments with turquoise mosaic panels. Right side features open low colonnade ruins and scattered shell plinths, with two small stepped-roof civic buildings far behind. The architecture stays mostly low, with generous negative space and broad sand courtyards. A small monumental arch at the far end, outside the play volume, becomes the distant focal point. Cream predominates in ruins, turquoise mosaics and a few peach coral clusters provide accents. Hero image with a distinctly open plaza silhouette."
+    },
+    {
+      "key": "02-terraced-temples",
+      "name": "Храмовые террасы",
+      "image": "02-terraced-temples.png",
+      "description": "Асимметричный город на высоких боковых террасах, главный ступенчатый храм слева и более низкие кварталы справа.",
+      "palette": [
+        "turquoise",
+        "ivory",
+        "cobalt blue",
+        "muted gold"
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: single landscape concept image for Lost City, location four of a Roblox underwater football world. Input image is ONLY a style, scale and camera reference: retain its beautiful toy block construction, studs, elevated three-quarter view and extremely long wide straight football lane receding from lower-left foreground to upper-right distance; replace the kelp forest environment completely with a sunken ancient city. Render a polished, very beautiful hand-modelable Roblox 3D toy environment with big clear forms and consistent studs. The central lane is flat pale turquoise mosaic tiles with subtle cream squares, fine white football markings and turquoise edging. Keep the entire lane and the wide volume directly above it completely empty for ball flight. Side scenery is on broad cream sand banks and blue block stone terraces, all objects fully visibly supported. Cyan turquoise underwater atmosphere, luminous sun shafts and soft caustics, readable bright palette, small bubbles. Architecture is large simple cream stone blockwork with turquoise mosaic trim, stepped roofs, shell statues. A shoal of silver fish swims well above the very distant arch, beyond the playing zone. A distant gateway may sit beyond the far boundary only and must have a very high clear opening. No bridges or overhead structures across the playing corridor. No UI, lettering, words, logos, watermark, real-world photography, photogrammetry or excessive tiny clutter. One single wide landscape picture, not a collage. Composition: TERRACED TEMPLE CITY, dramatically tiered asymmetric skyline. On the wide LEFT bank rises a large three-tier temple on fully supported broad blue blockstone terraces; each cream temple level has turquoise mosaic stepped roofs, stout square columns and carved shell motifs. Side-facing stairs climb between levels, never encroaching on lane. A smaller tiered temple and grouped cube houses sit on the RIGHT bank at lower heights, creating uneven rhythm. Shell-bearing block guardian statues punctuate the terrace corners, anchored on whole supported plinths. Turquoise roof bands and tiny muted gold details make the temple silhouette striking. A small very distant arch stands beyond the playable lane, with the silver fish shoal above. Keep the entire broad central lane sky completely open. Strong high-left / low-right massing, rich ordered architectural layers."
+    },
+    {
+      "key": "03-guardian-avenue",
+      "name": "Проспект стражей",
+      "image": "03-guardian-avenue.png",
+      "description": "Церемониальный проспект с парными крупными стражами и дворцовыми фасадами на боковых берегах.",
+      "palette": [
+        "ivory",
+        "jade turquoise",
+        "deep blue",
+        "pearl"
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: single landscape concept image for Lost City, location four of a Roblox underwater football world. Input image is ONLY a style, scale and camera reference: retain its beautiful toy block construction, studs, elevated three-quarter view and extremely long wide straight football lane receding from lower-left foreground to upper-right distance; replace the kelp forest environment completely with a sunken ancient city. Render a polished, very beautiful hand-modelable Roblox 3D toy environment with big clear forms and consistent studs. The central lane is flat pale turquoise mosaic tiles with subtle cream squares, fine white football markings and turquoise edging. Keep the entire lane and the wide volume directly above it completely empty for ball flight. Side scenery is on broad cream sand banks and blue block stone terraces, all objects fully visibly supported. Cyan turquoise underwater atmosphere, luminous sun shafts and soft caustics, readable bright palette, small bubbles. Architecture is large simple cream stone blockwork with turquoise mosaic trim, stepped roofs, shell statues. A shoal of silver fish swims well above the very distant arch, beyond the playing zone. A distant gateway may sit beyond the far boundary only and must have a very high clear opening. No bridges or overhead structures across the playing corridor. No UI, lettering, words, logos, watermark, real-world photography, photogrammetry or excessive tiny clutter. One single wide landscape picture, not a collage. Composition: PALACE AVENUE OF SHELL GUARDIANS, formal paired vertical framing. Two large memorable block-built guardian statues in the near-middle distance stand entirely on the LEFT and RIGHT broad sand banks, each holding a giant pearlescent scallop shell and standing on a chunky supported turquoise mosaic pedestal. Smaller matching statues repeat further away. Behind them stand elegant long cream palace facades set back from the lane, with square columns, tall open windows and stepped turquoise roofs. Palaces have broken ends, sand at their bases and sparse mint sea plants growing naturally from the sand. The silhouette is defined by the paired statues and long palace wings, not a hill or pyramid. Tiny pink and pearl accents. At the very far boundary, beyond gameplay, a tall ceremonially patterned arch and silver fish shoal conclude the avenue. Central wide straight lane and all its airspace remain fully empty."
+    }
+  ],
+  "selection": {
+    "key": "01-open-plaza",
+    "name": "Мозаичная площадь",
+    "date": "2026-11-04",
+    "userQuote": "1 — Мозаичная площадь"
+  },
+  "status": "Concept selected, construction pending separate user instruction",
+  "stage": "Built in Studio World2 preview; travel and progression pending",
+  "construction": {
+    "date": "2026-11-05",
+    "overview": "studio-overview.png",
+    "groundCheck": "studio-ground-check.png",
+    "builder": "RojoTest/src/server/OceanCourseLocations.luau",
+    "assetPack": "Assets/OceanDepths/LocationKit",
+    "studPitch": 1.2
+  },
+  "layoutRevision": {
+    "date": "2026-11-05",
+    "source": "User review of built scene; overrides one-sided concept layout",
+    "description": "One temple on each bank; colonnades alternate, shell basin on the right and gateway on the left.",
+    "overview": "studio-balanced-overview.png",
+    "rightView": "studio-balanced-right.png"
+  }
+}

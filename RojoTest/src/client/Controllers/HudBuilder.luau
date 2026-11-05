@@ -6,6 +6,7 @@ local Kit = require(script.Parent.HudKit)
 local Layout = require(script.Parent.Parent.Modules.HudLayout)
 local Config = require(game.ReplicatedStorage.Shared.GameConfig)
 local Assets = require(script.Parent.Parent.UIAssets)
+local MarketplaceCatalog = require(script.Parent.Parent.Modules.MarketplaceCatalog)
 
 local Builder = {}
 local C = Color3.fromRGB
@@ -391,6 +392,45 @@ function Builder.build(context: Context): Refs
 		tutorial = tutorial,
 		rebirthPercent = rebirthPercent,
 	}
+end
+
+function Builder.updateCommerce(refs: Refs, data: any)
+	for _, key in { "AutoThrow", "DoubleSkill", "DoubleWins", "Skill10M", "Skill100M", "Skill1B" } do
+		local node = refs.hud:FindFirstChild(key, true)
+		if not node or not node:IsA("GuiObject") then
+			continue
+		end
+		local body = Kit.visualOf(node)
+		local amountOffer = key == "AutoThrow" or key == "DoubleSkill" or key == "DoubleWins"
+		local text = body:FindFirstChild(if amountOffer then "Amount" else "Price")
+		local icon = body:FindFirstChild("RobuxIcon")
+		local prefix = amountOffer and body:FindFirstChild("Price")
+		if prefix and prefix:IsA("GuiObject") then
+			prefix.Visible = false
+		end
+		local label = MarketplaceCatalog.label(key, data)
+		local numeric = tonumber(label) ~= nil
+		local width = node.Size.X.Offset
+		local y = if key == "AutoThrow" then 35 elseif amountOffer then 41 else 43
+		local autoOwned = key == "AutoThrow" and data.perks.AutoThrow
+		if icon and icon:IsA("GuiObject") then
+			icon.Visible = numeric and not autoOwned
+			icon.Position = UDim2.fromOffset(math.floor((width - 62) / 2), y + 1)
+			icon.Size = UDim2.fromOffset(18, 18)
+		end
+		if text and text:IsA("TextLabel") then
+			text.Text = label
+			text.Visible = not autoOwned
+			text.TextSize = if numeric then 18 else 14
+			text.Position = UDim2.fromOffset(if numeric then math.floor((width - 62) / 2) + 22 else 4, y)
+			text.Size = UDim2.fromOffset(if numeric then 40 else width - 8, 22)
+		end
+	end
+	local starter = refs.hud:FindFirstChild("StarterPack", true)
+	local caption2 = starter and Kit.visualOf(starter):FindFirstChild("Caption2")
+	if caption2 and caption2:IsA("TextLabel") then
+		caption2.Text = data.perks.StarterPack and "PACK OWNED" or "STARTER PACK"
+	end
 end
 
 return Builder

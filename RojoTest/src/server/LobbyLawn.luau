@@ -3,6 +3,7 @@
 local Grid = require(game.ReplicatedStorage.Shared.Core.SurfaceGrid)
 local Scale = require(game.ReplicatedStorage.Shared.WorldScale)
 local Palette = require(script.Parent.LobbyPalette)
+local HDStuds = require(script.Parent.HDStuds)
 local Lawn = {}
 local DEPTH = 0.02
 local VERSION = "lobby-lawn-2-continuous"
@@ -143,9 +144,11 @@ function Lawn.apply(world: any): any
 			if p:IsA("BasePart") then
 				local parity = ((p:GetAttribute("GridU") or 0) + (p:GetAttribute("GridV") or 0)) % 2
 				p.Color = if p.Name == "LawnCell" and parity == 1 then Palette.LawnChecker else Palette.Lawn
-				local t = p:FindFirstChild("LawnStuds") :: Texture
-				t.Texture, t.Transparency = Palette.Studs, Palette.StudsTransparency
-				t.StudsPerTileU, t.StudsPerTileV, t.OffsetStudsU, t.OffsetStudsV = TILE, TILE, 0, 0
+				HDStuds.apply(p, TILE)
+				local old = p:FindFirstChild("LawnStuds")
+				if old then
+					old:Destroy()
+				end
 			end
 		end
 		return { rebuilt = false, checker = #plan.checker, parts = #root:GetChildren() }
@@ -168,10 +171,7 @@ function Lawn.apply(world: any): any
 			p:SetAttribute("GridU", cell.u)
 			p:SetAttribute("GridV", cell.v)
 		end
-		local t = Instance.new("Texture")
-		t.Name, t.Texture, t.Face = "LawnStuds", Palette.Studs, Enum.NormalId.Top
-		t.StudsPerTileU, t.StudsPerTileV, t.OffsetStudsU, t.OffsetStudsV = TILE, TILE, 0, 0
-		t.Transparency, t.Parent = Palette.StudsTransparency, p
+		HDStuds.apply(p, TILE)
 		p.Parent = root
 	end
 	for i, c in plan.checker do

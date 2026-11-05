@@ -4,7 +4,7 @@ local Refs = require(game.ReplicatedStorage.Shared.WorldRefs)
 local Scale = require(game.ReplicatedStorage.Shared.WorldScale)
 local Dividers = {}
 -- Authored studs; every divider size below is multiplied by the world scale.
-local HEIGHT = 33
+local HEIGHT = 50
 local CANVAS = Vector2.new(2048, 144)
 
 local function part(parent: Instance, name: string, size: Vector3, frame: CFrame, color: Color3, transparency: number)
@@ -44,6 +44,50 @@ local function title(anchor: BasePart, face: Enum.NormalId, text: string)
 	stroke.Color = Color3.fromRGB(25, 30, 42)
 	stroke.Thickness = 3
 	stroke.Parent = label
+end
+
+function Dividers.applyOcean(world: Instance, referenceWorld: Instance)
+	local course = Refs.course(world)
+	local root = Refs.boundaries(world)
+	if not root then
+		root = Instance.new("Folder")
+		root.Name = "Boundaries"
+		root.Parent = course
+	end
+	local reference = Refs.boundaries(referenceWorld)
+	local k = Scale.factor(world)
+	local height = HEIGHT * k
+	for index = 1, #Config.Biomes - 1 do
+		local name = "Boundary" .. index
+		if root:FindFirstChild(name) then
+			continue
+		end
+		local current, following = Refs.field(world, index), Refs.field(world, index + 1)
+		local fromZone = Refs.zone(world, index):GetAttribute("BiomeName")
+		local toZone = Refs.zone(world, index + 1):GetAttribute("BiomeName")
+		local back = current.CFrame * CFrame.new(0, current.Size.Y / 2, -current.Size.Z / 2)
+		local front = following.CFrame * CFrame.new(0, following.Size.Y / 2, following.Size.Z / 2)
+		local seam = back:Lerp(front, 0.5) * CFrame.new(0, 0.06 * k, 0)
+		local original = reference and reference:FindFirstChild(name)
+		local originalWall = original and original:FindFirstChild("Wall")
+		-- The Ocean seabed extends into the scenery. Match the span of the playable corridor.
+		local width = if originalWall and originalWall:IsA("BasePart")
+			then originalWall.Size.X * k / Scale.factor(referenceWorld)
+			else current.Size.X
+		local color = following.Color
+		local group = Instance.new("Model")
+		group.Name = name
+		group:SetAttribute("FromZone", fromZone)
+		group:SetAttribute("ToZone", toZone)
+		local center = seam * CFrame.new(0, height / 2, 0)
+		part(group, "Wall", Vector3.new(width, height, 0.1 * k), center, color, 0.5)
+		part(group, "TopEdge", Vector3.new(width, 0.22 * k, 0.3 * k), seam * CFrame.new(0, height, 0), color, 0.2)
+		local anchor = part(group, "TitleAnchor", Vector3.new(width, 11 * k, 0.29 * k), center, color, 1)
+		anchor:SetAttribute("PartRole", "LabelAnchor")
+		title(anchor, Enum.NormalId.Front, fromZone)
+		title(anchor, Enum.NormalId.Back, toZone)
+		group.Parent = root
+	end
 end
 
 function Dividers.align(map: any)

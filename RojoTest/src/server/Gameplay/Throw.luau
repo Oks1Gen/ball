@@ -3,6 +3,8 @@
 -- on the last contact. The distance, the award and the skill gain are all
 -- computed here, never taken from the client.
 local Config = require(game.ReplicatedStorage.Shared.GameConfig)
+local Worlds = require(game.ReplicatedStorage.Shared.Worlds)
+local Refs = require(game.ReplicatedStorage.Shared.WorldRefs)
 local BallPurchases = require(game.ReplicatedStorage.Shared.BallPurchases)
 local ShotFeedback = require(game.ReplicatedStorage.Shared.ShotFeedback)
 local ShotMotion = require(game.ReplicatedStorage.Shared.ShotMotion)
@@ -47,15 +49,9 @@ function Throw.build(context: Context): (Player, number?, number?, number?) -> (
 		if adminDistance then
 			assert(Access.isAuthorized(player.UserId), "Admin throw requires authorization")
 		end
-		local distance = adminDistance
-			or Config.shotDistance(d.skill, BallPurchases.power(d), d.world, context.arenaFor(player))
 		local timing = if adminDistance
 			then 1
 			else math.clamp(timingMultiplier or 1, Timing.MinCombined, Timing.MaxCombined)
-		if timingMultiplier and not adminDistance then
-			-- Keep the flight inside the authored river, including at maximum progression.
-			distance = math.clamp(math.floor(distance * timing), 1, Config.shotLimit(d.world, context.arenaFor(player)))
-		end
 		s.kickTiming = nil
 		local perfect = if adminDistance then 0 else math.clamp(perfectCount or 0, 0, 2)
 		local windup = Perfect.windup(perfect)
@@ -72,7 +68,15 @@ function Throw.build(context: Context): (Player, number?, number?, number?) -> (
 		local groundY = root.Position.Y - standingHeight
 		local startPosition =
 			stance:PointToWorldSpace(Vector3.new(0.4, -standingHeight + Config.BallDiameter / 2 + 0.1, -1.7))
-		distance = math.min(distance, Config.shotLimit(d.world, context.arenaFor(player), startPosition))
+		local arena = context.arenaFor(player)
+		local limit = Config.shotLimit(d.world, arena, startPosition)
+		local referenceStart = if d.world == 2 then startPosition else nil
+		local distance = adminDistance
+			or Config.shotDistance(d.skill, BallPurchases.power(d), d.world, arena, referenceStart)
+		if timingMultiplier and not adminDistance then
+			distance = math.clamp(math.floor(distance * timing), 1, Config.shotLimit(d.world, arena, referenceStart))
+		end
+		distance = math.min(distance, limit)
 		local duration = Config.shotDuration(distance, d.world, feedback.intensity)
 		context.lockPose(s, root, hum, stance)
 		local startedAt = workspace:GetServerTimeNow()
@@ -91,7 +95,9 @@ function Throw.build(context: Context): (Player, number?, number?, number?) -> (
 			end
 		end)
 		local award = math.max(1, math.floor(distance / 8))
-		award = math.floor(award * trail.boost * (d.perks.DoubleWins and 2 or 1) * (1 + s.friends * 0.1))
+		award = math.floor(
+			award * trail.boost * (d.perks.DoubleWins and 2 or 1) * (1 + s.friends * 0.1) * Worlds[d.world].reward
+		)
 		local info = {
 			userId = player.UserId,
 			distance = distance,
@@ -109,7 +115,7 @@ function Throw.build(context: Context): (Player, number?, number?, number?) -> (
 			groundY = groundY,
 		}
 		local character = player.Character
-		info.zoneCrossings = ShotZones.crossings(context.arenaFor(player), info)
+		info.zoneCrossings = ShotZones.crossings(arena, info)
 		local skillMultiplier = context.multiplier(s)
 		context.FlightStreaming.start(player, info, function()
 			return context.states[player] == s
@@ -143,6 +149,13 @@ function Throw.build(context: Context): (Player, number?, number?, number?) -> (
 					local zone = Zones.reached(info.zoneCrossings, 1)
 					local zoneMultiplier = Zones.multiplier(zone)
 					local finalAward = Zones.award(award, zone)
+					if info.world == 2 and distance == limit then
+						local field = Refs.field(arena, 8)
+						local goal = field and field.CFrame:PointToObjectSpace(startPosition)
+						if goal and math.abs(goal.X) <= field.Size.X / 2 then
+							arena:SetAttribute("OceanPearlOpenedUntil", workspace:GetServerTimeNow() + 8)
+						end
+					end
 					Data.add(d, "wins", finalAward)
 					Tutorial.shot(d, timingMultiplier ~= nil and adminDistance == nil)
 					d.best = Data.bound(math.max(d.best, distance))

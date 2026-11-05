@@ -1,0 +1,14 @@
+{
+  "source": "../model/nautilus-shell.glb",
+  "universeId": "10770268214",
+  "placeId": "106456161057435",
+  "requestedCreatorUserId": "11792184677",
+  "authenticatedUserId": "11789507527",
+  "authenticatedName": "Dakemo555",
+  "previousCreatorError": "403 PERMISSION_DENIED: authenticated user cannot create a Model asset as requested creator",
+  "lastResult": "Model approved; Use access and dependencies granted to universe 10770268214",
+  "operationId": "fd93fd04-91ab-4f7e-86ff-cda484798cd3",
+  "assetId": "70791212451135",
+  "status": "Approved_and_granted_to_game",
+  "assetCreatorUserId": "11789507527"
+}

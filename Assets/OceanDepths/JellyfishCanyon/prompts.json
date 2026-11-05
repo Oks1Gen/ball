@@ -1,0 +1,65 @@
+{
+  "generator": "Built-in image_gen",
+  "use_case": "stylized-concept",
+  "reference": [
+    "C:/Users/dakem/Documents/RobloxGames/ball/Assets/OceanDepths/KelpForest/03-amber-grove.png",
+    "C:/Users/dakem/Documents/RobloxGames/ball/Assets/OceanDepths/KelpForest/coral-reef-reference.png"
+  ],
+  "variants": [
+    {
+      "key": "01-blue-steps",
+      "name": "Синие ступени",
+      "description": "Открытая расщелина с невысокими синими террасами и розово-голубыми стаями медуз.",
+      "palette": [
+        "cerulean",
+        "cyan",
+        "ivory",
+        "rose pink"
+      ],
+      "prompt": "Use case: stylized-concept. Asset: single landscape 16:9 polished Roblox Ball Ocean Depths game environment concept. Input images are STYLE AND LAYOUT REFERENCES ONLY: retain their very long straight wide football lane in diagonal perspective from large lower-left foreground to distant upper-right endpoint, elevated 3/4 view, blocky handmade faceted toy-brick forms and square studs. Create a NEW Jellyfish Canyon environment, remove ships, kelp and ordinary coral landmarks. Blue underwater fissure with schools of pink and pale blue jellyfish. All rock forms rooted in visible continuous seabed, broad complete terraces, no floating rocks, full footprint support. Jellyfish float in the water over SIDE banks, never inside the central air/ball-flight corridor. Central lane and all space above it remain completely unobstructed. Pale blue-ivory checked lane with thin white football markings and turquoise edges. A sequence of small soft pink/cyan light blooms along the SIDE edges evokes a traveling pulse, not lasers or barriers. Bright enough to read entire lane and side terrain, clean saturated colors, expensive polished game aesthetic, underwater caustics. No text, labels, UI, logos, collage, photorealism, bridge over lane, nightclub, blackness or excessive neon. COMPOSITION A: broad open sunlit blue canyon, low asymmetric stepped blue rock terraces on both sides, large faceted pink jellyfish school at left middle depth and smaller cyan school at right, bright ivory-blue checked lane. Spacious clear turquoise water, light shafts from visible surface. Terrain only about one-third image height, no tall walls. Pink/cyan pulses small and restrained, daylight dominant.",
+      "image": "01-blue-steps.png"
+    },
+    {
+      "key": "02-sapphire-rift",
+      "name": "Сапфировая расщелина",
+      "description": "Высокие цельные стены расщелины, глубокий синий свет и светлые медузы в боковых карманах.",
+      "palette": [
+        "sapphire",
+        "steel blue",
+        "ice blue",
+        "pink"
+      ],
+      "prompt": "Use case: stylized-concept. Asset: single landscape 16:9 polished Roblox Ball Ocean Depths game environment concept. Input images are STYLE AND LAYOUT REFERENCES ONLY: retain their very long straight wide football lane in diagonal perspective from large lower-left foreground to distant upper-right endpoint, elevated 3/4 view, blocky handmade faceted toy-brick forms and square studs. Create a NEW Jellyfish Canyon environment, remove ships, kelp and ordinary coral landmarks. Blue underwater fissure with schools of pink and pale blue jellyfish. All rock forms rooted in visible continuous seabed, broad complete terraces, no floating rocks, full footprint support. Jellyfish float in the water over SIDE banks, never inside the central air/ball-flight corridor. Central lane and all space above it remain completely unobstructed. Pale blue-ivory checked lane with thin white football markings and turquoise edges. A sequence of small soft pink/cyan light blooms along the SIDE edges evokes a traveling pulse, not lasers or barriers. Bright enough to read entire lane and side terrain, clean saturated colors, expensive polished game aesthetic, underwater caustics. No text, labels, UI, logos, collage, photorealism, bridge over lane, nightclub, blackness or excessive neon. COMPOSITION B: dramatic deep sapphire fissure; tall steep stepped cliff WALLS rise continuously from wide side banks at left foreground and right background, creating a strong canyon silhouette, irregular diagonal rock strata and side alcoves. Keep corridor wide and roof open. Several large pale pink translucent faceted jellyfish in left alcove and pale cyan jellyfish against right wall. Lane is icy blue and ivory checker, strongest readable light is broad diffuse cool top light with soft rose bounce near side alcoves. No pitch black.",
+      "image": "02-sapphire-rift.png"
+    },
+    {
+      "key": "03-luminous-basins",
+      "name": "Светящиеся чаши",
+      "description": "Широкие боковые чаши и округлые террасы, две размерные группы медуз, мягкий молочный свет.",
+      "palette": [
+        "azure",
+        "periwinkle",
+        "pearl",
+        "coral pink"
+      ],
+      "prompt": "Use case: stylized-concept. Asset: single landscape 16:9 polished Roblox Ball Ocean Depths game environment concept. Input images are STYLE AND LAYOUT REFERENCES ONLY: retain their very long straight wide football lane in diagonal perspective from large lower-left foreground to distant upper-right endpoint, elevated 3/4 view, blocky handmade faceted toy-brick forms and square studs. Create a NEW Jellyfish Canyon environment, remove ships, kelp and ordinary coral landmarks. Blue underwater fissure with schools of pink and pale blue jellyfish. All rock forms rooted in visible continuous seabed, broad complete terraces, no floating rocks, full footprint support. Jellyfish float in the water over SIDE banks, never inside the central air/ball-flight corridor. Central lane and all space above it remain completely unobstructed. Pale blue-ivory checked lane with thin white football markings and turquoise edges. A sequence of small soft pink/cyan light blooms along the SIDE edges evokes a traveling pulse, not lasers or barriers. Bright enough to read entire lane and side terrain, clean saturated colors, expensive polished game aesthetic, underwater caustics. No text, labels, UI, logos, collage, photorealism, bridge over lane, nightclub, blackness or excessive neon. COMPOSITION C: distinctive broad side BASINS with nested curved/octagonal terraced blue rock bowls beside the lane, low terraces in foreground, one massive full-support amphitheatre of blue-periwinkle rock at left far third. Very open right side with sweeping pale sandy shelf. Many tiny pink jellyfish and three oversized pale blue bell jellyfish form curved schools above side basins, long soft segmented tentacles. Milky turquoise underwater light and stronger pink local pulse reflections; light lavender-blue lane. No isolated pillars, no cliffs enclosing both sides.",
+      "image": "03-luminous-basins.png"
+    }
+  ],
+  "selection": {
+    "key": "02-sapphire-rift",
+    "name": "Сапфировая расщелина",
+    "date": "2026-11-05",
+    "userQuote": "2 — Сапфировая расщелина"
+  },
+  "status": "Concept selected, construction pending separate user instruction",
+  "stage": "Built in Studio World2 preview; travel and progression pending",
+  "construction": {
+    "date": "2026-11-05",
+    "overview": "studio-overview.png",
+    "groundCheck": "studio-ground-check.png",
+    "builder": "RojoTest/src/server/OceanCourseLocations.luau",
+    "assetPack": "Assets/OceanDepths/LocationKit",
+    "studPitch": 1.2
+  }
+}

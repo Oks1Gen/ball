@@ -10,11 +10,14 @@ function Controller:Start()
 	local Lighting = game:GetService("Lighting")
 	local ProximityPrompts = game:GetService("ProximityPromptService")
 	local Config = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("GameConfig"))
+	local WorldRefs = require(ReplicatedStorage.Shared:WaitForChild("WorldRefs"))
 	local TrainingMotion = require(ReplicatedStorage.Shared:WaitForChild("TrainingMotion"))
 	local TrainingShot = require(clientRoot.Modules:WaitForChild("TrainingShot"))
 	local KickAnimation = require(clientRoot:WaitForChild("KickAnimation"))
 	local FlightVisuals = require(clientRoot:WaitForChild("FlightVisuals"))
 	local Snapshot = require(clientRoot.Modules:WaitForChild("Snapshot"))
+	local MarketplaceCatalog = require(clientRoot.Modules:WaitForChild("MarketplaceCatalog"))
+	MarketplaceCatalog.start()
 	local GuiInsets = require(clientRoot.Modules:WaitForChild("GuiInsets"))
 	local HudLayout = require(clientRoot.Modules:WaitForChild("HudLayout"))
 	local Presentation = require(clientRoot.Modules:WaitForChild("UiPresentation"))
@@ -33,6 +36,7 @@ function Controller:Start()
 	local TrainingBoost = require(clientRoot.Controllers:WaitForChild("TrainingBoost"))
 	local BallHolder = require(clientRoot.Controllers:WaitForChild("BallHolder"))
 	local WorldVisuals = require(clientRoot.Controllers:WaitForChild("WorldVisuals"))
+	local portalOutline = require(clientRoot.Controllers:WaitForChild("PortalOutline")).new()
 	local EggDisplay = require(clientRoot.Controllers:WaitForChild("EggDisplay"))
 	task.spawn(function()
 		require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("VolcanicEggVisual")).start()
@@ -56,6 +60,7 @@ function Controller:Start()
 	local yellow = C(255, 225, 66)
 	local latest: any = nil
 	local currentPanel: string? = nil
+	local visitedPortal: BasePart? = nil
 	local topbar: any = nil
 	local flight: any = nil
 	local trainingShot: any = nil
@@ -666,7 +671,11 @@ function Controller:Start()
 	end
 
 	effect.OnClientEvent:Connect(function(kind: string, info: any)
-		if kind == "KickReady" then
+		if kind == "PurchasePrompt" and type(info) == "string" then
+			task.spawn(MarketplaceCatalog.prompt, info, latest and latest.data, function(message: string)
+				notice(message)
+			end)
+		elseif kind == "KickReady" then
 			kickTiming.ready(info)
 		elseif kind == "KickAccuracyReady" then
 			kickTiming.accuracyReady(info)
@@ -728,6 +737,9 @@ function Controller:Start()
 				hudRefs.powerText.Visible = true
 			end
 		elseif kind == "World" then
+			if currentPanel == "Worlds" then
+				closePanel()
+			end
 			notice(info == 2 and "WORLD 2 • ×3 SKILL & WINS" or "Welcome back to World 1")
 		end
 	end)
@@ -744,6 +756,7 @@ function Controller:Start()
 		collectorUI:setHidden(flight ~= nil)
 		reveal.update(info)
 		local d = info.data
+		HudBuilder.updateCommerce(hudRefs, d)
 		gui:SetAttribute("ReducedMotion", d.settings.effects == false)
 		upgradeNotices.update(info)
 		hudRefs.skillText.Text = Config.format(d.skill) .. " SKILL"
@@ -849,6 +862,29 @@ function Controller:Start()
 		end
 		local root = player.Character and player.Character:FindFirstChild("HumanoidRootPart") :: BasePart?
 		world.frame()
+		local worldIndex = player:GetAttribute("SkippingWorld")
+		local preview = player:GetAttribute("DevPreviewWorld")
+		local arena = WorldRefs.world(if preview == 2 or (preview == nil and worldIndex == 2) then 2 else 1)
+		local zone = WorldRefs.portalZone(arena)
+		local closeToPortal = root and zone and (root.Position - zone.Position).Magnitude < 70
+		portalOutline(if closeToPortal then zone else nil, not latest or latest.data.settings.effects ~= false)
+		local inside = root and zone and WorldRefs.insidePortal(zone, root.Position)
+		if
+			not inside
+			or not player.Character
+			or player.Character:GetAttribute("SpawnReady") ~= true
+			or preview ~= nil
+			or player:GetAttribute("AdminFlight") == true
+			or player:GetAttribute("MapIntroActive") == true
+		then
+			visitedPortal = nil
+			if currentPanel == "Worlds" then
+				closePanel()
+			end
+		elseif visitedPortal ~= zone and latest and not currentPanel and not flight then
+			visitedPortal = zone
+			panels.open("Worlds")
+		end
 		eggPreview.frame()
 		local hand = player.Character
 			and (player.Character:FindFirstChild("RightHand") or player.Character:FindFirstChild("Right Arm"))
@@ -912,9 +948,9 @@ function Controller:Start()
 			local character = player.Character
 			local characterRoot = character and character:FindFirstChild("HumanoidRootPart")
 			local humanoid = character and character:FindFirstChildOfClass("Humanoid")
-			local map = workspace:FindFirstChild("Map")
-			local arena = map and map:FindFirstChild("World1")
 			latest.canThrow = latest.throwReady == true
+				and preview == nil
+				and player:GetAttribute("AdminFlight") ~= true
 				and characterRoot ~= nil
 				and characterRoot:IsA("BasePart")
 				and humanoid ~= nil
@@ -967,6 +1003,7 @@ function Controller:Start()
 		effects.destroy()
 		balls.destroy()
 		world.destroy()
+		portalOutline(nil, false)
 		if adminUI then
 			adminUI.destroy()
 		end

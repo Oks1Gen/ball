@@ -19,6 +19,8 @@ local NAMES = {
 	"ChampionshipTower",
 }
 local HEIGHTS = { 27, 32, 39, 52, 60, 70, 44, 56 }
+-- Voxel zones name their own landmark the same way, so apply() keeps it.
+Landmarks.Names = NAMES
 
 -- A restyled zone (CourseVoxelStyle) keeps its own landmark under the same signature.
 function Landmarks.signature(field: BasePart): string

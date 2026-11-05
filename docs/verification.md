@@ -1,5 +1,85 @@
 # Проверки проекта
 
+## Robux catalog, shop and full Dev reset — 2026-11-06
+
+Created and read back 4 Game Passes and 8 Developer Products for universe
+10770268214, including base prices and uploaded existing UI icons. All are off
+sale pending a separately authorized publication of the new handlers.
+Runtime IDs also match MarketplaceService engine readback.
+See [monetization.md](monetization.md) for the catalog and deployment boundary.
+
+The full project gate passed: 132 Lune tests, 5 verification-tool tests, StyLua,
+Selene, Rojo build, requires, ProfileStore routing/integrity and zero Luau type
+errors. In Studio, 71 isolated receipt checks covered all products, repeated
+receipts, failed profile saves, archive read/write failures, full pet storage,
+paid charges and interrupted/busy paid rebirth. Nine additional isolated checks
+covered Dev Reset, failed-save rollback, receipt locking and stale ownership
+requests. These fixtures never wrote the actual player's profile or made a paid
+purchase. Real ownership queries restored the current player's permanent passes;
+Starter Pack's 10K Wins did not repeat on a subsequent Play start.
+
+PC Play showed the shop, its Owned/Off Sale states and all offers reachable by
+scrolling. All six HUD price/status rows fit their labels; the shop contains 12
+offers. Update Log opened and closed, its new entry expanded to 130 px of details
+with Dakemo555's name/avatar and collapsed to 0 px; list scrolling worked.
+Player purchase policy loaded. Native paid checkout, its cancellation,
+real receipt persistence and production grants remain untested until deployment.
+No mobile tests, public publication or real paid purchases were performed.
+
+During the task, rclone moved 7 working files to conflict copies. Every pair was
+diffed: conflict1 contained the current reset/commerce changes, conflict2 their
+earlier versions. The missing originals were restored from conflict1, verified
+byte-for-byte, and the complete gate passed again. All 14 conflict copies remain
+untouched; no backup deletion or commit/push was performed.
+
+## Training boosts, character races and sync conflicts — 2026-11-05
+
+Local fixes split the active training boost from a queued free offer. The first
+contact activates the queued offer without consuming another paid charge; queued
+acknowledgements no longer clear the client's current boosted-cycle visuals.
+Stopping/restarting training clears both transient states. Character callbacks
+check both character and session identity before work, after each wait, and on death.
+
+Validation: complete check.mjs passed with 126 Lune tests, five gate tests, clean
+StyLua/Selene, Rojo build/sourcemap and zero type diagnostics. An isolated Studio
+Edit invocation loaded the updated on-disk sources into mock contexts: remaining
+paid rewards stayed 14,400 before/after a free claim, the next cycle received 9.3x,
+and the spare paid charge was preserved. VerifySessionCharacter passed eight
+isolated assertions with the updated source; the stale Studio source reproduced
+the original failure after HumanoidRootPart wait. No actual profile or scene changed.
+
+After the user accepted Rojo Connect, source markers confirmed both fixes arrived
+through Rojo. VerifySessionCharacter passed all eight assertions against the synced
+Studio source. Fresh PC Play ran VerifyTrainingBoost with isolated contexts: 505
+checks passed on all 14 lanes and three receipt fixtures. No real purchase or charge
+was created. A normal character death produced a different healthy character,
+SpawnReady=true, Health=100 and the configured WalkSpeed=24.
+
+Client Play confirmed Dakemo555 / 11789507527. The current unpublished v0.4.0 entry
+was updated in place, retaining five highlights. PC QA used the real HudPanels and
+UpdateLogView with an isolated UI context because the real HUD had a pending offline
+reward. Mouse input opened/expanded/collapsed/closed the window and scrolled its list
+300 pixels. The new details fit, and the author avatar loaded. The temporary UI was
+destroyed and the real HUD restored; no offline reward or daily gift was claimed.
+The final full gate passed again, including 126 unit tests and zero type errors.
+
+All 42 visible sync conflicts were reviewed: 14 identical, 28 older different
+copies across 19 originals. Keep current originals (final rigs, 2x fish, atmosphere,
+safe school envelopes and full release history). Verified byte-for-byte backup:
+Assets/OceanDepths/ConflictRecovery/2026-11-05-sync-conflicts.zip (1,546,942 bytes),
+with SHA-256 inventory. The user authorized the separate backup commit/push;
+f8ba402 reached origin/main and its LFS object uploaded successfully before the
+42 exact deletions. All 19 originals remained unchanged by deletion. Decisions:
+docs/audits/sync-conflicts-2026-11-05.md. No visible conflict copies remain.
+Only the recovery ZIP was committed/pushed; gameplay fixes remain local.
+No game publication or mobile test performed. Studio returned to Edit after QA.
+
+## HD Studs MaterialVariant в Lobby World1 — 05.11.2026
+
+- Studio MCP, Edit-превью. 9 872 детали с материалом, 0 старых HD Studs Texture в Lobby. Проверены дорожка с углами, шахматные стены и террасы, газон, стенд яиц и общий вид.
+- Сравнение сцены до/после показало 0 изменений геометрии, цвета и физики BasePart, 0 изменений MaterialVariant вне Lobby.
+- `node RojoTest/tools/check.mjs` прошёл, включая 123 Lune-теста, сборку и проверку типов. Постоянный startup-перенос не включён. Детали теста — [hd-studs.md](hd-studs.md).
+
 ## Стенды рейтингов по референсу и рейтинг доната — 04.11.2026
 
 - `node RojoTest/tools/check.mjs`: StyLua, Selene, Lune-тесты (включая
@@ -435,3 +515,278 @@ Wins, Rebirths, best, настройки звука, питомца и экип�
 
 Публикация игры и реальные оплаты не проверялись. Мобильные проверки не выполнялись.
 Git сохраняет файловую часть проекта; ручную сцену необходимо сохранять в Studio отдельно.
+
+## Ocean Depths · локации 2–8 · 05.11.2026
+
+По выбранным PNG построены семь локаций после существующего Coral Reef.
+В Studio Edit независимый `tools/VerifyOceanLocations.luau` подтвердил:
+8 зон по контракту сцены, 402 наземных объекта с полным пятном опоры,
+370 поддержанных каменных ярусов, 8753 HD-текстуры с повтором 4.8 и offsets=0,
+231 физическое попадание в Field. Стыки расположены через 324 studs,
+видимый декор не пересекает габарит полёта над центральной полосой.
+Повторное применение Zone08 дало одинаковые 2735 потомков, без дубликатов.
+
+Снимок до сборки сравнен с финальной Edit-сценой: из 70605 существовавших
+BasePart удалено 0; изменены только 5 частей водного фона World2 для продления
+до конца курса. Остальные 70600, включая World1, станции лобби и Coral Reef,
+сохранили CFrame, Size, прозрачность и физические флаги. Финальный
+TransparentCleanup.apply нашёл 0 кандидатов и удалил 0 объектов.
+
+Все семь новых зон посещены в Play. Проверены соответствующие свет и туман,
+движение водорослей/фауны, пульсации медуз и открытие верхней створки при
+приближении персонажа. Pearl Grotto корректно работает при выгруженном
+стримингом Field первой зоны. После возвращения в World1 его освещение
+восстанавливается. В Vent Fields персонаж прошёл 16.957 studs: изменение
+высоты 0, Health=100, FloorMaterial=SmoothPlastic. Шлейфы включены с Rate=12;
+сохранены три последовательных Play-кадра. Ошибок игрового кода Ocean Depths
+не обнаружено. Известные прежние предупреждения ассета 203785492 и пропуск
+изменённого авторского World1 не относятся к этой сборке.
+
+Набор Blender содержит 7 моделей / 4406 треугольников. GLB и FBX повторно
+импортированы и проверены; сохранены 4 ракурса. Нативный набор Studio:
+7 моделей / 763 экземпляра, XML round trip прошёл. Восстановление трёх
+эффектов из effects.json проверено в Edit. Структурированные результаты:
+[studio-validation.json](../Assets/OceanDepths/LocationKit/studio-validation.json).
+У каждой новой локации есть studio-overview.png и studio-ground-check.png.
+
+Update Log v0.4.0 проверен на ПК: открытие, раскрытие и сворачивание,
+аватар и вклад Dakemo555, прокрутка до Y=200, закрытие с уничтожением окна.
+Короткие заголовки читаются без пересечения с Details; снимок лежит в
+LocationKit/studio-update-log.png. Полный `node RojoTest/tools/check.mjs`
+прошёл: 117 unit-тестов, 5 проверок гейта, сборка Rojo, 0 новых ошибок типов.
+
+Независимая визуальная рубрика — 4/5: опоры, открытая трасса, studs и темы
+проходят; крупные регулярные скальные лица и повторяемые уступы проще
+референсов, листья kelp прямее выбранных янтарных лент. Это художественное
+расхождение, видимых обязательных ошибок опоры/компоновки не найдено.
+
+Ограничения: это Studio-превью; переходы между мирами, прогрессия и покупки
+World2 не подключены. Створка реагирует на персонажа, а не на прилёт мяча.
+Мобильная производительность отложена до подготовки релиза. Play остановлен,
+временные тестовые привязки удалены, камера, качество и Edit-свет восстановлены.
+Игра не опубликована; ручную сцену необходимо сохранить в Studio отдельно.
+
+### Перераспределение ориентиров после отзыва · 05.11.2026
+
+По просьбе пользователя убрана правая глубокая впадина Abyssal Trench.
+Вместо неё сплошной широкий берег со скалами и террасами, аналогичный левому,
+с отличающимися профилями. Оба корабля и оба храма распределены по одному
+на сторону; крупные группы Vent Fields чередуются между берегами.
+Независимая визуальная проверка всех восьми зон не выявила обязательных
+ошибок баланса сторон, опор, studs или чистого коридора.
+
+Итоговый аудит: 444 наземных объекта, 394 каменных яруса, 8940 текстур,
+231 попадание в Field — без ошибок. 77572 части вне четырёх изменённых зон
+сохранили геометрию и физические флаги; удалено 0. В Play 66 лучей по обоим
+берегам бывшей впадины попали в сплошную поверхность, пропусков 0.
+Персонаж прошёл по правому берегу 16.961 studs, вертикальное отклонение 0,
+Health=100. Кальмар продолжает двигаться, освещение зоны действует.
+Клиент видит корабль и храм на каждом берегу. Полный check.mjs прошёл.
+Обновлён текущий черновик Update Log v0.4.0; проверены открытие, раскрытие,
+читаемость новых подробностей и закрытие на ПК. TransparentCleanup.apply:
+0 кандидатов и удалений. Общие и правые виды — studio-balanced-*.png;
+отдельный обзор Coral Reef — Assets/OceanDepths/studio-coral-balance-audit.png.
+
+### 2026-11-05 · Animated Ocean Depths wildlife
+
+Eleven Blender species imported as persistent skinned MeshParts; 30 schools (262 fish),
+28 individual creatures, 58 routes. All scenery/HD-stud checks remain green: 8 zones,
+444 grounded objects, 394 stone tiers, 8940 textures, 231 pitch hits. Preservation baseline
+83038 parts: 0 missing, 0 changes to surviving Workspace geometry/physics, 630 old fauna
+parts archived outside Workspace. Uploaded-package links are absent from the active wildlife.
+
+GLB/FBX reverse imports: 22/22. Deformation bounds: 31 poses × 11 species, closed cycles
+within 0.0001 studs. Full-world 60 s simulation: 104400 steps, 2 rejected unsafe steps,
+minimum pair-envelope gap 0.2700 studs, 261/262 fish reshuffled, all 58 static route certificates
+pass against 30249 visible obstacle bounds. Adaptive initial spacing and swept relative
+movement prevent overlap, including low-rate catch-up steps. Atomic school models preserve
+whole groups under streaming. Runtime distance culling pauses/resumes each group's own clock.
+
+PC Play: screenshots in all eight locations, moving wings/tails/tentacles, correct colours and
+World1 lighting restore. Update Log opened, expanded with Dakemo555 credits, and closed.
+No new wildlife errors; old asset 203785492 warnings remain unrelated. Full check.mjs passes:
+120 unit tests, 5 gate tests, Rojo build, 243 relative requires, 0 new type errors.
+Evidence and recovery: Assets/OceanDepths/AnimatedSeaLife/{README.md,studio-validation.json}.
+No mobile/release profiling, game publication, Git commit or push performed.
+
+### 2026-11-05 · Developer travel and noclip flight
+
+PC Play through the actual DEV → Карта buttons: World2 preview travel and World1 return
+work, close the panel and preserve saved world/progress. Flight toggles its visible gold
+indicator and movement constraints; Space raised the character about 45 studs in 0.9 s,
+W moved about 48 studs in 1 s through a temporary collidable wall, and Shift+W moved
+57.6 studs in 0.6 s. Ctrl descended 14.8 studs in 0.3 s. Hover holds position.
+Disabling flight restored original collision values, normal Humanoid flags and controls.
+Death/respawn clears flight, preview attributes and constraints; the new character is
+alive with PlatformStand=false. Wrong payload types and unauthorized requests are rejected.
+Temporary test wall removed; camera override removed; no saved-world changes from travel.
+UI evidence: Assets/UI/DevPanel/world-travel-flight.png. Contract: docs/dev-navigation.md.
+
+### 2026-11-05 · Larger and faster fish
+
+Targeted Edit migration: all 268 fish (262 school members and 6 anglerfish) are 2× their
+previous size and route speed, with matching 2× skeletal frequency. The other 22 creatures
+retain their scale/speed. 36 fish routes were recertified; 29 origins moved, at most 80 studs.
+All 58 final route certificates pass against 30,249 visible obstacle bounds. Reapplying the
+migration changes zero route origins, speeds or scales. Scene preservation comparison found
+zero missing or altered landscape parts; no stud texture edits.
+
+Whole-world 60 s simulation: 169,200 integration steps, two rejected unsafe steps,
+minimum full-deformation pair gap 0.5401 studs, all 262 school members reshuffled, maximum
+school-envelope ratio 1 within float precision. Fish integrate at 1/60 s or less.
+PC Play: enlarged fish viewed from normal player camera and both sides at close range;
+root movement and changing bone transforms observed. Screenshots and numeric evidence:
+Assets/OceanDepths/AnimatedSeaLife/{studio-fish-double-size*.png,fish-visibility-validation.json}.
+
+`node RojoTest/tools/check.mjs` passed formatting, lint, 120 Lune tests, five verification
+gate tests, Rojo build/sourcemap, 246 requires and type checking (zero known/new/stale errors).
+Rclone had moved recent source/docs into conflict copies; recovered the newest versions,
+preserving every conflict copy. No mobile test, commit, push or publication performed.
+
+Fresh PC Play also verified the current Update Log entry: the 2× size/speed description,
+Dakemo555 credit and avatar fit, details expand/collapse, and the window closes normally.
+Evidence: Assets/UI/DevPanel/update-log-flight-fish.png. Play stopped after verification;
+temporary camera bindings and test globals removed, Rojo kept running.
+
+### 2026-11-05 · Ocean Depths atmosphere
+
+All six agreed additions are implemented in the Studio preview: 16 close schools
+(48 fish), an extra manta crossing, travelling jellyfish glow and squid encounters,
+moving surface caustics, certified plankton/bubble pockets, spatial underwater audio,
+grounded distant reefs and depth haze. Original 2× fish size/speed is retained.
+
+Edit checks: all 30,806 pre-existing parts retain CFrame, Size, Color, transparency and
+collision; none missing. All 162 new reef columns have full rectangular support on the
+seabed extensions. All 75 route certificates pass against 30,433 visible bounds,
+including decoration with CanQuery=false. The 60-second school simulation completed
+228,600 integration steps, rejected three unsafe steps, maintained a minimum full-pose
+pair gap of 0.3119 studs and reshuffled all 310 school members. New particles use bounded
+clear volumes; bubble paths expire inside swept columns above their source surfaces.
+
+PC Play: ordinary-camera captures in all eight zones; separate close surface and side
+support captures. The default cloudy sky is covered by a local far enclosure even when
+distant walls stream out. Independent visual review found no mandatory defects; full
+support was then additionally checked numerically and from the side.
+
+Real-time checks: a complete 82-second manta recording reached fully visible and fully
+hidden states, with movement in 162 samples. A full jellyfish wave measured light brightness
+from 0.2 to 1.45. All six selected sounds loaded in Edit and Client with non-zero measured
+lengths. Effects/ReducedMotion integration disabled all new emitters and caustic overlays;
+the existing sound bus handles mute. Saved preferences were not modified by the probes.
+
+Streaming regression found and fixed: losing Field1 previously stopped the atmosphere
+update. The controller now retains a measured origin and can derive it from another loaded
+field. With Field1 temporarily absent on the client, Zone06 still had three active ambient
+emitters, a playing vent loop and its underwater enclosure. The temporary anchor change
+was restored. On World1 return the ambient sounds stopped, the music volume returned to
+0.12, muffling disabled, normal camera restored and FogEnd returned to 2400.
+
+The current Update Log v0.4.0 entry was opened, expanded/collapsed and closed on PC;
+the new details and Dakemo555 credit fit. No game-script errors appeared; old sound
+203785492/SurfaceSeparation warnings remain. Two failed AssistantCommand UI lookups
+were test-harness mistakes, corrected during the same check.
+
+Full gate: StyLua, Selene, 123 Lune tests, five verification-gate tests, Rojo build/sourcemap,
+248 relative requires and zero known/new/stale type errors. Evidence and recreateable assets:
+`Assets/OceanDepths/Atmosphere/`. No mobile test, commit, push or game publication.
+
+### 2026-11-05 · Remove replaced ocean backgrounds
+
+Removed six obsolete WaterGradient/WaterGradientSegment walls (and their SurfaceGuis)
+and four static DepthCurtain parts. All were decorative with collision, touch and query
+disabled; only their dedicated background containers were removed. WaterSurface and its
+segment, ripples, sunlight, reefs and landscape remain. The builders no longer recreate
+the old walls, and the client no longer toggles legacy gradient GUIs. The targeted removal
+method does not rebuild the map. PC Play confirmed zero old walls and an active local
+UnderwaterHorizon with no opening into the default sky. Screenshot:
+Assets/OceanDepths/Atmosphere/studio-local-background-only.png. Play stopped afterward.
+
+### 2026-11-05 · Ocean Depths portal and gameplay
+
+Desktop Play used an isolated Studio profile. The portal opened on walking into
+the dashed zone. Closing the window inside the zone held until the next entry.
+Both generated banners loaded after sharing their Roblox Image assets with the
+experience. The dashes moved on the ground in Play.
+
+A new profile could not travel without enough Wins. At 100,007 Wins, the
+Unlock button left 7 Wins and landed the player on the Ocean Depths apron.
+Respawn kept World2. Return to World1 and re-entry to World2 preserved the
+balance. A new session started in Football City with the unlock intact.
+
+The Classic Ball prompt equipped the ball and charged 250 Wins. A timed
+17,978 m kick crossed seven named boundaries, reached Pearl Grotto, activated
+the shell and awarded 11,459 Wins and 168 Skill. Both lobbies displayed the
+same rankings. The layout verifier found two worlds, 16 fields, 20 working ball
+displays, and 14 training lanes and eight eggs including World2's placeholders.
+The Update Log entry was checked in the scrollable PC window with details and
+the author avatar.
+
+### 2026-11-05 · Ocean training, eggs and location dividers
+
+PC Play used the isolated Studio namespace
+BallProfiles_Studio_World2StationsQA_20261105. The source storage routing was
+restored after startup. World2's seven lanes all started through the ordinary
+training loop and awarded Skill. Lane 2 rejected zero rebirths, then started
+after the requirement was met. The seven lane multipliers retain their existing
+rebirth requirements and apply the world's triple Skill reward.
+
+VerifyRandomTraining passed 19,451 assertions for 2,016 shots on 14 lanes.
+The expanded regression caught coordinate rounding near Ocean Depths' goals.
+TrainingGoal now accepts a 0.001-stud plane tolerance, and the same full
+regression passed afterward. VerifyTrainingBoost passed 329 assertions on
+14 lanes with isolated receipt fixtures. Real paid products remain unconfigured.
+
+The nearest Common Egg panel displayed 500 Wins. Pressing E opened its real
+hatch presentation, deducted 500 and granted a pet with the triple world boost.
+Common x3, Uncommon, Rare and Rainbow deducted 1,500, 5,000, 50,000 and 400,000
+Wins respectively, with the expected pet counts and boosts. Insufficient Wins
+rejected a triple Rainbow hatch. Clicking Open Again deducted the correct
+400,000 and granted another pet. Existing persistence retains individual
+pet boosts.
+
+VerifyWorldLayout passed for two worlds, 16 fields, 20 ball displays, 14 lane
+signs, eight ordinary eggs and seven Ocean dividers. Special-egg prompts
+were present in both worlds. The dividers stand on the seven location seams,
+are 30 studs tall and 50% transparent, show the correct names on both faces,
+and have collision, touch and query disabled. They were inspected at player
+height from the front and side and in Edit from behind. Targeted Edit
+application also proved idempotent, without rebuilding the authored worlds.
+
+The Update Log opened, scrolled, expanded and collapsed on PC, with readable
+details and a loaded Dakemo555 avatar. Its summary was shortened after the
+first visual check to fit the row.
+
+Final fresh PC Play confirmed the shorter summary fits. Existing Edit dividers
+survived normal startup. The complete gate passed with 124 Lune tests, five gate
+tests and zero known/new/stale type errors. No game-script errors appeared in
+the final run. The pre-existing 203785492 asset warning and SurfaceSeparation
+message remain. Studio returned to Edit.
+# 2026-11-05 · Ocean egg integration
+
+Five approved Blender eggs imported and arranged Common → Legendary in World2.
+301/301 native CSG components completed; Jelly has 30 translucent components.
+PC Play confirmed levitation and five active outlines, correct themed prompt
+names, and startup without new game errors. Four normal approach raycasts find
+ground. The static gate passes 126 unit tests, five gate tests and zero type
+diagnostics. No paid hatch or reward mutation, mobile test or publication.
+
+# 2026-11-05 · Nautilus egg cradles
+
+- Five World2 ShellCradle models replaced from the selected Blender concept 5.
+- Approved smooth GLB Model 70791212451135 uploaded once to Dakemo555 with explicit
+  consent. Use and dependencies granted only to universe 10770268214. Source
+  bounds/orientation checked; all importer-grey material colors restored.
+- 29 imported MeshParts plus a two-piece contact foot per cradle. Original shells,
+  native source and imported package preserved outside Workspace.
+- Reapply: zero drift; 316 static stand and interaction parts unchanged.
+- 45 contact probes: zero misses and no air gap. Eggs retain 7.5-stud height,
+  0.06-stud static rim clearance, names, order and existing purchase anchors.
+- PC Play: five eggs move, five cradles stay static, five outlines activate;
+  effects remain active. Dakemo555 / 11789507527 confirmed. No purchase or profile edit.
+- Full check.mjs passes: StyLua, Selene, 126 Lune tests, five gate tests,
+  Rojo build, 266 requires, ProfileStore integrity and zero type errors.
+- Preloading actual shell Models succeeds for all 155 MeshPart references.
+  Independent visual review 4/4; central spiral confirmed in an isolated temporary
+  inspection copy, removed afterward. Update Log opening/closing, current text,
+  author and readability verified on PC.
+- Play stopped; Edit camera frames the stand. Save the place for manual assets.

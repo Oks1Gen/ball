@@ -1,0 +1,497 @@
+{
+  "01_Common_Kelp": {
+    "source": {
+      "mesh_count": 21,
+      "triangles": 4210,
+      "bounds_min": [
+        -1.9342396259307861,
+        -1.8680239915847778,
+        -0.005776414647698402
+      ],
+      "bounds_max": [
+        1.7200000286102295,
+        1.742097020149231,
+        4.630000114440918
+      ],
+      "symmetry_vertex_max_error": 0.0021809786558151245
+    },
+    "glb": {
+      "mesh_count": 21,
+      "triangles": 4210,
+      "bounds_min": [
+        -1.9342396259307861,
+        -1.8680239915847778,
+        -0.005776414647698402
+      ],
+      "bounds_max": [
+        1.7200000286102295,
+        1.742097020149231,
+        4.630000114440918
+      ],
+      "material_alpha_min": 1.0,
+      "self_contained": true,
+      "materials": [
+        {
+          "name": "OceanEgg_Kelp_Teal",
+          "alphaMode": "OPAQUE",
+          "transmission": 0
+        },
+        {
+          "name": "OceanEgg_Kelp_TealFacet",
+          "alphaMode": "OPAQUE",
+          "transmission": 0
+        },
+        {
+          "name": "OceanEgg_Kelp_Deep",
+          "alphaMode": "OPAQUE",
+          "transmission": 0
+        },
+        {
+          "name": "OceanEgg_Kelp_Sand",
+          "alphaMode": "OPAQUE",
+          "transmission": 0
+        },
+        {
+          "name": "OceanEgg_Kelp_AmberLeaf",
+          "alphaMode": "OPAQUE",
+          "transmission": 0
+        },
+        {
+          "name": "OceanEgg_Kelp_AmberRidge",
+          "alphaMode": "OPAQUE",
+          "transmission": 0
+        },
+        {
+          "name": "OceanEgg_Kelp_SandLight",
+          "alphaMode": "OPAQUE",
+          "transmission": 0
+        },
+        {
+          "name": "OceanEgg_Kelp_StemOlive",
+          "alphaMode": "OPAQUE",
+          "transmission": 0
+        },
+        {
+          "name": "OceanEgg_Kelp_StemEdge",
+          "alphaMode": "OPAQUE",
+          "transmission": 0
+        }
+      ]
+    },
+    "fbx": {
+      "mesh_count": 21,
+      "triangles": 4210,
+      "bounds_min": [
+        -1.9342395067214966,
+        -1.868024230003357,
+        -0.005776486359536648
+      ],
+      "bounds_max": [
+        1.720000147819519,
+        1.7420966625213623,
+        4.630000114440918
+      ],
+      "material_alpha_min": 1.0
+    },
+    "blend_verified": true
+  },
+  "02_Uncommon_Leviathan": {
+    "source": {
+      "mesh_count": 63,
+      "triangles": 3574,
+      "bounds_min": [
+        -2.09181809425354,
+        -1.9477273225784302,
+        -0.005776414647698402
+      ],
+      "bounds_max": [
+        2.09181809425354,
+        1.9477273225784302,
+        4.98284387588501
+      ],
+      "symmetry_vertex_max_error": 0.0021809786558151245
+    },
+    "glb": {
+      "mesh_count": 63,
+      "triangles": 3574,
+      "bounds_min": [
+        -2.09181809425354,
+        -1.9477273225784302,
+        -0.005776414647698402
+      ],
+      "bounds_max": [
+        2.09181809425354,
+        1.9477273225784302,
+        4.98284387588501
+      ],
+      "material_alpha_min": 1.0,
+      "self_contained": true,
+      "materials": [
+        {
+          "name": "OceanEgg_Gold",
+          "alphaMode": "OPAQUE",
+          "transmission": 0
+        },
+        {
+          "name": "OceanEgg_GoldLight",
+          "alphaMode": "OPAQUE",
+          "transmission": 0
+        },
+        {
+          "name": "OceanEgg_GoldRecess",
+          "alphaMode": "OPAQUE",
+          "transmission": 0
+        },
+        {
+          "name": "OceanEgg_Leviathan_Teal",
+          "alphaMode": "OPAQUE",
+          "transmission": 0
+        },
+        {
+          "name": "OceanEgg_Leviathan_Deep",
+          "alphaMode": "OPAQUE",
+          "transmission": 0
+        },
+        {
+          "name": "OceanEgg_Leviathan_TealFacet",
+          "alphaMode": "OPAQUE",
+          "transmission": 0
+        },
+        {
+          "name": "OceanEgg_AquaGem",
+          "alphaMode": "OPAQUE",
+          "transmission": 0
+        },
+        {
+          "name": "OceanEgg_AquaGemLight",
+          "alphaMode": "OPAQUE",
+          "transmission": 0
+        },
+        {
+          "name": "OceanEgg_AquaGemDeep",
+          "alphaMode": "OPAQUE",
+          "transmission": 0
+        },
+        {
+          "name": "OceanEgg_Horn_Ivory",
+          "alphaMode": "OPAQUE",
+          "transmission": 0
+        },
+        {
+          "name": "OceanEgg_Horn_Shadow",
+          "alphaMode": "OPAQUE",
+          "transmission": 0
+        }
+      ]
+    },
+    "fbx": {
+      "mesh_count": 63,
+      "triangles": 3574,
+      "bounds_min": [
+        -2.091817855834961,
+        -1.9477275609970093,
+        -0.005776486359536648
+      ],
+      "bounds_max": [
+        2.091818332672119,
+        1.947727084159851,
+        4.98284387588501
+      ],
+      "material_alpha_min": 1.0
+    },
+    "blend_verified": true
+  },
+  "03_Rare_Treasure": {
+    "source": {
+      "mesh_count": 66,
+      "triangles": 8536,
+      "bounds_min": [
+        -2.0887272357940674,
+        -1.8445781469345093,
+        -0.005776414647698402
+      ],
+      "bounds_max": [
+        2.0887272357940674,
+        1.8445781469345093,
+        4.630000114440918
+      ],
+      "symmetry_vertex_max_error": 0.0021809786558151245
+    },
+    "glb": {
+      "mesh_count": 66,
+      "triangles": 8536,
+      "bounds_min": [
+        -2.0887272357940674,
+        -1.8445781469345093,
+        -0.005776414647698402
+      ],
+      "bounds_max": [
+        2.0887272357940674,
+        1.8445781469345093,
+        4.630000114440918
+      ],
+      "material_alpha_min": 1.0,
+      "self_contained": true,
+      "materials": [
+        {
+          "name": "OceanEgg_Treasure_Navy",
+          "alphaMode": "OPAQUE",
+          "transmission": 0
+        },
+        {
+          "name": "OceanEgg_Treasure_NavyFacet",
+          "alphaMode": "OPAQUE",
+          "transmission": 0
+        },
+        {
+          "name": "OceanEgg_Treasure_Deep",
+          "alphaMode": "OPAQUE",
+          "transmission": 0
+        },
+        {
+          "name": "OceanEgg_Gold",
+          "alphaMode": "OPAQUE",
+          "transmission": 0
+        },
+        {
+          "name": "OceanEgg_AquaGem",
+          "alphaMode": "OPAQUE",
+          "transmission": 0
+        },
+        {
+          "name": "OceanEgg_AquaGemLight",
+          "alphaMode": "OPAQUE",
+          "transmission": 0
+        },
+        {
+          "name": "OceanEgg_AquaGemDeep",
+          "alphaMode": "OPAQUE",
+          "transmission": 0
+        },
+        {
+          "name": "OceanEgg_Barnacle_Ivory",
+          "alphaMode": "OPAQUE",
+          "transmission": 0
+        },
+        {
+          "name": "OceanEgg_Barnacle_Edge",
+          "alphaMode": "OPAQUE",
+          "transmission": 0
+        },
+        {
+          "name": "OceanEgg_Barnacle_Inside",
+          "alphaMode": "OPAQUE",
+          "transmission": 0
+        },
+        {
+          "name": "OceanEgg_GoldLight",
+          "alphaMode": "OPAQUE",
+          "transmission": 0
+        },
+        {
+          "name": "OceanEgg_GoldRecess",
+          "alphaMode": "OPAQUE",
+          "transmission": 0
+        }
+      ]
+    },
+    "fbx": {
+      "mesh_count": 66,
+      "triangles": 8536,
+      "bounds_min": [
+        -2.0887269973754883,
+        -1.844578504562378,
+        -0.005776486359536648
+      ],
+      "bounds_max": [
+        2.0887274742126465,
+        1.8445777893066406,
+        4.630000114440918
+      ],
+      "material_alpha_min": 1.0
+    },
+    "blend_verified": true
+  },
+  "04_Epic_Abyss": {
+    "source": {
+      "mesh_count": 87,
+      "triangles": 3898,
+      "bounds_min": [
+        -2.2345454692840576,
+        -2.1314544677734375,
+        -0.005776414647698402
+      ],
+      "bounds_max": [
+        2.2345454692840576,
+        2.1314544677734375,
+        4.630000114440918
+      ],
+      "symmetry_vertex_max_error": 0.0021809786558151245
+    },
+    "glb": {
+      "mesh_count": 87,
+      "triangles": 3898,
+      "bounds_min": [
+        -2.2345454692840576,
+        -2.1314544677734375,
+        -0.005776414647698402
+      ],
+      "bounds_max": [
+        2.2345454692840576,
+        2.1314544677734375,
+        4.630000114440918
+      ],
+      "material_alpha_min": 1.0,
+      "self_contained": true,
+      "materials": [
+        {
+          "name": "OceanEgg_CyanLight",
+          "alphaMode": "OPAQUE",
+          "transmission": 0
+        },
+        {
+          "name": "OceanEgg_CyanEdge",
+          "alphaMode": "OPAQUE",
+          "transmission": 0
+        },
+        {
+          "name": "OceanEgg_Abyss_Armor",
+          "alphaMode": "OPAQUE",
+          "transmission": 0
+        },
+        {
+          "name": "OceanEgg_Abyss_Ridge",
+          "alphaMode": "OPAQUE",
+          "transmission": 0
+        },
+        {
+          "name": "OceanEgg_Abyss_Indigo",
+          "alphaMode": "OPAQUE",
+          "transmission": 0
+        },
+        {
+          "name": "OceanEgg_Abyss_Deep",
+          "alphaMode": "OPAQUE",
+          "transmission": 0
+        },
+        {
+          "name": "OceanEgg_AquaGemLight",
+          "alphaMode": "OPAQUE",
+          "transmission": 0
+        },
+        {
+          "name": "OceanEgg_AquaGemDeep",
+          "alphaMode": "OPAQUE",
+          "transmission": 0
+        }
+      ]
+    },
+    "fbx": {
+      "mesh_count": 87,
+      "triangles": 3898,
+      "bounds_min": [
+        -2.2345452308654785,
+        -2.1314549446105957,
+        -0.005776486359536648
+      ],
+      "bounds_max": [
+        2.2345457077026367,
+        2.1314539909362793,
+        4.630000114440918
+      ],
+      "material_alpha_min": 1.0
+    },
+    "blend_verified": true
+  },
+  "05_Legendary_Jelly": {
+    "source": {
+      "mesh_count": 25,
+      "triangles": 8630,
+      "bounds_min": [
+        -2.0454211235046387,
+        -2.0268547534942627,
+        -0.005776414647698402
+      ],
+      "bounds_max": [
+        2.0454211235046387,
+        2.0268547534942627,
+        4.630000114440918
+      ],
+      "symmetry_vertex_max_error": 0.004958266392350197
+    },
+    "glb": {
+      "mesh_count": 25,
+      "triangles": 8630,
+      "bounds_min": [
+        -2.0454211235046387,
+        -2.0268547534942627,
+        -0.005776414647698402
+      ],
+      "bounds_max": [
+        2.0454211235046387,
+        2.0268547534942627,
+        4.630000114440918
+      ],
+      "material_alpha_min": 0.75,
+      "self_contained": true,
+      "materials": [
+        {
+          "name": "OceanEgg_Jelly_TranslucentLilac",
+          "alphaMode": "BLEND",
+          "transmission": 0.23000000417232513
+        },
+        {
+          "name": "OceanEgg_Jelly_TranslucentFacet",
+          "alphaMode": "BLEND",
+          "transmission": 0.25999999046325684
+        },
+        {
+          "name": "OceanEgg_Jelly_TranslucentViolet",
+          "alphaMode": "BLEND",
+          "transmission": 0.20000000298023224
+        },
+        {
+          "name": "OceanEgg_Jelly_TendrilTips",
+          "alphaMode": "BLEND",
+          "transmission": 0.23999999463558197
+        },
+        {
+          "name": "OceanEgg_CyanLight",
+          "alphaMode": "OPAQUE",
+          "transmission": 0
+        },
+        {
+          "name": "OceanEgg_AquaGemLight",
+          "alphaMode": "OPAQUE",
+          "transmission": 0
+        },
+        {
+          "name": "OceanEgg_Jelly_InnerPearl",
+          "alphaMode": "OPAQUE",
+          "transmission": 0
+        },
+        {
+          "name": "OceanEgg_CyanEdge",
+          "alphaMode": "OPAQUE",
+          "transmission": 0
+        }
+      ]
+    },
+    "fbx": {
+      "mesh_count": 25,
+      "triangles": 8630,
+      "bounds_min": [
+        -2.0454211235046387,
+        -2.026854991912842,
+        -0.005776486359536648
+      ],
+      "bounds_max": [
+        2.0454211235046387,
+        2.0268545150756836,
+        4.630000114440918
+      ],
+      "material_alpha_min": 1.0
+    },
+    "blend_verified": true
+  }
+}

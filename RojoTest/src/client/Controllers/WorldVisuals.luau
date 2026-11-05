@@ -136,7 +136,7 @@ function World.mount(context: Context): Handle
 		end
 		local map = mapCache[world]
 		if map == nil or not map.Parent then
-			map = (workspace:FindFirstChild("Map") and workspace.Map:FindFirstChild("World1"))
+			map = WorldRefs.world(world)
 			mapCache[world] = map
 		end
 		local found: any = nil

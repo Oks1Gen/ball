@@ -1,0 +1,134 @@
+[
+  {
+    "name": "Clownfish",
+    "format": "glb",
+    "bones": 6,
+    "vertices": 1064
+  },
+  {
+    "name": "Clownfish",
+    "format": "fbx",
+    "bones": 6,
+    "vertices": 208
+  },
+  {
+    "name": "BlueTang",
+    "format": "glb",
+    "bones": 6,
+    "vertices": 688
+  },
+  {
+    "name": "BlueTang",
+    "format": "fbx",
+    "bones": 6,
+    "vertices": 138
+  },
+  {
+    "name": "Butterflyfish",
+    "format": "glb",
+    "bones": 6,
+    "vertices": 832
+  },
+  {
+    "name": "Butterflyfish",
+    "format": "fbx",
+    "bones": 6,
+    "vertices": 162
+  },
+  {
+    "name": "SilverSprat",
+    "format": "glb",
+    "bones": 6,
+    "vertices": 688
+  },
+  {
+    "name": "SilverSprat",
+    "format": "fbx",
+    "bones": 6,
+    "vertices": 138
+  },
+  {
+    "name": "MantaRay",
+    "format": "glb",
+    "bones": 11,
+    "vertices": 1148
+  },
+  {
+    "name": "MantaRay",
+    "format": "fbx",
+    "bones": 11,
+    "vertices": 258
+  },
+  {
+    "name": "ReefJellyfish",
+    "format": "glb",
+    "bones": 34,
+    "vertices": 1760
+  },
+  {
+    "name": "ReefJellyfish",
+    "format": "fbx",
+    "bones": 34,
+    "vertices": 344
+  },
+  {
+    "name": "GoldenSeahorse",
+    "format": "glb",
+    "bones": 4,
+    "vertices": 1070
+  },
+  {
+    "name": "GoldenSeahorse",
+    "format": "fbx",
+    "bones": 4,
+    "vertices": 213
+  },
+  {
+    "name": "YellowTang",
+    "format": "glb",
+    "bones": 6,
+    "vertices": 688
+  },
+  {
+    "name": "YellowTang",
+    "format": "fbx",
+    "bones": 6,
+    "vertices": 138
+  },
+  {
+    "name": "Anglerfish",
+    "format": "glb",
+    "bones": 6,
+    "vertices": 774
+  },
+  {
+    "name": "Anglerfish",
+    "format": "fbx",
+    "bones": 6,
+    "vertices": 170
+  },
+  {
+    "name": "AbyssSquid",
+    "format": "glb",
+    "bones": 26,
+    "vertices": 2668
+  },
+  {
+    "name": "AbyssSquid",
+    "format": "fbx",
+    "bones": 26,
+    "vertices": 518
+  },
+  {
+    "name": "MoonJellyfish",
+    "format": "glb",
+    "bones": 34,
+    "vertices": 1744
+  },
+  {
+    "name": "MoonJellyfish",
+    "format": "fbx",
+    "bones": 34,
+    "vertices": 344
+  }
+]

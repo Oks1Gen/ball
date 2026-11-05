@@ -1,0 +1,331 @@
+{
+  "version": 1,
+  "libraryTextures": [
+    "9918912100"
+  ],
+  "reusedProjectTextures": [
+    "14425843511",
+    "12781828706"
+  ],
+  "nodes": [
+    {
+      "class": "Folder",
+      "name": "OceanAmbientTemplates",
+      "attributes": {
+        "TemplateVersion": 1
+      },
+      "children": [
+        {
+          "class": "Part",
+          "name": "Plankton",
+          "attributes": {
+            "PartRole": "VFX carrier",
+            "AmbientKind": "Plankton"
+          },
+          "properties": {
+            "Anchored": true,
+            "CanCollide": false,
+            "CanTouch": false,
+            "CanQuery": false,
+            "Transparency": 1,
+            "Size": [
+              16,
+              5,
+              20
+            ]
+          },
+          "children": [
+            {
+              "class": "ParticleEmitter",
+              "name": "DriftingPlankton",
+              "properties": {
+                "Texture": "rbxassetid://9918912100",
+                "Enabled": false,
+                "Rate": 6,
+                "Lifetime": [
+                  3,
+                  4.5
+                ],
+                "Speed": [
+                  0.1,
+                  0.35
+                ],
+                "SpreadAngle": [
+                  180,
+                  180
+                ],
+                "Size": [
+                  [
+                    0,
+                    0.07
+                  ],
+                  [
+                    0.5,
+                    0.12
+                  ],
+                  [
+                    1,
+                    0.04
+                  ]
+                ],
+                "Transparency": [
+                  [
+                    0,
+                    1
+                  ],
+                  [
+                    0.2,
+                    0.55
+                  ],
+                  [
+                    0.75,
+                    0.65
+                  ],
+                  [
+                    1,
+                    1
+                  ]
+                ],
+                "Color": "#B6F0E2",
+                "LightEmission": 0.25,
+                "LightInfluence": 0.6,
+                "Drag": 0.6,
+                "Acceleration": [
+                  0.08,
+                  0.02,
+                  0.04
+                ]
+              },
+              "attributes": {
+                "EmitCount": 8,
+                "EmitDuration": 4
+              }
+            }
+          ]
+        },
+        {
+          "class": "Part",
+          "name": "Bubbles",
+          "attributes": {
+            "PartRole": "VFX carrier",
+            "AmbientKind": "Bubbles"
+          },
+          "properties": {
+            "Anchored": true,
+            "CanCollide": false,
+            "CanTouch": false,
+            "CanQuery": false,
+            "Transparency": 1,
+            "Size": [
+              2,
+              0.2,
+              2
+            ]
+          },
+          "children": [
+            {
+              "class": "Attachment",
+              "name": "Source",
+              "children": [
+                {
+                  "class": "ParticleEmitter",
+                  "name": "RisingMicrobubbles",
+                  "properties": {
+                    "Texture": "rbxassetid://14425843511",
+                    "Enabled": false,
+                    "Rate": 1.7,
+                    "Lifetime": [
+                      2.5,
+                      3.5
+                    ],
+                    "Speed": [
+                      2,
+                      3
+                    ],
+                    "SpreadAngle": [
+                      6,
+                      6
+                    ],
+                    "Size": [
+                      [
+                        0,
+                        0.12
+                      ],
+                      [
+                        0.6,
+                        0.24
+                      ],
+                      [
+                        1,
+                        0.35
+                      ]
+                    ],
+                    "Transparency": [
+                      [
+                        0,
+                        1
+                      ],
+                      [
+                        0.12,
+                        0.25
+                      ],
+                      [
+                        0.8,
+                        0.5
+                      ],
+                      [
+                        1,
+                        1
+                      ]
+                    ],
+                    "Color": "#C7F4F2",
+                    "LightEmission": 0.18,
+                    "LightInfluence": 0.5,
+                    "Acceleration": [
+                      0.08,
+                      0.25,
+                      0.04
+                    ],
+                    "RotSpeed": [
+                      -8,
+                      8
+                    ]
+                  },
+                  "attributes": {
+                    "EmitCount": 6,
+                    "EmitDuration": 3
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "class": "Part",
+          "name": "CausticSurface",
+          "attributes": {
+            "PartRole": "Surface light overlay",
+            "AmbientKind": "Caustic"
+          },
+          "properties": {
+            "Anchored": true,
+            "CanCollide": false,
+            "CanTouch": false,
+            "CanQuery": false,
+            "Transparency": 1,
+            "Size": [
+              12,
+              0.02,
+              12
+            ]
+          },
+          "children": [
+            {
+              "class": "Texture",
+              "name": "CausticA",
+              "properties": {
+                "Texture": "rbxassetid://12781828706",
+                "Face": "Top",
+                "Transparency": 0.86,
+                "Color3": "#BAFFF0",
+                "StudsPerTileU": 20,
+                "StudsPerTileV": 20
+              }
+            },
+            {
+              "class": "Texture",
+              "name": "CausticB",
+              "properties": {
+                "Texture": "rbxassetid://12781828706",
+                "Face": "Top",
+                "Transparency": 0.91,
+                "Color3": "#ECFFD0",
+                "StudsPerTileU": 27,
+                "StudsPerTileV": 27,
+                "OffsetStudsU": 8,
+                "OffsetStudsV": 13
+              }
+            }
+          ]
+        },
+        {
+          "class": "Part",
+          "name": "JellySpark",
+          "attributes": {
+            "PartRole": "VFX carrier",
+            "AmbientKind": "JellySpark"
+          },
+          "properties": {
+            "Anchored": true,
+            "CanCollide": false,
+            "CanTouch": false,
+            "CanQuery": false,
+            "Transparency": 1,
+            "Size": [
+              3,
+              2,
+              3
+            ]
+          },
+          "children": [
+            {
+              "class": "ParticleEmitter",
+              "name": "BioluminescentDust",
+              "properties": {
+                "Texture": "rbxassetid://9918912100",
+                "Enabled": false,
+                "Rate": 0,
+                "Lifetime": [
+                  0.8,
+                  1.3
+                ],
+                "Speed": [
+                  0.2,
+                  0.5
+                ],
+                "SpreadAngle": [
+                  180,
+                  180
+                ],
+                "Size": [
+                  [
+                    0,
+                    0.08
+                  ],
+                  [
+                    0.5,
+                    0.15
+                  ],
+                  [
+                    1,
+                    0
+                  ]
+                ],
+                "Transparency": [
+                  [
+                    0,
+                    1
+                  ],
+                  [
+                    0.15,
+                    0.2
+                  ],
+                  [
+                    1,
+                    1
+                  ]
+                ],
+                "Color": "#A6FFE4",
+                "LightEmission": 0.8,
+                "LightInfluence": 0
+              },
+              "attributes": {
+                "EmitCount": 4
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

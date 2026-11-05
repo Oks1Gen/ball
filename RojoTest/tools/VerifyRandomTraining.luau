@@ -12,8 +12,8 @@ local function check(value, message)
 	checks += 1
 end
 
-for _, worldName in { "World1" } do
-	local map = workspace.Map:FindFirstChild(worldName)
+for world = 1, 2 do
+	local map = WorldRefs.world(world)
 	local zone = map and WorldRefs.training(map)
 	for index = 1, 7 do
 		local lane = zone and zone:FindFirstChild("TrainingLane" .. index)

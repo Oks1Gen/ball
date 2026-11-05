@@ -80,6 +80,22 @@ function Service:Start()
 	require(root.TransparentCleanup).apply(hierarchy.container())
 	require(root.EggStandStyle).apply(map)
 	require(root.ElementalEggStyle).apply(map)
+	local hdStuds = require(root.WorldHDStuds)
+	for _, world in hierarchy.container():GetChildren() do
+		if world.Name:match("^World%d+$") and world:FindFirstChild("Lobby") then
+			hdStuds.apply(world)
+		end
+	end
 	self.map = map
+	local world2 = require(root.Gameplay.WorldTravel).prepare(map)
+	if world2 then
+		if world2:GetAttribute("WorldScale") == nil then
+			world2:SetAttribute("WorldScale", map:GetAttribute("WorldScale"))
+		end
+		require(root.TrainingLaneSigns).apply(world2)
+		require(root.OceanEggStyle).apply(world2)
+		require(root.ZoneDividers).applyOcean(world2, map)
+	end
+	self.world2 = world2
 end
 return Service

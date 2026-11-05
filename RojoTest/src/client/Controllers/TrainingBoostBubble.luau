@@ -3,6 +3,7 @@
 local React = require(game.ReplicatedStorage.Packages.React)
 local Motion = require(game.ReplicatedStorage.Shared.UiMotion)
 local Assets = require(script.Parent.Parent.UIAssets)
+local MarketplaceCatalog = require(script.Parent.Parent.Modules.MarketplaceCatalog)
 local e = React.createElement
 local Bubble = {}
 local C = Color3.fromRGB
@@ -118,7 +119,9 @@ function Bubble.face(p: any)
 				Position = UDim2.fromScale(0.24, 0),
 				Size = UDim2.fromScale(0.76, 1),
 				BackgroundTransparency = 1,
-				Text = "ROBUX",
+				Text = p.definition:map(function(def: any)
+					return if def.product then MarketplaceCatalog.label(def.product) else "ROBUX"
+				end),
 				Font = Enum.Font.GothamBlack,
 				TextColor3 = WHITE,
 				TextScaled = true,

@@ -3,15 +3,48 @@
 -- and old places; gameplay never depends on a historical generator's folder.
 local Refs = {}
 
+function Refs.world(index: number): any
+	local map = workspace:FindFirstChild("Map")
+	return map and map:FindFirstChild("World" .. index)
+end
+
 function Refs.course(world: any): any
 	return world and (world:FindFirstChild("FootballCourse") or world:FindFirstChild("SkippingWorld"))
+end
+
+function Refs.zone(world: any, index: number): any
+	local course = Refs.course(world)
+	local zones = course and course:FindFirstChild("Zones")
+	return zones and zones:FindFirstChild(string.format("Zone%02d", index))
 end
 
 function Refs.field(world: any, index: number): any
 	local course = Refs.course(world)
 	local zones = course and course:FindFirstChild("Zones")
-	local zone = zones and zones:FindFirstChild(string.format("Zone%02d", index))
+	local zone = Refs.zone(world, index)
 	return if zones then zone and zone:FindFirstChild("Field") else course and course:FindFirstChild("Field_" .. index)
+end
+
+function Refs.portal(world: any): Model?
+	local lobby = world and world:FindFirstChild("Lobby")
+	local environment = lobby and lobby:FindFirstChild("Environment")
+	local decor = environment and environment:FindFirstChild("ClubDecor")
+	local portal = decor and (decor:FindFirstChild("BathyscapheHatch") or decor:FindFirstChild("WorldPortal"))
+	return if portal and portal:IsA("Model") then portal else nil
+end
+
+function Refs.portalZone(world: any): BasePart?
+	local portal = Refs.portal(world)
+	local zone = portal and portal:FindFirstChild("TravelZone")
+	return if zone and zone:IsA("BasePart") then zone else nil
+end
+
+function Refs.insidePortal(zone: BasePart, position: Vector3): boolean
+	local localPosition = zone.CFrame:PointToObjectSpace(position)
+	return math.abs(localPosition.X) <= zone.Size.X / 2
+		and math.abs(localPosition.Z) <= zone.Size.Z / 2
+		and localPosition.Y >= 0
+		and localPosition.Y <= 8
 end
 
 function Refs.finish(world: any): BasePart?

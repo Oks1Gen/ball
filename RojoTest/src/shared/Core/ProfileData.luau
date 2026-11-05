@@ -34,7 +34,9 @@ function Data.fresh(): any
 		pets = {},
 		equipped = {},
 		world = 1,
+		oceanUnlocked = false,
 		perks = {},
+		passGrants = {}, -- Durable one-time grants, independent of resettable perks.
 		receipts = {},
 		trainingBoosts = { ["67"] = 0, ["69"] = 0, ["144"] = 0 },
 		settings = { sound = 100, music = 100, shake = true, effects = true, upgradeNotices = true },
@@ -46,6 +48,18 @@ function Data.fresh(): any
 		offlineRate = 0,
 		offlinePending = 0,
 	}
+end
+
+function Data.resetProgress(input: any): any
+	local fresh = Data.fresh()
+	fresh.settings = table.clone(input.settings)
+	-- Receipts and one-time bundle grants are accounting records, not benefits.
+	fresh.receipts = input.receipts
+	fresh.passGrants = table.clone(input.passGrants or {})
+	if input.perks.StarterPack then
+		fresh.passGrants.StarterPack = true
+	end
+	return fresh
 end
 
 function Data.finite(value: any): boolean
@@ -90,6 +104,10 @@ function Data.normalize(input: any, catalog: any): any
 		data.trail = input.trail
 	end
 	data.perks, data.receipts = flags(input.perks), flags(input.receipts)
+	data.passGrants = flags(input.passGrants)
+	if data.perks.StarterPack then
+		data.passGrants.StarterPack = true
+	end
 	if data.perks.AdminEggPending then
 		data.adminEggPendingCount = math.max(1, bounded(input.adminEggPendingCount, 1, Data.MaxProgress))
 	end
@@ -98,8 +116,8 @@ function Data.normalize(input: any, catalog: any): any
 			data.trainingBoosts[key] = bounded(input.trainingBoosts[key], 0, 1000000)
 		end
 	end
-	-- Retired worlds never strand a returning player outside the remaining map.
-	data.world = 1
+	-- New sessions start in Football City. Keep the paid access from older saves.
+	data.oceanUnlocked = input.oceanUnlocked == true or input.unlockedWorld2 == true
 	local seen = {}
 	if type(input.pets) == "table" then
 		for _, pet in ipairs(input.pets) do

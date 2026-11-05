@@ -1,0 +1,139 @@
+{
+  "edit": {
+    "support": {
+      "columns": 162,
+      "failures": []
+    },
+    "stress": {
+      "maxEnvelopeRatio": 1.000000238418579,
+      "seconds": 60,
+      "minGap": 0.3119360673041025,
+      "steps": 228600,
+      "blockedSteps": 3,
+      "running": false,
+      "membersReshuffled": 310,
+      "groups": 75,
+      "ok": true
+    },
+    "build": {
+      "ok": true,
+      "running": false,
+      "result": {
+        "reefs": 162,
+        "patches": 234,
+        "plankton": 18,
+        "foreground": 48,
+        "failures": [],
+        "bubbles": 16,
+        "mantas": 1
+      }
+    },
+    "certificates": {
+      "running": false,
+      "failures": [],
+      "passed": 75,
+      "obstacles": 30433
+    },
+    "preservation": {
+      "missing": 0,
+      "changed": 0,
+      "count": 30806
+    }
+  },
+  "play": {
+    "restored": {
+      "cameraType": "Custom",
+      "muffleEnabled": false,
+      "fogEnd": 2400,
+      "activeAmbientSounds": 0,
+      "musicVolume": 0.11999999731779099
+    },
+    "player": "Dakemo555",
+    "audio": {
+      "ok": true,
+      "roles": {
+        "Water": {
+          "loaded": true,
+          "length": 59.44533333333333
+        },
+        "Current": {
+          "loaded": true,
+          "length": 4.1695416666666665
+        },
+        "Bubbles": {
+          "loaded": true,
+          "length": 1.4543125
+        },
+        "Deep": {
+          "loaded": true,
+          "length": 27.946666666666665
+        },
+        "Wreck": {
+          "loaded": true,
+          "length": 4.384
+        },
+        "Vent": {
+          "loaded": true,
+          "length": 71.79835416666667
+        }
+      }
+    },
+    "preferences": {
+      "flag": true,
+      "running": false,
+      "caustics": 0,
+      "enabledAmbientEmitters": 0
+    },
+    "date": "2026-11-05",
+    "jelly": {
+      "min": 0.20000000298023224,
+      "samples": 888,
+      "running": false,
+      "max": 1.4500000476837158
+    },
+    "userId": 11789507527,
+    "encounter": {
+      "min": 0,
+      "running": false,
+      "positions": 162,
+      "max": 1
+    },
+    "streaming": {
+      "restored": {
+        "cameraType": "Custom",
+        "muffleEnabled": false,
+        "fogEnd": 2400,
+        "activeAmbientSounds": 0,
+        "musicVolume": 0.11999999731779099
+      },
+      "log": {
+        "details": "Dakemo555 added close fish schools, moving caustic light, drifting plankton and bubble streams throughout Ocean Depths. Mantas pass above the course, jellyfish glow in waves and the squid appears in the distance. Spatial underwater audio blends between locations, while distant reefs and depth haze hide the edges. Fish remain twice as large and fast.",
+        "collapsed": true,
+        "credit": "Dakemo555  ·  Models, effects & animation"
+      },
+      "deep": {
+        "firstLoaded": true,
+        "camera": "4151, 28.376262664794922, -1575.9259033203125",
+        "root": "4151, 23.641023635864258, -1588",
+        "emitters": 3,
+        "sounds": {
+          "1": {
+            "loaded": true,
+            "volume": 0.10190869867801666,
+            "id": "rbxassetid://9112795400",
+            "playing": true
+          }
+        }
+      },
+      "missingAnchor": {
+        "vent": {
+          "volume": 0.10191356390714645,
+          "playing": true
+        },
+        "firstAbsent": true,
+        "horizon": true,
+        "emitters": 3
+      }
+    }
+  }
+}

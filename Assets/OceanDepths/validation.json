@@ -1,0 +1,24 @@
+{
+  "MantaRay": {
+    "triangles": 468
+  },
+  "YellowTang": {
+    "triangles": 236
+  },
+  "Clownfish": {
+    "triangles": 376
+  },
+  "BlueTang": {
+    "triangles": 236
+  },
+  "Butterflyfish": {
+    "triangles": 284
+  },
+  "export": {
+    "glbTriangles": 1600,
+    "species": 5,
+    "hasCameras": false,
+    "materials": 36,
+    "geometryManifold": true
+  }
+}

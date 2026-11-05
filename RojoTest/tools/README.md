@@ -1,5 +1,12 @@
 # tools
 
+- `VerifySessionCharacter.luau` — изолированные регрессии смены персонажа во время
+  ожидания Root/Humanoid и запоздалого события смерти. Без настоящих профилей и
+  изменений сцены; запускается через Studio MCP в Edit или Play.
+
+- `VerifyLobbyClubDecor.luau` — клубное оформление лобби: состав, физика,
+  отсутствие пересечений со станциями, целые studs, защита от уборки
+  (см. `docs/lobby-club-decor.md`).
 - `VerifyLobbyComposition.luau` — отсутствие свободного декора, стабильность
   уборки, непересекающиеся габариты станций и 342 пробы четырёх центральных
   проходов (пол, ширина, просвет по высоте). Выполнять в Edit и обычном Play.
@@ -194,6 +201,13 @@ Edit, и в Play (там, где это указано в таблице).
 Ручные проверки сцены выполняются отдельно, в Studio.
 
 ## Вспомогательные файлы
+
+Для Ocean Depths (Studio Edit): `VerifyOceanLocations.luau` выполняет читающий
+аудит опор, текстур и трассы; `ExportOceanNativeKit.luau` возвращает типизированный
+JSON и сохраняет переносимые шаблоны в ServerStorage. `ImportOceanEffects.luau`
+восстанавливает три шаблона из `Assets/OceanDepths/LocationKit/effects.json`.
+`ImportOceanSeaLife.luau` принимает необязательные packName/sourcePath для
+нового LocationKit; без них сохраняет прежнее поведение SeaLife.
 
 Кроме `.luau` в папке лежат Python-скрипты для Blender (экспорт геометрии в
 JSON и обратно), служебные `.mjs`/`.ps1` и список шаблонов Ripple:

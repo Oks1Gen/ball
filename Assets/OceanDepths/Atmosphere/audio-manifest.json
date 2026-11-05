@@ -1,0 +1,96 @@
+{
+  "date": "2026-11-05",
+  "method": "Creator Store listing plus Studio IsLoaded and TimeLength",
+  "roles": {
+    "Water": {
+      "id": 9112889917,
+      "name": "Underwater Ambience 1 (SFX)",
+      "creator": {
+        "id": 7462895450,
+        "name": "ProSoundEffects",
+        "type": 1,
+        "isVerifiedCreator": true
+      },
+      "artist": "Pro Sound Effects",
+      "isFree": true,
+      "loaded": true,
+      "measuredLength": 59.44533333333333,
+      "source": "https://create.roblox.com/store/asset/9112889917"
+    },
+    "Deep": {
+      "id": 9112889907,
+      "name": "Underwater Ambience 2 (SFX)",
+      "creator": {
+        "id": 7462895450,
+        "name": "ProSoundEffects",
+        "type": 1,
+        "isVerifiedCreator": true
+      },
+      "artist": "Pro Sound Effects",
+      "isFree": true,
+      "loaded": true,
+      "measuredLength": 27.946666666666665,
+      "source": "https://create.roblox.com/store/asset/9112889907"
+    },
+    "Bubbles": {
+      "id": 9125409840,
+      "name": "Bubbles Small Underwater Above Water Quality (SFX)",
+      "creator": {
+        "id": 7462895450,
+        "name": "ProSoundEffects",
+        "type": 1,
+        "isVerifiedCreator": true
+      },
+      "artist": "Pro Sound Effects",
+      "isFree": true,
+      "loaded": true,
+      "measuredLength": 1.4543125,
+      "source": "https://create.roblox.com/store/asset/9125409840"
+    },
+    "Current": {
+      "id": 9113604980,
+      "name": "Bubble Swells Underwater Pass Bys Pulsing 2 (SFX)",
+      "creator": {
+        "id": 7462895450,
+        "name": "ProSoundEffects",
+        "type": 1,
+        "isVerifiedCreator": true
+      },
+      "artist": "Pro Sound Effects",
+      "isFree": true,
+      "loaded": true,
+      "measuredLength": 4.169541666666667,
+      "source": "https://create.roblox.com/store/asset/9113604980"
+    },
+    "Wreck": {
+      "id": 9120829478,
+      "name": "Wood Creak 1 (SFX)",
+      "creator": {
+        "id": 7462895450,
+        "name": "ProSoundEffects",
+        "type": 1,
+        "isVerifiedCreator": true
+      },
+      "artist": "Pro Sound Effects",
+      "isFree": true,
+      "loaded": true,
+      "measuredLength": 4.384,
+      "source": "https://create.roblox.com/store/asset/9120829478"
+    },
+    "Vent": {
+      "id": 9112795400,
+      "name": "Hollow Rumble 3 (SFX)",
+      "creator": {
+        "id": 7462895450,
+        "name": "ProSoundEffects",
+        "type": 1,
+        "isVerifiedCreator": true
+      },
+      "artist": "Pro Sound Effects",
+      "isFree": true,
+      "loaded": true,
+      "measuredLength": 71.79835416666667,
+      "source": "https://create.roblox.com/store/asset/9112795400"
+    }
+  }
+}

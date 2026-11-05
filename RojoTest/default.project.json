@@ -2,6 +2,11 @@
   "name": "Ball",
   "tree": {
     "$className": "DataModel",
+    "MaterialService": {
+      "$className": "MaterialService",
+      "$ignoreUnknownInstances": true,
+      "$path": "assets/materials"
+    },
     "ReplicatedFirst": {
       "MapIntro": {
         "$path": "src/loading"
@@ -42,6 +47,9 @@
       },
       "ImportedTrainingFields": {
         "$path": "assets/studio/ImportedTrainingFields.rbxmx"
+      },
+      "OceanEggTemplates": {
+        "$path": "../Assets/OceanDepths/Eggs/work/ocean-eggs.rbxmx"
       }
     },
     "ServerScriptService": {

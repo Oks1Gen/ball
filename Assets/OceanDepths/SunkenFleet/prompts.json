@@ -1,0 +1,45 @@
+{
+  "world": "Ocean Depths",
+  "location": "Sunken Fleet",
+  "generator": "Built-in image_gen",
+  "reference": "../KelpForest/03-amber-grove.png",
+  "stage": "Built in Studio World2 preview; travel and progression pending",
+  "variants": [
+    {
+      "key": "01-galleon-bay",
+      "name": "Бухта галеонов",
+      "prompt": "Edit the supplied approved Ocean Depths Kelp Forest concept into zone 3 of the SAME Roblox game, SUNKEN FLEET. Preserve its elevated three-quarter camera looking along the complete very long straight sandy checkerboard football lane with thin white field markings, turquoise coping rails, broad side banks, clean colorful studded toy-brick scale. The central lane and the entire flight corridor above it stay open and clear. Replace the dominant tall kelp groves with sunken WOODEN SHIPWRECKS resting firmly in sand and against substantial blue limestone outcrops on both sides of the lane. Ships have recognizable curved chunky hulls, visible ribs and decks, portholes, broken masts, rigging and torn cream sails hanging DOWN from supported spars. A large heavy old anchor lies half buried in the foreground sand, with a short clearly attached chain. Wood uses warm honey, chestnut and deep brown faceted planks, toy-like clean broad bevels and selective square studs matching the map, simple chunky brass accents. Subtle barnacles and modest tufts of amber kelp connect to the preceding chosen Kelp Forest. Clear cyan-blue underwater atmosphere, filtered warm rays from the water surface, small fish schools and a few bubble columns. Complete, readable, hand-modelable high quality Roblox concept rather than photorealism. All grounded scenery has broad complete support; ships are bedded into sand or rocks, no floating rocks, no unsupported half-bases or platforms. Do not place ships, anchors, masts, sails or chains over the lane or across its clear flight corridor. No UI, no typography, no logos. One wide landscape environment image. VARIANT 1 — GALLEON BAY. A bright inviting wreck cove, turquoise shallow water, warm cream sand and golden sunbeams. Two relatively recognizable upright old galleon hulls flank the lane on the wide side banks, one on the foreground left and another farther along on the right, with another small wreck silhouette in the distance. Their hulls are half-filled with sand, their broken masts support a few torn cream sails. Distinct rounded bows and raised sterns are easy to recognize, with alternating pale and dark wooden plank bands. Keep the scenery open and balanced with clear gaps showing blue water between vessels. Low blue rocks, sparse amber kelp and small pink coral accents add contrast. Anchor clearly visible in the right foreground, partly in the sand. Cheerful exploration atmosphere and a broad view down the course."
+    },
+    {
+      "key": "02-wreck-graveyard",
+      "name": "Кладбище кораблей",
+      "prompt": "Edit the supplied approved Ocean Depths Kelp Forest concept into zone 3 of the SAME Roblox game, SUNKEN FLEET. Preserve its elevated three-quarter camera looking along the complete very long straight sandy checkerboard football lane with thin white field markings, turquoise coping rails, broad side banks, clean colorful studded toy-brick scale. The central lane and the entire flight corridor above it stay open and clear. Replace the dominant tall kelp groves with sunken WOODEN SHIPWRECKS resting firmly in sand and against substantial blue limestone outcrops on both sides of the lane. Ships have recognizable curved chunky hulls, visible ribs and decks, portholes, broken masts, rigging and torn cream sails hanging DOWN from supported spars. A large heavy old anchor lies half buried in the foreground sand, with a short clearly attached chain. Wood uses warm honey, chestnut and deep brown faceted planks, toy-like clean broad bevels and selective square studs matching the map, simple chunky brass accents. Subtle barnacles and modest tufts of amber kelp connect to the preceding chosen Kelp Forest. Clear cyan-blue underwater atmosphere, filtered warm rays from the water surface, small fish schools and a few bubble columns. Complete, readable, hand-modelable high quality Roblox concept rather than photorealism. All grounded scenery has broad complete support; ships are bedded into sand or rocks, no floating rocks, no unsupported half-bases or platforms. Do not place ships, anchors, masts, sails or chains over the lane or across its clear flight corridor. No UI, no typography, no logos. One wide landscape environment image. VARIANT 2 — WRECK GRAVEYARD. An atmospheric but colorful and readable fleet graveyard in slightly deeper rich blue/teal water with diagonal turquoise light shafts. More visibly BROKEN ships form an interesting sequence of 3 to 5 grounded fragments along the two side banks: a hull split open to expose thick U-shaped wooden ribs, a detached but firmly grounded bow partly sunk into sand, a leaning broken mast rooted in its hull, and a sand-filled section with a partly visible deck. No enormous intact ship wall blocking the scenery. One huge half-buried dark old anchor in the foreground left creates a strong landmark. Torn cloth banners hang among the rigging, never crossing the playable path. Deep chestnut wood, warm sand and bold blue rock terraces; small amber kelp sprouts among the ribs. Richer, more adventurous submerged wreck silhouettes than variant 1, with all details visible."
+    },
+    {
+      "key": "03-flagship-rest",
+      "name": "Последний флагман",
+      "prompt": "Edit the supplied approved Ocean Depths Kelp Forest concept into zone 3 of the SAME Roblox game, SUNKEN FLEET. Preserve its elevated three-quarter camera looking along the complete very long straight sandy checkerboard football lane with thin white field markings, turquoise coping rails, broad side banks, clean colorful studded toy-brick scale. The central lane and the entire flight corridor above it stay open and clear. Replace the dominant tall kelp groves with sunken WOODEN SHIPWRECKS resting firmly in sand and against substantial blue limestone outcrops on both sides of the lane. Ships have recognizable curved chunky hulls, visible ribs and decks, portholes, broken masts, rigging and torn cream sails hanging DOWN from supported spars. A large heavy old anchor lies half buried in the foreground sand, with a short clearly attached chain. Wood uses warm honey, chestnut and deep brown faceted planks, toy-like clean broad bevels and selective square studs matching the map, simple chunky brass accents. Subtle barnacles and modest tufts of amber kelp connect to the preceding chosen Kelp Forest. Clear cyan-blue underwater atmosphere, filtered warm rays from the water surface, small fish schools and a few bubble columns. Complete, readable, hand-modelable high quality Roblox concept rather than photorealism. All grounded scenery has broad complete support; ships are bedded into sand or rocks, no floating rocks, no unsupported half-bases or platforms. Do not place ships, anchors, masts, sails or chains over the lane or across its clear flight corridor. No UI, no typography, no logos. One wide landscape environment image. VARIANT 3 — REST OF THE FLAGSHIP. A composition led by ONE majestic oversized wrecked captain's flagship on the wide left bank in the middle-to-far third of the course, resting diagonally on a substantial layered blue limestone and sand formation, its weathered golden-brown hull partly open so the deck and broken stern gallery are visible, a tall snapped mast and a partly hanging tattered cream sail. The ship is firmly embedded in the seabed, NOT flying or balancing on a tiny pedestal. On the right bank, lower bow and rib fragments and one broad half-buried anchor leave more blue water visible. A smaller close foreground wreck section with thick hull ribs provides a human-scale entrance. Warm shafts highlight the flagship's amber planks and a few brass portholes, with cooler blue shadows beneath. A dramatic but friendly hero landmark, asymmetric side scenery, ample bright sand and fully clear field. No castle, no temple, no architecture other than actual wooden vessel remains."
+    }
+  ],
+  "selection": {
+    "key": "01-galleon-bay",
+    "name": "Бухта галеонов",
+    "date": "2026-11-04",
+    "userQuote": "первое фото больше нравится"
+  },
+  "construction": {
+    "date": "2026-11-05",
+    "overview": "studio-overview.png",
+    "groundCheck": "studio-ground-check.png",
+    "builder": "RojoTest/src/server/OceanCourseLocations.luau",
+    "assetPack": "Assets/OceanDepths/LocationKit",
+    "studPitch": 1.2
+  },
+  "layoutRevision": {
+    "date": "2026-11-05",
+    "source": "User review of built scene; overrides one-sided concept layout",
+    "description": "One wreck on each bank at different course positions; the right wreck faces the other direction.",
+    "overview": "studio-balanced-overview.png",
+    "rightView": "studio-balanced-right.png"
+  }
+}

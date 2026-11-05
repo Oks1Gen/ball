@@ -76,11 +76,14 @@ function Goal.contact(net: BasePart, start: Vector3, finish: Vector3, lane: numb
 	local sign = if delta.Z > 0 then 1 else -1
 	local ballRadius = BALL_RADIUS
 	local front = -sign * (net.Size.Z / 2 + ballRadius)
-	local alpha = (front - from.Z) / delta.Z
-	if alpha < -0.0001 or alpha > 1.0001 then
+	local distance = (front - from.Z) * sign
+	local travel = math.abs(delta.Z)
+	-- World-space Vector3 rounding can put the end of a short shot just outside the plane.
+	local tolerance = 0.001
+	if distance < -tolerance or distance > travel + tolerance then
 		return nil
 	end
-	alpha = math.clamp(alpha, 0, 1)
+	local alpha = math.clamp(distance / travel, 0, 1)
 	local phase = Config.KickContact + Motion.FlightTime * alpha
 	local position = Motion.position(start, finish, phase, lane)
 	local point = net.CFrame:PointToObjectSpace(position)

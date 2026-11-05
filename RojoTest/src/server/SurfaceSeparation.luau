@@ -16,6 +16,7 @@ function Repair.apply(map: any)
 		retired[tonumber(id)] = true
 	end
 	local changed, missing = 0, 0
+	local auditMissing = {}
 	for ordinal, record in records do
 		-- Explicit ids preserve saved render links after retired-world records are removed.
 		local index = record[7] or ordinal
@@ -64,6 +65,7 @@ function Repair.apply(map: any)
 		end
 		if not target then
 			missing += 1
+			table.insert(auditMissing, index)
 			continue
 		end
 		local render = target:Clone()
@@ -97,6 +99,9 @@ function Repair.apply(map: any)
 		end
 	end
 	if missing > 0 then
+		if game:GetService("RunService"):IsStudio() then
+			map:SetAttribute("SurfaceSeparationAuditMissing", table.concat(auditMissing, ","))
+		end
 		warn("[SurfaceSeparation] " .. map.Name .. ": " .. missing .. " authored parts changed; skipped safely")
 	end
 	return { changed = changed, missing = missing }

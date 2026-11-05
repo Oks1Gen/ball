@@ -1,0 +1,138 @@
+{
+  "date": "2026-11-05",
+  "cleanup": {
+    "reasons": [],
+    "paths": [],
+    "sourceCandidates": 0,
+    "keptPhysicalParts": 1339,
+    "mapCandidates": 0,
+    "candidateParts": 0,
+    "transparentBefore": 1722
+  },
+  "studioGeometry": {
+    "zones": 8,
+    "passed": true,
+    "failures": [],
+    "textures": 8940,
+    "grounded": 444,
+    "walkSamples": 231,
+    "tiers": 394
+  },
+  "preservation": {
+    "deleted": 0,
+    "total": 70605,
+    "changed": 5,
+    "intentionalChanges": "Five existing World2 water-background parts extended; World1, Lobby stations and Coral Reef preserved"
+  },
+  "modelPack": {
+    "blenderModels": 7,
+    "triangles": 4406,
+    "glbRoundTrip": true,
+    "fbxRoundTrip": true,
+    "nativeModels": 7,
+    "nativeInstances": 763,
+    "nativeXmlRoundTrip": true,
+    "effectTemplates": 3,
+    "effectImporterVerified": true
+  },
+  "play": {
+    "zonesVisited": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "lightingByZoneVerified": true,
+    "lightingRestoresInWorld1": true,
+    "streamingWithoutZone01Verified": true,
+    "kelpAndFaunaMove": true,
+    "jellyfishPulse": true,
+    "pearlOpensNearCharacter": true,
+    "mineralClouds": {
+      "enabled": true,
+      "rate": 12,
+      "phaseCaptures": 3
+    },
+    "walk": {
+      "distance": 16.957,
+      "verticalDelta": 0,
+      "health": 100,
+      "floor": "SmoothPlastic"
+    },
+    "updateLog": {
+      "version": "0.4.0",
+      "opened": true,
+      "expanded": true,
+      "creditsReadable": true,
+      "collapsed": true,
+      "scrolledToY": 200,
+      "closed": true
+    },
+    "newOceanRuntimeErrors": 0
+  },
+  "checks": {
+    "command": "node RojoTest/tools/check.mjs",
+    "passed": true,
+    "newTypeErrors": 0,
+    "mobileTested": false
+  },
+  "visualReview": {
+    "score": "4/5",
+    "supportAndComposition": "pass",
+    "remainingArtDifferences": [
+      "Large regular rock faces and repeated terraces are simpler than the concept art",
+      "Kelp leaf ribbons are straighter and more uniform than the concept art"
+    ]
+  },
+  "limitations": [
+    "Studio art preview only: World2 travel, progression and station interactions are not connected",
+    "Shell opens near the character; ball-arrival event is not implemented",
+    "Mobile/device performance is deferred to release preparation",
+    "No game publication performed"
+  ],
+  "balanceRevision": {
+    "date": "2026-11-05",
+    "changedZones": [
+      3,
+      4,
+      6,
+      7
+    ],
+    "reviewedZones": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "untouchedParts": 77572,
+    "untouchedPartsChanged": 0,
+    "untouchedPartsDeleted": 0,
+    "shipsPerBank": [
+      1,
+      1
+    ],
+    "templesPerBank": [
+      1,
+      1
+    ],
+    "chimneysPerBank": [
+      16,
+      16
+    ],
+    "abyssBankRayHits": 66,
+    "abyssBankRayMisses": 0,
+    "rightBankWalkDistance": 16.9609375,
+    "rightBankWalkVerticalDelta": 0,
+    "health": 100,
+    "deepRightTrenchRemoved": true,
+    "exactMirrorLayout": false,
+    "fullChecksPassed": true
+  }
+}

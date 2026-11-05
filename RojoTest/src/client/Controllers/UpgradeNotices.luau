@@ -56,8 +56,7 @@ function UpgradeNotices.mount(context: any)
 		automatic = false,
 		enabled = false,
 		target = function()
-			local map = workspace:FindFirstChild("Map")
-			local lanes = WorldRefs.training(map and map:FindFirstChild("World1"))
+			local lanes = WorldRefs.training(info and WorldRefs.world(info.data.world))
 			local lane = guiding and lanes and lanes:FindFirstChild("TrainingLane" .. guiding)
 			return lane and lane:FindFirstChild("TrainingStrip")
 		end,

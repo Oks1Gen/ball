@@ -13,8 +13,10 @@ local WorldRefs = require(ReplicatedStorage.Shared.WorldRefs)
 local BallPurchases = require(ReplicatedStorage.Shared.BallPurchases)
 local TrainingMotion = require(ReplicatedStorage.Shared.TrainingMotion)
 local Net = require(ReplicatedStorage.Shared.Net)
+local Worlds = require(ReplicatedStorage.Shared.Worlds)
 local LobbyRankings = require(script.Parent.LobbyRankings)
 local AdminService = require(script.Parent.AdminService)
+local Commerce = require(script.Parent.Gameplay.Commerce)
 local FlightStreaming = require(script.Parent.FlightStreaming)
 local Profiles = require(script.Parent.Services.ProfileService)
 local ProfileData = require(ReplicatedStorage.Shared.Core.ProfileData)
@@ -30,11 +32,12 @@ local KickTiming = require(script.Parent.Gameplay.KickTiming)
 local Prompts = require(script.Parent.Gameplay.Prompts)
 local EggInteraction = require(script.Parent.Gameplay.EggInteraction)
 local Lifecycle = require(script.Parent.Gameplay.Lifecycle)
+local WorldTravel = require(script.Parent.Gameplay.WorldTravel)
 
 local Game: any = {}
 local started = false
 
-function Game.start(map)
+function Game.start(map, world2: Instance?)
 	if started then
 		return
 	end
@@ -52,7 +55,7 @@ function Game.start(map)
 	local function laneSet(arena, label: string)
 		local set = {}
 		local zone = WorldRefs.training(arena)
-		for index = 1, 7 do
+		for index in Config.Lanes do
 			local lane = zone and zone:FindFirstChild("TrainingLane" .. index)
 			local pad = lane and lane:FindFirstChild("StartingPad")
 			local strip = lane and lane:FindFirstChild("TrainingStrip")
@@ -68,9 +71,14 @@ function Game.start(map)
 		end
 		return set
 	end
-	local lanes = { [1] = laneSet(map, "World1") }
-	local function arenaFor(_player: Player)
-		return map
+	local arenas = { [1] = map, [2] = world2 }
+	local lanes = {}
+	for index, arena in arenas do
+		lanes[index] = laneSet(arena, arena.Name)
+	end
+	local function arenaFor(player: Player)
+		local state = states[player]
+		return (state and arenas[state.data.world]) or map
 	end
 	local function frameFor(player: Player)
 		return Config.arenaFrame(arenaFor(player))
@@ -127,6 +135,8 @@ function Game.start(map)
 		s.trainingBoostCycle = nil
 		s.trainingBoostOffer = nil
 		s.trainingBoostMultiplier = nil
+		s.trainingPendingBoostCycle = nil
+		s.trainingPendingBoostMultiplier = nil
 		s.trainingLevelsGained = nil
 		s.nextTraining = nil
 		s.trainingHit = nil
@@ -149,7 +159,7 @@ function Game.start(map)
 		hum.AutoRotate = false
 	end
 	local function laneEntry(s: any, index: number)
-		local set = s.lanes and s.lanes[1]
+		local set = s.lanes and s.lanes[s.data.world]
 		return set and set[index]
 	end
 	local function startTraining(player: Player, index: number)
@@ -173,6 +183,8 @@ function Game.start(map)
 		s.trainingBoostCycle = nil
 		s.trainingBoostOffer = nil
 		s.trainingBoostMultiplier = nil
+		s.trainingPendingBoostCycle = nil
+		s.trainingPendingBoostMultiplier = nil
 		s.trainingLevelsGained = 0
 		s.trainingHit = 1
 		s.trainingCycle = 0
@@ -260,8 +272,12 @@ function Game.start(map)
 			* BallPurchases.power(d)
 			* (d.perks.DoubleSkill and 2 or 1)
 			* (1 + state.friends * 0.1)
+			* Worlds[d.world].reward
 	end
 	local function inKickZone(player)
+		if player:GetAttribute("AdminFlight") == true or player:GetAttribute("DevPreviewWorld") ~= nil then
+			return false
+		end
 		local p, h = rootFor(player)
 		if not p or not h or h.Health <= 0 then
 			return false
@@ -322,12 +338,18 @@ function Game.start(map)
 		local s = states[player]
 		local d = s.data
 		local egg = Config.find(Config.Eggs, id)
-		if not egg then
+		local arena = arenas[d.world]
+		if not egg or not arena then
 			return
 		end
 		local amount = count == 3 and 3 or 1
 		if testing then
 			assert(require(script.Parent.AdminAccess).isAuthorized(player.UserId), "Admin hatch requires authorization")
+		elseif not s.purchasePolicyReady then
+			publish(player, "Checking egg availability. Please try again shortly.")
+			return
+		elseif player:GetAttribute("DevPreviewWorld") ~= nil or player:GetAttribute("AdminFlight") == true then
+			return
 		end
 		if os.clock() < s.busyUntil then
 			publish(player, "Wait for your throw to finish")
@@ -337,7 +359,7 @@ function Game.start(map)
 			publish(player, "Pet storage full (60). Delete a pet first.")
 			return
 		end
-		local cost = testing and 0 or egg.cost
+		local cost = if testing then 0 else Config.eggCost(egg, d.world)
 		if d.wins < cost * amount then
 			publish(player, "Need " .. Config.format(cost * amount) .. " Wins")
 			return
@@ -348,7 +370,7 @@ function Game.start(map)
 				publish(player, "Wait for your character to respawn")
 				return
 			end
-			local destination = EggInteraction.destination(arenaFor(player), id, standingHeight(root, hum))
+			local destination = EggInteraction.destination(arena, id, standingHeight(root, hum))
 			if not destination then
 				publish(player, "This egg is unavailable right now")
 				return
@@ -362,12 +384,12 @@ function Game.start(map)
 		d.wins -= cost * amount
 		local hatched = {}
 		for _ = 1, amount do
-			local chosen = Config.rollEggPet(id)
+			local chosen = if s.paidRandomRestricted then Config.eggPets(id)[1] else Config.rollEggPet(id)
 			local pet = {
 				uid = HttpService:GenerateGUID(false),
 				id = chosen.id,
 				name = chosen.name,
-				boost = chosen.boost * egg.boost,
+				boost = Config.eggPetBoost(egg, chosen.boost, d.world),
 				rarity = chosen.rarity,
 			}
 			table.insert(d.pets, pet)
@@ -453,6 +475,7 @@ function Game.start(map)
 	local function claimPending(player: Player)
 		Receipts.claimPending(receiptContext, player)
 	end
+	local commerce = Commerce.new({ states = states, save = save, publish = publish, effect = effect })
 	Commands.install({
 		action = action,
 		effect = effect,
@@ -466,6 +489,18 @@ function Game.start(map)
 		equipBest = equipBest,
 		stopTraining = stopTraining,
 		claimPending = claimPending,
+		promptPurchase = function(player: Player, key: string)
+			commerce:prompt(player, key)
+		end,
+		travelWorld = WorldTravel.build({
+			states = states,
+			arenas = arenas,
+			rootFor = rootFor,
+			stopTraining = stopTraining,
+			publish = publish,
+			save = save,
+			effect = effect,
+		}),
 	})
 	Receipts.install(receiptContext)
 	Prompts.install({
@@ -477,7 +512,7 @@ function Game.start(map)
 		stopTraining = stopTraining,
 		arenaFor = arenaFor,
 		rootFor = rootFor,
-	}, map)
+	}, map, world2)
 	-- The training lanes are cached once per arena: the hot loop then reads a
 	-- ready reference instead of walking the arena tree on every tick.
 	Training.run({
@@ -507,6 +542,9 @@ function Game.start(map)
 		FlightStreaming = FlightStreaming,
 		lanes = lanes,
 		claimPending = claimPending,
+		restorePurchases = function(player: Player)
+			commerce:restore(player)
+		end,
 	}
 	local function setup(player)
 		Session.setup(sessionContext, player)
@@ -538,7 +576,7 @@ function Game.start(map)
 		admin = admin,
 		FlightStreaming = FlightStreaming,
 	})
-	LobbyRankings.start(map, states)
+	LobbyRankings.start(map, states, world2)
 	print("StoneSkipping ready: 7 lanes, 8 biomes, pets, trails, gifts, rebirths")
 end
 

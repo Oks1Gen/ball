@@ -4,6 +4,7 @@ local world = workspace.Map.World1
 local relative = world:GetAttribute("WorldScale") / 0.8
 local PITCH, CELL, TILE = 1.6 * relative, 3.2 * relative, 6.4 * relative
 local sources = game.ServerScriptService.Server
+local HDStuds = require(sources.HDStuds)
 local paletteModule = sources.LobbyPalette:Clone()
 paletteModule.Parent = game.ServerStorage
 local palette = require(paletteModule)
@@ -35,20 +36,9 @@ for _, name in { "SideTerraces1", "SideTerraces2", "RearTerraces", "EntranceTunn
 			assert(math.abs(component(p.Size, axis) - palette.WallCheckerDepth) < 0.00001, "Facade protrudes")
 			local plane = component(p.Position, axis) - sign * component(p.Size, axis) / 2
 			assert(math.abs(plane - group:GetAttribute("Plane")) < 0.001, "Skin is detached from wall")
-			local textures = 0
-			for _, t in p:GetChildren() do
-				if t:IsA("Texture") then
-					textures += 1
-					assert(t.Name == "WallStuds" and t.Texture == palette.Studs, "Wrong wall texture")
-					assert(
-						math.abs(t.StudsPerTileU - TILE) < 0.001 and math.abs(t.StudsPerTileV - TILE) < 0.001,
-						"Studs stretched or wrongly scaled"
-					)
-					assert(t.OffsetStudsU == 0 and t.OffsetStudsV == 0, "Cut stud phase")
-					assert(math.abs(t.Transparency - palette.StudsTransparency) < 0.001, "Wrong stud visibility")
-				end
-			end
-			assert(textures == 1, "Duplicate or missing stud layer")
+			local variant = HDStuds.variant(p.Material, TILE)
+			assert(variant and p.MaterialVariant == variant.Name, "Missing HD Studs on wall")
+			assert(not p:FindFirstChildWhichIsA("Texture"), "Duplicate wall texture")
 			local a, b = component(p.Size, u), component(p.Size, v)
 			if isCap or p.Name == "WallEdge" then
 				assert(p.Name == "CapSurface" or p.Name == "WallEdge")

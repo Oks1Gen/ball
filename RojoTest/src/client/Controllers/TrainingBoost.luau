@@ -55,7 +55,7 @@ function Boost.mount(context: any)
 	local alive = true
 	local visible = false
 	local lastPosition = UDim2.new()
-	local acceptedCycle: number? = nil
+	local acceptedCycles: { [number]: boolean } = {}
 	local size = 144
 	local goal: Vector2? = nil
 	local placementReady = false
@@ -119,7 +119,7 @@ function Boost.mount(context: any)
 			if not alive or not current or info.seed ~= current.seed or info.started ~= current.started then
 				return
 			end
-			acceptedCycle = info.cycle
+			acceptedCycles[info.cycle] = true
 			if info.offer == offer then
 				consumed = true
 				hide()
@@ -136,13 +136,18 @@ function Boost.mount(context: any)
 			local reset = not current or current.started ~= state.started or current.seed ~= state.seed
 			if reset then
 				offer = -1
-				acceptedCycle = nil
+				table.clear(acceptedCycles)
 				consumed = false
 				feedback.clear()
 				collect.clear()
 				placementReady = false
 			end
 			current = state
+			for cycle in acceptedCycles do
+				if cycle < state.cycle then
+					acceptedCycles[cycle] = nil
+				end
+			end
 			local camera = workspace.CurrentCamera
 			local character = Players.LocalPlayer.Character
 			local characterRoot = character and character:FindFirstChild("HumanoidRootPart")
@@ -161,7 +166,7 @@ function Boost.mount(context: any)
 				feedback.clear()
 				collect.clear()
 				placementReady = false
-				return acceptedCycle == state.cycle
+				return acceptedCycles[state.cycle] == true
 			end
 			local viewport = camera.ViewportSize
 			local small = Input.TouchEnabled or viewport.Y < 600
@@ -176,7 +181,7 @@ function Boost.mount(context: any)
 			local age = Rules.age(state.started, nextOffer, workspace:GetServerTimeNow())
 			if nextOffer < 0 or age < 0 or age >= Rules.Lifetime then
 				hide()
-				return acceptedCycle == state.cycle
+				return acceptedCycles[state.cycle] == true
 			end
 			if nextOffer ~= offer then
 				offer = nextOffer
@@ -195,7 +200,7 @@ function Boost.mount(context: any)
 			end
 			if consumed then
 				hide()
-				return acceptedCycle == state.cycle
+				return acceptedCycles[state.cycle] == true
 			end
 			local safe = GuiService:GetInsetArea(Enum.ScreenInsets.DeviceSafeInsets)
 			local margin = size * 0.62 + 8
@@ -223,7 +228,7 @@ function Boost.mount(context: any)
 			end
 			if not goal then
 				hide()
-				return acceptedCycle == state.cycle
+				return acceptedCycles[state.cycle] == true
 			end
 			x = goal.X
 			local y = -size + (goal.Y + size) * fallValue
@@ -237,11 +242,11 @@ function Boost.mount(context: any)
 			setReady(age >= Rules.TravelTime)
 			gui:SetAttribute("Offer", offer)
 			gui:SetAttribute("Multiplier", Rules.offer(state.seed, offer).multiplier)
-			return acceptedCycle == state.cycle
+			return acceptedCycles[state.cycle] == true
 		end,
 		clear = function()
 			current = nil
-			acceptedCycle = nil
+			table.clear(acceptedCycles)
 			offer = -1
 			consumed = false
 			hide()

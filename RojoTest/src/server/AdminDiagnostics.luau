@@ -114,9 +114,11 @@ function Diagnostics.run(map: Construction.World)
 	check("Финальный стадион Football City", function()
 		local refs = require(game.ReplicatedStorage.Shared.WorldRefs)
 		local course = refs.course(map)
-		local root = course.Zones.Zone08.Environment:FindFirstChild("Cityscape")
+		local zone = course.Zones.Zone08
+		local root = zone.Environment:FindFirstChild("Cityscape")
+		local landmark = if zone:GetAttribute("VoxelStyleVersion") then "ChampionshipTower" else "ChampionshipFinish"
 		assert(
-			root and root:FindFirstChild("ChampionshipFinish") and refs.finish(map),
+			root and root:FindFirstChild(landmark) and refs.finish(map),
 			"Нет стадиона или точки финиша"
 		)
 		return "Стадион и конечная точка удара на месте"

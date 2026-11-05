@@ -20,6 +20,7 @@ Config.BallDiameter = 1.1
 Config.ShotStartLocal = Vector3.new(-115.6, 1.27, 0.3)
 Config.WorldShotProgression = {
 	[1] = { requiredPower = 1000000, routeStuds = 2592 },
+	[2] = { requiredPower = 100000000, routeStuds = 2592 },
 }
 Config.RebirthBaseSkill = Economy.RebirthBaseSkill
 Config.RebirthSkillGrowth = Economy.RebirthSkillGrowth
@@ -64,9 +65,9 @@ function Config.trainingSurface(lane: any): number
 	local strip = lane.TrainingStrip
 	return strip.Position.Y + strip.Size.Y / 2 + (lane:FindFirstChild("ImportedField") and 0.08 or 0)
 end
-function Config.shotLimit(_world, arena, startPosition: Vector3?)
-	local definition = Config.WorldShotProgression[1]
-	arena = arena or (workspace:FindFirstChild("Map") and workspace.Map:FindFirstChild("World1"))
+function Config.shotLimit(world, arena, startPosition: Vector3?)
+	local definition = Config.WorldShotProgression[world] or Config.WorldShotProgression[1]
+	arena = arena or WorldRefs.world(world or 1)
 	local field = WorldRefs.field(arena, 8)
 	if field then
 		local frame = Config.arenaFrame(arena)
@@ -81,11 +82,11 @@ function Config.shotLimit(_world, arena, startPosition: Vector3?)
 	-- Seven studs of endpoint setback and the existing launch offset of 0.3 studs.
 	return math.floor((definition.routeStuds - 7 - 0.3) * Config.DistancePerStud)
 end
-function Config.shotDistance(skill, power, world, arena)
-	local definition = Config.WorldShotProgression[1]
+function Config.shotDistance(skill, power, world, arena, startPosition: Vector3?)
+	local definition = Config.WorldShotProgression[world] or Config.WorldShotProgression[1]
 	-- Rebirths and pets already increase earned Skill; do not multiply them again.
 	local ratio = Economy.shotRatio(skill, power, definition.requiredPower)
-	local limit = Config.shotLimit(world, arena)
+	local limit = Config.shotLimit(world, arena, startPosition)
 	return Economy.shotDistance(ratio, limit)
 end
 function Config.shotDuration(distance: number, _world: number?, intensity: number?): number
@@ -361,6 +362,15 @@ Config.Eggs = {
 	{ id = "Rare", name = "Rare Egg", cost = 5000, boost = 5, color = C(81, 195, 255), x = -130, z = 160 },
 	{ id = "Rainbow", name = "Rainbow Egg", cost = 40000, boost = 15, color = C(255, 130, 231), x = -155, z = 160 },
 }
+
+function Config.eggCost(egg: { cost: number }, world: number): number
+	return egg.cost * (if world == 2 then 10 else 1)
+end
+
+function Config.eggPetBoost(egg: { boost: number }, petBoost: number, world: number): number
+	return petBoost * egg.boost * (if world == 2 then 3 else 1)
+end
+
 Config.Gifts = {
 	{ time = 60, wins = 100, skill = 50 },
 	{ time = 180, wins = 500, skill = 150 },
@@ -369,23 +379,7 @@ Config.Gifts = {
 	{ time = 900, wins = 10000, skill = 5000 },
 	{ time = 1800, wins = 50000, skill = 25000 },
 }
--- Set actual IDs after creating products in this experience's Creator Dashboard.
-type Product = { id: number, price: number?, skill: number?, trainingBoost: number? }
-local products: { [string]: Product } = {
-	TrainingBoost67 = { id = 0, trainingBoost = 67 },
-	TrainingBoost69 = { id = 0, trainingBoost = 69 },
-	TrainingBoost144 = { id = 0, trainingBoost = 144 },
-	AutoThrow = { id = 0, price = 25 },
-	DoubleSkill = { id = 0, price = 5 },
-	DoubleWins = { id = 0, price = 59 },
-	Skill10M = { id = 0, price = 25, skill = 10000000 },
-	Skill100M = { id = 0, price = 95, skill = 100000000 },
-	Skill1B = { id = 0, price = 185, skill = 1000000000 },
-	StarterPack = { id = 0, price = 99 },
-	SkipRebirth = { id = 0, price = 49 },
-	AdminEgg = { id = 0, price = 175 },
-}
-Config.Products = products
+Config.Products = require("./CommerceCatalog")
 
 function Config.find(list, id)
 	for _, item in list do

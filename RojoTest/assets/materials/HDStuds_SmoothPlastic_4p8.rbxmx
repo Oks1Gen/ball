@@ -1,0 +1,12 @@
+<roblox version="4">
+  <Item class="MaterialVariant" referent="RBX3">
+    <Properties>
+      <string name="Name">HDStuds_SmoothPlastic_4p8</string>
+      <token name="BaseMaterial">272</token>
+      <Content name="ColorMap"><url>rbxassetid://120693636759409</url></Content>
+      <Content name="NormalMap"><url>rbxassetid://126277949962862</url></Content>
+      <float name="StudsPerTile">4.8</float>
+      <token name="MaterialPattern">0</token>
+    </Properties>
+  </Item>
+</roblox>

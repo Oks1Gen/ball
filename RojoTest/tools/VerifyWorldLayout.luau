@@ -51,10 +51,14 @@ function Verify.compare(): any
 end
 
 function Verify.run(): any
-	local worlds, displays, fields, lanes, eggs = 0, 0, 0, 0, 0
+	local worlds, displays, fields, lanes, eggs, oceanDividers = 0, 0, 0, 0, 0, 0
+	local running = game:GetService("RunService"):IsRunning()
+	local paired = Refs.world(2) ~= nil
 	for _, world in workspace.Map:GetChildren() do
+		local ocean = world.Name == "World2" and world:GetAttribute("OceanDepthsPreview") == true
 		assert(
-			world:GetAttribute("WorldLayoutVersion") == 1 and world:GetAttribute("WorldLayoutReady"),
+			world:GetAttribute("WorldLayoutReady")
+				and (ocean or (world.Name == "World1" and world:GetAttribute("WorldLayoutVersion") == 1)),
 			"Layout not ready"
 		)
 		for _, node in world:GetChildren() do
@@ -73,12 +77,30 @@ function Verify.run(): any
 			assert(ball:GetAttribute("BallId") == item.id, "Wrong ball")
 			assert(ball.DisplayLabel.Value == label, "Detached label")
 			assert(label:FindFirstChildWhichIsA("BillboardGui"), "Missing label GUI")
-			assert(display.PurchaseAnchor:FindFirstChildWhichIsA("ProximityPrompt"), "Missing purchase prompt")
+			assert(display:FindFirstChild("PurchaseAnchor"), "Missing purchase anchor")
+			if not ocean or running then
+				assert(display.PurchaseAnchor:FindFirstChildWhichIsA("ProximityPrompt"), "Missing purchase prompt")
+			end
 			displays += 1
 		end
 		for i = 1, 8 do
 			assert(Refs.field(world, i), "Missing field")
 			fields += 1
+		end
+		if ocean and running then
+			for i = 1, 7 do
+				local boundary = assert(Refs.boundaries(world):FindFirstChild("Boundary" .. i))
+				local wall = boundary.Wall
+				local field, following = Refs.field(world, i), Refs.field(world, i + 1)
+				local back = field.Position + field.CFrame.LookVector * field.Size.Z / 2
+				local front = following.Position - following.CFrame.LookVector * following.Size.Z / 2
+				assert(math.abs(wall.Position.Z - back:Lerp(front, 0.5).Z) < 0.01, "Divider off the seam")
+				assert(wall.Transparency == 0.5 and wall.Size.Y >= 30, "Divider style differs from World1")
+				assert(wall.Anchored and not wall.CanCollide and not wall.CanTouch and not wall.CanQuery)
+				assert(boundary:GetAttribute("FromZone") == Refs.zone(world, i):GetAttribute("BiomeName"))
+				assert(boundary:GetAttribute("ToZone") == Refs.zone(world, i + 1):GetAttribute("BiomeName"))
+				oceanDividers += 1
+			end
 		end
 		for i = 1, 7 do
 			local lane = Refs.training(world):FindFirstChild("TrainingLane" .. i)
@@ -86,16 +108,33 @@ function Verify.run(): any
 				lane and lane:FindFirstChild("StartingPad") and lane:FindFirstChild("TrainingStrip"),
 				"Broken training lane"
 			)
+			if running then
+				assert(lane.GoalSignAnchor.TrainingLaneSign:HasTag("TrainingLaneSign"), "Missing live lane sign")
+			end
 			lanes += 1
 		end
 		for _, egg in Config.Eggs do
 			local model = Refs.eggs(world):FindFirstChild("Egg_" .. egg.id)
-			assert(model and model:FindFirstChild("EggShell"), "Missing egg")
+			local shell = model and model:FindFirstChild("EggShell")
+			assert(shell, "Missing egg")
+			if running then
+				assert(shell:FindFirstChildWhichIsA("ProximityPrompt", true), "Missing egg prompt")
+			end
 			eggs += 1
 		end
-		assert(world.Name == "World1" and Refs.kickZoneFloor(world), "Missing remaining world/launch")
+		assert(Refs.kickZoneFloor(world), "Missing launch")
 		assert(not world.Lobby:FindFirstChild("Portal"), "Retired portal remains")
-		assert(Refs.volcanic(world).InteractionAnchor, "Missing special egg")
+		local specialEgg = assert(Refs.volcanic(world).InteractionAnchor, "Missing special egg")
+		if running then
+			assert(specialEgg:FindFirstChildWhichIsA("ProximityPrompt", true), "Missing special egg prompt")
+		end
+		if paired then
+			assert(Refs.portal(world), "Missing world portal")
+			if running then
+				local zone = assert(Refs.portalZone(world), "Missing portal zone")
+				assert(zone.Anchored and not zone.CanCollide and not zone.CanTouch and not zone.CanQuery)
+			end
+		end
 		local rankings = Refs.rankings(world)
 		if rankings then
 			for _, name in { "skill", "wins", "best" } do
@@ -115,7 +154,14 @@ function Verify.run(): any
 		end
 		worlds += 1
 	end
-	return { worlds = worlds, displays = displays, fields = fields, lanes = lanes, eggs = eggs }
+	return {
+		worlds = worlds,
+		displays = displays,
+		fields = fields,
+		lanes = lanes,
+		eggs = eggs,
+		oceanDividers = oceanDividers,
+	}
 end
 
 -- Work on an unparented disposable copy; the authored scene stays untouched.

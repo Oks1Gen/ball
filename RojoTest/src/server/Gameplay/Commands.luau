@@ -1,7 +1,6 @@
 --!strict
 -- The Action remote carries player intents only. Every price, reward and
 -- requirement is decided here on the server from the authoritative state.
-local MarketplaceService = game:GetService("MarketplaceService")
 local Net = require(game.ReplicatedStorage.Shared.Net)
 local Config = require(game.ReplicatedStorage.Shared.GameConfig)
 local BallPurchases = require(game.ReplicatedStorage.Shared.BallPurchases)
@@ -24,6 +23,8 @@ export type Context = {
 	equipBest: (any) -> (),
 	stopTraining: (Player, boolean?) -> (),
 	claimPending: (Player) -> (),
+	promptPurchase: (Player, string) -> (),
+	travelWorld: (Player, number) -> (),
 	rootFor: (Player) -> (any, any),
 	effect: RemoteEvent,
 }
@@ -56,6 +57,8 @@ function Commands.install(context: Context)
 			context.publish(player, nil, true)
 		elseif command == "Throw" then
 			context.kickTiming.begin(player)
+		elseif command == "TravelWorld" then
+			context.travelWorld(player, value)
 		elseif command == "TutorialRestart" then
 			Tutorial.restart(s.data)
 			context.publish(player)
@@ -194,20 +197,7 @@ function Commands.install(context: Context)
 			end
 			context.publish(player)
 		elseif command == "Product" and type(value) == "string" then
-			local product = Config.Products[value]
-			if not product then
-				context.publish(player, "Unknown product")
-				return
-			end
-			if s.data.perks[value] then
-				context.publish(player, "Already owned")
-				return
-			end
-			if product.id == 0 then
-				context.publish(player, "This purchase is not available yet")
-			else
-				MarketplaceService:PromptProductPurchase(player, product.id)
-			end
+			context.promptPurchase(player, value)
 		elseif command == "UnlockAuto" then
 			if s.data.perks.AutoThrow then
 				s.auto = not s.auto

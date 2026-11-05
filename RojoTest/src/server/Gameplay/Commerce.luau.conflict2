@@ -1,0 +1,150 @@
+--!strict
+-- Ownership and policy are server-owned; the client only opens native checkout.
+local Players = game:GetService("Players")
+local Marketplace = game:GetService("MarketplaceService")
+local PolicyService = game:GetService("PolicyService")
+local Config = require(game.ReplicatedStorage.Shared.GameConfig)
+local PassRewards = require(game.ReplicatedStorage.Shared.Core.PassRewards)
+local Commerce = {}
+Commerce.__index = Commerce
+
+export type Context = {
+	states: { [Player]: any },
+	save: (Player, boolean?, string?) -> boolean,
+	publish: (Player, string?) -> (),
+	effect: RemoteEvent,
+}
+
+function Commerce.new(context: Context)
+	local self = setmetatable({ context = context }, Commerce)
+	Marketplace.PromptGamePassPurchaseFinished:Connect(function(player, passId, purchased)
+		if not purchased then
+			return
+		end
+		local state = context.states[player]
+		if not state then
+			return -- Ownership is restored when the profile is ready or on next join.
+		end
+		for key, item in Config.Products do
+			if item.kind == "GamePass" and item.id == passId then
+				state.passOwnership = state.passOwnership or {}
+				state.passOwnership[key] = true
+				if PassRewards.apply(state.data, key) then
+					context.save(player, false)
+				end
+				context.publish(player, item.name .. " unlocked!")
+				break
+			end
+		end
+	end)
+	return self
+end
+
+function Commerce.owns(self: any, player: Player, key: string, refresh: boolean?): boolean?
+	local state = self.context.states[player]
+	local item = Config.Products[key]
+	if not state or not item or item.kind ~= "GamePass" then
+		return nil
+	end
+	state.passOwnership = state.passOwnership or {}
+	if state.passOwnership[key] == true or (state.passOwnership[key] ~= nil and not refresh) then
+		return state.passOwnership[key]
+	end
+	for attempt = 1, 3 do
+		local ok, owned = pcall(function()
+			return Marketplace:UserOwnsGamePassAsync(player.UserId, item.id)
+		end)
+		if self.context.states[player] ~= state or player.Parent ~= Players then
+			return nil
+		end
+		-- A completed prompt can arrive while the ownership request yields.
+		if state.passOwnership[key] == true then
+			return true
+		end
+		if ok then
+			state.passOwnership[key] = owned
+			return owned
+		end
+		if attempt < 3 then
+			task.wait(attempt)
+		end
+	end
+	warn("[Ball purchases] Game pass ownership is temporarily unavailable: " .. key)
+	return nil -- Never cache a failed request as not owned.
+end
+
+function Commerce.restore(self: any, player: Player)
+	local state = self.context.states[player]
+	if not state then
+		return
+	end
+	-- Wins are obtainable through Starter Pack, so random Wins eggs must obey
+	-- each player's paid-random-item policy. The guaranteed Admin Dragon is separate.
+	for attempt = 1, 3 do
+		local ok, policy = pcall(function()
+			return PolicyService:GetPolicyInfoForPlayerAsync(player)
+		end)
+		if self.context.states[player] ~= state or player.Parent ~= Players then
+			return
+		end
+		if ok and type(policy.ArePaidRandomItemsRestricted) == "boolean" then
+			state.paidRandomRestricted = policy.ArePaidRandomItemsRestricted
+			state.purchasePolicyReady = true
+			self.context.publish(player)
+			break
+		end
+		if attempt < 3 then
+			task.wait(attempt)
+		else
+			warn("[Ball purchases] Purchase policy unavailable; random eggs remain unavailable")
+		end
+	end
+	for key, item in Config.Products do
+		if item.kind == "GamePass" then
+			local owned = self:owns(player, key)
+			if self.context.states[player] ~= state then
+				return
+			end
+			if owned and PassRewards.apply(state.data, key) then
+				self.context.save(player, false)
+				self.context.publish(player)
+			end
+		end
+	end
+end
+
+function Commerce.prompt(self: any, player: Player, key: string)
+	local context = self.context
+	local state = context.states[player]
+	local item = Config.Products[key]
+	if not state or not item or item.id <= 0 then
+		return
+	end
+	local now = os.clock()
+	if state.purchaseRequestAt and now - state.purchaseRequestAt < 2 then
+		return
+	end
+	state.purchaseRequestAt = now
+	if item.kind == "GamePass" then
+		if PassRewards.owned(state.data, key, item.kind) then
+			context.publish(player, "Already owned")
+			return
+		end
+		local owned = self:owns(player, key, true)
+		if context.states[player] ~= state then
+			return
+		end
+		if owned == nil then
+			context.publish(player, "Could not check ownership. Please try again.")
+			return
+		elseif owned then
+			PassRewards.apply(state.data, key)
+			context.save(player, false)
+			context.publish(player, "Already owned")
+			return
+		end
+	end
+	context.effect:FireClient(player, "PurchasePrompt", key)
+end
+
+return Commerce

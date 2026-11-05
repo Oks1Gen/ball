@@ -4,6 +4,7 @@
 -- sizes and scrolls vertically inside the same window chrome.
 local Kit = require(script.Parent.HudKit)
 local Config = require(game.ReplicatedStorage.Shared.GameConfig)
+local MarketplaceCatalog = require(script.Parent.Parent.Modules.MarketplaceCatalog)
 local BallCardArt = require(script.Parent.Parent.Modules.BallCardArt)
 local UIAssets = require(script.Parent.Parent.UIAssets)
 local UserInputService = game:GetService("UserInputService")
@@ -14,6 +15,7 @@ local GuiInsets = require(script.Parent.Parent.Modules.GuiInsets)
 local Presentation = require(script.Parent.Parent.Modules.UiPresentation)
 local ReturnRewardPanels = require(script.Parent.ReturnRewardPanels)
 local UpdateLogView = require(script.Parent.UpdateLogView)
+local WorldsView = require(script.Parent.WorldsView)
 
 local Panels = {}
 local C = Color3.fromRGB
@@ -66,7 +68,7 @@ function Panels.mount(context: Context): Handle
 	end
 
 	-- A padded group keeps the whole window centred, including its chrome.
-	local function shell(name: string, kind: string, width: number, height: number, fitWhole: boolean?): Frame
+	local function shell(name: string, kind: string?, width: number, height: number, fitWhole: boolean?): Frame
 		local phone, area = phoneArea()
 		phone = phone and not fitWhole
 		local originalHeight = height
@@ -110,9 +112,11 @@ function Panels.mount(context: Context): Handle
 		headingLimit.MinTextSize = 24
 		headingLimit.MaxTextSize = phone and 34 or 63
 		headingLimit.Parent = heading
-		local cornerIcon = Kit.icon(modal, kind, 0, 0, phone and 64 or 100, phone and 64 or 100)
-		cornerIcon.AnchorPoint = Vector2.new(0.5, 0.5)
-		cornerIcon.ZIndex = 10
+		if kind then
+			local cornerIcon = Kit.icon(modal, kind, 0, 0, phone and 64 or 100, phone and 64 or 100)
+			cornerIcon.AnchorPoint = Vector2.new(0.5, 0.5)
+			cornerIcon.ZIndex = 10
+		end
 		local canvasScale = math.max(0.01, canvas.AbsoluteSize.X / canvas.Size.X.Offset)
 		local closeSize = if fitWhole then math.max(60, math.ceil(44 / canvasScale)) else phone and 44 or 60
 		local close = Kit.button(
@@ -497,6 +501,12 @@ function Panels.mount(context: Context): Handle
 		refresh = function()
 			local snapshot = context.snapshot()
 			if snapshot then
+				local skipButton = modal:FindFirstChild("SkipRebirth")
+				local skipCaption = skipButton and Kit.captionOf(skipButton)
+				if skipCaption then
+					skipCaption.Text = "Skip • " .. MarketplaceCatalog.label("SkipRebirth")
+					skipCaption.TextSize = 19
+				end
 				local currentBefore = Kit.captionOf(before)
 				if currentBefore then
 					currentBefore.Text = "×" .. (snapshot.data.rebirths + 1) .. "\nSKILL"
@@ -742,6 +752,11 @@ function Panels.mount(context: Context): Handle
 				openSettings()
 			elseif name == "UpdateLog" then
 				openUpdateLog()
+			elseif name == "Worlds" then
+				begin(name)
+				local modal = shell("Worlds", nil, 744, 455, true)
+				refresh = WorldsView.mount(modal, context)
+				assert(refresh)()
 			elseif name == "Rebirth" then
 				openRebirth()
 			elseif name == "Inventory" then

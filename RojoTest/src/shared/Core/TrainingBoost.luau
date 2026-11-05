@@ -64,4 +64,23 @@ function Boost.takeCharge(data: any): number?
 	return nil
 end
 
+-- A future free offer must not replace the multiplier of a kick in progress.
+-- Activate it only on that cycle's first contact; paid charges wait their turn.
+function Boost.beginCycle(state: any, cycle: number): number?
+	if state.trainingBoostCycle == cycle then
+		return nil
+	end
+	local multiplier
+	if state.trainingPendingBoostCycle == cycle then
+		multiplier = state.trainingPendingBoostMultiplier
+		state.trainingPendingBoostCycle = nil
+		state.trainingPendingBoostMultiplier = nil
+	else
+		multiplier = Boost.takeCharge(state.data)
+	end
+	state.trainingBoostCycle = if multiplier then cycle else nil
+	state.trainingBoostMultiplier = multiplier
+	return multiplier
+end
+
 return Boost

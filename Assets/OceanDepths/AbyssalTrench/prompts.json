@@ -1,0 +1,78 @@
+{
+  "location": "Abyssal Trench",
+  "date": "2026-11-05",
+  "generator": "Built-in image_gen",
+  "reference": "Assets/OceanDepths/KelpForest/03-amber-grove.png",
+  "inspectedReferences": [
+    "Assets/OceanDepths/KelpForest/03-amber-grove.png",
+    "Assets/OceanDepths/SunkenFleet/01-galleon-bay.png",
+    "Assets/OceanDepths/KelpForest/coral-reef-reference.png"
+  ],
+  "selection": {
+    "key": "03-abyss-amphitheatre",
+    "name": "Амфитеатр бездны",
+    "date": "2026-11-05",
+    "userQuote": "3 — Амфитеатр бездны"
+  },
+  "status": "Concept selected, construction pending separate user instruction",
+  "variants": [
+    {
+      "key": "01-cliff-lanterns",
+      "name": "Огни у обрыва",
+      "prompt": "Use case: stylized-concept. Create ONE polished wide landscape concept image for Roblox Ball Ocean Depths, a single whole scene not a collage. Input image 1 is reference only for broad long straight football lane proportions, elevated three-quarter camera, clean toy-brick faceted handmade 3D style. Keep that generously WIDE uninterrupted lane running from large lower foreground towards distant upper right, thin pale football markings, subtle cream/sand checker surface with small orderly square studs, turquoise edges. Clear central path and huge open flight airspace above it. This is ABYSSAL TRENCH underwater deep ocean, dangerous depth yet colorful readable family-friendly game art. Blue-black abyss beyond substantial continuous rocky landform UNDER the lane, no floating road, no detached floating boulders. Rock and land objects sit fully on visible supporting rock. Dark navy faceted block rocks with square studs where appropriate, cyan blue ambient light renders the lane and rock contour clearly, sparse tiny warm anglerfish lamps in outer water, silhouette of huge squid distant BEHIND side rocks away from lane. No text, logos, UI, border, characters, photoreal scans, horror, black unreadable image. Distinct composition: an asymmetrical long ledge attached to a monumental tall rocky cliff on LEFT, while RIGHT beyond a low rocky shoulder drops steeply into deep black-blue open abyss. Show foreground right cliff face descending far down below lane as part of continuous bedrock, lane never suspended. One huge octopus-like squid silhouette emerges in deep right background behind rock outcrops, tentacles confined to distant open water. Sparse warm anglerfish lures hang beyond right edge, an occasional grounded cyan luminous anemone on wide side terraces. Navy, cobalt, restrained violet shadow, cyan rim light, cream playing surface. Scenic readable composition, light falls from upper left but no visible bright surface.",
+      "image": "01-cliff-lanterns.png",
+      "description": "Высокая тёмно-синяя стена слева, правый край цельной каменной полки обрывается в открытую бездну. Редкие огни удильщиков подчёркивают глубину; кальмар читается в дальнем правом фоне. Янтарные водоросли и голубые анемоны связывают оформление с Ocean Depths.",
+      "palette": [
+        "navy",
+        "cobalt",
+        "cyan",
+        "cream",
+        "amber"
+      ]
+    },
+    {
+      "key": "02-twin-walls",
+      "name": "Стены глубины",
+      "prompt": "Use case: stylized-concept. Create ONE polished wide landscape concept image for Roblox Ball Ocean Depths, a single whole scene not a collage. Input image 1 is reference only for broad long straight football lane proportions, elevated three-quarter camera, clean toy-brick faceted handmade 3D style. Keep that generously WIDE uninterrupted lane running from large lower foreground towards distant upper right, thin pale football markings, subtle cream/sand checker surface with small orderly square studs, turquoise edges. Clear central path and huge open flight airspace above it. This is ABYSSAL TRENCH underwater deep ocean, dangerous depth yet colorful readable family-friendly game art. Blue-black abyss beyond substantial continuous rocky landform UNDER the lane, no floating road, no detached floating boulders. Rock and land objects sit fully on visible supporting rock. Dark navy faceted block rocks with square studs where appropriate, cyan blue ambient light renders the lane and rock contour clearly, sparse tiny warm anglerfish lamps in outer water, silhouette of huge squid distant BEHIND side rocks away from lane. No text, logos, UI, border, characters, photoreal scans, horror, black unreadable image. Distinct composition: two enormous jagged vertical canyon walls flank the long broad football terrace; the LEFT wall is very tall and close, the RIGHT wall spaced farther out across a deep chasm. The lane sits on a massive solid shelf joined continuously to left wall with visibly stepped bedrock below foreground edge. Repeating side buttresses recede into fog, a broad pale-blue light shaft from distant rear cleft makes layered stone silhouettes legible. A few spherical anglerfish with amber lures in water beyond side edge; giant squid silhouette half-hidden behind the far RIGHT wall. No arch or rocks crossing overhead. Deep indigo, slate blue, cyan bioluminescent seams, a few amber points. Football terrace light cream to grey-sand, cyan side strips.",
+      "image": "02-twin-walls.png",
+      "description": "Полка проходит вдоль высокой левой стены; через глубокую расщелину справа видна вторая стена. Более яркий голубой свет в конце, циановые минеральные швы на скалах и удильщик на переднем плане.",
+      "palette": [
+        "indigo",
+        "slate blue",
+        "cyan",
+        "sand",
+        "amber"
+      ]
+    },
+    {
+      "key": "03-abyss-amphitheatre",
+      "name": "Амфитеатр бездны",
+      "prompt": "Use case: stylized-concept. Create ONE polished wide landscape concept image for Roblox Ball Ocean Depths, a single whole scene not a collage. Input image 1 is reference only for broad long straight football lane proportions, elevated three-quarter camera, clean toy-brick faceted handmade 3D style. Keep that generously WIDE uninterrupted lane running from large lower foreground towards distant upper right, thin pale football markings, subtle cream/sand checker surface with small orderly square studs, turquoise edges. Clear central path and huge open flight airspace above it. This is ABYSSAL TRENCH underwater deep ocean, dangerous depth yet colorful readable family-friendly game art. Blue-black abyss beyond substantial continuous rocky landform UNDER the lane, no floating road, no detached floating boulders. Rock and land objects sit fully on visible supporting rock. Dark navy faceted block rocks with square studs where appropriate, cyan blue ambient light renders the lane and rock contour clearly, sparse tiny warm anglerfish lamps in outer water, silhouette of huge squid distant BEHIND side rocks away from lane. No text, logos, UI, border, characters, photoreal scans, horror, black unreadable image. Distinct composition: the wide straight football lane extends along the inner rim of an immense curved amphitheatre-shaped abyss. Tall curved stepped basalt rock terraces sweep around LEFT and distant BACK, while enormous open dark-blue crater drops outside RIGHT edge. Thick solid foreground rock cliff beneath lane is highly visible and descends out of frame; route is a continuous supported plateau, never a bridge. One far background break between massive rock towers reveals the huge gentle squid silhouette against soft turquoise deepwater haze, no tentacles over path. Scattered amber anglerfish lures trace the curved outer depths, sparse icy cyan mineral crystals sit fully on side terraces. Wider sweeping view than other variants; violet-blue strata, saturated cobalt ambient fill, pale sand lane with restrained square-stud texture.",
+      "image": "03-abyss-amphitheatre.png",
+      "description": "Широкие ступенчатые стены изгибаются вокруг огромной круглой впадины. Правая стена основания уходит вниз ярусами; огни рыб продолжают дугу. В проёме между дальними башнями виден кальмар.",
+      "palette": [
+        "cobalt",
+        "violet blue",
+        "turquoise",
+        "sand",
+        "amber"
+      ]
+    }
+  ],
+  "stage": "Built in Studio World2 preview; travel and progression pending",
+  "construction": {
+    "date": "2026-11-05",
+    "overview": "studio-overview.png",
+    "groundCheck": "studio-ground-check.png",
+    "builder": "RojoTest/src/server/OceanCourseLocations.luau",
+    "assetPack": "Assets/OceanDepths/LocationKit",
+    "studPitch": 1.2
+  },
+  "layoutRevision": {
+    "date": "2026-11-05",
+    "source": "User review of built scene; overrides one-sided concept layout",
+    "description": "Deep right trench removed at user request; both banks are continuous with rock walls and terraces.",
+    "overview": "studio-balanced-overview.png",
+    "rightView": "studio-balanced-right.png"
+  }
+}

@@ -1,7 +1,8 @@
 --!strict
 -- Retire loose lobby dressing without rebuilding the authored map.
 local Removal = {}
-local STRUCTURE = { SideTerraces1 = true, SideTerraces2 = true, RearTerraces = true }
+-- ClubDecor is the curated club dressing built by LobbyClubDecor, not loose scenery.
+local STRUCTURE = { SideTerraces1 = true, SideTerraces2 = true, RearTerraces = true, ClubDecor = true }
 local ENTRANCE = {
 	Collision = true,
 	LeftAbutment = true,

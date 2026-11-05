@@ -19,6 +19,7 @@ export type Context = {
 	FlightStreaming: any,
 	lanes: { [number]: any },
 	claimPending: (Player) -> (),
+	restorePurchases: (Player) -> (),
 }
 
 function Session.setup(context: Context, player: Player)
@@ -46,6 +47,8 @@ function Session.setup(context: Context, player: Player)
 		inventoryVersion = 1,
 		sentInventoryVersion = 0,
 		lanes = context.lanes,
+		paidRandomRestricted = true,
+		purchasePolicyReady = false,
 	}
 	context.states[player] = state
 	Profiles:Attach(player, state, function()
@@ -69,17 +72,22 @@ function Session.setup(context: Context, player: Player)
 	local function spawn(char: Model)
 		-- The same character can reach the hook twice: the signal can fire
 		-- while the character that already exists is spawned.
-		if char == handledCharacter then
+		if char == handledCharacter or player.Character ~= char or context.states[player] ~= state then
 			return
 		end
 		handledCharacter = char
+		player:SetAttribute("DevPreviewWorld", nil)
 		context.FlightStreaming.stop(player)
 		local r: any = char:WaitForChild("HumanoidRootPart", 10)
-		local hum: any = char:WaitForChild("Humanoid", 10)
-		if r and hum and player.Character == char then
-			hum.WalkSpeed = context.Config.CharacterWalkSpeed
-			-- CharacterSpawn owns placement, before the client checks its floor.
+		if player.Character ~= char or context.states[player] ~= state then
+			return
 		end
+		local hum: any = char:WaitForChild("Humanoid", 10)
+		if not r or not hum or player.Character ~= char or context.states[player] ~= state then
+			return
+		end
+		hum.WalkSpeed = context.Config.CharacterWalkSpeed
+		-- CharacterSpawn owns placement, before the client checks its floor.
 		local s = context.states[player]
 		if s then
 			s.kickTiming = nil
@@ -89,6 +97,9 @@ function Session.setup(context: Context, player: Player)
 		end
 		if hum then
 			hum.Died:Connect(function()
+				if player.Character ~= char or context.states[player] ~= state then
+					return
+				end
 				local current = context.states[player]
 				if current then
 					current.kickTiming = nil
@@ -105,6 +116,7 @@ function Session.setup(context: Context, player: Player)
 		task.spawn(spawn, character)
 	end
 	context.publish(player, "Train while moving on a lane, then KICK your ball!")
+	task.spawn(context.restorePurchases, player)
 end
 
 return Session

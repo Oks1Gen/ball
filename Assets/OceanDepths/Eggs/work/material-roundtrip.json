@@ -1,0 +1,36 @@
+{
+  "glb": {
+    "OceanEgg_Jelly_TranslucentLilac.001": {
+      "diffuse_alpha": 0.7900000214576721,
+      "shader_alpha": 0.7900000214576721,
+      "transmission": 0.23000000417232513
+    },
+    "OceanEgg_Jelly_TranslucentFacet.001": {
+      "diffuse_alpha": 0.75,
+      "shader_alpha": 0.75,
+      "transmission": 0.25999999046325684
+    },
+    "OceanEgg_Jelly_TranslucentViolet.001": {
+      "diffuse_alpha": 0.8100000023841858,
+      "shader_alpha": 0.8100000023841858,
+      "transmission": 0.20000000298023224
+    }
+  },
+  "fbx": {
+    "OceanEgg_Jelly_TranslucentLilac.001": {
+      "diffuse_alpha": 1.0,
+      "shader_alpha": 0.7900000214576721,
+      "transmission": 0.0
+    },
+    "OceanEgg_Jelly_TranslucentFacet.001": {
+      "diffuse_alpha": 1.0,
+      "shader_alpha": 0.75,
+      "transmission": 0.0
+    },
+    "OceanEgg_Jelly_TranslucentViolet.001": {
+      "diffuse_alpha": 1.0,
+      "shader_alpha": 0.8100000023841858,
+      "transmission": 0.0
+    }
+  }
+}

@@ -332,14 +332,15 @@ function UnlockReveal.mount(context: Context)
 	-- The stand prompts are written locally from the player's own data. The
 	-- list is found once and searched again only after a prompt streams out.
 	local prompts: { ProximityPrompt } = {}
-	local function standPrompts(): { ProximityPrompt }
+	local promptWorld: number?
+	local function standPrompts(worldIndex: number): { ProximityPrompt }
 		local first = prompts[1]
-		if first and first.Parent then
+		if promptWorld == worldIndex and first and first:IsDescendantOf(workspace) then
 			return prompts
 		end
+		promptWorld = worldIndex
 		table.clear(prompts)
-		local map = workspace:FindFirstChild("Map")
-		local stand = WorldRefs.balls(map and map:FindFirstChild("World1"))
+		local stand = WorldRefs.balls(WorldRefs.world(worldIndex))
 		if stand then
 			for _, node in stand:GetDescendants() do
 				if node:IsA("ProximityPrompt") and type(node:GetAttribute("BallId")) == "string" then
@@ -351,7 +352,7 @@ function UnlockReveal.mount(context: Context)
 	end
 	local function updatePrompts(info: any)
 		local d = info.data
-		for _, prompt in standPrompts() do
+		for _, prompt in standPrompts(d.world) do
 			local id = prompt:GetAttribute("BallId") :: string
 			local item = Config.find(Config.Stones, id)
 			if item then

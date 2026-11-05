@@ -436,6 +436,8 @@ function UI.mount(context: Context)
 				local short = baseH < 420
 				local props = {
 					Data = data,
+					PaidRandomRestricted = handle.Snapshot and handle.Snapshot.paidRandomRestricted ~= false,
+					PurchasePolicyReady = handle.Snapshot and handle.Snapshot.purchasePolicyReady == true,
 					Phone = phone,
 					Inventory = inventory or { pets = {}, equipped = {} },
 					Width = w - 24 - (collection and (phone and 104 or 164) or 0),

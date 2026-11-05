@@ -22,8 +22,8 @@ function Readiness.start()
 		params.RespectCanCollide = true
 		while character.Parent and player.Character == character do
 			local root = character:FindFirstChild("HumanoidRootPart") :: BasePart?
-			local map = workspace:FindFirstChild("Map")
-			local world = map and map:FindFirstChild("World1")
+			local index = character:GetAttribute(Protocol.World)
+			local world = WorldRefs.world(if index == 2 then 2 else 1)
 			local floor = WorldRefs.kickZoneFloor(world)
 			if root and floor and character:GetAttribute(Protocol.Positioned) == true then
 				params.FilterDescendantsInstances = { floor }

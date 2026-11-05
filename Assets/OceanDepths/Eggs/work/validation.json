@@ -1,0 +1,62 @@
+{
+  "01_Common_Kelp": {
+    "parts": 21,
+    "triangles": 4210,
+    "degenerate_faces": 0,
+    "nonmanifold_edges": 0,
+    "dimensions": [
+      3.6542396545410156,
+      3.610121011734009,
+      4.635776529088616
+    ],
+    "symmetry": 3
+  },
+  "02_Uncommon_Leviathan": {
+    "parts": 63,
+    "triangles": 3574,
+    "degenerate_faces": 0,
+    "nonmanifold_edges": 0,
+    "dimensions": [
+      4.183635950088501,
+      3.8954546451568604,
+      4.988620290532708
+    ],
+    "symmetry": 6
+  },
+  "03_Rare_Treasure": {
+    "parts": 66,
+    "triangles": 8536,
+    "degenerate_faces": 0,
+    "nonmanifold_edges": 0,
+    "dimensions": [
+      4.177454471588135,
+      3.6891562938690186,
+      4.635776529088616
+    ],
+    "symmetry": 6
+  },
+  "04_Epic_Abyss": {
+    "parts": 87,
+    "triangles": 3898,
+    "degenerate_faces": 0,
+    "nonmanifold_edges": 0,
+    "dimensions": [
+      4.469091176986694,
+      4.262908935546875,
+      4.635776529088616
+    ],
+    "symmetry": 6
+  },
+  "05_Legendary_Jelly": {
+    "parts": 25,
+    "triangles": 8630,
+    "degenerate_faces": 0,
+    "nonmanifold_edges": 0,
+    "dimensions": [
+      4.090843200683594,
+      4.053709506988525,
+      4.635776529088616
+    ],
+    "symmetry": 6
+  }
+}

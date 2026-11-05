@@ -1,0 +1,52 @@
+--!strict
+local Catalog = require("../src/shared/CommerceCatalog")
+local PassRewards = require("../src/shared/Core/PassRewards")
+local Data = require("../src/shared/Core/ProfileData")
+return {
+	["Roblox catalog has unique configured IDs and grants for every repeatable product"] = function()
+		local ids, passes, products = {}, 0, 0
+		for key, item in Catalog do
+			assert(item.id > 0 and item.id % 1 == 0 and not ids[item.id], key)
+			ids[item.id] = true
+			assert(item.price > 0 and item.price % 1 == 0, key)
+			if item.kind == "GamePass" then
+				passes += 1
+				local data = Data.fresh()
+				assert(PassRewards.apply(data, key), key)
+				assert(PassRewards.owned(data, key, item.kind), key)
+			elseif item.kind == "DeveloperProduct" then
+				products += 1
+				assert(item.skill or item.trainingBoost or key == "SkipRebirth" or key == "AdminEgg", key)
+			else
+				error("Unknown kind: " .. item.kind)
+			end
+		end
+		assert(passes == 4 and products == 8)
+	end,
+	["Starter Pack restores permanent Skill and grants its Wins exactly once across reload"] = function()
+		local data = Data.fresh()
+		assert(PassRewards.apply(data, "StarterPack"))
+		assert(data.wins == 10000 and data.perks.DoubleSkill and data.perks.StarterPack)
+		data = Data.normalize(data, { stones = {}, trails = {}, pets = {} })
+		assert(not PassRewards.apply(data, "StarterPack"))
+		assert(data.wins == 10000)
+		data.perks.DoubleSkill = nil
+		assert(PassRewards.apply(data, "StarterPack"))
+		assert(data.perks.DoubleSkill and data.wins == 10000)
+	end,
+	["separate Skill pass and Starter Pack do not stack or revoke other ownership"] = function()
+		local data = Data.fresh()
+		PassRewards.apply(data, "DoubleSkill")
+		PassRewards.apply(data, "StarterPack")
+		PassRewards.apply(data, "DoubleWins")
+		assert(data.perks.DoubleSkill == true and data.perks.DoubleWins and data.wins == 10000)
+		assert(not PassRewards.apply(data, "DoubleSkill"))
+	end,
+	["paid eggs and boosts remain repeatable even after a prior purchase"] = function()
+		local data = Data.fresh()
+		data.perks.AdminEgg = true
+		assert(not PassRewards.owned(data, "AdminEgg", "DeveloperProduct"))
+		assert(not PassRewards.apply(data, "AdminEgg"))
+		assert(not PassRewards.apply(data, "Skill10M"))
+	end,
+}

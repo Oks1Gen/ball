@@ -1,0 +1,84 @@
+{
+  "date": "2026-11-05",
+  "edit": {
+    "comparison": {
+      "fish": 268,
+      "sceneryChanged": 0,
+      "movedRoutes": 29,
+      "maxMove": 80,
+      "studTextures": 22772,
+      "sceneryMissing": 0,
+      "wrong": [],
+      "other": 22
+    },
+    "stress": {
+      "maxEnvelopeRatio": 1.000000238418579,
+      "seconds": 60,
+      "minGap": 0.5400749605963107,
+      "steps": 169200,
+      "blockedSteps": 2,
+      "running": false,
+      "membersReshuffled": 262,
+      "groups": 58,
+      "ok": true
+    },
+    "certificates": {
+      "failures": [],
+      "passed": 58,
+      "obstacles": 30249
+    },
+    "sceneryBaseline": 30516,
+    "date": "2026-11-05",
+    "idempotence": {
+      "ok": true,
+      "changed": 0,
+      "result": {
+        "speedMultiplier": 2,
+        "routes": 36,
+        "sizeMultiplier": 2,
+        "fish": 268
+      }
+    }
+  },
+  "play": {
+    "invalidFlight": {
+      "ok": false,
+      "message": "Выбери включение или выключение полёта"
+    },
+    "flight": {
+      "enabled": true,
+      "start": "4150, 23.598012924194336, 129.60000610351562",
+      "descent": -14.800019264221191
+    },
+    "world2": {
+      "status": {
+        "errors": 0,
+        "wins": 162435,
+        "rebirths": 2,
+        "pets": 5,
+        "skill": 0,
+        "shot": 60,
+        "previewWorld": 2,
+        "studio": true,
+        "flight": false,
+        "equipped": 0,
+        "world": 1
+      },
+      "preserved": true,
+      "root": "4150, 23.5980224609375, 129.60000610351562"
+    },
+    "motion": {
+      "seconds": 3.4836197000113316,
+      "travel": 45.824867248535156,
+      "poseChanged": true
+    }
+  },
+  "respawn": {
+    "before": true,
+    "after": {
+      "flight": false,
+      "health": 100,
+      "hasRoot": true
+    }
+  }
+}

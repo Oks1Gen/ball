@@ -32,11 +32,14 @@ function Training.run(context: Context)
 		while true do
 			task.wait(0.1)
 			for player, s in context.states do
+				if player:GetAttribute("AdminFlight") == true or player:GetAttribute("DevPreviewWorld") ~= nil then
+					continue
+				end
 				context.kickTiming.validate(player)
 				local pos, hum = context.rootFor(player)
 				local laneIndex = nil
 				if pos and hum and hum.Health > 0 and os.clock() >= s.busyUntil then
-					local lanes = s.lanes and s.lanes[1]
+					local lanes = s.lanes and s.lanes[s.data.world]
 					for i, def in context.Config.Lanes do
 						local entry = lanes and lanes[i]
 						local strip = entry and entry.strip
@@ -81,16 +84,15 @@ function Training.run(context: Context)
 						/ 0.8
 					local gain, remainder = TrainingMotion.reward(cycleGain, s.lane, s.gainRemainder)
 					s.gainRemainder = remainder
-					if s.trainingHit == 1 and (not s.trainingBoostCycle or s.trainingBoostCycle < s.trainingCycle) then
-						local paid = Boost.takeCharge(s.data)
-						if paid then
-							s.trainingBoostCycle = s.trainingCycle
-							s.trainingBoostMultiplier = paid
+					if s.trainingHit == 1 then
+						local free = s.trainingPendingBoostCycle == s.trainingCycle
+						local multiplier = Boost.beginCycle(s, s.trainingCycle)
+						if multiplier and not free then
 							context.effect:FireClient(player, "TrainingBoost", {
 								seed = s.trainingSeed,
 								started = s.trainingStarted,
 								cycle = s.trainingCycle,
-								multiplier = paid,
+								multiplier = multiplier,
 							})
 						end
 					end
