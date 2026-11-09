@@ -43,6 +43,9 @@ Sequence.PreviewClicks = { 0.5, 1.1, 1.7, 2.3, 2.9 }
 export type Frame = { at: number, index: number }
 
 function Sequence.tierOf(rarity: string?): number
+	if rarity == "Secret" then
+		return #Sequence.Tiers
+	end
 	if rarity == "Epic" then
 		return 3
 	end

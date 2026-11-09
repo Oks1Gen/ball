@@ -1,0 +1,145 @@
+{
+  "date": "2026-11-09",
+  "scope": "Desktop Pets composition revision after user rejected first implementation",
+  "player": "Dakemo555",
+  "userId": 11789507527,
+  "layout": {
+    "restored": {
+      "brightness": 1,
+      "onTop": true,
+      "blur": 22
+    },
+    "sourceInset": {
+      "1": 0,
+      "2": 58
+    },
+    "craftClick": {
+      "1": 592.25,
+      "2": 534
+    },
+    "footer": {
+      "PetUtilityBar": {
+        "right": 251.37493896484375,
+        "left": 296.4750061035156,
+        "bottom": 17.80999755859375
+      },
+      "EquipBest": {
+        "right": 537.375,
+        "left": 10.475006103515625,
+        "bottom": 17.80999755859375
+      },
+      "PetCapacity": {
+        "right": 13.708984375,
+        "left": 586.8090209960938,
+        "bottom": 31.60400390625
+      }
+    },
+    "sweep": {
+      "minimumCloseClearance": 21.10502899169922,
+      "screenRightMargin": 69.080078125
+    },
+    "scale": 1.1,
+    "viewport": {
+      "1": 1366,
+      "2": 767
+    },
+    "portraitLoaded": true
+  },
+  "actions": {
+    "nativeEquip": true,
+    "nativeUnequip": true,
+    "disabledRejected": true,
+    "recycleBlocksDetail": true,
+    "fixture": {
+      "events": {
+        "1": {
+          "value": "qa4",
+          "command": "RecyclePet"
+        },
+        "2": {
+          "command": "EquipBest"
+        },
+        "3": {
+          "command": "PetCraft"
+        }
+      },
+      "planesAfter3Cycles": 1,
+      "sweep": {
+        "minimumCloseClearance": 20.572281150817872,
+        "screenRightMargin": 92.666259765625
+      },
+      "afterClose": {
+        "plane": false,
+        "surface": false
+      },
+      "recycleCount": 3,
+      "craft": true
+    },
+    "realCraft": {
+      "opened": true,
+      "planeAfter": false,
+      "surfaceAfter": false
+    },
+    "scroll60Y": 500
+  },
+  "motion": {
+    "offAngle": 0,
+    "onAngle": 0.01953156106173992
+  },
+  "assets": {
+    "golden": {
+      "loaded": true,
+      "selected": "qa3",
+      "uri": "rbxassetid://127541774036816"
+    },
+    "shardLoaded": true,
+    "moderation": "Approved",
+    "universeSharing": "success"
+  },
+  "gate": {
+    "luneTests": 149,
+    "gateTests": 5,
+    "typeDiagnostics": 0,
+    "result": "passed",
+    "log": "RojoTest/.tools/pets-v2-check.log"
+  },
+  "updateLog": {
+    "version": "0.8.0",
+    "published": false,
+    "author": "Dakemo555",
+    "openClose": true,
+    "expandCollapse": true,
+    "detailsBounds": [
+      510,
+      68
+    ],
+    "detailsBox": [
+      511.07,
+      76.81
+    ],
+    "fits": true
+  },
+  "capture": {
+    "file": "2026-11-09-pc-geometry.png",
+    "normalRuntime": false,
+    "temporaryChanges": [
+      "AlwaysOnTop=false",
+      "Brightness=2",
+      "BlurEffects disabled",
+      "Local character and pet followers hidden"
+    ],
+    "allRestored": true,
+    "limitation": "Roblox engine screenshot omits AlwaysOnTop SurfaceGui. Diagnostic image verifies geometry, not normal colors or background blur."
+  },
+  "limitations": [
+    "No mobile test per AGENTS.md",
+    "No exact normal-render screenshot",
+    "Visual approval still belongs to user",
+    "Existing startup warning rbxassetid://203785492 type mismatch remains unrelated"
+  ],
+  "cleanup": {
+    "playStopped": true,
+    "temporaryFixtureRemoved": true
+  },
+  "publication": false
+}

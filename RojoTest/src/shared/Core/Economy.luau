@@ -48,7 +48,7 @@ local FORMAT_STEPS: { FormatStep } = {
 }
 
 function Economy.effectiveShotPower(skill: number, power: number?): number
-	return math.max(0, skill) * math.max(1, power or 1)
+	return math.max(0, skill) * math.max(0, power or 1)
 end
 
 function Economy.rebirthRequirement(rebirths: number?): number
@@ -117,7 +117,7 @@ end
 
 -- Egg ids map to a pool name; unknown eggs fall back to the common pool.
 function Economy.eggPoolKey(eggId: string?): string
-	if eggId == "Uncommon" or eggId == "Rare" or eggId == "Rainbow" then
+	if eggId == "Uncommon" or eggId == "Rare" or eggId == "Rainbow" or eggId == "SolarCrown" then
 		return eggId
 	end
 	return "Common"

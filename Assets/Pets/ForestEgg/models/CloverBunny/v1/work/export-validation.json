@@ -1,0 +1,574 @@
+{
+  "source_parts": 31,
+  "triangles": 9988,
+  "max_part_triangles": 1330,
+  "degenerate": 0,
+  "bounds": {
+    "min": [
+      -1.1962119340896606,
+      -1.11899995803833,
+      0.0
+    ],
+    "max": [
+      1.5159958600997925,
+      1.3450000286102295,
+      3.6433160305023193
+    ],
+    "size": [
+      2.712207794189453,
+      2.4639999866485596,
+      3.6433160305023193
+    ]
+  },
+  "source_front": "-Y",
+  "saved_blend_inventory": {
+    "scenes": [
+      "CloverBunny"
+    ],
+    "objects": [
+      "CloverBunny",
+      "CB_Tail_Lobe_R",
+      "CB_Tail_Lobe_L",
+      "CB_Tail",
+      "CB_Smile_Right",
+      "CB_Smile_Left",
+      "CB_Nose",
+      "CB_Mouth_Center",
+      "CB_Iris_R",
+      "CB_Iris_L",
+      "CB_Foot_R_Rear",
+      "CB_Foot_R_Front",
+      "CB_Foot_L_Rear",
+      "CB_Foot_L_Front",
+      "CB_EyeWhite_R",
+      "CB_EyeWhite_L",
+      "CB_Ear_Upright_Pink",
+      "CB_Ear_Upright",
+      "CB_Ear_Folded_Pink",
+      "CB_Ear_Folded",
+      "CB_Clover_Top",
+      "CB_Clover_Stem",
+      "CB_Clover_Right",
+      "CB_Clover_Left",
+      "CB_Clover_Bottom",
+      "CB_Catchlight_Small_R",
+      "CB_Catchlight_Small_L",
+      "CB_Catchlight_Main_R",
+      "CB_Catchlight_Main_L",
+      "CB_Body",
+      "CB_Blush_R",
+      "CB_Blush_L"
+    ],
+    "images": [
+      "iris-green.png",
+      "blush.png"
+    ]
+  },
+  "packed_source_images": [
+    "iris-green.png",
+    "blush.png"
+  ],
+  "glb_external_uris": [],
+  "parts": [
+    {
+      "name": "CB_Body",
+      "triangles": 588,
+      "degenerate": 0,
+      "materials": [
+        "CB_Cream"
+      ]
+    },
+    {
+      "name": "CB_Foot_L_Front",
+      "triangles": 300,
+      "degenerate": 0,
+      "materials": [
+        "CB_Cream"
+      ]
+    },
+    {
+      "name": "CB_Foot_L_Rear",
+      "triangles": 300,
+      "degenerate": 0,
+      "materials": [
+        "CB_Cream"
+      ]
+    },
+    {
+      "name": "CB_Foot_R_Front",
+      "triangles": 300,
+      "degenerate": 0,
+      "materials": [
+        "CB_Cream"
+      ]
+    },
+    {
+      "name": "CB_Foot_R_Rear",
+      "triangles": 300,
+      "degenerate": 0,
+      "materials": [
+        "CB_Cream"
+      ]
+    },
+    {
+      "name": "CB_Tail",
+      "triangles": 360,
+      "degenerate": 0,
+      "materials": [
+        "CB_Cream"
+      ]
+    },
+    {
+      "name": "CB_Tail_Lobe_L",
+      "triangles": 120,
+      "degenerate": 0,
+      "materials": [
+        "CB_Cream"
+      ]
+    },
+    {
+      "name": "CB_Tail_Lobe_R",
+      "triangles": 120,
+      "degenerate": 0,
+      "materials": [
+        "CB_Cream"
+      ]
+    },
+    {
+      "name": "CB_Ear_Upright",
+      "triangles": 1330,
+      "degenerate": 0,
+      "materials": [
+        "CB_Cream"
+      ]
+    },
+    {
+      "name": "CB_Ear_Upright_Pink",
+      "triangles": 674,
+      "degenerate": 0,
+      "materials": [
+        "CB_Pink"
+      ]
+    },
+    {
+      "name": "CB_Ear_Folded",
+      "triangles": 1330,
+      "degenerate": 0,
+      "materials": [
+        "CB_Cream"
+      ]
+    },
+    {
+      "name": "CB_Ear_Folded_Pink",
+      "triangles": 674,
+      "degenerate": 0,
+      "materials": [
+        "CB_Pink"
+      ]
+    },
+    {
+      "name": "CB_EyeWhite_L",
+      "triangles": 360,
+      "degenerate": 0,
+      "materials": [
+        "CB_EyeWhite"
+      ]
+    },
+    {
+      "name": "CB_Iris_L",
+      "triangles": 360,
+      "degenerate": 0,
+      "materials": [
+        "CB_Iris_Green"
+      ]
+    },
+    {
+      "name": "CB_Catchlight_Main_L",
+      "triangles": 120,
+      "degenerate": 0,
+      "materials": [
+        "CB_Glint"
+      ]
+    },
+    {
+      "name": "CB_Catchlight_Small_L",
+      "triangles": 100,
+      "degenerate": 0,
+      "materials": [
+        "CB_Glint"
+      ]
+    },
+    {
+      "name": "CB_EyeWhite_R",
+      "triangles": 360,
+      "degenerate": 0,
+      "materials": [
+        "CB_EyeWhite"
+      ]
+    },
+    {
+      "name": "CB_Iris_R",
+      "triangles": 360,
+      "degenerate": 0,
+      "materials": [
+        "CB_Iris_Green"
+      ]
+    },
+    {
+      "name": "CB_Catchlight_Main_R",
+      "triangles": 120,
+      "degenerate": 0,
+      "materials": [
+        "CB_Glint"
+      ]
+    },
+    {
+      "name": "CB_Catchlight_Small_R",
+      "triangles": 100,
+      "degenerate": 0,
+      "materials": [
+        "CB_Glint"
+      ]
+    },
+    {
+      "name": "CB_Blush_L",
+      "triangles": 160,
+      "degenerate": 0,
+      "materials": [
+        "CB_Blush_Soft"
+      ]
+    },
+    {
+      "name": "CB_Blush_R",
+      "triangles": 160,
+      "degenerate": 0,
+      "materials": [
+        "CB_Blush_Soft"
+      ]
+    },
+    {
+      "name": "CB_Nose",
+      "triangles": 224,
+      "degenerate": 0,
+      "materials": [
+        "CB_Nose"
+      ]
+    },
+    {
+      "name": "CB_Mouth_Center",
+      "triangles": 92,
+      "degenerate": 0,
+      "materials": [
+        "CB_Mouth"
+      ]
+    },
+    {
+      "name": "CB_Smile_Left",
+      "triangles": 252,
+      "degenerate": 0,
+      "materials": [
+        "CB_Mouth"
+      ]
+    },
+    {
+      "name": "CB_Smile_Right",
+      "triangles": 252,
+      "degenerate": 0,
+      "materials": [
+        "CB_Mouth"
+      ]
+    },
+    {
+      "name": "CB_Clover_Stem",
+      "triangles": 92,
+      "degenerate": 0,
+      "materials": [
+        "CB_CloverStem"
+      ]
+    },
+    {
+      "name": "CB_Clover_Top",
+      "triangles": 120,
+      "degenerate": 0,
+      "materials": [
+        "CB_Clover"
+      ]
+    },
+    {
+      "name": "CB_Clover_Left",
+      "triangles": 120,
+      "degenerate": 0,
+      "materials": [
+        "CB_Clover"
+      ]
+    },
+    {
+      "name": "CB_Clover_Right",
+      "triangles": 120,
+      "degenerate": 0,
+      "materials": [
+        "CB_Clover"
+      ]
+    },
+    {
+      "name": "CB_Clover_Bottom",
+      "triangles": 120,
+      "degenerate": 0,
+      "materials": [
+        "CB_Clover"
+      ]
+    }
+  ],
+  "roundtrip": {
+    "blend": {
+      "bounds": {
+        "min": [
+          -1.1962119340896606,
+          -1.11899995803833,
+          0.0
+        ],
+        "max": [
+          1.5159958600997925,
+          1.3450000286102295,
+          3.6433160305023193
+        ],
+        "size": [
+          2.712207794189453,
+          2.4639999866485596,
+          3.6433160305023193
+        ]
+      },
+      "max_bounds_error": 0.0,
+      "mesh_count": 27,
+      "material_count": 8,
+      "images": [
+        {
+          "name": "iris-green.png.001",
+          "size": [
+            256,
+            256
+          ],
+          "packed": true,
+          "filepath": "C:\\Users\\dakem\\Documents\\RobloxGames\\ball\\Assets\\Pets\\ForestEgg\\models\\CloverBunny\\v1\\work\\textures\\iris-green.png"
+        },
+        {
+          "name": "blush.png.001",
+          "size": [
+            128,
+            128
+          ],
+          "packed": true,
+          "filepath": "C:\\Users\\dakem\\Documents\\RobloxGames\\ball\\Assets\\Pets\\ForestEgg\\models\\CloverBunny\\v1\\work\\textures\\blush.png"
+        }
+      ],
+      "face_front_y": -1.019000083208084,
+      "objects": [
+        "CloverBunny.001",
+        "CB_Body.001",
+        "CB_Foot_L_Front.001",
+        "CB_Foot_L_Rear.001",
+        "CB_Foot_R_Front.001",
+        "CB_Foot_R_Rear.001",
+        "CB_Tail.001",
+        "CB_Tail_Lobe_L.001",
+        "CB_Tail_Lobe_R.001",
+        "CB_Ear_Upright.001",
+        "CB_Ear_Upright_Pink.001",
+        "CB_Ear_Folded.001",
+        "CB_Ear_Folded_Pink.001",
+        "CB_EyeWhite_L.001",
+        "CB_Iris_L.001",
+        "CB_Catchlight_Main_L.001",
+        "CB_Catchlight_Small_L.001",
+        "CB_EyeWhite_R.001",
+        "CB_Iris_R.001",
+        "CB_Catchlight_Main_R.001",
+        "CB_Catchlight_Small_R.001",
+        "CB_Blush_L.001",
+        "CB_Blush_R.001",
+        "CB_Nose.001",
+        "CB_Mouth_Center.001",
+        "CB_Smile_Left.001",
+        "CB_Smile_Right.001",
+        "CB_Clover_Stem.001",
+        "CB_Clover_Top.001",
+        "CB_Clover_Left.001",
+        "CB_Clover_Right.001",
+        "CB_Clover_Bottom.001"
+      ]
+    },
+    "glb": {
+      "bounds": {
+        "min": [
+          -1.1962119340896606,
+          -1.11899995803833,
+          0.0
+        ],
+        "max": [
+          1.5159958600997925,
+          1.3450000286102295,
+          3.6433160305023193
+        ],
+        "size": [
+          2.712207794189453,
+          2.4639999866485596,
+          3.6433160305023193
+        ]
+      },
+      "max_bounds_error": 0.0,
+      "mesh_count": 31,
+      "material_count": 10,
+      "images": [
+        {
+          "name": "blush",
+          "size": [
+            128,
+            128
+          ],
+          "packed": true,
+          "filepath": ""
+        },
+        {
+          "name": "iris-green",
+          "size": [
+            256,
+            256
+          ],
+          "packed": true,
+          "filepath": ""
+        }
+      ],
+      "face_front_y": -1.019000083208084,
+      "objects": [
+        "CloverBunny_ExportRoot.001",
+        "CB_Blush_L_Export.001",
+        "CB_Blush_R_Export.001",
+        "CB_Body_Export.001",
+        "CB_Catchlight_Main_L_Export.001",
+        "CB_Catchlight_Main_R_Export.001",
+        "CB_Catchlight_Small_L_Export.001",
+        "CB_Catchlight_Small_R_Export.001",
+        "CB_Clover_Bottom_Export.001",
+        "CB_Clover_Left_Export.001",
+        "CB_Clover_Right_Export.001",
+        "CB_Clover_Stem_Export.001",
+        "CB_Clover_Top_Export.001",
+        "CB_Ear_Folded_Export.001",
+        "CB_Ear_Folded_Pink_Export.001",
+        "CB_Ear_Upright_Export.001",
+        "CB_Ear_Upright_Pink_Export.001",
+        "CB_EyeWhite_L_Export.001",
+        "CB_EyeWhite_R_Export.001",
+        "CB_Foot_L_Front_Export.001",
+        "CB_Foot_L_Rear_Export.001",
+        "CB_Foot_R_Front_Export.001",
+        "CB_Foot_R_Rear_Export.001",
+        "CB_Iris_L_Export.001",
+        "CB_Iris_R_Export.001",
+        "CB_Mouth_Center_Export.001",
+        "CB_Nose_Export.001",
+        "CB_Smile_Left_Export.001",
+        "CB_Smile_Right_Export.001",
+        "CB_Tail_Export.001",
+        "CB_Tail_Lobe_L_Export.001",
+        "CB_Tail_Lobe_R_Export.001"
+      ]
+    },
+    "fbx": {
+      "bounds": {
+        "min": [
+          -1.1962116956710815,
+          -1.1190001964569092,
+          -2.1316705556273519e-07
+        ],
+        "max": [
+          1.5159962177276611,
+          1.3450000286102295,
+          3.6433160305023193
+        ],
+        "size": [
+          2.7122079133987427,
+          2.4640002250671387,
+          3.643316243669375
+        ]
+      },
+      "max_bounds_error": 3.5762786865234375e-07,
+      "mesh_count": 31,
+      "material_count": 10,
+      "images": [
+        {
+          "name": "iris-green.png.002",
+          "size": [
+            256,
+            256
+          ],
+          "packed": true,
+          "filepath": "C:\\Users\\dakem\\Documents\\RobloxGames\\ball\\Assets\\Pets\\ForestEgg\\models\\CloverBunny\\v1\\work\\roundtrip\\CloverBunny.fbm\\iris-green.png"
+        },
+        {
+          "name": "blush.png.004",
+          "size": [
+            128,
+            128
+          ],
+          "packed": true,
+          "filepath": "C:\\Users\\dakem\\Documents\\RobloxGames\\ball\\Assets\\Pets\\ForestEgg\\models\\CloverBunny\\v1\\work\\roundtrip\\CloverBunny.fbm\\blush.png"
+        },
+        {
+          "name": "blush.png.002",
+          "size": [
+            128,
+            128
+          ],
+          "packed": true,
+          "filepath": "C:\\Users\\dakem\\Documents\\RobloxGames\\ball\\Assets\\Pets\\ForestEgg\\models\\CloverBunny\\v1\\work\\roundtrip\\CloverBunny.fbm\\blush.png"
+        },
+        {
+          "name": "iris-green.png.003",
+          "size": [
+            256,
+            256
+          ],
+          "packed": true,
+          "filepath": "C:\\Users\\dakem\\Documents\\RobloxGames\\ball\\Assets\\Pets\\ForestEgg\\models\\CloverBunny\\v1\\work\\roundtrip\\CloverBunny.fbm\\iris-green.png"
+        }
+      ],
+      "face_front_y": -1.0190002918243408,
+      "objects": [
+        "CB_Blush_L_Export.002",
+        "CB_Blush_R_Export.002",
+        "CB_Body_Export.002",
+        "CB_Catchlight_Main_L_Export.002",
+        "CB_Catchlight_Main_R_Export.002",
+        "CB_Catchlight_Small_L_Export.002",
+        "CB_Catchlight_Small_R_Export.002",
+        "CB_Clover_Bottom_Export.002",
+        "CB_Clover_Left_Export.002",
+        "CB_Clover_Right_Export.002",
+        "CB_Clover_Stem_Export.002",
+        "CB_Clover_Top_Export.002",
+        "CB_Ear_Folded_Export.002",
+        "CB_Ear_Folded_Pink_Export.002",
+        "CB_Ear_Upright_Export.002",
+        "CB_Ear_Upright_Pink_Export.002",
+        "CB_EyeWhite_L_Export.002",
+        "CB_EyeWhite_R_Export.002",
+        "CB_Foot_L_Front_Export.002",
+        "CB_Foot_L_Rear_Export.002",
+        "CB_Foot_R_Front_Export.002",
+        "CB_Foot_R_Rear_Export.002",
+        "CB_Iris_L_Export.002",
+        "CB_Iris_R_Export.002",
+        "CB_Mouth_Center_Export.002",
+        "CB_Nose_Export.002",
+        "CB_Smile_Left_Export.002",
+        "CB_Smile_Right_Export.002",
+        "CB_Tail_Export.002",
+        "CB_Tail_Lobe_L_Export.002",
+        "CB_Tail_Lobe_R_Export.002",
+        "CloverBunny_ExportRoot.002"
+      ]
+    }
+  },
+  "original_scene_preserved": true
+}

@@ -59,7 +59,7 @@ DeveloperProductId/TargetId fields.
   independent archive is written. Its durable marker survives archive failure,
   so retries cannot duplicate the reward. Old boolean archive entries remain
   supported. New records store player/product IDs, actual receipt Robux and time.
-- Admin Eggs remain repeatable. Each grants one pet, or one saved reservation
+- The Shop's Admin Egg remains a repeatable offer for a guaranteed Glitched Dragon. Each purchase grants one pet, or one saved reservation
   when storage is full. Charges survive rejoining and are spent only by a real
   complete training kick. Paid rebirth waits for an existing kick to finish.
 - Donate totals use actual Developer Product CurrencySpent. Pass ownership does
@@ -73,7 +73,9 @@ PolicyService.GetPolicyInfoForPlayerAsync with retries. Egg purchases wait until
 the result is known. Restricted players see only the first configured pet at
 100%, and the server grants it deterministically for the existing Wins price.
 Other players see the complete normal pool and numeric odds. Guaranteed regional
-reveals show only the delivered pet. Admin Egg is always a guaranteed pet.
+reveals show only the delivered pet. Football City's fifth stand sells Solar
+Crown Egg for Wins through the same policy gate. Glitched Dragon is a separate
+guaranteed offer in the Shop and at Ocean Depths' Jelly Egg stand.
 The separately authorized Studio admin hatch is a development path.
 
 ## Reset Progress

@@ -8,6 +8,7 @@ local PetVisuals = require(game.ReplicatedStorage.Shared.PetVisuals)
 local Config = require(game.ReplicatedStorage.Shared.GameConfig)
 local Style = require(script.Parent.Parent.UiStyle)
 local Assets = require(script.Parent.Parent.UIAssets)
+local PetCardArt = require(script.Parent.Parent.Modules.PetCardArt)
 
 local Kit = {}
 local C = Color3.fromRGB
@@ -120,6 +121,18 @@ end
 
 function Kit.petIcon(parent: Instance, def: any, x: number, y: number, w: number, h: number): Instance?
 	parent = Kit.visualOf(parent)
+	local image = PetCardArt.outlinedImage(def.id)
+	if image then
+		local portrait = Instance.new("ImageLabel")
+		portrait.Name = "PetCardArt"
+		portrait.Image = image
+		portrait.BackgroundTransparency = 1
+		portrait.Position = UDim2.fromOffset(x, y)
+		portrait.Size = UDim2.fromOffset(w, h)
+		portrait.ScaleType = Enum.ScaleType.Fit
+		portrait.Parent = parent
+		return portrait
+	end
 	local preview = PetVisuals.preview(parent, def.visual or def.id, x, y, w, h)
 	if preview then
 		return preview

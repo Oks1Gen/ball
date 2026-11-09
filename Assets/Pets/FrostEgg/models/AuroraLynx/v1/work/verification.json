@@ -1,0 +1,50 @@
+{
+  "triangles": 7804,
+  "largestPart": 1188,
+  "bounds": [
+    [
+      -1.0728563070297241,
+      -1.1019999980926514,
+      0.0
+    ],
+    [
+      1.2814908027648926,
+      2.0348103046417236,
+      3.062999963760376
+    ]
+  ],
+  "parts": {
+    "Square body": 764,
+    "front left paw": 448,
+    "rear left paw": 448,
+    "front right paw": 448,
+    "rear right paw": 448,
+    "left glossy eye": 420,
+    "right glossy eye": 420,
+    "left lynx ear": 576,
+    "left aqua tuft": 672,
+    "right lynx ear": 576,
+    "right aqua tuft": 672,
+    "Plush aurora tail": 1188,
+    "left smile curl": 200,
+    "right smile curl": 200,
+    "Soft charcoal nose": 324
+  },
+  "imports": {
+    "blend": {
+      "triangles": 7804,
+      "boundsError": 0.0,
+      "packedImages": 4
+    },
+    "glb": {
+      "triangles": 7804,
+      "boundsError": 0.0,
+      "packedImages": 4
+    },
+    "fbx": {
+      "triangles": 7804,
+      "boundsError": 2.384185791015625e-07,
+      "packedImages": 4
+    }
+  }
+}

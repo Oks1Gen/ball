@@ -196,6 +196,7 @@ function Guide.mount(context: any)
 			title.Visible = true
 			local key = ""
 			local button: GuiObject? = nil
+			local pointer: Vector2? = nil
 			if stage == 0 then
 				if info.training then
 					title.Text = "Train on the field: " .. tostring(math.floor(d.tutorialSkill or 0)) .. " / 30 Skill"
@@ -272,9 +273,9 @@ function Guide.mount(context: any)
 				else
 					key = "Egg"
 					title.Text = "Hatch a Common Egg for " .. Config.format(cost) .. " Wins"
-					if context.previewEgg() == "Common" then
+					pointer = context.eggTutorialPoint("Common")
+					if pointer then
 						key = ""
-						button = findButton({ "EggPreviewHatch" }, now)
 					elseif panel == "Common Egg" then
 						key = ""
 						button = findButton({ "Hatch" }, now)
@@ -297,16 +298,14 @@ function Guide.mount(context: any)
 				summary.Visible = true
 				return
 			end
-			if button and visible(button) and not context.timing() then
+			if button and visible(button) then
+				pointer = button.AbsolutePosition + button.AbsoluteSize * Vector2.new(0.65, 1)
+			end
+			if pointer and not context.timing() then
 				hand.Position = UDim2.fromOffset(
+					math.clamp(pointer.X - safe.AbsolutePosition.X, 32, size.X - 32),
 					math.clamp(
-						button.AbsolutePosition.X + button.AbsoluteSize.X * 0.65 - safe.AbsolutePosition.X,
-						32,
-						size.X - 32
-					),
-					math.clamp(
-						button.AbsolutePosition.Y
-							+ button.AbsoluteSize.Y
+						pointer.Y
 							- safe.AbsolutePosition.Y
 							- 5
 							+ (if d.settings.effects then math.sin(now * 5) * 5 else 0),

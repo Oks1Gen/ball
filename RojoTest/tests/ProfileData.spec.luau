@@ -11,6 +11,25 @@ local catalog = {
 }
 
 return {
+	["pet discoveries migrate, survive recycling and reload, and clear on a full reset"] = function()
+		local old = Data.fresh()
+		old.pets = { { uid = "one", id = "Dog", boost = 1.2 } }
+		old.discoveredPets = nil
+		local data = Data.normalize(old, catalog)
+		check(data.discoveredPets.Dog == true)
+		data.pets = {}
+		local reloaded = Data.normalize(data, catalog)
+		check(reloaded.discoveredPets.Dog == true and #reloaded.pets == 0)
+		check(next(Data.resetProgress(reloaded).discoveredPets) == nil)
+	end,
+	["newly granted pets are remembered without sharing history across profiles"] = function()
+		local first, second = Data.fresh(), Data.fresh()
+		first.pets = { { uid = "new", id = "Dog", boost = 1.2 } }
+		Data.rememberPets(first)
+		check(first.discoveredPets.Dog and not second.discoveredPets.Dog)
+		local clean = Data.normalize({ discoveredPets = { Dog = true, Missing = true, Cat = "true" } }, catalog)
+		check(clean.discoveredPets.Dog and clean.discoveredPets.Missing == nil and clean.discoveredPets.Cat == nil)
+	end,
 	["legacy progress, fractional boosts and receipts survive normalization"] = function()
 		local old = Data.fresh()
 		old.skill, old.wins, old.rebirths, old.best = 98453, 100000, 7, 8969

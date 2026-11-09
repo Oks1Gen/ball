@@ -89,7 +89,7 @@ function KickTiming.mount(context: any)
 			elseif Input.PreferredInput == Enum.PreferredInput.Gamepad then "A / X TO KICK"
 			else "CLICK / SPACE"
 		local product = if accuracy and (submitted or resultVisible)
-			then string.format("%.2f × %.2f ≈ %.2f", lockedPower, lockedAccuracy, resultPower)
+			then string.format("Power + Accuracy → ×%.2f", resultPower)
 			else ""
 		root:render(e(React.Fragment, nil, {
 			Flash = e("Frame", {

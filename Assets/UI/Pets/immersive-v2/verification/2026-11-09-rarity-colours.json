@@ -1,0 +1,115 @@
+{
+  "date": "2026-11-09",
+  "scope": "Selected rarity background plus Common black/grey outline",
+  "gradients": {
+    "1": {
+      "top": {
+        "1": 0.1349019706249237,
+        "2": 0.5521568655967712,
+        "3": 0.800000011920929
+      },
+      "rarity": "Rare",
+      "bottom": {
+        "1": 0.06745097786188126,
+        "2": 0.2760784327983856,
+        "3": 0.3999999761581421
+      },
+      "nameFits": true,
+      "correct": true
+    },
+    "2": {
+      "top": {
+        "1": 0.2729411721229553,
+        "2": 0.6901960968971252,
+        "3": 0.4047059118747711
+      },
+      "rarity": "Uncommon",
+      "bottom": {
+        "1": 0.13647058606147766,
+        "2": 0.34509801864624023,
+        "3": 0.20235294103622437
+      },
+      "nameFits": true,
+      "correct": true
+    },
+    "3": {
+      "top": {
+        "1": 0.4360784590244293,
+        "2": 0.5082353353500366,
+        "3": 0.5960784554481506
+      },
+      "rarity": "Common",
+      "bottom": {
+        "1": 0.21803921461105347,
+        "2": 0.2541176378726959,
+        "3": 0.29803919792175293
+      },
+      "nameFits": true,
+      "correct": true
+    }
+  },
+  "borders": {
+    "rare": {
+      "haloCorrect": true,
+      "rarity": "Rare",
+      "correct": true
+    },
+    "uncommon": {
+      "haloCorrect": true,
+      "rarity": "Uncommon",
+      "correct": true
+    },
+    "common": {
+      "borderMatchesWindow": true,
+      "border": {
+        "1": 12,
+        "2": 13,
+        "3": 19
+      },
+      "pillBorder": {
+        "1": 12,
+        "2": 13,
+        "3": 19
+      },
+      "pillText": {
+        "1": 255,
+        "2": 255,
+        "3": 255
+      },
+      "halo": {
+        "1": 56,
+        "2": 65,
+        "3": 79
+      },
+      "pillMatchesWindow": true,
+      "windowOutline": {
+        "1": 12,
+        "2": 13,
+        "3": 19
+      },
+      "rarity": "Common"
+    }
+  },
+  "finalCommon": {
+    "haloNeutral": true,
+    "borderMatchesWindow": true,
+    "rarity": "Common",
+    "pillMatchesWindow": true
+  },
+  "gate": {
+    "lune": 149,
+    "verification": 5,
+    "typeDiagnostics": 0,
+    "result": "passed",
+    "log": "RojoTest/.tools/pets-rarity-check.log"
+  },
+  "updateLog": {
+    "version": "0.8.0",
+    "published": false,
+    "detailsFit": true,
+    "pcOpenCloseExpandCollapse": true
+  },
+  "playStopped": true,
+  "noSavedInventoryChanges": true,
+  "noMobileTest": true
+}

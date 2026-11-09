@@ -1,0 +1,110 @@
+{
+  "date": "2026-11-09",
+  "scope": "Five Forest Egg UI portraits",
+  "generation": "Built-in ImageGen, transparent background",
+  "roblox": {
+    "universeId": 10770268214,
+    "creatorUserId": 11789507527,
+    "BloomFox": "rbxassetid://124490712371263",
+    "MoonOwl": "rbxassetid://93803273203661",
+    "GroveGuardian": "rbxassetid://117525307875285",
+    "CloverBunny": "rbxassetid://115200199975380",
+    "AcornSquirrel": "rbxassetid://92661951811505"
+  },
+  "styleReference": "sources/outline-reference.png",
+  "preview": "preview.png",
+  "canvas": {
+    "width": 512,
+    "height": 512,
+    "format": "RGBA PNG"
+  },
+  "outline": {
+    "color": "#000000",
+    "pixels": 24,
+    "measurement": "Opaque artwork boundary to 50% alpha perimeter"
+  },
+  "camera": {
+    "projection": "orthographic",
+    "yawDegrees": 25.2,
+    "pitchDegrees": 18.2,
+    "view": "front-left",
+    "mirroredForView": [
+      "CloverBunny",
+      "AcornSquirrel",
+      "BloomFox",
+      "GroveGuardian"
+    ]
+  },
+  "portraits": [
+    {
+      "name": "Clover Bunny",
+      "file": "CloverBunny.png",
+      "render": "sources/CloverBunny-render.png",
+      "imageGenSource": "sources/CloverBunny-imagegen.png",
+      "alphaBoundsXYWH": [
+        87,
+        16,
+        338,
+        480
+      ],
+      "prompt": "Use case: precise-object-edit. Make one polished Roblox simulator pet inventory portrait from image 1, the actual Blender model render. Preserve exactly the cube body, cute proportions, ears, tail, facial features, camera front-left view and cream/caramel colors of image 1. Cream Clover Bunny with one upright ear, one bent ear, pink inner ears, green clover and green glossy eyes. Keep the soft 3D shading. Add one smooth uniform extra-thick pure black outer sticker outline, 48 pixels on a 1024 square, matching image 2's thick outline style. Fully transparent RGBA background. Keep the complete pet centered, generous transparent margins. No internal black contour strokes, no white border, ground shadow, text, props or background.",
+      "imageGenId": "exec-612deb85-6b9e-4bff-b88d-f9d399c56d6b"
+    },
+    {
+      "name": "Acorn Squirrel",
+      "file": "AcornSquirrel.png",
+      "render": "sources/AcornSquirrel-render.png",
+      "imageGenSource": "sources/AcornSquirrel-imagegen.png",
+      "alphaBoundsXYWH": [
+        41,
+        16,
+        431,
+        480
+      ],
+      "prompt": "Use case: precise-object-edit. Make one polished Roblox simulator pet inventory portrait from image 1, the actual Blender model render. Preserve exactly the cube body, cute proportions, ears, tail, facial features, camera front-left view and cream/caramel colors of image 1. Caramel Acorn Squirrel with a huge curled tail with brown acorn cap, cream muzzle and amber glossy eyes. Keep the soft 3D shading. Add one smooth uniform extra-thick pure black outer sticker outline, 48 pixels on a 1024 square, matching image 2's thick outline style. Fully transparent RGBA background. Keep the complete pet centered, generous transparent margins. No internal black contour strokes, no white border, ground shadow, text, props or background.",
+      "imageGenId": "exec-7acabb86-b781-410c-8216-009d02687878"
+    },
+    {
+      "name": "Bloom Fox",
+      "file": "BloomFox.png",
+      "render": "sources/BloomFox-render.png",
+      "imageGenSource": "sources/BloomFox-imagegen.png",
+      "imageGenId": "exec-d3b6704e-cb75-4022-b110-24c4f5f9a572",
+      "alphaBoundsXYWH": [
+        16,
+        18,
+        480,
+        476
+      ],
+      "prompt": "Use case: precise-object-edit. Create one polished Roblox pet inventory icon on a fully transparent RGBA background. Image 1 is the actual Blender render to edit. Image 2 is only a reference for the front-left three-quarter viewpoint and graphic black outline. Preserve image 1's exact pose, camera angle, soft cube proportions, facial features, colors, markings and accessory silhouettes. Subject: Bloom Fox, a coral-orange softened cube fox with two tall fox ears, cream muzzle, emerald eyes, tiny orange paws and exactly two broad cream-tipped orange tails visible behind the left edge. Keep the angular cream marks from image 1. Keep the rendered 3D shading inside the character. Add a bold, smooth, pure black #000000 OUTER sticker contour, uniform width all around including feet and the gaps between appendages, about 40 px on a 1024 square canvas, visibly thicker than Image 2. Rounded anti-aliased outer edge. Outline the silhouette as one connected sticker. No black strokes on interior face markings, wings, ears or overlapping parts; no second outline. Center the complete character with even transparent margins. No ground shadow, haze, panel, background color, white border, checkerboard, props, lettering or crops."
+    },
+    {
+      "name": "Moon Owl",
+      "file": "MoonOwl.png",
+      "render": "sources/MoonOwl-render.png",
+      "imageGenSource": "sources/MoonOwl-imagegen.png",
+      "imageGenId": "exec-5ef6141a-321d-414b-b04b-7a9c6ac8ebba",
+      "alphaBoundsXYWH": [
+        35,
+        16,
+        444,
+        480
+      ],
+      "prompt": "Use case: precise-object-edit. Create one polished Roblox pet inventory icon on a fully transparent RGBA background. Image 1 is the actual Blender render to edit. Image 2 is only a reference for the front-left three-quarter viewpoint and graphic black outline. Preserve image 1's exact pose, camera angle, soft cube proportions, facial features, colors, markings and accessory silhouettes. Subject: Moon Owl, a soft lavender cube owl with two purple feather tufts, a single pale golden crescent, two round cream eye patches, amber eyes, little golden beak and paws, and the visible scalloped plum wing on the left side. Keep the rendered 3D shading inside the character. Add a bold, smooth, pure black #000000 OUTER sticker contour, uniform width all around including feet and the gaps between appendages, about 40 px on a 1024 square canvas, visibly thicker than Image 2. Rounded anti-aliased outer edge. Outline the silhouette as one connected sticker. No black strokes on interior face markings, wings, ears or overlapping parts; no second outline. Center the complete character with even transparent margins. No ground shadow, haze, panel, background color, white border, checkerboard, props, lettering or crops."
+    },
+    {
+      "name": "Grove Guardian",
+      "file": "GroveGuardian.png",
+      "render": "sources/GroveGuardian-render.png",
+      "imageGenSource": "sources/GroveGuardian-imagegen.png",
+      "imageGenId": "exec-fe589852-161c-497b-8c06-057e8c7e3a8e",
+      "alphaBoundsXYWH": [
+        35,
+        16,
+        442,
+        480
+      ],
+      "prompt": "Use case: precise-object-edit. Create one polished Roblox pet inventory icon on a fully transparent RGBA background. Image 1 is the actual Blender render to edit. Image 2 is only a reference for the front-left three-quarter viewpoint and graphic black outline. Preserve image 1's exact pose, camera angle, soft cube proportions, facial features, colors, markings and accessory silhouettes. Subject: Grove Guardian, a muted pale olive cube deer with a cream muzzle, teal-green eyes, small brown feet, two cream ears with pink cups, branched caramel antlers with two golden amber bud tips, three pale forehead petals, and one cream-tipped tail behind its left side. Keep the rendered 3D shading inside the character. Add a bold, smooth, pure black #000000 OUTER sticker contour, uniform width all around including feet and the gaps between appendages, about 40 px on a 1024 square canvas, visibly thicker than Image 2. Rounded anti-aliased outer edge. Outline the silhouette as one connected sticker. No black strokes on interior face markings, wings, ears or overlapping parts; no second outline. Center the complete character with even transparent margins. No ground shadow, haze, panel, background color, white border, checkerboard, props, lettering or crops."
+    }
+  ]
+}

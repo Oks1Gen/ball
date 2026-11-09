@@ -79,9 +79,8 @@ function Training.run(context: Context)
 				while s.lane and s.nextTraining and serverNow >= s.nextTraining and contacts < 8 do
 					local cycleGain = context.Config.Lanes[s.lane].multiplier
 						* context.multiplier(s)
-						* 7
+						* context.Config.Balance.TrainingSkillPerSecond
 						* context.Config.TrainingCycle
-						/ 0.8
 					local gain, remainder = TrainingMotion.reward(cycleGain, s.lane, s.gainRemainder)
 					s.gainRemainder = remainder
 					if s.trainingHit == 1 then

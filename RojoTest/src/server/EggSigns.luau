@@ -2,13 +2,14 @@
 -- Two-line captions above the existing eggs.
 local Config = require(game.ReplicatedStorage.Shared.GameConfig)
 local Scale = require(game.ReplicatedStorage.Shared.WorldScale)
+local WorldRefs = require(game.ReplicatedStorage.Shared.WorldRefs)
 local Signs = {}
 local HEIGHT = 4.2 -- authored studs; the sign scales with the world
 local C = Color3.fromRGB
 local CAPTIONS = {
 	Common = { title = "Forest Egg", rarity = "Common", color = C(220, 233, 229) },
 	Uncommon = { title = "Frost Egg", rarity = "Uncommon", color = C(46, 255, 35) },
-	AdminEgg = { title = "Solar Crown Egg", rarity = "Legendary", color = C(255, 208, 69) },
+	SolarCrown = { title = Config.SolarEgg.name, rarity = "Legendary", color = Config.SolarEgg.color },
 	Rare = { title = "Magma Egg", rarity = "Rare", color = C(0, 210, 255) },
 	Rainbow = { title = "Void Egg", rarity = "Epic", color = C(206, 113, 255) },
 }
@@ -51,7 +52,7 @@ local function caption(parent: Instance, center: Vector3, topY: number, id: stri
 	local gui = if oldGui and oldGui:IsA("BillboardGui") then oldGui else Instance.new("BillboardGui")
 	gui.Name = "EggSign"
 	gui.Adornee = anchor
-	gui.Size = UDim2.fromScale((if id == "AdminEgg" then 20 else 16) * scale, height)
+	gui.Size = UDim2.fromScale((if id == "SolarCrown" then 20 else 16) * scale, height)
 	gui.AlwaysOnTop = false
 	gui.LightInfluence = 0
 	gui.MaxDistance = 180
@@ -86,7 +87,7 @@ function Signs.apply(map: Instance, settings: any?)
 		return
 	end
 	local scale = Scale.factor(map)
-	for _, egg in config.Eggs do
+	for _, egg in config.BaseEggs do
 		local stand = world:FindFirstChild("Egg_" .. egg.id)
 		local shell = stand and stand:FindFirstChild("EggShell")
 		if not stand or not shell or not shell:IsA("BasePart") then
@@ -139,7 +140,27 @@ function Signs.apply(map: Instance, settings: any?)
 		local holder: Instance = world:FindFirstChild("AdminEggCaption") or Instance.new("Folder")
 		holder.Name = "AdminEggCaption"
 		holder.Parent = world
-		caption(holder, admin.Position, visual.Position.Y + visual.Size.Y / 2, "AdminEgg", scale)
+		caption(holder, admin.Position, visual.Position.Y + visual.Size.Y / 2, "SolarCrown", scale)
+	end
+end
+
+function Signs.applySolar(world: Instance)
+	local egg = Config.SolarEgg
+	local stand, part, visual = WorldRefs.eggStation(world, egg.id)
+	if not stand or not part then
+		return
+	end
+	local center, size = part.CFrame, part.Size
+	if visual then
+		center, size = visual:GetBoundingBox()
+	end
+	local anchor = stand:FindFirstChild("EggSignAnchor", true)
+	caption(anchor and anchor.Parent or stand, center.Position, center.Y + size.Y / 2, egg.id, Scale.factor(world))
+	stand:SetAttribute("EggId", egg.id)
+	local prompt = part:FindFirstChildWhichIsA("ProximityPrompt", true)
+	if prompt then
+		prompt.ActionText = "Hatch"
+		prompt.ObjectText = egg.name
 	end
 end
 

@@ -1,0 +1,120 @@
+{
+  "date": "2026-11-09",
+  "universeId": 10770268214,
+  "creatorUserId": 11789507527,
+  "bodyWidth": 1.8,
+  "permissions": {
+    "models": {
+      "successAssetIds": [
+        107211497144595,
+        115598800937010,
+        72267539305518,
+        103746982548293,
+        93407469562216
+      ],
+      "errors": []
+    },
+    "portraits": {
+      "successAssetIds": [
+        75723867072532,
+        126093246946268,
+        120375371975993,
+        78349984252832,
+        124608994969151
+      ],
+      "errors": []
+    }
+  },
+  "assets": [
+    {
+      "visual": "SnowPup",
+      "name": "Snow Pup",
+      "petId": "Cactus",
+      "meshId": "rbxassetid://91515727776814",
+      "textureId": "rbxassetid://113430887592622",
+      "meshSize": [
+        2.6029038429260254,
+        2.561000108718872,
+        3.4368419647216797
+      ],
+      "modelId": "107211497144595",
+      "modelOperation": "86eb29a0-ab6e-485e-9794-fcd4f6813c9e",
+      "portraitId": "75723867072532",
+      "portraitOperation": "0f7fb41e-7284-4c4d-a106-14f305d18a06",
+      "moderation": "Approved",
+      "outlineBottom": 455
+    },
+    {
+      "visual": "SnowyPenguin",
+      "name": "Snowy Penguin",
+      "petId": "Frog",
+      "meshId": "rbxassetid://91621453161053",
+      "textureId": "rbxassetid://111502529410394",
+      "meshSize": [
+        3.057513952255249,
+        2.240000009536743,
+        2.202000141143799
+      ],
+      "modelId": "115598800937010",
+      "modelOperation": "d54a2345-851a-4c06-b87c-17ee9f95e3c2",
+      "portraitId": "126093246946268",
+      "portraitOperation": "276e1805-7baa-4408-8d77-32c0be20dc00",
+      "moderation": "Approved",
+      "outlineBottom": 495
+    },
+    {
+      "visual": "GlacierWalrus",
+      "name": "Glacier Walrus",
+      "petId": "Watermelon",
+      "meshId": "rbxassetid://130095400084050",
+      "textureId": "rbxassetid://84725449038932",
+      "meshSize": [
+        3.36024808883667,
+        2.240000009536743,
+        2.194840908050537
+      ],
+      "modelId": "72267539305518",
+      "modelOperation": "d2eeb581-b08a-4015-92de-8ebc5a27049a",
+      "portraitId": "120375371975993",
+      "portraitOperation": "4d0c2a50-7311-4e4b-b8f0-5e0cdfee16a6",
+      "moderation": "Approved",
+      "outlineBottom": 477
+    },
+    {
+      "visual": "AuroraLynx",
+      "name": "Aurora Lynx",
+      "petId": "AuroraLynx",
+      "meshId": "rbxassetid://124390238670426",
+      "textureId": "rbxassetid://124932473230990",
+      "meshSize": [
+        2.354346990585327,
+        3.062999963760376,
+        3.136810302734375
+      ],
+      "modelId": "103746982548293",
+      "modelOperation": "ab084a67-a92c-4233-bde9-12811a86242f",
+      "portraitId": "78349984252832",
+      "portraitOperation": "c840e49a-5211-43be-af74-4741bb63db10",
+      "moderation": "Approved",
+      "outlineBottom": 495
+    },
+    {
+      "visual": "GlacierDragon",
+      "name": "Glacier Dragon",
+      "petId": "GreenDragon",
+      "meshId": "rbxassetid://103737848018636",
+      "textureId": "rbxassetid://103555893453054",
+      "meshSize": [
+        4.710319995880127,
+        2.9560000896453857,
+        2.6593234539031982
+      ],
+      "modelId": "93407469562216",
+      "modelOperation": "27503f4c-a433-473c-9fb6-2485d20e3716",
+      "portraitId": "124608994969151",
+      "portraitOperation": "6c76f301-360f-4536-bad3-10c0f20d4bff",
+      "moderation": "Approved",
+      "outlineBottom": 454
+    }
+  ]
+}

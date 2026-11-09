@@ -65,13 +65,13 @@ return {
 	["offline rate uses the best unlocked lane and permanent boosts"] = function()
 		local data = Data.fresh()
 		local lanes = { { multiplier = 1, rebirths = 0 }, { multiplier = 2, rebirths = 2 } }
-		assert(Rewards.offlineRate(data, lanes, 1) == 7 / 0.8 * Rewards.OfflineFraction)
+		assert(Rewards.offlineRate(data, lanes, 1) == 2 * 10 * Rewards.OfflineFraction)
 		data.rebirths = 2
 		data.world = 2
 		data.perks.DoubleSkill = true
 		data.pets = { { uid = "pet", boost = 2 } }
 		data.equipped = { "pet" }
-		assert(Rewards.offlineRate(data, lanes, 5) == 2 * 3 * 2 * 2 * 5 * 7 / 0.8 * Rewards.OfflineFraction)
+		assert(Rewards.offlineRate(data, lanes, 5) == 2 * 3 * (1 + 5 + 1) * 2 * 10 * Rewards.OfflineFraction)
 	end,
 	["return rewards use the same progression cap as every other accrual"] = function()
 		local data = Data.fresh()

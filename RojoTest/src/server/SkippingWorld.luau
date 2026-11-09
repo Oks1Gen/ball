@@ -525,7 +525,7 @@ function World.apply(map: Construction.World): Instance?
 	for _, x in { -175, -57 } do
 		part("BankSafetyExtension", V(2, 100, 160), V(x, 49, -1360), C(255, 255, 255), true).Transparency = 1
 	end
-	for _, egg in Config.Eggs do
+	for _, egg in Config.BaseEggs do
 		local model = Instance.new("Model")
 		model.Name = "Egg_" .. egg.id
 		model:SetAttribute("EggId", egg.id)
@@ -571,7 +571,7 @@ function World.apply(map: Construction.World): Instance?
 			)
 			rock.Shape = Enum.PartType.Ball
 			label(
-				stone.name .. "\n×" .. stone.power,
+				stone.name .. "\n+" .. stone.trainingBonus .. " Training",
 				V(pedestal.Position.X, rock.Position.Y + 4, pedestal.Position.Z),
 				12,
 				stone.color

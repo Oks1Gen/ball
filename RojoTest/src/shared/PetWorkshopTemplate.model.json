@@ -1,0 +1,1137 @@
+{
+  "ClassName": "Model",
+  "Children": [
+    {
+      "ClassName": "Part",
+      "Properties": {
+        "Name": "Foundation",
+        "Anchored": true,
+        "CanCollide": true,
+        "CanTouch": false,
+        "CanQuery": true,
+        "Size": [
+          16,
+          0.7,
+          12
+        ],
+        "Position": [
+          0,
+          0.35,
+          0
+        ],
+        "Color": [
+          0.08,
+          0.14,
+          0.25
+        ],
+        "Material": "SmoothPlastic",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth"
+      }
+    },
+    {
+      "ClassName": "Part",
+      "Properties": {
+        "Name": "FoundationTrim",
+        "Anchored": true,
+        "CanCollide": false,
+        "CanTouch": false,
+        "CanQuery": false,
+        "Size": [
+          15.6,
+          0.2,
+          11.6
+        ],
+        "Position": [
+          0,
+          0.8,
+          0
+        ],
+        "Color": [
+          1,
+          0.73,
+          0.06
+        ],
+        "Material": "SmoothPlastic",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth"
+      }
+    },
+    {
+      "ClassName": "Part",
+      "Properties": {
+        "Name": "FusionCabinet",
+        "Anchored": true,
+        "CanCollide": true,
+        "CanTouch": false,
+        "CanQuery": true,
+        "Size": [
+          6.3,
+          7.2,
+          4.5
+        ],
+        "Position": [
+          -3.65,
+          4.5,
+          -2
+        ],
+        "Color": [
+          0.86,
+          0.94,
+          1
+        ],
+        "Material": "SmoothPlastic",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth"
+      }
+    },
+    {
+      "ClassName": "Part",
+      "Properties": {
+        "Name": "FusionRoof",
+        "Anchored": true,
+        "CanCollide": false,
+        "CanTouch": false,
+        "CanQuery": false,
+        "Size": [
+          6.8,
+          0.6,
+          4.9
+        ],
+        "Position": [
+          -3.65,
+          8.2,
+          -2
+        ],
+        "Color": [
+          1,
+          0.73,
+          0.06
+        ],
+        "Material": "SmoothPlastic",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth"
+      }
+    },
+    {
+      "ClassName": "Part",
+      "Properties": {
+        "Name": "FusionRoofStep",
+        "Anchored": true,
+        "CanCollide": false,
+        "CanTouch": false,
+        "CanQuery": false,
+        "Size": [
+          5.3,
+          0.3,
+          3.5
+        ],
+        "Position": [
+          -3.65,
+          8.65,
+          -2
+        ],
+        "Color": [
+          1,
+          0.73,
+          0.06
+        ],
+        "Material": "SmoothPlastic",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth"
+      }
+    },
+    {
+      "ClassName": "Part",
+      "Properties": {
+        "Name": "FusionFrame",
+        "Anchored": true,
+        "CanCollide": false,
+        "CanTouch": false,
+        "CanQuery": false,
+        "Size": [
+          5.4,
+          4.4,
+          0.35
+        ],
+        "Position": [
+          -3.65,
+          5.1,
+          0.3
+        ],
+        "Color": [
+          1,
+          0.73,
+          0.06
+        ],
+        "Material": "SmoothPlastic",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth"
+      }
+    },
+    {
+      "ClassName": "Part",
+      "Properties": {
+        "Name": "FusionScreen",
+        "Anchored": true,
+        "CanCollide": false,
+        "CanTouch": false,
+        "CanQuery": false,
+        "Size": [
+          4.8,
+          3.8,
+          0.16
+        ],
+        "Position": [
+          -3.65,
+          5.1,
+          0.52
+        ],
+        "Color": [
+          0.06,
+          0.25,
+          0.4
+        ],
+        "Material": "SmoothPlastic",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth"
+      }
+    },
+    {
+      "ClassName": "Part",
+      "Properties": {
+        "Name": "FusionWindow",
+        "Anchored": true,
+        "CanCollide": false,
+        "CanTouch": false,
+        "CanQuery": false,
+        "Size": [
+          4.4,
+          3.4,
+          0.1
+        ],
+        "Position": [
+          -3.65,
+          5.1,
+          0.64
+        ],
+        "Color": [
+          0.03,
+          0.74,
+          1
+        ],
+        "Material": "SmoothPlastic",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth"
+      }
+    },
+    {
+      "ClassName": "Part",
+      "Properties": {
+        "Name": "FusionPetBody",
+        "Anchored": true,
+        "CanCollide": false,
+        "CanTouch": false,
+        "CanQuery": false,
+        "Size": [
+          1.8,
+          1.55,
+          0.18
+        ],
+        "Position": [
+          -3.65,
+          4.9,
+          0.8
+        ],
+        "Color": [
+          0.86,
+          0.94,
+          1
+        ],
+        "Material": "SmoothPlastic",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth"
+      }
+    },
+    {
+      "ClassName": "Part",
+      "Properties": {
+        "Name": "FusionPetEarLeft",
+        "Anchored": true,
+        "CanCollide": false,
+        "CanTouch": false,
+        "CanQuery": false,
+        "Size": [
+          0.5,
+          0.65,
+          0.18
+        ],
+        "Position": [
+          -4.3,
+          5.95,
+          0.8
+        ],
+        "Color": [
+          0.86,
+          0.94,
+          1
+        ],
+        "Material": "SmoothPlastic",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth"
+      }
+    },
+    {
+      "ClassName": "Part",
+      "Properties": {
+        "Name": "FusionPetEarRight",
+        "Anchored": true,
+        "CanCollide": false,
+        "CanTouch": false,
+        "CanQuery": false,
+        "Size": [
+          0.5,
+          0.65,
+          0.18
+        ],
+        "Position": [
+          -3.0,
+          5.95,
+          0.8
+        ],
+        "Color": [
+          0.86,
+          0.94,
+          1
+        ],
+        "Material": "SmoothPlastic",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth"
+      }
+    },
+    {
+      "ClassName": "Part",
+      "Properties": {
+        "Name": "FusionConsole",
+        "Anchored": true,
+        "CanCollide": false,
+        "CanTouch": false,
+        "CanQuery": false,
+        "Size": [
+          5.2,
+          0.8,
+          1.2
+        ],
+        "Position": [
+          -3.65,
+          2.5,
+          0.6
+        ],
+        "Color": [
+          1,
+          0.73,
+          0.06
+        ],
+        "Material": "SmoothPlastic",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth"
+      }
+    },
+    {
+      "ClassName": "Part",
+      "Properties": {
+        "Name": "FusionControl",
+        "Anchored": true,
+        "CanCollide": false,
+        "CanTouch": false,
+        "CanQuery": false,
+        "Size": [
+          2.7,
+          0.12,
+          0.65
+        ],
+        "Position": [
+          -4.25,
+          2.95,
+          0.7
+        ],
+        "Color": [
+          0.03,
+          0.74,
+          1
+        ],
+        "Material": "Neon",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth"
+      }
+    },
+    {
+      "ClassName": "Part",
+      "Properties": {
+        "Name": "FusionKey0",
+        "Anchored": true,
+        "CanCollide": false,
+        "CanTouch": false,
+        "CanQuery": false,
+        "Size": [
+          0.25,
+          0.15,
+          0.45
+        ],
+        "Position": [
+          -2.65,
+          2.95,
+          0.7
+        ],
+        "Color": [
+          0.86,
+          0.94,
+          1
+        ],
+        "Material": "SmoothPlastic",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth"
+      }
+    },
+    {
+      "ClassName": "Part",
+      "Properties": {
+        "Name": "FusionKey1",
+        "Anchored": true,
+        "CanCollide": false,
+        "CanTouch": false,
+        "CanQuery": false,
+        "Size": [
+          0.25,
+          0.15,
+          0.45
+        ],
+        "Position": [
+          -2.27,
+          2.95,
+          0.7
+        ],
+        "Color": [
+          0.86,
+          0.94,
+          1
+        ],
+        "Material": "SmoothPlastic",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth"
+      }
+    },
+    {
+      "ClassName": "Part",
+      "Properties": {
+        "Name": "FusionKey2",
+        "Anchored": true,
+        "CanCollide": false,
+        "CanTouch": false,
+        "CanQuery": false,
+        "Size": [
+          0.25,
+          0.15,
+          0.45
+        ],
+        "Position": [
+          -1.89,
+          2.95,
+          0.7
+        ],
+        "Color": [
+          0.86,
+          0.94,
+          1
+        ],
+        "Material": "SmoothPlastic",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth"
+      }
+    },
+    {
+      "ClassName": "Part",
+      "Properties": {
+        "Name": "FusionAntenna",
+        "Anchored": true,
+        "CanCollide": false,
+        "CanTouch": false,
+        "CanQuery": false,
+        "Size": [
+          0.32,
+          1,
+          0.32
+        ],
+        "Position": [
+          -3.65,
+          9.3,
+          -2
+        ],
+        "Color": [
+          0.03,
+          0.74,
+          1
+        ],
+        "Material": "SmoothPlastic",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth"
+      }
+    },
+    {
+      "ClassName": "Part",
+      "Properties": {
+        "Name": "FusionBeacon",
+        "Anchored": true,
+        "CanCollide": false,
+        "CanTouch": false,
+        "CanQuery": false,
+        "Size": [
+          0.9,
+          0.9,
+          0.9
+        ],
+        "Position": [
+          -3.65,
+          10,
+          -2
+        ],
+        "Color": [
+          1,
+          0.73,
+          0.06
+        ],
+        "Material": "Neon",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth"
+      }
+    },
+    {
+      "ClassName": "Part",
+      "Properties": {
+        "Name": "FusionPlatform",
+        "Anchored": true,
+        "CanCollide": true,
+        "CanTouch": false,
+        "CanQuery": true,
+        "Size": [
+          0.3,
+          5.2,
+          4.2
+        ],
+        "Color": [
+          1,
+          0.73,
+          0.06
+        ],
+        "Material": "SmoothPlastic",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth",
+        "Shape": "Cylinder",
+        "CFrame": [
+          -3.65,
+          1.05,
+          3.4,
+          0,
+          -1,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "ClassName": "Part",
+      "Properties": {
+        "Name": "FusionPad",
+        "Anchored": true,
+        "CanCollide": false,
+        "CanTouch": false,
+        "CanQuery": false,
+        "Size": [
+          0.1,
+          4.4,
+          3.6
+        ],
+        "Color": [
+          0.03,
+          0.74,
+          1
+        ],
+        "Material": "Neon",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth",
+        "Shape": "Cylinder",
+        "CFrame": [
+          -3.65,
+          1.23,
+          3.4,
+          0,
+          -1,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "ClassName": "Part",
+      "Properties": {
+        "Name": "MutationCabinet",
+        "Anchored": true,
+        "CanCollide": true,
+        "CanTouch": false,
+        "CanQuery": true,
+        "Size": [
+          6.3,
+          7.2,
+          4.5
+        ],
+        "Position": [
+          3.65,
+          4.5,
+          -2
+        ],
+        "Color": [
+          0.86,
+          0.94,
+          1
+        ],
+        "Material": "SmoothPlastic",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth"
+      }
+    },
+    {
+      "ClassName": "Part",
+      "Properties": {
+        "Name": "MutationRoof",
+        "Anchored": true,
+        "CanCollide": false,
+        "CanTouch": false,
+        "CanQuery": false,
+        "Size": [
+          6.8,
+          0.6,
+          4.9
+        ],
+        "Position": [
+          3.65,
+          8.2,
+          -2
+        ],
+        "Color": [
+          0.65,
+          0.3,
+          0.95
+        ],
+        "Material": "SmoothPlastic",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth"
+      }
+    },
+    {
+      "ClassName": "Part",
+      "Properties": {
+        "Name": "MutationRoofStep",
+        "Anchored": true,
+        "CanCollide": false,
+        "CanTouch": false,
+        "CanQuery": false,
+        "Size": [
+          5.3,
+          0.3,
+          3.5
+        ],
+        "Position": [
+          3.65,
+          8.65,
+          -2
+        ],
+        "Color": [
+          0.65,
+          0.3,
+          0.95
+        ],
+        "Material": "SmoothPlastic",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth"
+      }
+    },
+    {
+      "ClassName": "Part",
+      "Properties": {
+        "Name": "MutationFrame",
+        "Anchored": true,
+        "CanCollide": false,
+        "CanTouch": false,
+        "CanQuery": false,
+        "Size": [
+          5.4,
+          4.4,
+          0.35
+        ],
+        "Position": [
+          3.65,
+          5.1,
+          0.3
+        ],
+        "Color": [
+          0.65,
+          0.3,
+          0.95
+        ],
+        "Material": "SmoothPlastic",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth"
+      }
+    },
+    {
+      "ClassName": "Part",
+      "Properties": {
+        "Name": "MutationScreen",
+        "Anchored": true,
+        "CanCollide": false,
+        "CanTouch": false,
+        "CanQuery": false,
+        "Size": [
+          4.8,
+          3.8,
+          0.16
+        ],
+        "Position": [
+          3.65,
+          5.1,
+          0.52
+        ],
+        "Color": [
+          0.06,
+          0.25,
+          0.4
+        ],
+        "Material": "SmoothPlastic",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth"
+      }
+    },
+    {
+      "ClassName": "Part",
+      "Properties": {
+        "Name": "MutationWindow",
+        "Anchored": true,
+        "CanCollide": false,
+        "CanTouch": false,
+        "CanQuery": false,
+        "Size": [
+          4.4,
+          3.4,
+          0.1
+        ],
+        "Position": [
+          3.65,
+          5.1,
+          0.64
+        ],
+        "Color": [
+          0.03,
+          0.74,
+          1
+        ],
+        "Material": "SmoothPlastic",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth"
+      }
+    },
+    {
+      "ClassName": "Part",
+      "Properties": {
+        "Name": "MutationPetBody",
+        "Anchored": true,
+        "CanCollide": false,
+        "CanTouch": false,
+        "CanQuery": false,
+        "Size": [
+          1.8,
+          1.55,
+          0.18
+        ],
+        "Position": [
+          3.65,
+          4.9,
+          0.8
+        ],
+        "Color": [
+          0.86,
+          0.94,
+          1
+        ],
+        "Material": "SmoothPlastic",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth"
+      }
+    },
+    {
+      "ClassName": "Part",
+      "Properties": {
+        "Name": "MutationPetEarLeft",
+        "Anchored": true,
+        "CanCollide": false,
+        "CanTouch": false,
+        "CanQuery": false,
+        "Size": [
+          0.5,
+          0.65,
+          0.18
+        ],
+        "Position": [
+          3.0,
+          5.95,
+          0.8
+        ],
+        "Color": [
+          0.86,
+          0.94,
+          1
+        ],
+        "Material": "SmoothPlastic",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth"
+      }
+    },
+    {
+      "ClassName": "Part",
+      "Properties": {
+        "Name": "MutationPetEarRight",
+        "Anchored": true,
+        "CanCollide": false,
+        "CanTouch": false,
+        "CanQuery": false,
+        "Size": [
+          0.5,
+          0.65,
+          0.18
+        ],
+        "Position": [
+          4.3,
+          5.95,
+          0.8
+        ],
+        "Color": [
+          0.86,
+          0.94,
+          1
+        ],
+        "Material": "SmoothPlastic",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth"
+      }
+    },
+    {
+      "ClassName": "Part",
+      "Properties": {
+        "Name": "MutationConsole",
+        "Anchored": true,
+        "CanCollide": false,
+        "CanTouch": false,
+        "CanQuery": false,
+        "Size": [
+          5.2,
+          0.8,
+          1.2
+        ],
+        "Position": [
+          3.65,
+          2.5,
+          0.6
+        ],
+        "Color": [
+          0.65,
+          0.3,
+          0.95
+        ],
+        "Material": "SmoothPlastic",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth"
+      }
+    },
+    {
+      "ClassName": "Part",
+      "Properties": {
+        "Name": "MutationControl",
+        "Anchored": true,
+        "CanCollide": false,
+        "CanTouch": false,
+        "CanQuery": false,
+        "Size": [
+          2.7,
+          0.12,
+          0.65
+        ],
+        "Position": [
+          3.05,
+          2.95,
+          0.7
+        ],
+        "Color": [
+          0.03,
+          0.74,
+          1
+        ],
+        "Material": "Neon",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth"
+      }
+    },
+    {
+      "ClassName": "Part",
+      "Properties": {
+        "Name": "MutationKey0",
+        "Anchored": true,
+        "CanCollide": false,
+        "CanTouch": false,
+        "CanQuery": false,
+        "Size": [
+          0.25,
+          0.15,
+          0.45
+        ],
+        "Position": [
+          4.65,
+          2.95,
+          0.7
+        ],
+        "Color": [
+          0.86,
+          0.94,
+          1
+        ],
+        "Material": "SmoothPlastic",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth"
+      }
+    },
+    {
+      "ClassName": "Part",
+      "Properties": {
+        "Name": "MutationKey1",
+        "Anchored": true,
+        "CanCollide": false,
+        "CanTouch": false,
+        "CanQuery": false,
+        "Size": [
+          0.25,
+          0.15,
+          0.45
+        ],
+        "Position": [
+          5.03,
+          2.95,
+          0.7
+        ],
+        "Color": [
+          0.86,
+          0.94,
+          1
+        ],
+        "Material": "SmoothPlastic",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth"
+      }
+    },
+    {
+      "ClassName": "Part",
+      "Properties": {
+        "Name": "MutationKey2",
+        "Anchored": true,
+        "CanCollide": false,
+        "CanTouch": false,
+        "CanQuery": false,
+        "Size": [
+          0.25,
+          0.15,
+          0.45
+        ],
+        "Position": [
+          5.41,
+          2.95,
+          0.7
+        ],
+        "Color": [
+          0.86,
+          0.94,
+          1
+        ],
+        "Material": "SmoothPlastic",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth"
+      }
+    },
+    {
+      "ClassName": "Part",
+      "Properties": {
+        "Name": "MutationAntenna",
+        "Anchored": true,
+        "CanCollide": false,
+        "CanTouch": false,
+        "CanQuery": false,
+        "Size": [
+          0.32,
+          1,
+          0.32
+        ],
+        "Position": [
+          3.65,
+          9.3,
+          -2
+        ],
+        "Color": [
+          0.03,
+          0.74,
+          1
+        ],
+        "Material": "SmoothPlastic",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth"
+      }
+    },
+    {
+      "ClassName": "Part",
+      "Properties": {
+        "Name": "MutationBeacon",
+        "Anchored": true,
+        "CanCollide": false,
+        "CanTouch": false,
+        "CanQuery": false,
+        "Size": [
+          0.9,
+          0.9,
+          0.9
+        ],
+        "Position": [
+          3.65,
+          10,
+          -2
+        ],
+        "Color": [
+          0.65,
+          0.3,
+          0.95
+        ],
+        "Material": "Neon",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth"
+      }
+    },
+    {
+      "ClassName": "Part",
+      "Properties": {
+        "Name": "MutationPlatform",
+        "Anchored": true,
+        "CanCollide": true,
+        "CanTouch": false,
+        "CanQuery": true,
+        "Size": [
+          0.3,
+          5.2,
+          4.2
+        ],
+        "Color": [
+          0.65,
+          0.3,
+          0.95
+        ],
+        "Material": "SmoothPlastic",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth",
+        "Shape": "Cylinder",
+        "CFrame": [
+          3.65,
+          1.05,
+          3.4,
+          0,
+          -1,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "ClassName": "Part",
+      "Properties": {
+        "Name": "MutationPad",
+        "Anchored": true,
+        "CanCollide": false,
+        "CanTouch": false,
+        "CanQuery": false,
+        "Size": [
+          0.1,
+          4.4,
+          3.6
+        ],
+        "Color": [
+          0.03,
+          0.74,
+          1
+        ],
+        "Material": "Neon",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth",
+        "Shape": "Cylinder",
+        "CFrame": [
+          3.65,
+          1.23,
+          3.4,
+          0,
+          -1,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "ClassName": "Part",
+      "Properties": {
+        "Name": "CenterSpine",
+        "Anchored": true,
+        "CanCollide": false,
+        "CanTouch": false,
+        "CanQuery": false,
+        "Size": [
+          0.45,
+          6.6,
+          4.7
+        ],
+        "Position": [
+          0,
+          4.25,
+          -2
+        ],
+        "Color": [
+          0.08,
+          0.14,
+          0.25
+        ],
+        "Material": "SmoothPlastic",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth"
+      }
+    }
+  ]
+}

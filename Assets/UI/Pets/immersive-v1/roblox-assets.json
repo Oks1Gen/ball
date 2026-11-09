@@ -1,0 +1,37 @@
+{
+  "date": "2026-11-08",
+  "creatorUserId": 11789507527,
+  "universeId": 10770268214,
+  "sharing": {
+    "subjectType": "Universe",
+    "action": "Use",
+    "grantToDependencies": true,
+    "status": "success for all four Decals"
+  },
+  "assets": [
+    {
+      "key": "Recycle",
+      "file": "recycle.png",
+      "decalId": 130763063963876,
+      "imageId": 109480590885908
+    },
+    {
+      "key": "PetCraft",
+      "file": "craft.png",
+      "decalId": 118945240371091,
+      "imageId": 72851446115205
+    },
+    {
+      "key": "PetTeam",
+      "file": "team.png",
+      "decalId": 77060570049177,
+      "imageId": 97422531207156
+    },
+    {
+      "key": "PetStorage",
+      "file": "storage.png",
+      "decalId": 97041967961496,
+      "imageId": 114673124674659
+    }
+  ]
+}

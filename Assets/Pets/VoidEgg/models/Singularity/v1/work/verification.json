@@ -1,0 +1,45 @@
+{
+  "triangles": 6612,
+  "largestPart": 2816,
+  "bounds": [
+    [
+      -2.0561764240264893,
+      -1.7941535711288452,
+      0.0
+    ],
+    [
+      2.0561764240264893,
+      1.7941535711288452,
+      2.240000009536743
+    ]
+  ],
+  "parts": {
+    "Square body": 764,
+    "front left paw": 448,
+    "rear left paw": 448,
+    "front right paw": 448,
+    "rear right paw": 448,
+    "left glossy eye": 420,
+    "right glossy eye": 420,
+    "Tilted neon orbit ring": 2816,
+    "left light smile curl": 200,
+    "right light smile curl": 200
+  },
+  "imports": {
+    "blend": {
+      "triangles": 6612,
+      "boundsError": 0.0,
+      "packedImages": 3
+    },
+    "glb": {
+      "triangles": 6612,
+      "boundsError": 0.0,
+      "packedImages": 3
+    },
+    "fbx": {
+      "triangles": 6612,
+      "boundsError": 4.76837158203125e-07,
+      "packedImages": 3
+    }
+  }
+}

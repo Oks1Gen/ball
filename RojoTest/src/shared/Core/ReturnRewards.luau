@@ -1,6 +1,7 @@
 --!strict
 -- Server-owned calendar and offline accrual. No engine dependencies.
 local Data = require("./ProfileData")
+local Balance = require("./Balance")
 local Rewards = {}
 
 -- A small bonus for a real break: nothing for short absences, so rejoining
@@ -26,18 +27,8 @@ function Rewards.offlineRate(data: any, lanes: any, ballPower: number): number
 			gain = math.max(gain, lane.multiplier)
 		end
 	end
-	local pets = 1
-	for _, uid in data.equipped do
-		for _, pet in data.pets do
-			if pet.uid == uid then
-				pets += math.max(0, (pet.boost or 1) - 1)
-				break
-			end
-		end
-	end
-	local multiplier = (1 + data.rebirths) * pets * ballPower * (if data.perks.DoubleSkill then 2 else 1)
-
-	return math.min(Data.MaxProgress, gain * multiplier * 7 / 0.8 * Rewards.OfflineFraction)
+	local multiplier = Balance.trainingMultiplier(data, ballPower)
+	return math.min(Data.MaxProgress, gain * multiplier * Balance.TrainingSkillPerSecond * Rewards.OfflineFraction)
 end
 
 function Rewards.arrive(data: any, now: number)

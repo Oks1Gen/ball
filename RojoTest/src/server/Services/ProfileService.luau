@@ -26,6 +26,7 @@ function Service:Init(context: any)
 		Config.UncommonPets,
 		Config.RarePets,
 		Config.RainbowPets,
+		Config.SolarPets,
 		{ Config.AdminPet },
 	}
 	for _, list in catalogs do
@@ -172,7 +173,7 @@ function Service:Attach(player: Player, state: any, onLost: () -> ())
 	local function sync()
 		local original = state.data
 		original.lastSeen = os.time()
-		original.offlineRate = ReturnRewards.offlineRate(original, Config.Lanes, BallPurchases.power(original))
+		original.offlineRate = ReturnRewards.offlineRate(original, Config.Lanes, BallPurchases.trainingBonus(original))
 		profile.Data.progress = original
 	end
 	profile.OnSave:Connect(sync)
@@ -229,8 +230,11 @@ function Service:Release(player: Player, state: any)
 	end
 	profile.Data.progress = state.data
 	profile.Data.progress.lastSeen = os.time()
-	profile.Data.progress.offlineRate =
-		ReturnRewards.offlineRate(profile.Data.progress, Config.Lanes, BallPurchases.power(profile.Data.progress))
+	profile.Data.progress.offlineRate = ReturnRewards.offlineRate(
+		profile.Data.progress,
+		Config.Lanes,
+		BallPurchases.trainingBonus(profile.Data.progress)
+	)
 	self.profiles[player] = nil
 	profile:EndSession()
 	player:SetAttribute("ProfileStorage", nil)

@@ -9,7 +9,7 @@ local Motion = {}
 local resets: { [GuiButton]: () -> () } = {}
 
 function Motion.reduced(node: Instance): boolean
-	local gui = node:FindFirstAncestorOfClass("ScreenGui")
+	local gui = node:FindFirstAncestorWhichIsA("LayerCollector")
 	return gui ~= nil and gui:GetAttribute("ReducedMotion") == true
 end
 
@@ -22,7 +22,7 @@ function Motion.enabled(button: GuiButton): boolean
 		if node:IsA("GuiObject") and (not node.Visible or not node.Interactable) then
 			return false
 		end
-		if node:IsA("ScreenGui") and not node.Enabled then
+		if node:IsA("LayerCollector") and not node.Enabled then
 			return false
 		end
 		node = node.Parent
@@ -217,7 +217,7 @@ function Motion.button(button: GuiButton, visual: GuiObject, shadow: GuiObject?)
 			target(true)
 		end
 	end)
-	local screen = button:FindFirstAncestorOfClass("ScreenGui")
+	local screen = button:FindFirstAncestorWhichIsA("LayerCollector")
 	if screen then
 		connect(screen:GetAttributeChangedSignal("ReducedMotion"), function()
 			reset()
@@ -372,7 +372,7 @@ function Motion.window(group: CanvasGroup, baseScale: number?, reduced: (() -> b
 			)
 		end
 	end
-	local screen = group:FindFirstAncestorOfClass("ScreenGui")
+	local screen = group:FindFirstAncestorWhichIsA("LayerCollector")
 	if screen then
 		reducedConnection = screen:GetAttributeChangedSignal("ReducedMotion"):Connect(function()
 			if Motion.reduced(group) then

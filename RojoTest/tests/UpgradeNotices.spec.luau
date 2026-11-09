@@ -5,9 +5,9 @@ local Net = require("../src/shared/Net")
 local config = {
 	Lanes = { { rebirths = 0, multiplier = 1 }, { rebirths = 2, multiplier = 2 }, { rebirths = 4, multiplier = 4 } },
 	Stones = {
-		{ id = "Pebble", name = "Starter", power = 1, cost = 0 },
-		{ id = "Smooth", name = "Smooth", power = 2, cost = 250 },
-		{ id = "Sun", name = "Sun", power = 10, cost = 2500 },
+		{ id = "Pebble", name = "Starter", trainingBonus = 1, cost = 0 },
+		{ id = "Smooth", name = "Smooth", trainingBonus = 2, cost = 250 },
+		{ id = "Sun", name = "Sun", trainingBonus = 10, cost = 2500 },
 	},
 	Trails = {
 		{ id = "None", name = "None", boost = 1, cost = 0 },

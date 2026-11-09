@@ -5,7 +5,8 @@ local WorldRefs = require(game.ReplicatedStorage.Shared.WorldRefs)
 local checked = 0
 for _, world in { workspace.Map.World1 } do
 	for _, egg in Config.Eggs do
-		local shell = WorldRefs.eggs(world)["Egg_" .. egg.id].EggShell
+		local _, shell = WorldRefs.eggStation(world, egg.id)
+		assert(shell, "Missing stand for " .. egg.id)
 		local destination = Interaction.destination(world, egg.id, 3)
 		assert(destination, "No safe destination for " .. world.Name .. "/" .. egg.id)
 		local offset = (destination.Position - shell.Position) * Vector3.new(1, 0, 1)

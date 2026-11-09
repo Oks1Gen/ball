@@ -4,7 +4,7 @@ local Layout = {}
 function Layout.calculate(width: number, height: number, count: number, variant: string?): any
 	local mode = variant or "Gallery"
 	local cols = if mode == "Gallery"
-		then math.min(count, math.max(1, math.floor((width + 12) / 150)))
+		then math.min(count, math.max(1, math.floor((width + 12) / 145)))
 		elseif mode == "LargeCards" then math.min(count, math.max(1, math.floor((width + 12) / 210)))
 		else math.min(count, width >= 460 and 2 or 1)
 	local rows = math.ceil(count / cols)

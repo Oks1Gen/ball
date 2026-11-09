@@ -20,9 +20,9 @@ function Purchases.buyOrEquip(data, id)
 	return true, item.name .. " equipped!"
 end
 
-function Purchases.power(data)
+function Purchases.trainingBonus(data)
 	local item = Config.find(Config.Stones, data.stone)
-	return item and data.stones[item.id] == true and item.power or 1
+	return item and data.stones[item.id] == true and item.trainingBonus or 0
 end
 
 return Purchases

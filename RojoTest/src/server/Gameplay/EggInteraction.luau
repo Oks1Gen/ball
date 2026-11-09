@@ -4,10 +4,8 @@ local WorldRefs = require(game.ReplicatedStorage.Shared.WorldRefs)
 
 -- Resolve the real stand in the current world, including manually moved stands.
 function Interaction.destination(arena: Instance, eggId: string, standingHeight: number): CFrame?
-	local scenery = WorldRefs.eggs(arena)
-	local stand = scenery and scenery:FindFirstChild("Egg_" .. eggId)
-	local shell = stand and stand:FindFirstChild("EggShell")
-	if not shell or not shell:IsA("BasePart") then
+	local _, shell = WorldRefs.eggStation(arena, eggId)
+	if not shell then
 		return nil
 	end
 	local forward = shell.CFrame.LookVector * Vector3.new(1, 0, 1)

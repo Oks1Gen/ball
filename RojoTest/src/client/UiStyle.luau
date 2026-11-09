@@ -40,6 +40,7 @@ Style.Rarity = {
 	Epic = C(181, 100, 255),
 	Legendary = C(255, 197, 61),
 	Mythic = C(255, 75, 158),
+	Secret = C(255, 205, 60),
 }
 
 -- Shape of the plates.

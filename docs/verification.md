@@ -1,5 +1,108 @@
 # Проверки проекта
 
+## Frost Egg models and portraits — 2026-11-09
+
+Five pets were modeled in headless Blender using the reference proportions
+and the revised saturated palette. All fifteen model exports passed isolated
+reimport. The built-in ImageGen portraits passed the 512 × 512 RGBA and uniform
+24 px contour checks. Roblox approved all ten assets and granted Ball access
+including model dependencies.
+
+Desktop Play showed all five textured models from four angles and in the
+follower controller. The outlined portraits loaded in Pets, the detail card,
+the Egg collection, the proximity catalogue, the hatch stage and Pet Workshop.
+The proximity test used the real Frost stand and an isolated discovery state.
+The scroll test reached the Legendary portrait. Golden and mutation forms
+kept their textures. The hatch showed the formatted ×3.16 Skill label.
+
+All 10,000 roll values per egg were checked. Frost follows 55/30/10/4/1%.
+Legacy Frost pet IDs, item UIDs, boosts, equipment and discoveries were
+verified against a fixture. Update Log expansion, collapse, scrolling, author
+and close were checked in Play. The project gate passed 151 Lune and five gate
+tests with zero type errors. Test copies were removed and Play was stopped.
+[Studio evidence](../RojoTest/assets/pets/frost-v1/verify-studio.json)
+
+## Forest Egg models and portraits — 2026-11-09
+
+Three approved Roblox models and three outlined portrait images are shared with
+Ball. Each model uses one textured MeshPart. Studio Play confirmed mesh and
+texture loading, front, side, rear and underside views, follower scale and
+collision flags. Normal portraits loaded in Pets, the selected detail card,
+the Egg collection, the egg proximity catalogue, hatching and Pet Workshop.
+The undiscovered Moon Owl was black in the catalogue. Golden Bloom Fox retained
+its texture and tint.
+
+The 10,000 Forest Egg rolls yielded 5,500 Common, 3,000 Uncommon, 1,000 Rare,
+400 Epic and 100 Legendary. Isolated legacy records kept species IDs, item UIDs,
+equipment and discovery flags while adopting the new names. Update Log v0.8.0
+was opened, expanded, collapsed and scrolled on desktop. Its author and text
+fit were verified. The full gate passed 151 Lune and five gate tests with zero
+type diagnostics. Fixtures were removed and Play was stopped.
+Evidence: `RojoTest/assets/pets/forest-v1/verify-studio.json`.
+
+## Pets rarity colours and Common outline — 2026-11-09
+
+The detail plane now derives its gradient, outline/halo and rarity pill from the selected pet rarity. Native PC selection Rare→Uncommon→Common verified live gradient endpoints against Theme.Rarity (80%/40% RGB); names fit. Common card and pill outlines match the main window's Theme.Outline exactly RGB12,13,19; Common text is white. Other rarity rims/halo follow their palette. Final Common halo is neutral Theme.Outline→white12%, removing the remaining fixed cyan. No new assets or saved inventory changes. Source delivered through Rojo; project gate log: `RojoTest/.tools/pets-rarity-check.log`. No mobile test or publication.
+
+## Pets 01D: composition revision after rejection — 2026-11-09
+
+The first implementation's functional checks did not establish visual acceptance. Revised against the approved image: overall design1120, larger desktop scale (1.10 at1366×767), closer flat rounded card, viewport inset correction, calibrated perspective, larger trimmed portraits and labels, brighter teal face, short button gloss, Golden Scarlet art and shard icon. Original translucent fill/close artwork retained. Details: [pets-inventory.md](pets-inventory.md).
+
+Fresh Play: source delivery confirmed; native plane Equip/Unequip, disabled Team Full rejection, golden image loaded, Recycle confirmation blocks detail, Recycle4→3/Best/sort/Craft in isolated canonical fixture; real Craft opens Window_PetCraft and removes plane/surface. Scroll60 reached Y500. Effects Off rotation0, On resumed. Three repeated close/open cycles left one plane; final close left none. At final desktop scale, extreme tilt sweep left21.105px minimum close clearance and69.080px right margin; all footer groups stay inside shell at1.14 including shadow allowance. Update Logv0.8.0 opened, expanded/collapsed and closed; changed details fit510×68 in511.07×76.81. Author Dakemo555 confirmed in Play.
+
+Final gate:149 Lune +5 verification tests, StyLua/Selene, Rojo build, ProfileStore integrity,284 relative requires,0 type diagnostics. Log: `RojoTest/.tools/pets-v2-check.log`. New PNGs use Git LFS; both moderation Approved and universe Use sharing succeeded. No new UI runtime errors; existing startup ContentId203785492 type-mismatch warnings remain unrelated.
+
+Evidence: `Assets/UI/Pets/immersive-v2/verification/results.json` and `2026-11-09-pc-geometry.png`. The image is diagnostic: engine capture omits AlwaysOnTop SurfaceGui, so AlwaysOnTop/blur/brightness/local character/follower visibility were temporarily changed, then restored. It is not an exact normal-color/blur screenshot. No mobile test, live spending, save mutations, standard write, commit or game publication. Play stopped. Visual approval is pending the user's review.
+
+## Pets inventory 01D — 2026-11-09
+
+Implemented the user-selected 01D with React/Ripple: original translucent shell/close art, no Pets sidebar, contained chunky footer, live counts and a rounded paper-thin perspective SurfaceGui. Existing gameplay requests preserved. New four individual alpha icons uploaded/approved and shared with universe10770268214; all loaded in Play. Exact design, implementation and ownership: [pets-inventory.md](pets-inventory.md).
+
+Final `node RojoTest/tools/check.mjs`: **149 Lune +5 gate tests**, StyLua/Selene/Rojo build/ProfileStore integrity pass, **0 known/new/stale type errors**. Log: `RojoTest/.tools/pets-ui-check-console.log`. Mandatory Rojo HTTP200; final source delivered and fresh Play used.
+
+PC evidence: native projected Equip/Unequip clicks in isolated canonical fixture; hover1.08, disabled press0.96 without dispatch; confirmation blocks detail; cancel preserves4, confirm4→3 fixture pets; Best/Craft/Sort; real Craft opens Window_PetCraft and destroys detail.60-pet scroll reached last row; empty Find Eggs works. Five rapid reversals retain exactly one plane/surface; final close leaves neither. No real pet spending or test remote/profile writes.
+
+Effects Off:0 radians motion/scale1; On resumes0.14959rad sampled tilt. Camera move screen-anchor error0.000372px. Extreme tilt sweep leaves at least29.879px from close button at its maximum growth and21.48px to the screen edge. Footer groups remain inside shell including max1.14 growth. Names wrap and fit. Sound via existing SkippingSounds: IsLoaded/Playing true,0.845417s length. Runtime error log clean on final Play.
+
+Update Log v0.8.0,2026-11-09,published=false: confirmed Dakemo55511789507527, loaded avatar, open/close, expand/collapse, description fit and scroll189.588px. Prior releases retained. No publication or commit.
+
+Capture limitation reproduced with an independent native SurfaceGui: engine capture omits AlwaysOnTop output. Normal screenshot therefore lacks the card. A separately labelled geometry proof temporarily uses world-pass rendering, Brightness2, no blur and hidden local character/followers; all settings restored. Files and machine-readable results: `Assets/UI/Pets/immersive-v1/verification/`. Not claimed as an exact normal-runtime color/blur screenshot. Mobile deferred by project instruction; Play stopped and temporary fixtures/observers removed.
+
+## Progression balance implementation — 2026-11-08
+
+Implemented user-approved balance with explicit overrides: balls add training bonuses only; bubbles retain x5–15 and paid x67/69/144 values with a 14-second interval; rebirth requirements, multiplier and all lane gates/multipliers remain unchanged. Tunables and migration rules are documented in [balance.md](balance.md). Earlier CEO proposal below is historical.
+
+Full `node RojoTest/tools/check.mjs` passed on the final code: formatting, Selene with zero warnings, 140 Lune tests, five gate tests, Rojo build, 274 relative requires, pinned server-only ProfileStore integrity, Studio tool/source checks and zero Luau diagnostics. Logs: `RojoTest/.tools/balance-check-console.log`, `lune.log`, `typecheck-summary.txt`. Git diff confirms Economy changed only shot power's lower bound, not rebirth math. No tracked conflict files were introduced; pre-existing AGENTS.md/restoration work preserved.
+
+Studio target place 106456161057435, universe 10770268214. Author reconfirmed in Client as Dakemo555 / 11789507527. Source delivery through Rojo checked before fresh Play. Final Server results:
+
+- `VerifyBalanceRuntime.luau`: 14 checks, Commands/Snapshot isolated state, zero gameplay profile writes. Buying a ball increases training but preserves current distance; replayed recycling/claims cannot grant again.
+- `VerifyTwoStageKick.luau`: 19 checks, bounded timing, stage tokens/replays/cancellation and separate perfect accents. Returned min 0.85, max 1.35, mixed perfect stages 1.1.
+- `VerifyBallGameplay.luau`: 151 checks, all ten models, additive tiers, prices, ownership transactions and animation, isolated inventory.
+- Actual scene at 20,000 Skill: weak 2,911 m, neutral 3,127 m, perfect 3,571 m. Rainbow Secret multiplier x10; bubble interval 14 seconds. Rebirth requirements 50K/80K and final lane x64 / 16 rebirths confirmed.
+
+PC UI checks used `PreviewBalance.luau`: production React components and isolated data without gameplay remotes. Ball +X cards; pet upgrade spent 10 Shards and changed Common 1.15 to 1.165; recycle confirmation and successful removal/shard payout; task Claim added exactly 40 Wins and one Shard. Protected Secret/equipped/paid cases covered by Lune and runtime checks. Final egg screen showed 55/30/13.95/1/0.05%, with Secret reachable by scrolling; fractional multiplier displayed as 1.675. Pet portrait assets reported IsLoaded=true. Update Log v0.6.0 showed Dakemo555/avatar, four entries, details expanded/collapsed and scrolling. Captures: Balance_PC_Balls, Balance_PC_Pets_Sibling, Balance_PC_Challenges, Balance_PC_Secret_Final, Balance_PC_Crafting_Final, Balance_PC_Recycle_Confirm and Balance_PC_Log_Expanded. Some fixture captures predate the final optional Secret power increase from 7.75 to 10; final server readback above verifies x10.
+
+Main client's `ProgressionReward` feedback was delivered separately and its toast text observed without a reward mutation. A SoundService listener confirmed success Sound 91735091370012 with Playing=true and IsLoaded=true. A separate CollectorUI handle displayed an isolated Secret hatch: five real E key presses, full highest-tier reveal, Eclipse Cat / Secret / x10 labels and Continue. Capture: Balance_PC_Secret_Reveal. No hatch remote or profile write. The observer and hatch handle were removed afterward. Existing asset 203785492 type warnings and SurfaceSeparation's guarded authored-part skip remain; the only extra Output error came from an early verification request before remotes were ready, corrected by waiting for readiness. No builders manually invoked, no mobile test, publication, purchases or sales changes. Fixtures removed; Play stopped; Rojo remains running.
+
+Still unmeasured: full fresh-player time to first rebirth and later progression/retention under the new balance. Fixed-loadout calculations are hypotheses, not observed session times.
+
+## CEO balance audit — 2026-11-08
+
+Read-only source review and Studio MCP inspection of place 106456161057435 / universe 10770268214. Rojo HTTP 200; Studio in Edit. Confirmed current economy constants, lanes, egg costs and authored shot limits (World1 17,897 m; World2 17,907 m). In World1 at 20,000 Skill and default ball, Config returns 3,127 m before timing; the current x6 perfect reaches the limit.
+
+`node design/balance-model-2026-11-08.mjs` completed with exit 0. All five World1 shot snapshots match Studio's returns. Calculated rare-drop distribution, fixed-loadout training times and rebirth sensitivity through r=30. Proposed values remain hypotheses; no Play session, fresh-player timing, cohort/retention measurement or cloud sales-state check was performed. Existing scene, source, profiles and purchase configuration were not changed. No builders or UI automation used.
+
+Proposal and assumptions: [balance review](../design/balance-review-2026-11-08.md). Scoped acceptance appended to `design/ACCEPTANCE.md`; earlier restoration results preserved. No Update Log entry applies to this analysis-only task.
+
+## Original gameplay restored — 2026-11-08
+
+At the user's explicit request, removed the experimental downhill implementation, declarative input tree, tests, prototype scene and prototype-only scene archives. Restored the original server/client/loading bootstraps, networking and WorldRefs byte-for-byte from the pre-prototype Git revision. Removed the unpublished experimental release drafts; the disk Update Log contains one restoration entry. User changes to AGENTS.md were preserved.
+
+Edit comparison verified all 83,530 original World1/World2 parts unchanged in identity, CFrame, Size, transparency and collide/touch/query flags. Original scene/source safety backups were retained. Desktop Play loaded SkippingHUD, CollectorUI, BallTopbar, original training/tutorial interfaces and SkippingRemotes; the avatar spawned in World1 at (54, 23.598, 129.6). No DownhillRemotes were created. Remaining orphaned prototype ModuleScripts/input objects were removed from Edit after checking the corresponding source files were deleted. Full gate: 132 Lune tests, five gate tests, formatting, Selene, Rojo build, ProfileStore integrity and zero Luau diagnostics passed.
+
+Rojo HTTP responds, but the Studio plugin reported disconnection and did not receive the last restoration-log edit after a file touch. The original gameplay bootstraps in Studio were already verified restored; the remaining log delivery requires reconnecting the Studio Rojo plugin. No UI automation was used. A full replay of purchases/progression and a new mobile test were outside this rollback.
+
 ## Robux catalog, shop and full Dev reset — 2026-11-06
 
 Created and read back 4 Game Passes and 8 Developer Products for universe
@@ -790,3 +893,324 @@ diagnostics. No paid hatch or reward mutation, mobile test or publication.
   inspection copy, removed afterward. Update Log opening/closing, current text,
   author and readability verified on PC.
 - Play stopped; Edit camera frames the stand. Save the place for manual assets.
+
+
+## Pet Workshop implementation — 2026-11-08
+
+User-directed replacement of the previous shard upgrade system: duplicate fusion through Golden/Diamond/Rainbow, higher-form jackpots, five random replacing mutations, reference-adapted React UI and a lobby station. No publication, purchases or loaded-profile test writes.
+
+- Rojo HTTP 200 before work and continuation; all source via disk/Rojo. Fresh Studio Play, player Dakemo555 confirmed. Exactly one station remains in Lobby through startup. The initial missing LayoutKey caused duplicate stations/prompts; fixed and fresh Play confirmed native E opens the real workshop with HUD hidden and blur. No whole-map builders invoked manually.
+- Unit tests cover all material counts, full form chain and terminal Rainbow, exact mutation weights, higher-form boundaries, all-consumed failure, primary mutation inheritance, equipped/paid guards, duplicate selection, stale revisions, weak-over-strong replacement, origin matching and reload/refund idempotence. Full check gate evidence: `RojoTest/.tools/workshop-check-console.log`.
+- Studio `VerifyPetWorkshop`: **20 checks**, isolated Commands context, policy not ready/restricted, equipped/duplicate inputs, consumption, exact shard cost, cooldown, replay, snapshot invalidation, saved form/mutation/power. `VerifyBalanceRuntime`: **14 checks**, updated for mutation costs; balls, flight, Secret and rebirth regression. Both returned profileWrites=0.
+- PC production UI exercised through isolated PreviewPetWorkshop: real button clicks choose and auto-fill five, remove slot five, display **80%** with Fail20/Golden79.12/Diamond0.8/Rainbow0.08, confirmation and roulette. A seeded unit=.99999 demonstrates Normal→Rainbow jackpot; seeded outcomes are fixtures only, never production RNG. Golden and Rainbow vertex colours, intact facial features, Diamond and mutation labels read visually. Cosmic→Wind spent exactly10 Shards and retained Diamond; sound91735091370012 observed Playing=true, IsLoaded=true.
+- Captures: WorkshopFinalSelection, WorkshopGoldenVertices, WorkshopFiveMutationOdds, WorkshopDowngradeResult, WorkshopEightyPercentFinal, WorkshopRainbowFinal, WorkshopNativePanelFinal, WorkshopUpdateLogFinal. Earlier QA overlays occasionally included the actual panel beneath; fixture now hides/restores existing windows. Main-game capture confirms one window.
+- Update Log current unpublished draft is v0.7.0 with five entries. Open/close, new version/author, scrolling and details expansion checked on PC: pet entry Expanded=true with202.85px height (collapsed57.11px). Confirmed nick/UserId preserved.
+- Machine source uses39 native parts authored in Blender, with .blend/.glb/.fbx retained. All three reimport to39 meshes,916 triangles; materials present. Source/render/verification in Assets/PetWorkshop. Actual Studio placement front at player height observed, footprint9/9 rays supported atY20.24; native prompt opens after duplicate fix. Final four Edit angles checked separately below.
+- Existing Output asset203785492 type mismatch and SurfaceSeparation authored-part skip warning predate this task. No new errors accepted. Optional editable-mesh allocation has explicit cosmetic fallback; low-memory device testing remains unmeasured.
+- New sounds/particles were not generated. Buttons use existing motion/sounds, vertical reel Ripple, reveal existing Sunburst/success sound, mutation outline. Mobile deferred by project instruction. Full new-player/endgame pacing and retention remain unmeasured; see backlog.
+
+- Final gate: **147 Lune tests + 5 gate tests**, StyLua/Selene zero warnings, Rojo build,279 resolved relative requires, pinned ProfileStore integrity, Luau **0 new/known/stale errors**. Logs end in All checks passed.
+- Failure UI separately verified on final fresh Play: one selected pet consumed,10 of11 fixture pets remain, Fail result and consumption message shown; built-in failure sound observed Playing=true/IsLoaded=true. Fixture now explicitly dismisses old cosmetic receipts before mounting; no real profile writes.
+- Final Edit captures WorkshopInspectedFront/Left/Rear/Right visually checked: full supported foundation, clear surrounding route, no duplicate machine. Play stopped, temporary UI/sound observers removed; Rojo remains running. First capture immediately after Stop temporarily had no focused handler, subsequent captures succeeded.
+
+
+## Pet Workshop inventory fix — 2026-11-08
+
+- Repro: user screenshot showed no eligible pets despite ownership; workshop consumed `data.pets`, but Snapshot.apply deliberately strips pets/equipped from data and stores them in inventory. The original fixture had the wrong shape. This was a client view integration bug, not deleted player pets.
+- Fixed split inventory reads and all equipped lookups. `PetWorkshopState` tests use the real client Snapshot.apply: inventory update → progress-only payload → replacement inventory. Equipped/protected/Rainbow remain visible with reasons and a direct unequip action. Fixture now uses `data` without pets/equipped and a separate `inventory`.
+- Fresh Play on the actual profile: **6 real pet cards** displayed, including four matching Scarlet Mushrooms; auto-fill selected four for **80%** and correct full odds. Mutations displayed all6; insufficient2 Shards shows a disabled spin. Captures WorkshopInventoryBugFixedLive, WorkshopRealPetsAutoFillFixed, WorkshopRealMutationViewFixed. Real pets were not consumed for verification.
+- Prompt service observed false while the real window was open and true after closing. Station prompt no longer overlaps the modal. Shared modal suppression also preserves hatch behavior by replacing the separate hatch-only state.
+- Canonical-shape fixture:11 pets/3 equipped all visible with Equipped badges; Unequip to craft removed qa1 from the fixture's equipped array, kept qa2/qa3 and spent nothing. Auto-fill skipped the remaining equipped pets, five eligible pets became one Golden (11→7). Mutation then spent10 Shards (100→90), Cosmic→Wind, Diamond preserved. This fixture sends no gameplay remotes or profile writes.
+- Full gate: **149 Lune tests +5 gate tests**, formatting/lint/build/ProfileStore/types passed,0 new/known/stale errors. Log: `RojoTest/.tools/workshop-fix-check-console.log`. Output has only the pre-existing203785492 asset mismatch and authored SurfaceSeparation skip. Mobile deferred by project rules.
+
+## Forest Egg roster concepts — 2026-11-09
+
+Static design proposal only: `Assets/Pets/ForestEgg/concepts-v1/`. First display
+title Forest Egg verified in EggSigns; current Common pool has four chances
+55/30/14/1% from Core/Balance. Built-in ImageGen produced one visually inspected
+1536x1024 roster sheet: Clover Bunny, Acorn Squirrel, Bloom Fox, Grove Guardian.
+The cube proportions follow the three user references. Rarity adds visible
+secondary forms rather than only colors. PNG copy SHA256 equals the generation
+source; prompt, references and scope limitations retained beside it.
+
+KB consulted: Shape Language and Silhouette Testing (roster test, Checklist),
+Chibi Character Rules in Practice (Checklist). Static silhouette comparison
+applied; actual game size, rear views, 3D assets, animation and Studio lighting
+not verified. No source implementation, Update Log, profiles, publication or
+permanent-standard writes. Code checks are inapplicable to this image-only task.
+
+### Forest Egg simplified roster v2 — 2026-11-09
+
+User liked soft style and forms, requested less foliage/detail. Built-in ImageGen
+edit saved in `Assets/Pets/ForestEgg/concepts-v2/` with exact prompt and notes.
+Visually verified clean fox body, two tails, bare guardian antlers with two glowing
+tips, no leaf mantle/amulet/particles; bunny clover and squirrel cap simplified.
+Faces, cube forms, labels and odds retained. Source/copy SHA256 matches; v1 kept.
+Rojo HTTP 200; static-only scope, no game implementation or permanent-standard write.
+
+### Forest Egg cube-base correction v3 — 2026-11-09
+
+Built-in ImageGen edit in `Assets/Pets/ForestEgg/concepts-v3/` corrects fox and
+guardian to single square cube bodies with tiny feet; flat front/side planes
+and no separate head/torso visually confirmed. Soft style, appendages, names and
+odds preserved. Exact prompt saved, copy/source hashes match, Rojo HTTP 200.
+Static scope only; no game implementation, publication or permanent-standard write.
+
+### Forest Egg five-pet roster v4 — 2026-11-09
+
+User requires five designs per egg; first-egg sheet now contains exactly five.
+Built-in ImageGen added Moon Owl (Epic): lavender cube, amber eyes, ivory mask
+and crescent, small wings. All five cube bases and soft rendering visually
+confirmed in `Assets/Pets/ForestEgg/concepts-v4/forest-egg-five-pets-v4.png`.
+Proposed odds 55/30/10/4/1% total 100%; production pool remains unchanged.
+Exact prompt/rationale saved, source/copy SHA256 matches, prior variants kept.
+Rojo HTTP 200. Static scope; no gameplay, Studio/mobile or publication actions.
+
+## World1 remaining egg pet concepts — 2026-11-09
+
+Four built-in ImageGen sheets in `Assets/Pets/World1/remaining-eggs-v1/`:
+Frost, Magma, Void and Solar Crown. Exactly five complete cube pets per sheet
+(20 new concepts), visually inspected against approved Forest v4. Soft plastic,
+flat cube planes, small feet and minimal decoration retained; species and large
+secondary silhouettes distinguish tiers. Void includes Secret Singularity.
+Names/rarities checked; no probabilities shown. Solar Crown's five-pet design
+exploration does not change its existing guaranteed premium reward.
+
+All PNG headers confirm1536x1024; source/copy SHA256 matches in verification.json.
+Exact prompts and full rosters saved beside sheets. KB roster/silhouette/chibi
+checklists from current task reused; no Studio/runtime silhouette claims made.
+Rojo HTTP200 verified first. Static-only work: no game source, reward pool,
+profiles, Update Log, permanent-standard, commit, upload or publication changes.
+
+## World2 pet reference library and saturation revision — 2026-11-09
+
+Five new sheets for Kelp/Leviathan/Treasure/Abyss/Jelly, exactly five pets each.
+World2 titles/themes verified in OceanEggCatalog and ocean-eggs.md; Rojo HTTP200.
+User requested richer saturated colors during generation; all five v1 sheets
+were edited with built-in ImageGen into final v2, preserving species, cube
+bases, faces, appendages and labels. V2 visually inspected against v1: vivid
+lime/coral/emerald, strong blue/teal, rich red/gold, violet/cyan and saturated
+translucent Jelly materials respectively. No pastel-primary material palette
+remains in final colored bodies; small ivory masks provide contrast.
+
+Current: `Assets/Pets/World2/concepts-v2/`. Original v1 retained as superseded.
+Ten original/copied World2 PNG pairs have matching SHA256 and1536x1024 headers
+in World2/verification.json. Exact generation/edit prompts saved locally.
+Root Assets/Pets README and catalog.json index ten preferred egg sheets and50
+pet concepts for future modeling. Three original user style refs and all
+Forest revisions retained. Assets/Pets .gitignore exception prevents accidental
+omission from a future authorized backup; existing PNG LFS applies.
+
+Static-art scope; no 3D/Studio/mobile, rewards, purchases or profiles changed.
+No Update Log, permanent standard, commit, push, asset upload or publication.
+
+### Treasure Egg fifth pet replacement — 2026-11-09
+
+Built-in ImageGen edit replaces rejected Treasure Mimic with Legendary Ruby
+Koi (ruby square cube, emerald eyes, broad gold fins and fan tail). Four other
+pets, saturated palette, captions and layout visually retained. Exactly five
+complete pets, full new silhouette within cell. Saved PNG/exact prompt in
+Assets/Pets/World2/concepts-v3; copy/source SHA256 matches. Catalog/modeling
+index points at v3; older Mimic sheets retained as superseded. Rojo HTTP200.
+Static scope only; no game/model/paid reward or permanent-standard changes.
+
+## Clover Bunny Blender model and exports — 2026-11-09
+
+Rojo HTTP200; connected Blender5.2.3, original default Scene inspected/backed up.
+Requested species Clover Bunny built against approved Forest v4 despite Frost
+name in request. Created one soft cube body, cream/pink palette, green textured
+iris gradients/two catchlights, alpha blush, tiny feet, bent ear/clover/rear tail.
+Actual front/rear Blender renders reviewed; ear silhouette and lighting refined.
+
+Files in Assets/Pets/ForestEgg/models/CloverBunny/v1/model: clean single-scene
+BLEND, GLB and FBX. Evaluated export9,988 triangles; max1,330 per component,
+zero degenerates,31 exported meshes. Two image resources packed/embedded;
+GLB no external URI; FBX extracted its embedded images under isolated-copy.fbm.
+Same-session independent reimports preserve bounds/orientation: BLEND/GLB error0,
+FBX0.00000036. All three reimport renders checked for colors, eyes, blush and ears.
+Details: work/export-validation.json and roundtrip-*.png; source scripts retained.
+
+Original Cube/Camera/Light transforms unchanged. Asset collection also linked
+into original Scene; clean CloverBunny scene left active in the open Blender.
+Verification scenes/copies removed; before/full-authoring backups saved in work.
+Catalog links model files. No Studio import/upload, gameplay/profile/Update Log,
+permanent-standard, commit or publication changes. In-engine behavior unverified.
+
+## Egg preview — 2026-11-09
+
+Rojo delivered the new React view to the Ball place. A PC Play capture shows
+the Forest Egg title, three discovered portraits, one black silhouette, real
+drop rates, and prices for one and three eggs. All four portraits were loaded
+and black in a fresh-player fixture. Adding one discovery restored its colour
+with no corresponding pet in inventory. The Admin Egg's 3D fallback rendered
+black, and Void Egg showed 0.05% for the Secret pet. Guaranteed mode showed one
+pet at 100%.
+
+Native clicks dispatched counts 1 and 3 to isolated callbacks and dispatched
+neither with full storage. Play confirmed switching eggs, three approach and
+retreat cycles, blocking during a modal, and reopening on modal close. Hover
+and press reached 1.08 and 0.96. Opening reached 0.05 → 1.06 → 1, closing
+reached 0.05 before fade, and Effects Off reset portrait and button motion.
+The opening sound was observed in SoundService. Update Log v0.8.0 opened,
+scrolled, expanded and collapsed the new item, loaded its avatar and closed.
+
+Lune verified migration from current inventory, retention after recycling and
+normalization, per-profile isolation, and clearing on full reset. Studio
+verified reload on in-memory data. No hatch transaction against the real
+profile was run. The full gate passed 151 Lune cases and five gate tests with
+zero type diagnostics. Play stopped and its test fixtures were removed.
+Mobile verification is deferred under AGENTS.md.
+
+Evidence is in `Assets/UI/EggPreview/verification/`.
+
+### Egg preview in 3D — 2026-11-09
+
+This revision supersedes the earlier screen placement. PC Play measured the
+billboard at 634 px and 366.5 px across two zooms. The centre attachment moved
+0.36 studs with the egg and matched its model bounds within 0.00003 studs.
+The centre and the left/right offsets stayed on the billboard. The round E,
+Hatch 1 and Hatch 3 sent 1/1/3 through native mouse clicks to isolated callbacks.
+E/R sent 1/3, and turning the camera away removed the shortcut and tutorial
+target. The tutorial hand matched its projected target within 0.27 px.
+
+Switching stands and leaving restored the native signs. The Update Log blocked
+the billboard, opened and scrolled, expanded and collapsed the revised item,
+and loaded the author avatar. Closing it restored the egg UI. The final gate
+passed 151 Lune tests and five gate tests with zero type diagnostics.
+
+Studio capture omits the always-on-top billboard. The saved composition shot
+uses a temporary depth offset and size compensation. Production depth and size
+were restored, then Play was stopped. Native input was tested with production
+depth settings. Evidence is in `Assets/UI/EggPreview/verification/` under
+`2026-11-09-worldspace.*`.
+
+### Egg preview viewport fit — 2026-11-09
+
+PC Play at 1366×767 measured the native billboard at two camera distances
+and near all four edges. All six samples fit between the measured HUD bounds
+with at least 10 px clearance. E stayed centred in the close and far samples.
+Native clicks after both horizontal and vertical adjustment dispatched 1/1/3
+to isolated callbacks. The last-kick caption hid on approach and returned on
+leaving. The revised Update Log was checked on PC and Play stopped.
+
+The close diagnostic screenshot and measurements are in
+`Assets/UI/EggPreview/verification/2026-11-09-viewport-fit.*`. The screenshot
+uses a temporary copy with depth and size compensation. Native input and
+fit were checked on the production billboard. The full verification gate
+passed with 151 Lune cases, five gate tests and zero type diagnostics.
+
+### Forest Egg replacement completion — 2026-11-09
+
+Clover Bunny and Acorn Squirrel now replace the remaining mushroom and cake
+templates. Their saved species IDs stay unchanged. Profile normalization
+verified the new names, equipped UID, Golden form and both discovery flags.
+The five Forest portraits now share a 24 px black outline at 512 × 512,
+matching Frost. Two new Model assets and five bold Image assets were approved
+and granted to Ball. Asset IDs and operations are saved beside the exports.
+
+Fresh PC Play loaded every Forest portrait and texture. The production
+portrait/model components displayed all five together; the production Pets
+page displayed five ordinary portraits and both Golden replacement meshes.
+The obsolete Golden mushroom exception was removed. Both real follower
+components resolved the replacement meshes, kept textures and disabled
+collisions. Fixtures were isolated from saved profiles and removed afterward.
+
+Evidence: `RojoTest/assets/pets/forest-v1/verify-completion.json`,
+`studio-complete.jpg` and `studio-golden-inventory.jpg`. The full project gate
+passed 151 Lune tests, five gate tests, formatting, lint, Rojo build and zero
+type diagnostics. No old displayed mushroom/cake names or portrait URLs
+remain in runtime sources. Play stopped; map layout was not rebuilt.
+
+### Magma Egg models and UI — 2026-11-09
+
+Five vibrant pets now replace the third World1 egg's visuals. The saved egg
+ID remains Rare; Shark/CloudBird/AngelCat/IceCat map to Coal Mole/Cinder
+Gecko/Ember Ram/Inferno Phoenix. Blaze Bat adds the Epic slot. Exhaustive
+10,000-roll verification gives 55/30/10/4/1. Existing equipment, UIDs,
+Golden form and discoveries survived isolated profile normalization.
+
+All fifteen BLEND/GLB/FBX files passed isolated reimport, matching triangle
+counts and bounds within 0.000001 units, with packed images. Five models
+have 5,464 / 6,912 / 8,208 / 7,748 / 9,852 triangles. All 78 authored mesh
+parts are closed manifolds with positive signed volume. Front, back and
+roundtrip render contact sheets are saved beside the modeling source.
+
+Five ImageGen portraits from actual model renders are transparent 512px
+RGBA with a uniform 24 px black outline. All ten uploads are Approved and
+granted to Ball, including dependencies. Runtime uses independent Rojo
+templates with white tint, canonical rotation and a 1.8-stud cube body.
+The temporary inserted package copies were removed; prior templates are
+archived as an unreferenced file outside the scene.
+
+PC Play loaded every portrait and texture. Four imported model angles,
+actual follower components, Golden/Flame texture retention, production
+inventory, egg collection, mystery silhouettes, hatch results and workshop
+were verified using isolated UI snapshots and client data. Both hatch tiers
+displayed readable names and x2.8/x4.6 boosts. The production proximity
+controller mounted to the actual Magma_Plate_01 anchor and read back all
+five loaded portraits; the native billboard did not appear in MCP capture,
+so its identical production panel was captured separately. This was an
+asset replacement, with no changes to the billboard's runtime code.
+
+The same-day unpublished Update Log was updated and checked on PC for
+open/close, expand/collapse, scrolling, text fit and Dakemo555's avatar.
+Full gate passed 151 Lune tests, five gate tests, lint/formatting, Rojo build,
+ProfileStore integrity and zero type diagnostics. Temporary fixtures were
+removed and Play stopped. No map builder or purchase was invoked.
+
+Evidence: `RojoTest/assets/pets/magma-v1/verify-studio.json`,
+`verify-exports.json`, `verify-topology.json` and saved Studio screenshots.
+
+### Void Egg models and UI — 2026-11-09
+
+All five BLEND/GLB/FBX sets passed reimport with packed textures and matching
+bounds and triangle counts. The Blender topology audit found 76 closed parts
+across the five pets. Each upload uses one mesh and an embedded 1024 px atlas.
+The portrait exporter verified 512 px RGBA and a 24 px outline for each PNG.
+
+All ten assets received approval and permission for Ball. The five template
+meshes, textures and portrait IDs loaded in PC Play. The production UI rendered
+all five in inventory, egg catalogue, hatch results and workshop. The proximity
+controller read back five loaded portraits and the correct discovery tints
+at the actual Void stand. The admin icon helper and follower controller
+resolved all five visuals. A Golden Rift Wyrm retained the textured mesh.
+
+The 10,000 possible rolls gave 5,500 / 3,000 / 1,395 / 100 / 5 by slot.
+An isolated saved profile kept all five species IDs, UIDs, discovery flags,
+equipment, Golden form and Cosmic mutation. Singularity displayed Secret
+and ×10 Skill on the hatch result. The Update Log opened, expanded, scrolled,
+collapsed and closed with the credited avatar loaded.
+
+The project gate passed 151 Lune tests, five gate tests and type checking.
+Temporary fixtures were removed and Play stopped. Results and captures are in
+`RojoTest/assets/pets/void-v1/`.
+
+### Solar Crown Egg models, UI and Wins hatch — 2026-11-09
+
+All fifteen editable Blender, GLB and FBX files passed independent reimport.
+The topology audit found 89 closed mesh parts. Each Studio upload packs one
+mesh with a 1024 px color atlas. All five built-in ImageGen portraits passed
+512 px RGBA and 24 px black contour checks. Roblox approved all ten assets
+and granted Ball access to their dependencies.
+
+The fifth Football City stand uses its original Celestial shell. A targeted
+Edit update replaced the legacy caption and verified all 29 other parts kept
+their geometry and collision properties. Fresh Play confirmed the real prompt
+and hatch destination. The normal server hatch code ran with isolated state.
+It charged 900,000 Wins for three pets, gated capacity, availability and policy,
+and guaranteed Honey Bee for a restricted player. All 10,000 rolls matched
+55/30/10/4/1%. Solar Crown appeared only in World1. The existing Shop offer
+showed Glitched Dragon at ×25 Skill with Off Sale status. The isolated paid
+reward test confirmed the same dragon ID and boost after normalization.
+
+PC Play verified all five models and textures in follower components, plus
+matching portraits in the egg preview, collection, inventory, workshop,
+admin panel and hatch results. The catalogue shows all five cards without
+scrolling at 1366×767. Native Hatch and Hatch 3 clicks dispatched the correct
+egg and count in the test fixture. The Update Log opened, expanded, scrolled,
+collapsed and closed with Dakemo555's confirmed avatar.
+
+The project gate passed 151 Lune tests, five gate tests, formatting, Selene,
+Rojo build and Luau type checking. Studio captures and results are stored in
+`RojoTest/assets/pets/solar-crown-v1/`. The verification fixtures used isolated
+state and were removed before returning to Edit.

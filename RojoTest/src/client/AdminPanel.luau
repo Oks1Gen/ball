@@ -470,11 +470,12 @@ function Panel.mount(context: Context)
 				},
 			}, y, 210, 42)
 		elseif tab == "Петы / яйца" then
-			local egg = Config.find(Config.Eggs, selectedEgg) or Config.Eggs[1]
+			local eggs = Config.eggsForWorld(status.world or 1)
+			local egg = Config.find(eggs, selectedEgg) or eggs[1]
 			selectedEgg = egg.id
-			local eggColumns = math.max(1, math.min(#Config.Eggs, math.floor((bodyWidth + 10) / 155)))
+			local eggColumns = math.max(1, math.min(#eggs, math.floor((bodyWidth + 10) / 155)))
 			local eggWidth, eggGap = Spacing.row(bodyWidth - 32, eggColumns, 36)
-			for i, option in Config.Eggs do
+			for i, option in eggs do
 				brickButton(
 					body,
 					"SelectEgg_" .. option.id,
@@ -491,10 +492,13 @@ function Panel.mount(context: Context)
 					end
 				)
 			end
-			y += math.ceil(#Config.Eggs / eggColumns) * (38 + eggGap)
-			local worldBoost = 1
+			y += math.ceil(#eggs / eggColumns) * (38 + eggGap)
 			y = label(egg.name .. " · " .. Config.format(egg.cost) .. " Wins", y + 4)
 			local pool = Config.eggPets(egg.id)
+			local total = 0
+			for _, pet in pool do
+				total += pet.weight
+			end
 			local columns = math.max(1, math.floor((bodyWidth + 10) / 220))
 			local cw = (bodyWidth - (columns - 1) * 10) / columns
 			for i, pet in pool do
@@ -507,7 +511,9 @@ function Panel.mount(context: Context)
 				Kit.text(
 					card,
 					"Chance",
-					pet.weight .. "% · ×" .. pet.boost * egg.boost * worldBoost,
+					Config.formatBoost(pet.weight / total * 100)
+						.. "% · ×"
+						.. Config.formatBoost(Config.eggPetBoost(egg, pet.boost, 1)),
 					5,
 					120,
 					cw - 10,

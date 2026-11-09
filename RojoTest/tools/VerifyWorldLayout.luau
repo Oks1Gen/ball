@@ -113,7 +113,7 @@ function Verify.run(): any
 			end
 			lanes += 1
 		end
-		for _, egg in Config.Eggs do
+		for _, egg in Config.BaseEggs do
 			local model = Refs.eggs(world):FindFirstChild("Egg_" .. egg.id)
 			local shell = model and model:FindFirstChild("EggShell")
 			assert(shell, "Missing egg")

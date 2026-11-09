@@ -1,0 +1,42 @@
+[
+  {
+    "image": "frost-egg-five-pets-v1.png",
+    "source": "C:\\Users\\dakem\\.codex\\generated_images\\01a1bd02-1bc3-7323-ad5b-a34eabf4a1ba\\exec-645f767a-f614-4da2-93e8-51822600fdfe.png",
+    "sha256": "DB45820B5F681B7625DCFB195D7FAC005B4A01FB509E8576A9DCAD4D53907057",
+    "copyMatches": true,
+    "width": 1536,
+    "height": 1024,
+    "visuallyReviewed": true,
+    "pets": 5
+  },
+  {
+    "image": "magma-egg-five-pets-v1.png",
+    "source": "C:\\Users\\dakem\\.codex\\generated_images\\01a1bd02-1bc3-7323-ad5b-a34eabf4a1ba\\exec-4e15e1c1-b3ce-4748-8658-88a588776348.png",
+    "sha256": "8A8E8545705FFDF26B2B662C1169491C4313F95F2BDE423841BE02B013FF24E3",
+    "copyMatches": true,
+    "width": 1536,
+    "height": 1024,
+    "visuallyReviewed": true,
+    "pets": 5
+  },
+  {
+    "image": "void-egg-five-pets-v1.png",
+    "source": "C:\\Users\\dakem\\.codex\\generated_images\\01a1bd02-1bc3-7323-ad5b-a34eabf4a1ba\\exec-a59077d8-a85f-4ff8-a9ef-8f383fffe552.png",
+    "sha256": "85B509FB5871CFB66D14A04E1F3DFE48A02D91D489FA62D53ECDE6B9A7C38884",
+    "copyMatches": true,
+    "width": 1536,
+    "height": 1024,
+    "visuallyReviewed": true,
+    "pets": 5
+  },
+  {
+    "image": "solar-crown-egg-five-pets-v1.png",
+    "source": "C:\\Users\\dakem\\.codex\\generated_images\\01a1bd02-1bc3-7323-ad5b-a34eabf4a1ba\\exec-aa4f4779-c1ae-4144-8a31-4d7b58ca85f9.png",
+    "sha256": "EBB997008BFE187FB294DFFEEF0628F8ED64D6AFF267149998659B8FDF2384F4",
+    "copyMatches": true,
+    "width": 1536,
+    "height": 1024,
+    "visuallyReviewed": true,
+    "pets": 5
+  }
+]

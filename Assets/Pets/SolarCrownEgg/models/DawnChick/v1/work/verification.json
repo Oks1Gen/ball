@@ -1,0 +1,47 @@
+{
+  "triangles": 6452,
+  "largestPart": 1000,
+  "bounds": [
+    [
+      -1.3865734338760376,
+      -1.1449999809265137,
+      0.0
+    ],
+    [
+      1.3865734338760376,
+      1.0,
+      3.069999933242798
+    ]
+  ],
+  "parts": {
+    "Square body": 764,
+    "front left paw": 448,
+    "rear left paw": 448,
+    "front right paw": 448,
+    "rear right paw": 448,
+    "left glossy eye": 420,
+    "right glossy eye": 420,
+    "left soft chick wing": 640,
+    "right soft chick wing": 640,
+    "Short second comb lobe": 392,
+    "Swept forelock of orange feathers": 1000,
+    "Tiny chick beak": 384
+  },
+  "imports": {
+    "blend": {
+      "triangles": 6452,
+      "boundsError": 0.0,
+      "packedImages": 4
+    },
+    "glb": {
+      "triangles": 6452,
+      "boundsError": 0.0,
+      "packedImages": 4
+    },
+    "fbx": {
+      "triangles": 6452,
+      "boundsError": 1.7678672747933888e-07,
+      "packedImages": 4
+    }
+  }
+}

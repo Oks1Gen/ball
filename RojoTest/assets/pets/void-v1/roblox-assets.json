@@ -1,0 +1,135 @@
+{
+  "date": "2026-11-09",
+  "placeId": 106456161057435,
+  "universeId": 10770268214,
+  "creatorUserId": 11789507527,
+  "eggId": "Rainbow",
+  "bodyWidth": 1.8,
+  "permissions": {
+    "successAssetIds": [
+      89294269142490,
+      130654387175615,
+      114595595417086,
+      131420614917369,
+      115825619575762,
+      105488122352898,
+      72029973207763,
+      120521616667730,
+      94659465647283,
+      83286800944557
+    ],
+    "errors": []
+  },
+  "assets": [
+    {
+      "visual": "DuskMoth",
+      "name": "Dusk Moth",
+      "petId": "Butterfly",
+      "rarity": "Common",
+      "coat": "B05AE7",
+      "weight": 5500,
+      "triangles": 8352,
+      "meshId": "rbxassetid://130850722408714",
+      "textureId": "rbxassetid://106039042370018",
+      "meshSize": [
+        3.7184767723083496,
+        2.9769999980926514,
+        2.120000123977661
+      ],
+      "modelId": "89294269142490",
+      "modelOperation": "2a039309-3666-4083-b54b-8da75f3c0974",
+      "portraitId": "130654387175615",
+      "portraitOperation": "619cf28e-0e82-42ee-b828-9c5654296226",
+      "moderation": "Approved",
+      "outlineBottom": 483
+    },
+    {
+      "visual": "ShadowKitten",
+      "name": "Shadow Kitten",
+      "petId": "MoonCat",
+      "rarity": "Uncommon",
+      "coat": "352584",
+      "weight": 3000,
+      "triangles": 6664,
+      "meshId": "rbxassetid://111199215232474",
+      "textureId": "rbxassetid://101919976579365",
+      "meshSize": [
+        2.2757346630096436,
+        2.9957499504089355,
+        3.4448118209838867
+      ],
+      "modelId": "114595595417086",
+      "modelOperation": "01e98a88-7a5b-499f-b209-dfcb854f9b86",
+      "portraitId": "131420614917369",
+      "portraitOperation": "3efe11ab-28a8-4c2d-ba28-0eda16435e2d",
+      "moderation": "Approved",
+      "outlineBottom": 496
+    },
+    {
+      "visual": "OrbitAxolotl",
+      "name": "Orbit Axolotl",
+      "petId": "GalaxyCat",
+      "rarity": "Rare",
+      "coat": "4854C7",
+      "weight": 1395,
+      "triangles": 8248,
+      "meshId": "rbxassetid://128335579239626",
+      "textureId": "rbxassetid://99694092481181",
+      "meshSize": [
+        3.5199999809265137,
+        2.614074230194092,
+        3.11026930809021
+      ],
+      "modelId": "115825619575762",
+      "modelOperation": "c88e39a9-1729-4504-b6ab-35b9f31b9e64",
+      "portraitId": "105488122352898",
+      "portraitOperation": "be9856a3-5b7a-4518-aa9e-9989b64301bc",
+      "moderation": "Approved",
+      "outlineBottom": 479
+    },
+    {
+      "visual": "RiftWyrm",
+      "name": "Rift Wyrm",
+      "petId": "CrystalCat",
+      "rarity": "Legendary",
+      "coat": "872BC6",
+      "weight": 100,
+      "triangles": 9716,
+      "meshId": "rbxassetid://94674077622689",
+      "textureId": "rbxassetid://108292008652042",
+      "meshSize": [
+        4.460000038146973,
+        3.130000114440918,
+        2.5742671489715576
+      ],
+      "modelId": "72029973207763",
+      "modelOperation": "3637389e-4de6-4f16-a048-28af4301e349",
+      "portraitId": "120521616667730",
+      "portraitOperation": "4902dcce-2cf7-4366-93dd-aed3a2d0145f",
+      "moderation": "Approved",
+      "outlineBottom": 464
+    },
+    {
+      "visual": "Singularity",
+      "name": "Singularity",
+      "petId": "EclipseCat",
+      "rarity": "Secret",
+      "coat": "191228",
+      "weight": 5,
+      "triangles": 6612,
+      "meshId": "rbxassetid://123498806010240",
+      "textureId": "rbxassetid://110089865710519",
+      "meshSize": [
+        4.1123528480529785,
+        2.240000009536743,
+        3.5883071422576904
+      ],
+      "modelId": "94659465647283",
+      "modelOperation": "950bdc5c-d1ca-4ffe-8c51-3291c9e39af5",
+      "portraitId": "83286800944557",
+      "portraitOperation": "514934d3-0ff7-47fb-bd91-0934e0cbb2b7",
+      "moderation": "Approved",
+      "outlineBottom": 437
+    }
+  ]
+}

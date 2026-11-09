@@ -71,14 +71,14 @@ function Notices.available(info: any, config: any): { Notice }
 			action = "VIEW REBIRTH",
 		})
 	end
-	local ball = upgrade(data, config.Stones, data.stones, "power")
+	local ball = upgrade(data, config.Stones, data.stones, "trainingBonus")
 	if ball then
 		table.insert(result, {
 			id = "ball:" .. ball.id,
 			kind = "Ball",
-			rank = ball.power,
+			rank = ball.trainingBonus,
 			title = ball.name,
-			detail = "×" .. ball.power .. " Power  ·  " .. Economy.format(ball.cost) .. " Wins",
+			detail = "+" .. ball.trainingBonus .. " Training  ·  " .. Economy.format(ball.cost) .. " Wins",
 			itemId = ball.id,
 			action = "VIEW BALL",
 		})

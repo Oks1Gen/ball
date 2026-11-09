@@ -56,7 +56,7 @@ handler.release(player, oldToken, workspace:GetServerTimeNow())
 check(state.kickTiming == pending and #throws == 0, "Replayed first press ignored")
 pending.startedAt = workspace:GetServerTimeNow() - 1
 handler.release(player, secondToken, pending.startedAt + 1)
-check(#throws == 1 and math.abs(throws[1] - Timing.MaxCombined) < 1e-6, "Both stages produce maximum six")
+check(#throws == 1 and math.abs(throws[1] - Timing.MaxCombined) < 1e-6, "Both stages produce maximum normalized power")
 check(perfectCounts[1] == 2, "Server confirms double perfect independently of product")
 handler.release(player, secondToken, workspace:GetServerTimeNow())
 check(#throws == 1, "Second-stage replay cannot duplicate the shot")
@@ -64,7 +64,7 @@ check(#throws == 1, "Second-stage replay cannot duplicate the shot")
 pending = lockPower(0)
 pending.startedAt = workspace:GetServerTimeNow()
 handler.release(player, pending.token, pending.startedAt)
-check(#throws == 2 and math.abs(throws[2] - Timing.MinCombined) < 1e-4, "Weak shots multiply to one quarter")
+check(#throws == 2 and math.abs(throws[2] - Timing.MinCombined) < 1e-4, "Weak shots have bounded power")
 check(perfectCounts[2] == 0, "Weak shot has no perfect accent")
 
 lockPower(0.4)
@@ -92,9 +92,15 @@ check(state.kickTiming == nil and #throws == 2, "Cancelled accuracy cannot launc
 pending = lockPower(0.8)
 pending.startedAt = workspace:GetServerTimeNow()
 handler.release(player, pending.token, pending.startedAt)
-check(perfectCounts[3] == 1 and math.abs(throws[3] - 1) < 1e-4, "Perfect power survives a weak second stage")
+check(
+	perfectCounts[3] == 1 and math.abs(throws[3] - Timing.combined(2, 0.5)) < 1e-4,
+	"Perfect power survives a weak second stage"
+)
 pending = lockPower(0)
 pending.startedAt = workspace:GetServerTimeNow() - 1
 handler.release(player, pending.token, pending.startedAt + 1)
-check(perfectCounts[4] == 1 and math.abs(throws[4] - 1.5) < 1e-4, "Perfect accuracy survives weak power")
+check(
+	perfectCounts[4] == 1 and math.abs(throws[4] - Timing.combined(0.5, 3)) < 1e-4,
+	"Perfect accuracy survives weak power"
+)
 return { checks = checks, multipliers = throws, perfectCounts = perfectCounts }

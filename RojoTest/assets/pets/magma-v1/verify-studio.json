@@ -1,0 +1,143 @@
+{
+  "date": "2026-11-09",
+  "placeId": 106456161057435,
+  "universeId": 10770268214,
+  "scope": "Third World1 egg / Rare saved egg ID / Magma Egg",
+  "isolation": "UI snapshots use production components with client-only data; no purchases, claims, stored profile edits or map builder calls",
+  "rojo": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"CinderGecko\":{\"texture\":\"rbxassetid://84159315785308\",\"mesh\":\"rbxassetid://105972378757188\",\"size\":\"1.8000001907348633, 2.7222211360931396, 2.902015447616577\"},\"EmberRam\":{\"texture\":\"rbxassetid://70729247926152\",\"mesh\":\"rbxassetid://106913706738216\",\"size\":\"3.231149673461914, 2.743577003479004, 2.2812583446502686\"},\"BlazeBat\":{\"texture\":\"rbxassetid://70943904545087\",\"mesh\":\"rbxassetid://81337410791773\",\"size\":\"3.635999917984009, 2.7716588973999023, 2.1765449047088623\"},\"CoalMole\":{\"texture\":\"rbxassetid://117572189408249\",\"mesh\":\"rbxassetid://96097005781220\",\"size\":\"1.8000001907348633, 2.3264999389648438, 1.9179000854492188\"},\"InfernoPhoenix\":{\"texture\":\"rbxassetid://107644848592315\",\"mesh\":\"rbxassetid://113826510081858\",\"size\":\"3.6223490238189697, 2.8980000019073486, 2.9211692810058594\"}}"
+      }
+    ],
+    "isError": false
+  },
+  "preload": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"items\":{\"CloudBird\":{\"visual\":\"CinderGecko\",\"textureState\":\"Enum.AssetFetchStatus.Success\",\"boost\":1.9000000000000002,\"pic\":\"rbxassetid://140219385075272\",\"picState\":\"Enum.AssetFetchStatus.Success\",\"meshSize\":\"2.000000238418579, 3.0246901512145996, 3.224461555480957\",\"weight\":3000,\"name\":\"Cinder Gecko\",\"mesh\":\"rbxassetid://105972378757188\",\"texture\":\"rbxassetid://84159315785308\"},\"AngelCat\":{\"visual\":\"EmberRam\",\"textureState\":\"Enum.AssetFetchStatus.Success\",\"boost\":2.8000000000000004,\"pic\":\"rbxassetid://133635334101448\",\"picState\":\"Enum.AssetFetchStatus.Success\",\"meshSize\":\"3.5901663303375244, 3.0484189987182617, 2.534731388092041\",\"weight\":1000,\"name\":\"Ember Ram\",\"mesh\":\"rbxassetid://106913706738216\",\"texture\":\"rbxassetid://70729247926152\"},\"IceCat\":{\"visual\":\"InfernoPhoenix\",\"textureState\":\"Enum.AssetFetchStatus.Success\",\"boost\":4.6000000000000009,\"pic\":\"rbxassetid://121150376848083\",\"picState\":\"Enum.AssetFetchStatus.Success\",\"meshSize\":\"4.024832248687744, 3.2200000286102295, 3.2457435131073\",\"weight\":100,\"name\":\"Inferno Phoenix\",\"mesh\":\"rbxassetid://113826510081858\",\"texture\":\"rbxassetid://107644848592315\"},\"BlazeBat\":{\"visual\":\"BlazeBat\",\"textureState\":\"Enum.AssetFetchStatus.Success\",\"boost\":2.8000000000000004,\"pic\":\"rbxassetid://110245325486876\",\"picState\":\"Enum.AssetFetchStatus.Success\",\"meshSize\":\"4.039999961853027, 3.0796210765838623, 2.4183831214904785\",\"weight\":400,\"name\":\"Blaze Bat\",\"mesh\":\"rbxassetid://81337410791773\",\"texture\":\"rbxassetid://70943904545087\"},\"Shark\":{\"visual\":\"CoalMole\",\"textureState\":\"Enum.AssetFetchStatus.Success\",\"boost\":1.4499999999999998,\"pic\":\"rbxassetid://84998984605018\",\"picState\":\"Enum.AssetFetchStatus.Success\",\"meshSize\":\"2.000000238418579, 2.5850000381469727, 2.13100004196167\",\"weight\":5500,\"name\":\"Coal Mole\",\"mesh\":\"rbxassetid://96097005781220\",\"texture\":\"rbxassetid://117572189408249\"}},\"authorId\":11789507527,\"author\":\"Dakemo555\",\"placeId\":106456161057435,\"egg\":\"Magma Egg\"}"
+      }
+    ],
+    "isError": false
+  },
+  "inventory": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"variants\":{\"1\":{\"color\":\"1, 0.847059, 0.364706\",\"mesh\":\"rbxassetid://81337410791773\",\"name\":\"Pet_BlazeBat\",\"texture\":\"rbxassetid://70943904545087\"},\"3\":{\"color\":\"1, 0.847059, 0.364706\",\"mesh\":\"rbxassetid://96097005781220\",\"name\":\"Pet_CoalMole\",\"texture\":\"rbxassetid://117572189408249\"},\"2\":{\"color\":\"1, 0.847059, 0.364706\",\"mesh\":\"rbxassetid://81337410791773\",\"name\":\"Pet_BlazeBat\",\"texture\":\"rbxassetid://70943904545087\"}},\"pics\":{\"1\":{\"loaded\":true,\"image\":\"rbxassetid://84998984605018\"},\"3\":{\"loaded\":true,\"image\":\"rbxassetid://133635334101448\"},\"2\":{\"loaded\":true,\"image\":\"rbxassetid://140219385075272\"},\"5\":{\"loaded\":true,\"image\":\"rbxassetid://121150376848083\"},\"4\":{\"loaded\":true,\"image\":\"rbxassetid://110245325486876\"}}}"
+      }
+    ],
+    "isError": false
+  },
+  "eggCollection": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"labels\":{\"1\":\"Magma Egg\",\"3\":\"10%\",\"2\":\"55%\",\"5\":\"4%\",\"4\":\"1%\",\"6\":\"30%\"},\"images\":{\"1\":{\"loaded\":true,\"image\":\"rbxassetid://84998984605018\"},\"3\":{\"loaded\":true,\"image\":\"rbxassetid://121150376848083\"},\"2\":{\"loaded\":true,\"image\":\"rbxassetid://133635334101448\"},\"5\":{\"loaded\":true,\"image\":\"rbxassetid://140219385075272\"},\"4\":{\"loaded\":true,\"image\":\"rbxassetid://110245325486876\"}}}"
+      }
+    ],
+    "isError": false
+  },
+  "eggPanel": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"1\":{\"loaded\":true,\"image\":\"rbxassetid://84998984605018\",\"name\":\"PetCardArt\",\"color\":\"1, 1, 1\"},\"3\":{\"loaded\":true,\"image\":\"rbxassetid://121150376848083\",\"name\":\"PetCardArt\",\"color\":\"1, 1, 1\"},\"2\":{\"loaded\":true,\"image\":\"rbxassetid://133635334101448\",\"name\":\"PetCardArt\",\"color\":\"0, 0, 0\"},\"5\":{\"loaded\":true,\"image\":\"rbxassetid://140219385075272\",\"name\":\"PetCardArt\",\"color\":\"1, 1, 1\"},\"4\":{\"loaded\":true,\"image\":\"rbxassetid://110245325486876\",\"name\":\"PetCardArt\",\"color\":\"0, 0, 0\"}}"
+      }
+    ],
+    "isError": false
+  },
+  "proximityController": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"enabled\":true,\"parent\":\"Players.Dakemo555.PlayerGui\",\"egg\":\"Rare\",\"adornee\":\"Workspace.Map.World1.Lobby.EggShop.Egg_Rare.ImportedVisual.Magma_Plate_01.EggPreviewCenter\",\"group\":{\"1\":{\"visible\":true,\"alpha\":0,\"size\":\"679.5, 402\"}}}"
+      }
+    ],
+    "isError": false
+  },
+  "proximityReadback": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"egg\":\"Rare\",\"images\":{\"1\":{\"loaded\":true,\"image\":\"rbxassetid://84998984605018\",\"tint\":\"1, 1, 1\"},\"3\":{\"loaded\":true,\"image\":\"rbxassetid://121150376848083\",\"tint\":\"1, 1, 1\"},\"2\":{\"loaded\":true,\"image\":\"rbxassetid://133635334101448\",\"tint\":\"0, 0, 0\"},\"5\":{\"loaded\":true,\"image\":\"rbxassetid://140219385075272\",\"tint\":\"1, 1, 1\"},\"4\":{\"loaded\":true,\"image\":\"rbxassetid://110245325486876\",\"tint\":\"0, 0, 0\"}}}"
+      }
+    ],
+    "isError": false
+  },
+  "proximityCaptureLimit": "The native billboard was enabled, mounted to the real Magma_Plate_01 anchor and populated, but did not appear in the MCP capture. The identical production panel is captured separately in studio-egg-panel.jpg.",
+  "hatchFirstThree": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"1\":{\"loaded\":true,\"image\":\"rbxassetid://140219385075272\",\"tint\":\"1, 1, 1\"},\"3\":{\"loaded\":true,\"image\":\"rbxassetid://133635334101448\",\"tint\":\"1, 1, 1\"},\"2\":{\"loaded\":true,\"image\":\"rbxassetid://84998984605018\",\"tint\":\"1, 1, 1\"}}"
+      }
+    ],
+    "isError": false
+  },
+  "hatchEpicLegendary": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"labels\":{\"1\":{\"fits\":true,\"text\":\"×4.6 Skill\"},\"4\":{\"fits\":true,\"text\":\"Blaze Bat\"},\"3\":{\"fits\":true,\"text\":\"×2.8 Skill\"},\"2\":{\"fits\":true,\"text\":\"Inferno Phoenix\"}},\"pics\":{\"1\":{\"loaded\":true,\"image\":\"rbxassetid://121150376848083\",\"tint\":\"1, 1, 1\"},\"2\":{\"loaded\":true,\"image\":\"rbxassetid://110245325486876\",\"tint\":\"1, 1, 1\"}}}"
+      }
+    ],
+    "isError": false
+  },
+  "workshop": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"1\":{\"loaded\":true,\"image\":\"rbxassetid://84998984605018\"},\"3\":{\"loaded\":true,\"image\":\"rbxassetid://133635334101448\"},\"2\":{\"loaded\":true,\"image\":\"rbxassetid://140219385075272\"},\"5\":{\"loaded\":true,\"image\":\"rbxassetid://121150376848083\"},\"4\":{\"loaded\":true,\"image\":\"rbxassetid://110245325486876\"}}"
+      }
+    ],
+    "isError": false
+  },
+  "followersAndVariants": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"variants\":{\"CloudBird\":{\"color\":\"1, 0.847059, 0.364706\",\"texture\":\"rbxassetid://84159315785308\"},\"AngelCat\":{\"color\":\"1, 0.847059, 0.364706\",\"texture\":\"rbxassetid://70729247926152\"},\"IceCat\":{\"color\":\"1, 0.847059, 0.364706\",\"texture\":\"rbxassetid://107644848592315\"},\"BlazeBat\":{\"color\":\"1, 0.847059, 0.364706\",\"texture\":\"rbxassetid://70943904545087\"},\"Shark\":{\"color\":\"1, 0.847059, 0.364706\",\"texture\":\"rbxassetid://117572189408249\"}},\"followers\":{\"1\":{\"texture\":\"rbxassetid://117572189408249\",\"size\":\"2.355140447616577, 3.0440187454223633, 2.50940203666687\",\"model\":\"Pet_CoalMole\"},\"3\":{\"texture\":\"rbxassetid://70729247926152\",\"size\":\"4.227672576904297, 3.5897269248962402, 2.9848239421844482\",\"model\":\"Pet_EmberRam\"},\"2\":{\"texture\":\"rbxassetid://84159315785308\",\"size\":\"2.355140447616577, 3.5617847442626953, 3.797029733657837\",\"model\":\"Pet_CinderGecko\"},\"5\":{\"texture\":\"rbxassetid://107644848592315\",\"size\":\"4.7395219802856445, 3.791775703430176, 3.8220906257629395\",\"model\":\"Pet_InfernoPhoenix\"},\"4\":{\"texture\":\"rbxassetid://70943904545087\",\"size\":\"4.757383346557617, 3.626469612121582, 2.847815752029419\",\"model\":\"Pet_BlazeBat\"}}}"
+      }
+    ],
+    "isError": false
+  },
+  "rollsAndMigration": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"migration\":{\"1\":{\"balanceVersion\":3,\"rarity\":\"Common\",\"eggId\":\"Rare\",\"id\":\"Shark\",\"boost\":1.4499999999999998,\"variantVersion\":1,\"uid\":\"keep-1\",\"name\":\"Coal Mole\",\"craftRevision\":0,\"sourceWorld\":1,\"baseBoost\":1.4499999999999998,\"form\":\"Normal\",\"upgradeLevel\":0},\"4\":{\"balanceVersion\":3,\"rarity\":\"Legendary\",\"eggId\":\"Rare\",\"id\":\"IceCat\",\"boost\":4.6000000000000009,\"variantVersion\":1,\"uid\":\"keep-4\",\"name\":\"Inferno Phoenix\",\"craftRevision\":0,\"sourceWorld\":1,\"baseBoost\":4.6000000000000009,\"form\":\"Normal\",\"upgradeLevel\":0},\"3\":{\"balanceVersion\":3,\"rarity\":\"Rare\",\"eggId\":\"Rare\",\"id\":\"AngelCat\",\"boost\":2.8000000000000004,\"variantVersion\":1,\"uid\":\"keep-3\",\"name\":\"Ember Ram\",\"craftRevision\":0,\"sourceWorld\":1,\"baseBoost\":2.8000000000000004,\"form\":\"Normal\",\"upgradeLevel\":0},\"2\":{\"balanceVersion\":3,\"rarity\":\"Uncommon\",\"eggId\":\"Rare\",\"id\":\"CloudBird\",\"boost\":2.8000000000000004,\"variantVersion\":1,\"uid\":\"keep-2\",\"name\":\"Cinder Gecko\",\"craftRevision\":0,\"sourceWorld\":1,\"baseBoost\":1.9000000000000002,\"form\":\"Golden\",\"upgradeLevel\":0}},\"rolls\":{\"CloudBird\":3000,\"AngelCat\":1000,\"IceCat\":100,\"BlazeBat\":400,\"Shark\":5500},\"equipped\":{\"1\":\"keep-1\"},\"epicRecycle\":4,\"discoveries\":{\"Shark\":true,\"CloudBird\":true,\"IceCat\":true,\"AngelCat\":true}}"
+      }
+    ],
+    "isError": false
+  },
+  "updateLogExpanded": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"scrollMax\":1552,\"Description\":{\"text\":\"Dakemo555 chose fifteen soft cube pets and bold portraits. Forest and Frost Egg have five new designs each. Magma Egg adds Coal Mole, Cinder Gecko, Ember Ram, Blaze Bat and Inferno Phoenix in bright fire colors. Pets already in your collection get the new looks.\",\"fits\":true,\"size\":\"519, 78\"},\"avatar\":{\"loaded\":true,\"image\":\"rbxthumb://type=AvatarHeadShot&id=11789507527&w=48&h=48\"},\"Author\":{\"text\":\"Dakemo555  ·  Pet and portrait art direction\",\"fits\":true,\"size\":\"483, 28\"},\"expanded\":true}"
+      }
+    ],
+    "isError": false
+  },
+  "updateLogClosed": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"fixturesRemoved\":true,\"collapsed\":true,\"closed\":true}"
+      }
+    ],
+    "isError": false
+  },
+  "checks": "Full project gate passed 151 Lune tests, five gate tests, formatting, lint, Rojo build, ProfileStore integrity and zero type errors",
+  "cleanup": "Client fixtures, native package staging copies removed; character/camera/UI states restored; Play stopped",
+  "screenshots": [
+    "studio-pets-and-ui.jpg",
+    "studio-four-angles.jpg",
+    "studio-inventory.jpg",
+    "studio-egg-panel.jpg",
+    "studio-hatch.jpg"
+  ]
+}

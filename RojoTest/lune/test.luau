@@ -1,5 +1,8 @@
 --!strict
 local suites = {
+	require("../tests/PetWorkshopState.spec"),
+	require("../tests/PetWorkshop.spec"),
+	require("../tests/Balance.spec"),
 	require("../tests/Commerce.spec"),
 	require("../tests/OceanAtmosphere.spec"),
 	require("../tests/OceanSwimming.spec"),

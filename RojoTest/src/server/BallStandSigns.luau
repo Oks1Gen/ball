@@ -49,7 +49,7 @@ function Signs.render(gui: BillboardGui, item: any)
 	)
 	status.Text = if item.cost == 0 then "UNLOCKED" else "LOCKED"
 	local power = label(gui, "Power", 0.29, 0.32, Color3.fromRGB(255, 239, 215))
-	power.Text = tostring(item.power) .. "x Skill"
+	power.Text = "+" .. tostring(item.trainingBonus) .. " Training"
 	local price = label(gui, "Price", 0.67, 0.30, Color3.fromRGB(255, 225, 20))
 	price.Text = Config.format(item.cost) .. " Wins"
 	gui:SetAttribute("BallId", item.id)

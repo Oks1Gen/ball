@@ -39,11 +39,19 @@
 - UI объединяет выпуски под одной карточкой даты, новые даты/версии сверху; показывает четыре последние даты. Историю после начальной очистки не удалять из данных ради лимита UI. Опубликованный выпуск (`published=true`) не дополнять новыми изменениями; создавать следующий номер в той же карточке даты. Флаг публикации менять только после фактической явно разрешённой публикации игры; обновление журнала не разрешает публикацию.
 - Проверять на ПК открытие/закрытие, раскрытие/сворачивание, авторов, прокрутку и читаемость; при изменении модели — Lune-тесты журнала и `node RojoTest/tools/check.mjs`. Мобильную проверку отложить до подготовки релиза или отдельной просьбы. Иконку, промпт и Roblox Image ID хранить в `Assets/UI/` по принятому формату.
 
-## Память
+## Стандарт SecondBrain
 
-SecondBrain: C:\Users\dakem\Documents\SecondBrain. Точечная правка (опечатка, число, переименование, мелкий фикс в одном месте) — память не нужна.
-Создаёшь новое (модуль, систему, механику, экран, ассет, эффект, карту) или переделываешь вид или механику — сначала
-`node C:/Users/dakem/Documents/SecondBrain/skills/obsidian-memory/scripts/mem.mjs context <домен>` и следуй выводу
-(домены: ui, motion, 3d, anim, map, vfx, sfx, code; новый код — code).
-Пользователь дал правило или поправку, оценил визуальный результат, ты нашёл ловушку или проверенный факт — перед ответом прочитай C:/Users/dakem/Documents/SecondBrain/skills/obsidian-memory/references/write.md.
-Конфликт: слова пользователя > AGENTS.md и docs проекта > память.
+Vault: C:/Users/dakem/Documents/SecondBrain. Карточка: standard/games/ball/card.md (path, genre, styles).
+Точечная правка текста, числа или имени — дополнительный контекст не нужен.
+Создание, улучшение, существенная переделка, диагностика поведения или аудит — сначала:
+`node C:/Users/dakem/Documents/SecondBrain/skills/obsidian-memory/scripts/mem.mjs context <домены> --cwd "C:/Users/dakem/Documents/RobloxGames/ball"`.
+Домены: ui, motion, feel, vfx, sfx, 3d, anim, world, design, code. Новый код — code; механика/экран с откликом — ещё feel.
+Затем выполни C:/Users/dakem/Documents/SecondBrain/skills/roblox-knowledge/references/task-workflow.md: сам ищи KB по цели/симптому, читай нужные разделы и чек-листы, сравнивай с проектом, применяй подходящее и проверяй. Лимитов токенов, чтения и числа поисков нет. KB не разрешает автоматическую запись в стандарт или расширение поручения.
+Приёмка: `node C:/Users/dakem/Documents/SecondBrain/skills/obsidian-memory/scripts/mem.mjs accept --cwd "C:/Users/dakem/Documents/RobloxGames/ball" --profile prototype` (релиз: release).
+Сохрани чек-лист в design/ACCEPTANCE.md; каждый пункт проверь кадром, логом или тестом. Непроверенное не засчитывай.
+Приоритет: слова пользователя → AGENTS.md и docs игры → игра → названный стиль → жанр → база.
+Ограничения проекта на стек, инструменты и запуск Play сохраняются.
+Стиль применяй только названный пользователем. Нет выбранного стиля — база и жанр.
+Обучение и запись: C:/Users/dakem/Documents/SecondBrain/skills/obsidian-memory/references/learn.md и write.md.
+Новые правила — только с согласием на пункт и слой; нет ответа — ничего не записывать даже в inbox. Технические приёмы — в skills.
+Один агент; visual-critic — только по просьбе пользователя. В прототипе новые идеи только в отчёте.

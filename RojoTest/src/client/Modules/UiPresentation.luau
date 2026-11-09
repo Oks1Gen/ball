@@ -9,7 +9,7 @@ end
 
 function Presentation.kickHint(canThrow: boolean, training: boolean): string
 	if training then
-		return "Catch lightning bubbles for up to ×4 Skill • Leave the lane to stop"
+		return "Catch lightning bubbles for ×5–15 Skill • Leave the lane to stop"
 	end
 	if not canThrow then
 		return "Walk or stand on a training lane to gain Skill"
@@ -35,6 +35,17 @@ function Presentation.readyGifts(snapshot: any): number
 	if snapshot then
 		for i, gift in Config.Gifts do
 			if not snapshot.gifts[i] and snapshot.elapsed >= gift.time then
+				count += 1
+			end
+		end
+	end
+	if snapshot then
+		for _, goal in Config.Balance.Challenges do
+			local key = tostring(snapshot.data.world) .. ":" .. goal.id
+			if
+				not (snapshot.data.challengeClaims or {})[key]
+				and ((snapshot.data.challengeProgress or {})[key] or 0) >= goal.hits
+			then
 				count += 1
 			end
 		end

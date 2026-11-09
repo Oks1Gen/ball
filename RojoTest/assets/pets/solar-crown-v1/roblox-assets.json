@@ -1,0 +1,142 @@
+{
+  "date": "2026-11-09",
+  "placeId": 106456161057435,
+  "universeId": 10770268214,
+  "creatorUserId": 11789507527,
+  "eggId": "SolarCrown",
+  "bodyWidth": 1.8,
+  "costWins": 300000,
+  "world": 1,
+  "permissions": {
+    "successAssetIds": [
+      85823226775519,
+      104500212086314,
+      139000453725248,
+      118337928180503,
+      119998068502409,
+      98235141340146,
+      136602497878832,
+      116087970002123,
+      95870250205859,
+      138388696956168
+    ],
+    "errors": []
+  },
+  "assets": [
+    {
+      "visual": "HoneyBee",
+      "name": "Honey Bee",
+      "petId": "HoneyBee",
+      "rarity": "Common",
+      "coat": "FFBD10",
+      "weight": 5500,
+      "triangles": 6752,
+      "boost": 2.05,
+      "meshId": "rbxassetid://114927410874643",
+      "textureId": "rbxassetid://102196381877328",
+      "meshSize": [
+        2.000000238418579,
+        3.0506744384765625,
+        2.1020002365112305
+      ],
+      "modelId": "85823226775519",
+      "modelOperation": "4d26f9fd-8b3a-44c5-8850-f783bcfb9d5e",
+      "portraitId": "104500212086314",
+      "portraitOperation": "5b9d4e60-a0d4-4fe1-b09b-ae0b410856e5",
+      "moderation": "Approved",
+      "outlineBottom": 496
+    },
+    {
+      "visual": "DawnChick",
+      "name": "Dawn Chick",
+      "petId": "DawnChick",
+      "rarity": "Uncommon",
+      "coat": "FFB232",
+      "weight": 3000,
+      "triangles": 6452,
+      "boost": 3.1,
+      "meshId": "rbxassetid://78813836892096",
+      "textureId": "rbxassetid://85184806854584",
+      "meshSize": [
+        2.773146867752075,
+        3.069999933242798,
+        2.1449999809265137
+      ],
+      "modelId": "139000453725248",
+      "modelOperation": "b0a94449-c90b-49c3-8f72-9c55766980ad",
+      "portraitId": "118337928180503",
+      "portraitOperation": "7aea1dbb-4583-4f59-ba66-c77e0643784d",
+      "moderation": "Approved",
+      "outlineBottom": 496
+    },
+    {
+      "visual": "SunLion",
+      "name": "Sun Lion",
+      "petId": "SunLion",
+      "rarity": "Rare",
+      "coat": "FF9A2C",
+      "weight": 1000,
+      "triangles": 9572,
+      "boost": 5.2,
+      "meshId": "rbxassetid://83010481485919",
+      "textureId": "rbxassetid://106687877633338",
+      "meshSize": [
+        3.4520912170410156,
+        2.8250598907470703,
+        2.302126884460449
+      ],
+      "modelId": "119998068502409",
+      "modelOperation": "e5a4c775-644d-4e42-8fcc-288a5eb3dfa2",
+      "portraitId": "98235141340146",
+      "portraitOperation": "1fbfd86b-5fcc-4541-86ab-93aa7fee26b5",
+      "moderation": "Approved",
+      "outlineBottom": 446
+    },
+    {
+      "visual": "SkyPegasus",
+      "name": "Sky Pegasus",
+      "petId": "SkyPegasus",
+      "rarity": "Epic",
+      "coat": "FFE1AC",
+      "weight": 400,
+      "triangles": 9624,
+      "boost": 7.3,
+      "meshId": "rbxassetid://93552267855768",
+      "textureId": "rbxassetid://131962392910247",
+      "meshSize": [
+        4.439389228820801,
+        3.0320000648498535,
+        2.9178714752197266
+      ],
+      "modelId": "136602497878832",
+      "modelOperation": "883406c9-11a3-4389-b403-2d7d2b49e4ce",
+      "portraitId": "116087970002123",
+      "portraitOperation": "aab59677-c6b9-4bab-9463-4748d6c38922",
+      "moderation": "Approved",
+      "outlineBottom": 452
+    },
+    {
+      "visual": "SolarSeraph",
+      "name": "Solar Seraph",
+      "petId": "SolarSeraph",
+      "rarity": "Legendary",
+      "coat": "FFE6BA",
+      "weight": 100,
+      "triangles": 8342,
+      "boost": 9.4,
+      "meshId": "rbxassetid://110290964626483",
+      "textureId": "rbxassetid://130662814649393",
+      "meshSize": [
+        4.4950103759765625,
+        3.234999895095825,
+        2.1471548080444336
+      ],
+      "modelId": "95870250205859",
+      "modelOperation": "d3b870c4-7b96-4d9e-baa6-6747684c2ccb",
+      "portraitId": "138388696956168",
+      "portraitOperation": "c4b50de0-8d12-4fff-b03a-5f6f6ebc4d9d",
+      "moderation": "Approved",
+      "outlineBottom": 472
+    }
+  ]
+}

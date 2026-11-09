@@ -1,0 +1,52 @@
+{
+  "triangles": 9852,
+  "largestPart": 960,
+  "bounds": [
+    [
+      -1.9391844272613525,
+      -1.1749999523162842,
+      0.0
+    ],
+    [
+      2.0856480598449707,
+      2.0707435607910156,
+      3.2200000286102295
+    ]
+  ],
+  "parts": {
+    "Square body": 764,
+    "front left paw": 448,
+    "rear left paw": 448,
+    "front right paw": 448,
+    "rear right paw": 448,
+    "left glossy eye": 420,
+    "right glossy eye": 420,
+    "left golden wing feather 1": 576,
+    "left golden wing feather 2": 576,
+    "left golden wing feather 3": 576,
+    "right golden wing feather 1": 576,
+    "right golden wing feather 2": 576,
+    "right golden wing feather 3": 576,
+    "Single flowing flame crest": 960,
+    "Sweeping tail feather 1": 828,
+    "Sweeping tail feather 2": 828,
+    "Tiny golden beak": 384
+  },
+  "imports": {
+    "blend": {
+      "triangles": 9852,
+      "boundsError": 0.0,
+      "packedImages": 5
+    },
+    "glb": {
+      "triangles": 9852,
+      "boundsError": 0.0,
+      "packedImages": 5
+    },
+    "fbx": {
+      "triangles": 9852,
+      "boundsError": 2.384185791015625e-07,
+      "packedImages": 5
+    }
+  }
+}

@@ -1,0 +1,92 @@
+[
+  {
+    "visual": "DuskMoth",
+    "type": "Model",
+    "displayName": "Ball Void Dusk Moth",
+    "file": "RojoTest/assets/pets/void-v1/DuskMoth.glb",
+    "path": "operations/2a039309-3666-4083-b54b-8da75f3c0974",
+    "operationId": "2a039309-3666-4083-b54b-8da75f3c0974",
+    "done": false
+  },
+  {
+    "visual": "DuskMoth",
+    "type": "Image",
+    "displayName": "Ball Void Dusk Moth UI",
+    "file": "Assets/UI/Pets/void-egg-v1/DuskMoth.png",
+    "path": "operations/619cf28e-0e82-42ee-b828-9c5654296226",
+    "operationId": "619cf28e-0e82-42ee-b828-9c5654296226",
+    "done": false
+  },
+  {
+    "visual": "ShadowKitten",
+    "type": "Model",
+    "displayName": "Ball Void Shadow Kitten",
+    "file": "RojoTest/assets/pets/void-v1/ShadowKitten.glb",
+    "path": "operations/01e98a88-7a5b-499f-b209-dfcb854f9b86",
+    "operationId": "01e98a88-7a5b-499f-b209-dfcb854f9b86",
+    "done": false
+  },
+  {
+    "visual": "ShadowKitten",
+    "type": "Image",
+    "displayName": "Ball Void Shadow Kitten UI",
+    "file": "Assets/UI/Pets/void-egg-v1/ShadowKitten.png",
+    "path": "operations/3efe11ab-28a8-4c2d-ba28-0eda16435e2d",
+    "operationId": "3efe11ab-28a8-4c2d-ba28-0eda16435e2d",
+    "done": false
+  },
+  {
+    "visual": "OrbitAxolotl",
+    "type": "Model",
+    "displayName": "Ball Void Orbit Axolotl",
+    "file": "RojoTest/assets/pets/void-v1/OrbitAxolotl.glb",
+    "path": "operations/c88e39a9-1729-4504-b6ab-35b9f31b9e64",
+    "operationId": "c88e39a9-1729-4504-b6ab-35b9f31b9e64",
+    "done": false
+  },
+  {
+    "visual": "OrbitAxolotl",
+    "type": "Image",
+    "displayName": "Ball Void Orbit Axolotl UI",
+    "file": "Assets/UI/Pets/void-egg-v1/OrbitAxolotl.png",
+    "path": "operations/be9856a3-5b7a-4518-aa9e-9989b64301bc",
+    "operationId": "be9856a3-5b7a-4518-aa9e-9989b64301bc",
+    "done": false
+  },
+  {
+    "visual": "RiftWyrm",
+    "type": "Model",
+    "displayName": "Ball Void Rift Wyrm",
+    "file": "RojoTest/assets/pets/void-v1/RiftWyrm.glb",
+    "path": "operations/3637389e-4de6-4f16-a048-28af4301e349",
+    "operationId": "3637389e-4de6-4f16-a048-28af4301e349",
+    "done": false
+  },
+  {
+    "visual": "RiftWyrm",
+    "type": "Image",
+    "displayName": "Ball Void Rift Wyrm UI",
+    "file": "Assets/UI/Pets/void-egg-v1/RiftWyrm.png",
+    "path": "operations/4902dcce-2cf7-4366-93dd-aed3a2d0145f",
+    "operationId": "4902dcce-2cf7-4366-93dd-aed3a2d0145f",
+    "done": false
+  },
+  {
+    "visual": "Singularity",
+    "type": "Model",
+    "displayName": "Ball Void Singularity",
+    "file": "RojoTest/assets/pets/void-v1/Singularity.glb",
+    "path": "operations/950bdc5c-d1ca-4ffe-8c51-3291c9e39af5",
+    "operationId": "950bdc5c-d1ca-4ffe-8c51-3291c9e39af5",
+    "done": false
+  },
+  {
+    "visual": "Singularity",
+    "type": "Image",
+    "displayName": "Ball Void Singularity UI",
+    "file": "Assets/UI/Pets/void-egg-v1/Singularity.png",
+    "path": "operations/514934d3-0ff7-47fb-bd91-0934e0cbb2b7",
+    "operationId": "514934d3-0ff7-47fb-bd91-0934e0cbb2b7",
+    "done": false
+  }
+]

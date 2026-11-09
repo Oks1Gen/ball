@@ -1,0 +1,56 @@
+{
+  "triangles": 9572,
+  "largestPart": 768,
+  "bounds": [
+    [
+      -1.4690001010894775,
+      -1.1019999980926514,
+      0.0
+    ],
+    [
+      1.9830913543701172,
+      1.2001268863677979,
+      2.8250598907470703
+    ]
+  ],
+  "parts": {
+    "Rear orange cube": 764,
+    "Rounded square face panel": 764,
+    "front left paw": 448,
+    "rear left paw": 448,
+    "front right paw": 448,
+    "rear right paw": 448,
+    "left glossy eye": 420,
+    "right glossy eye": 420,
+    "Mane petal 1": 400,
+    "Mane petal 2": 400,
+    "Mane petal 3": 400,
+    "Mane petal 4": 400,
+    "Mane petal 5": 400,
+    "Mane petal 6": 400,
+    "Mane petal 7": 400,
+    "Mane petal 8": 400,
+    "Curved lion tail": 768,
+    "Rounded pointed tail tuft": 720,
+    "left smile curl": 200,
+    "right smile curl": 200,
+    "Soft charcoal nose": 324
+  },
+  "imports": {
+    "blend": {
+      "triangles": 9572,
+      "boundsError": 0.0,
+      "packedImages": 4
+    },
+    "glb": {
+      "triangles": 9572,
+      "boundsError": 0.0,
+      "packedImages": 4
+    },
+    "fbx": {
+      "triangles": 9572,
+      "boundsError": 2.384185791015625e-07,
+      "packedImages": 4
+    }
+  }
+}

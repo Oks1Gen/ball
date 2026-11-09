@@ -1,0 +1,211 @@
+{
+  "placeId": 106456161057435,
+  "universeId": 10770268214,
+  "preload": {
+    "items": {
+      "AutumnCat": {
+        "texture": "rbxassetid://132120042458138",
+        "picState": "Enum.AssetFetchStatus.Success",
+        "meshSize": "2.6403603553771973, 3.01796293258667, 3.798494815826416",
+        "collide": false,
+        "textureState": "Enum.AssetFetchStatus.Success",
+        "mesh": "rbxassetid://140375509863434",
+        "pic": "rbxassetid://107535913428978"
+      },
+      "MoonOwl": {
+        "texture": "rbxassetid://94563611208325",
+        "picState": "Enum.AssetFetchStatus.Success",
+        "meshSize": "2.6085526943206787, 2.732731342315674, 2.745027542114258",
+        "collide": false,
+        "textureState": "Enum.AssetFetchStatus.Success",
+        "mesh": "rbxassetid://135373105755580",
+        "pic": "rbxassetid://95640491504404"
+      },
+      "FlameCat": {
+        "texture": "rbxassetid://91792082628868",
+        "picState": "Enum.AssetFetchStatus.Success",
+        "meshSize": "3.4140520095825195, 3.376918315887451, 2.979526996612549",
+        "collide": false,
+        "textureState": "Enum.AssetFetchStatus.Success",
+        "mesh": "rbxassetid://81229903014028",
+        "pic": "rbxassetid://84520763736094"
+      }
+    },
+    "pool": {
+      "1": {
+        "1": "ScarletMushroom",
+        "2": "Scarlet Mushroom",
+        "3": "Common",
+        "4": 5500,
+        "5": "ScarletMushroom"
+      },
+      "2": {
+        "1": "StrawberryCake",
+        "2": "Strawberry Cake",
+        "3": "Uncommon",
+        "4": 3000,
+        "5": "StrawberryCake"
+      },
+      "3": {
+        "1": "AutumnCat",
+        "2": "Bloom Fox",
+        "3": "Rare",
+        "4": 1000,
+        "5": "BloomFox"
+      },
+      "4": {
+        "1": "MoonOwl",
+        "2": "Moon Owl",
+        "3": "Epic",
+        "4": 400,
+        "5": "MoonOwl"
+      },
+      "5": {
+        "1": "FlameCat",
+        "2": "Grove Guardian",
+        "3": "Legendary",
+        "4": 100,
+        "5": "GroveGuardian"
+      }
+    },
+    "name": "Dakemo555",
+    "userId": 11789507527,
+    "ready": true
+  },
+  "profileFixture": {
+    "savedIds": {
+      "1": "AutumnCat",
+      "2": "FlameCat"
+    },
+    "author": {
+      "1": "Dakemo555",
+      "2": 11789507527
+    },
+    "rolls": {
+      "ScarletMushroom": 5500,
+      "AutumnCat": 1000,
+      "MoonOwl": 400,
+      "FlameCat": 100,
+      "StrawberryCake": 3000
+    },
+    "savedNames": {
+      "1": "Bloom Fox",
+      "2": "Grove Guardian"
+    }
+  },
+  "inventory": {
+    "pets": {
+      "rbxassetid://95640491504404": true,
+      "rbxassetid://107535913428978": true,
+      "rbxassetid://84520763736094": true
+    },
+    "detail": {
+      "rbxassetid://95640491504404": true
+    },
+    "variant": {
+      "color": "1, 0.847059, 0.364706",
+      "mesh": "rbxassetid://140375509863434",
+      "texture": "rbxassetid://132120042458138"
+    }
+  },
+  "eggCollection": {
+    "rbxassetid://95640491504404": {
+      "color": "1, 1, 1",
+      "loaded": true
+    },
+    "rbxassetid://107535913428978": {
+      "color": "1, 1, 1",
+      "loaded": true
+    },
+    "rbxassetid://84520763736094": {
+      "color": "1, 1, 1",
+      "loaded": true
+    }
+  },
+  "eggProximity": {
+    "rbxassetid://95640491504404": {
+      "color": "0, 0, 0",
+      "loaded": true
+    },
+    "rbxassetid://118541048196711": {
+      "color": "0, 0, 0",
+      "loaded": true
+    },
+    "rbxassetid://107535913428978": {
+      "color": "1, 1, 1",
+      "loaded": true
+    },
+    "rbxassetid://140368963386117": {
+      "color": "0, 0, 0",
+      "loaded": true
+    },
+    "rbxassetid://84520763736094": {
+      "color": "1, 1, 1",
+      "loaded": true
+    }
+  },
+  "workshop": {
+    "rbxassetid://95640491504404": {
+      "color": "1, 1, 1",
+      "loaded": true
+    },
+    "rbxassetid://107535913428978": {
+      "color": "1, 1, 1",
+      "loaded": true
+    },
+    "rbxassetid://84520763736094": {
+      "color": "1, 1, 1",
+      "loaded": true
+    }
+  },
+  "hatch": {
+    "rbxassetid://84520763736094": {
+      "color": "1, 1, 1",
+      "loaded": true
+    },
+    "rbxassetid://107535913428978": {
+      "color": "1, 1, 1",
+      "loaded": true
+    },
+    "rbxassetid://95640491504404": {
+      "color": "1, 1, 1",
+      "loaded": true
+    }
+  },
+  "followers": {
+    "BloomFox": {
+      "physics": true,
+      "meshSize": "2.6403603553771973, 3.01796293258667, 3.798494815826416",
+      "size": "3.1092095375061035, 3.553863048553467, 4.472993850708008"
+    },
+    "MoonOwl": {
+      "physics": true,
+      "meshSize": "2.6085526943206787, 2.732731342315674, 2.745027542114258",
+      "size": "3.071753740310669, 3.217982530593872, 3.2324624061584473"
+    },
+    "GroveGuardian": {
+      "physics": true,
+      "meshSize": "3.4140520095825195, 3.376918315887451, 2.979526996612549",
+      "size": "4.020285606384277, 3.976558208465576, 3.5086019039154053"
+    }
+  },
+  "updateLog": {
+    "textFits": true,
+    "avatar": "rbxthumb://type=AvatarHeadShot&id=11789507527&w=48&h=48",
+    "scroll": 100,
+    "author": "Dakemo555  ·  Pet and portrait art direction",
+    "expanded": true,
+    "viewHeight": 427.3694763183594,
+    "canvasHeight": 1827.6444091796875
+  },
+  "fixtureCleanup": {
+    "fixtures": true,
+    "logClosed": true
+  },
+  "playStopped": true,
+  "projectGate": {
+    "lune": 151,
+    "gateTests": 5,
+    "typeDiagnostics": 0
+  }
+}

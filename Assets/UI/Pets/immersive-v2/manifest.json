@@ -1,0 +1,33 @@
+{
+  "date": "2026-11-09",
+  "mode": "built-in image_gen",
+  "creatorUserId": 11789507527,
+  "universeId": 10770268214,
+  "sharing": {
+    "subjectType": "Universe",
+    "action": "Use",
+    "grantToDependencies": true,
+    "status": "success"
+  },
+  "assets": [
+    {
+      "key": "GoldenScarletMushroom",
+      "file": "GoldenScarletMushroom.png",
+      "decalId": 126345177458365,
+      "imageId": 127541774036816,
+      "moderation": "Approved",
+      "source": "C:/Users/dakem/.codex/generated_images/01a1bcd1-901a-7e03-97cb-ee99df5175db/exec-61413232-9a1e-4b55-b551-a36fb8392212.png",
+      "reference": "../individual-v3/ScarletMushroom.png",
+      "prompt": "Use case: precise-object-edit. Edit target: attached ScarletMushroom pet icon. Make the Golden form of the SAME pet for a Roblox inventory. Preserve exact silhouette, two mushroom caps and stems, ears, cube body, feet, face, black eyes with white highlights, mouth, whiskers, pose, camera angle, bold dark outline and faceted cartoon shading. Change the red/orange body and red mushroom caps to rich warm golden yellow, honey shadows and pale gold shiny highlights. Keep black facial details and white eye highlights; caps have pale cream spots. One isolated full-body pet, centered, filling about 90% of square. Genuinely transparent alpha background. No text, no panel, no scene, no extra decoration or external shadow."
+    },
+    {
+      "key": "PetShard",
+      "file": "shard.png",
+      "decalId": 101450359517077,
+      "imageId": 84471888218124,
+      "moderation": "Approved",
+      "source": "C:/Users/dakem/.codex/generated_images/01a1bcd1-901a-7e03-97cb-ee99df5175db/exec-7ac723b5-4855-44c0-9ebf-e0e5720a4109.png",
+      "prompt": "Use case: ui-mockup. ONE small Roblox simulator currency icon. A golden faceted octagonal shard coin, front face almost straight on with slight right bevel. Thick dark brown cartoon outline, saturated lemon-gold front, honey-gold rim, simple smaller octagonal inset, short white highlight on top left. Match the gold shard icon in the approved Pets UI concept. Centered isolated object filling 85% of a square; genuinely transparent alpha background. No lettering, no numbers, no text, no scene, no panel, no extra items, no external shadow."
+    }
+  ]
+}

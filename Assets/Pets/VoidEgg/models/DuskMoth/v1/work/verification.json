@@ -1,0 +1,53 @@
+{
+  "triangles": 8352,
+  "largestPart": 764,
+  "bounds": [
+    [
+      -1.8592383861541748,
+      -1.1200000047683716,
+      0.0
+    ],
+    [
+      1.8592383861541748,
+      1.0,
+      2.9769999980926514
+    ]
+  ],
+  "parts": {
+    "Square body": 764,
+    "front left paw": 448,
+    "rear left paw": 448,
+    "front right paw": 448,
+    "rear right paw": 448,
+    "left glossy eye": 420,
+    "right glossy eye": 420,
+    "left small lower moth wing": 448,
+    "left oval-marked moth wing": 640,
+    "left rounded moth antenna": 704,
+    "left rounded antenna bulb": 324,
+    "right small lower moth wing": 448,
+    "right oval-marked moth wing": 640,
+    "right rounded moth antenna": 704,
+    "right rounded antenna bulb": 324,
+    "left smile curl": 200,
+    "right smile curl": 200,
+    "Little pink nose": 324
+  },
+  "imports": {
+    "blend": {
+      "triangles": 8352,
+      "boundsError": 0.0,
+      "packedImages": 3
+    },
+    "glb": {
+      "triangles": 8352,
+      "boundsError": 0.0,
+      "packedImages": 3
+    },
+    "fbx": {
+      "triangles": 8352,
+      "boundsError": 1.7638642191286635e-07,
+      "packedImages": 3
+    }
+  }
+}

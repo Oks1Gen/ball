@@ -1,0 +1,51 @@
+{
+  "triangles": 6752,
+  "largestPart": 764,
+  "bounds": [
+    [
+      -1.0,
+      -1.1019999980926514,
+      0.0
+    ],
+    [
+      1.0,
+      1.0,
+      3.0506744384765625
+    ]
+  ],
+  "parts": {
+    "Square body": 764,
+    "front left paw": 448,
+    "rear left paw": 448,
+    "front right paw": 448,
+    "rear right paw": 448,
+    "left glossy eye": 420,
+    "right glossy eye": 420,
+    "left short bent antenna": 480,
+    "left golden antenna bulb": 324,
+    "left pillowy ivory wing": 512,
+    "right short bent antenna": 480,
+    "right golden antenna bulb": 324,
+    "right pillowy ivory wing": 512,
+    "left smile curl": 200,
+    "right smile curl": 200,
+    "Soft charcoal nose": 324
+  },
+  "imports": {
+    "blend": {
+      "triangles": 6752,
+      "boundsError": 0.0,
+      "packedImages": 3
+    },
+    "glb": {
+      "triangles": 6752,
+      "boundsError": 0.0,
+      "packedImages": 3
+    },
+    "fbx": {
+      "triangles": 6752,
+      "boundsError": 2.384185791015625e-07,
+      "packedImages": 3
+    }
+  }
+}

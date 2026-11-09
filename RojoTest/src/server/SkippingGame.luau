@@ -34,6 +34,7 @@ local EggInteraction = require(script.Parent.Gameplay.EggInteraction)
 local Lifecycle = require(script.Parent.Gameplay.Lifecycle)
 local WorldTravel = require(script.Parent.Gameplay.WorldTravel)
 
+local PetWorkshopStation = require(script.Parent.PetWorkshopStation)
 local Game: any = {}
 local started = false
 
@@ -42,6 +43,7 @@ function Game.start(map, world2: Instance?)
 		return
 	end
 	started = true
+	PetWorkshopStation.install(map)
 	local remote = Net.server()
 	local action: any = assert(remote:FindFirstChild("Action")) :: RemoteEvent
 	local update: any = assert(remote:FindFirstChild("Update")) :: RemoteEvent
@@ -195,18 +197,6 @@ function Game.start(map, world2: Instance?)
 		character:SetAttribute("TrainingStarted", s.trainingStarted)
 		character:SetAttribute("TrainingSeed", s.trainingSeed)
 	end
-	local function petBoost(data: any)
-		local bonus = 0
-		for _, id in data.equipped do
-			for _, pet in data.pets do
-				if pet.uid == id then
-					bonus += math.max(0, (pet.boost or 1) - 1)
-					break
-				end
-			end
-		end
-		return 1 + bonus
-	end
 	-- The friend counts live for a minute: every lookup is a web request and
 	-- Roblox throttles them, so the same pair is not asked twice in a minute
 	-- and the count of a player is reused while it is fresh.
@@ -267,12 +257,12 @@ function Game.start(map, world2: Instance?)
 	end
 	local function multiplier(state: any)
 		local d = state.data
-		return (1 + d.rebirths)
-			* petBoost(d)
-			* BallPurchases.power(d)
-			* (d.perks.DoubleSkill and 2 or 1)
-			* (1 + state.friends * 0.1)
-			* Worlds[d.world].reward
+		return Config.Balance.trainingMultiplier(
+			d,
+			BallPurchases.trainingBonus(d),
+			state.friends,
+			Worlds[d.world].reward
+		)
 	end
 	local function inKickZone(player)
 		if player:GetAttribute("AdminFlight") == true or player:GetAttribute("DevPreviewWorld") ~= nil then
@@ -324,6 +314,8 @@ function Game.start(map, world2: Instance?)
 	-- changed, so the version is bumped by everything that touches them.
 	local function equipBest(s: any)
 		local d = s.data
+		-- All hatch, reserved paid-pet and developer-grant paths equip here.
+		ProfileData.rememberPets(d)
 		local sorted: { { uid: string, boost: number } } = table.clone(d.pets)
 		table.sort(sorted, function(a, b)
 			return a.boost > b.boost
@@ -337,7 +329,7 @@ function Game.start(map, world2: Instance?)
 	local function hatch(player: Player, id: string, count: number?, testing: boolean?)
 		local s = states[player]
 		local d = s.data
-		local egg = Config.find(Config.Eggs, id)
+		local egg = Config.find(Config.eggsForWorld(d.world), id)
 		local arena = arenas[d.world]
 		if not egg or not arena then
 			return
@@ -390,6 +382,10 @@ function Game.start(map, world2: Instance?)
 				id = chosen.id,
 				name = chosen.name,
 				boost = Config.eggPetBoost(egg, chosen.boost, d.world),
+				eggId = id,
+				sourceWorld = d.world,
+				balanceVersion = Config.Balance.Version,
+				upgradeLevel = 0,
 				rarity = chosen.rarity,
 			}
 			table.insert(d.pets, pet)
@@ -513,6 +509,7 @@ function Game.start(map, world2: Instance?)
 		arenaFor = arenaFor,
 		rootFor = rootFor,
 	}, map, world2)
+	PetWorkshopStation.connect({ states = states, rootFor = rootFor, arenaFor = arenaFor, effect = effect }, map)
 	-- The training lanes are cached once per arena: the hot loop then reads a
 	-- ready reference instead of walking the arena tree on every tick.
 	Training.run({

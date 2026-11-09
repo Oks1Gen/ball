@@ -1,0 +1,52 @@
+{
+  "triangles": 9732,
+  "largestPart": 968,
+  "bounds": [
+    [
+      -2.3551599979400635,
+      -1.0750000476837158,
+      0.0
+    ],
+    [
+      2.3551599979400635,
+      1.5843232870101929,
+      2.9560000896453857
+    ]
+  ],
+  "parts": {
+    "Square body": 764,
+    "front left paw": 448,
+    "rear left paw": 448,
+    "front right paw": 448,
+    "rear right paw": 448,
+    "left glossy eye": 420,
+    "right glossy eye": 420,
+    "left swept ice horn": 792,
+    "right swept ice horn": 792,
+    "left scalloped ice wing": 840,
+    "left frosted wing leading edge": 572,
+    "right scalloped ice wing": 840,
+    "right frosted wing leading edge": 572,
+    "Upturned tail stem": 968,
+    "Curved ice spade": 560,
+    "left smile curl": 200,
+    "right smile curl": 200
+  },
+  "imports": {
+    "blend": {
+      "triangles": 9732,
+      "boundsError": 0.0,
+      "packedImages": 3
+    },
+    "glb": {
+      "triangles": 9732,
+      "boundsError": 0.0,
+      "packedImages": 3
+    },
+    "fbx": {
+      "triangles": 9732,
+      "boundsError": 2.384185791015625e-07,
+      "packedImages": 3
+    }
+  }
+}

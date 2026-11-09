@@ -1,0 +1,322 @@
+{
+  "date": "2026-11-09",
+  "placeId": 106456161057435,
+  "universeId": 10770268214,
+  "isolatedUiSnapshots": true,
+  "rojo": {
+    "portraits": true,
+    "source": true,
+    "templates": {
+      "SnowPup": {
+        "texture": "rbxassetid://113430887592622",
+        "mesh": "rbxassetid://91515727776814",
+        "size": "2.342613458633423, 2.3049001693725586, 3.0931577682495117"
+      },
+      "GlacierWalrus": {
+        "texture": "rbxassetid://84725449038932",
+        "mesh": "rbxassetid://130095400084050",
+        "size": "3.0242233276367188, 2.0160000324249268, 1.9753568172454834"
+      },
+      "AuroraLynx": {
+        "texture": "rbxassetid://124932473230990",
+        "mesh": "rbxassetid://124390238670426",
+        "size": "2.1189122200012207, 2.756700038909912, 2.823129177093506"
+      },
+      "SnowyPenguin": {
+        "texture": "rbxassetid://111502529410394",
+        "mesh": "rbxassetid://91621453161053",
+        "size": "2.751762628555298, 2.0160000324249268, 1.9818000793457031"
+      },
+      "GlacierDragon": {
+        "texture": "rbxassetid://103555893453054",
+        "mesh": "rbxassetid://103737848018636",
+        "size": "4.239287853240967, 2.660400152206421, 2.3933911323547363"
+      }
+    }
+  },
+  "assetsAndProfile": {
+    "profile": {
+      "Watermelon": {
+        "uid": "frost-test-3",
+        "name": "Glacier Walrus",
+        "boost": 2.08
+      },
+      "Frog": {
+        "uid": "frost-test-2",
+        "name": "Snowy Penguin",
+        "boost": 1.54
+      },
+      "GreenDragon": {
+        "uid": "frost-test-5",
+        "name": "Glacier Dragon",
+        "boost": 3.1600000000000006
+      },
+      "AuroraLynx": {
+        "uid": "frost-test-4",
+        "name": "Aurora Lynx",
+        "boost": 2.08
+      },
+      "Cactus": {
+        "uid": "frost-test-1",
+        "name": "Snow Pup",
+        "boost": 1.2699999999999998
+      }
+    },
+    "assets": {
+      "Watermelon": {
+        "image": "rbxassetid://120375371975993",
+        "imageStatus": "Enum.AssetFetchStatus.Success",
+        "textureStatus": "Enum.AssetFetchStatus.Success",
+        "texture": "rbxassetid://84725449038932",
+        "mesh": "rbxassetid://130095400084050",
+        "collisions": false,
+        "size": "3.95692777633667, 2.6377570629119873, 2.5845789909362793"
+      },
+      "Frog": {
+        "image": "rbxassetid://126093246946268",
+        "imageStatus": "Enum.AssetFetchStatus.Success",
+        "textureStatus": "Enum.AssetFetchStatus.Success",
+        "texture": "rbxassetid://111502529410394",
+        "mesh": "rbxassetid://91621453161053",
+        "collisions": false,
+        "size": "3.6004371643066406, 2.6377570629119873, 2.5930094718933105"
+      },
+      "GreenDragon": {
+        "image": "rbxassetid://124608994969151",
+        "imageStatus": "Enum.AssetFetchStatus.Success",
+        "textureStatus": "Enum.AssetFetchStatus.Success",
+        "texture": "rbxassetid://103555893453054",
+        "mesh": "rbxassetid://103737848018636",
+        "collisions": false,
+        "size": "5.546731948852539, 3.4808974266052246, 3.131539821624756"
+      },
+      "AuroraLynx": {
+        "image": "rbxassetid://78349984252832",
+        "imageStatus": "Enum.AssetFetchStatus.Success",
+        "textureStatus": "Enum.AssetFetchStatus.Success",
+        "texture": "rbxassetid://124932473230990",
+        "mesh": "rbxassetid://124390238670426",
+        "collisions": false,
+        "size": "2.7724084854125977, 3.6068973541259766, 3.6938140392303467"
+      },
+      "Cactus": {
+        "image": "rbxassetid://75723867072532",
+        "imageStatus": "Enum.AssetFetchStatus.Success",
+        "textureStatus": "Enum.AssetFetchStatus.Success",
+        "texture": "rbxassetid://113430887592622",
+        "mesh": "rbxassetid://91515727776814",
+        "collisions": false,
+        "size": "3.0651018619537354, 3.0157573223114014, 4.047122478485107"
+      }
+    },
+    "author": {
+      "name": "Dakemo555",
+      "userId": 11789507527
+    },
+    "bootstrap": [],
+    "rolls": {
+      "Rainbow": {
+        "CrystalCat": 100,
+        "GalaxyCat": 1395,
+        "EclipseCat": 5,
+        "Butterfly": 5500,
+        "MoonCat": 3000
+      },
+      "Rare": {
+        "Shark": 5500,
+        "CloudBird": 3000,
+        "IceCat": 100,
+        "AngelCat": 1400
+      },
+      "Uncommon": {
+        "Watermelon": 1000,
+        "Frog": 3000,
+        "GreenDragon": 100,
+        "AuroraLynx": 400,
+        "Cactus": 5500
+      },
+      "Common": {
+        "ScarletMushroom": 5500,
+        "AutumnCat": 1000,
+        "MoonOwl": 400,
+        "FlameCat": 100,
+        "StrawberryCake": 3000
+      }
+    }
+  },
+  "inventory": {
+    "inventory": {
+      "rbxassetid://126093246946268": {
+        "loaded": true,
+        "tint": "1, 1, 1"
+      },
+      "rbxassetid://124608994969151": {
+        "loaded": true,
+        "tint": "1, 1, 1"
+      },
+      "rbxassetid://78349984252832": {
+        "loaded": true,
+        "tint": "1, 1, 1"
+      },
+      "rbxassetid://75723867072532": {
+        "loaded": true,
+        "tint": "1, 1, 1"
+      },
+      "rbxassetid://120375371975993": {
+        "loaded": true,
+        "tint": "1, 1, 1"
+      }
+    },
+    "cam": "73.08293151855469, 24.713682174682617, 253.09002685546875",
+    "root": "72.80866241455078, 23.23802375793457, 249.3873748779297",
+    "detail": {
+      "rbxassetid://124608994969151": {
+        "loaded": true,
+        "tint": "1, 1, 1"
+      }
+    },
+    "shell": "72.80866241455078, 25.428747177124023, 240.8873748779297"
+  },
+  "eggCollection": {
+    "loaded": {
+      "rbxassetid://126093246946268": true,
+      "rbxassetid://124608994969151": true,
+      "rbxassetid://78349984252832": true,
+      "rbxassetid://75723867072532": true,
+      "rbxassetid://120375371975993": true
+    },
+    "removed": true,
+    "scroll": 191.71945190429688
+  },
+  "worldEggPreview": {
+    "portraits": {
+      "rbxassetid://126093246946268": {
+        "loaded": true,
+        "tint": "1, 1, 1"
+      },
+      "rbxassetid://124608994969151": {
+        "loaded": true,
+        "tint": "1, 1, 1"
+      },
+      "rbxassetid://78349984252832": {
+        "loaded": true,
+        "tint": "0, 0, 0"
+      },
+      "rbxassetid://75723867072532": {
+        "loaded": true,
+        "tint": "1, 1, 1"
+      },
+      "rbxassetid://120375371975993": {
+        "loaded": true,
+        "tint": "0, 0, 0"
+      }
+    },
+    "adornee": "Workspace.Map.World1.Lobby.EggShop.Egg_Uncommon.ImportedVisual.Glacier_Crown_1",
+    "title": "Frost Egg",
+    "egg": "Uncommon"
+  },
+  "workshop": {
+    "workshop": {
+      "rbxassetid://126093246946268": {
+        "loaded": true,
+        "tint": "1, 1, 1"
+      },
+      "rbxassetid://124608994969151": {
+        "loaded": true,
+        "tint": "1, 1, 1"
+      },
+      "rbxassetid://78349984252832": {
+        "loaded": true,
+        "tint": "1, 1, 1"
+      },
+      "rbxassetid://75723867072532": {
+        "loaded": true,
+        "tint": "1, 1, 1"
+      },
+      "rbxassetid://120375371975993": {
+        "loaded": true,
+        "tint": "1, 1, 1"
+      }
+    },
+    "variants": {
+      "GlacierDragon": {
+        "mutation": true,
+        "tint": "1, 0.847059, 0.364706",
+        "texture": "rbxassetid://103555893453054"
+      },
+      "AuroraLynx": {
+        "mutation": false,
+        "tint": "1, 0.847059, 0.364706",
+        "texture": "rbxassetid://124932473230990"
+      }
+    }
+  },
+  "epicRecycleShards": 4,
+  "hatch": {
+    "rbxassetid://126093246946268": true,
+    "rbxassetid://120375371975993": true,
+    "rbxassetid://75723867072532": true,
+    "rbxassetid://78349984252832": true,
+    "rbxassetid://124608994969151": true,
+    "format": {
+      "fits": true,
+      "boost": "3.16"
+    },
+    "desktopCapture": "studio-hatch.jpg"
+  },
+  "followerAndAdminPreload": {
+    "prefetched": {
+      "Watermelon": "Enum.AssetFetchStatus.Success",
+      "Frog": "Enum.AssetFetchStatus.Success",
+      "GreenDragon": "Enum.AssetFetchStatus.Success",
+      "AuroraLynx": "Enum.AssetFetchStatus.Success",
+      "Cactus": "Enum.AssetFetchStatus.Success"
+    },
+    "followers": {
+      "Watermelon": true,
+      "Frog": true,
+      "GreenDragon": true,
+      "AuroraLynx": true,
+      "Cactus": true
+    },
+    "adminIcons": {
+      "Watermelon": "rbxassetid://120375371975993",
+      "Frog": "rbxassetid://126093246946268",
+      "GreenDragon": "rbxassetid://124608994969151",
+      "AuroraLynx": "rbxassetid://78349984252832",
+      "Cactus": "rbxassetid://75723867072532"
+    },
+    "user": {
+      "name": "Dakemo555",
+      "id": 11789507527
+    }
+  },
+  "meshAngles": {
+    "angles": [
+      "front three-quarter",
+      "side",
+      "rear three-quarter",
+      "underside"
+    ],
+    "capture": "studio-four-angles.jpg"
+  },
+  "updateLog": {
+    "version": "0.8.0",
+    "author": "Dakemo555  ·  Pet and portrait art direction",
+    "fit": true,
+    "expanded": true,
+    "avatar": "rbxthumb://type=AvatarHeadShot&id=11789507527&w=48&h=48",
+    "collapsed": true,
+    "scroll": 100,
+    "logClosed": true
+  },
+  "gate": {
+    "luneTests": 151,
+    "gateTests": 5,
+    "typeDiagnostics": 0
+  },
+  "cleanup": {
+    "noFixture": true,
+    "playStopped": true
+  }
+}

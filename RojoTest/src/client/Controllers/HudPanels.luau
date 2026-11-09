@@ -12,8 +12,9 @@ local TweenService = game:GetService("TweenService")
 local Motion = require(game.ReplicatedStorage.Shared.UiMotion)
 local MotionConfig = require(game.ReplicatedStorage.Shared.UiMotionConfig)
 local GuiInsets = require(script.Parent.Parent.Modules.GuiInsets)
-local Presentation = require(script.Parent.Parent.Modules.UiPresentation)
 local ReturnRewardPanels = require(script.Parent.ReturnRewardPanels)
+local PetWorkshop = require(script.Parent.PetWorkshop)
+local ProgressionRewards = require(script.Parent.ProgressionRewards)
 local UpdateLogView = require(script.Parent.UpdateLogView)
 local WorldsView = require(script.Parent.WorldsView)
 
@@ -539,7 +540,7 @@ function Panels.mount(context: Context): Handle
 		Kit.text(
 			modal,
 			"Description",
-			phone and "Buy with Wins • Boost power" or "Buy with Wins • Boost training and hits",
+			"Buy with Wins • Add training bonus",
 			25,
 			32,
 			width - 50,
@@ -567,7 +568,7 @@ function Panels.mount(context: Context): Handle
 			Kit.text(
 				row,
 				"Power",
-				"×" .. item.power .. (phone and " Power" or " Training & Hit Power"),
+				"+" .. item.trainingBonus .. " Training",
 				115,
 				47,
 				phone and width - 286 or 340,
@@ -630,92 +631,8 @@ function Panels.mount(context: Context): Handle
 
 	local function openGifts()
 		begin("Gifts")
-		local modal = shell("Playtime Rewards", "Gifts", 700, 452)
-		local phone = phoneArea()
-		local cardWidth = math.floor((modal.Size.X.Offset - 64) / 3)
-		local rows: { [number]: TextButton } = {}
-		local checks: { [number]: Frame } = {}
-		local dimmers: { [number]: Frame } = {}
-		for i, gift in Config.Gifts do
-			local x = 18 + (i - 1) % 3 * (cardWidth + 14)
-			local y = (phone and 12 or 56) + math.floor((i - 1) / 3) * 192
-			local color = i <= 3 and C(39, 167, 225) or i <= 5 and C(184, 104, 239) or C(255, 203, 33)
-			local row = Kit.brick(modal, "Gift" .. i, x, y, cardWidth, 178, color, 18)
-			Kit.burst(row)
-			Kit.text(
-				row,
-				"Wins",
-				"+" .. Config.format(gift.wins) .. " WINS",
-				8,
-				7,
-				cardWidth - 16,
-				27,
-				phone and 18 or 22
-			)
-			Kit.text(
-				row,
-				"Skill",
-				"+" .. Config.format(gift.skill) .. " SKILL",
-				8,
-				34,
-				cardWidth - 16,
-				24,
-				phone and 16 or 19
-			)
-			Kit.icon(
-				row,
-				i % 2 == 0 and "Skill" or "Wins",
-				(cardWidth - (phone and 90 or 102)) / 2,
-				62,
-				phone and 90 or 102,
-				phone and 54 or 65
-			)
-			rows[i] = Kit.button(
-				row,
-				"Claim",
-				"",
-				14,
-				phone and 124 or 134,
-				cardWidth - 28,
-				phone and 44 or 34,
-				C(250, 53, 53),
-				22,
-				function()
-					local snapshot = context.snapshot()
-					if snapshot and not snapshot.gifts[i] and snapshot.elapsed >= Config.Gifts[i].time then
-						context.send("Gift", i)
-					end
-				end
-			)
-			local dimmer = Kit.frame(row, "ClaimedShade", 0, 0, cardWidth, 178, C(10, 13, 22))
-			dimmer.BackgroundTransparency = 0.48
-			dimmer.ZIndex = 7
-			Kit.corner(dimmer, 18)
-			dimmers[i] = dimmer
-			local check = Kit.icon(row, "Check", 50, 56, 112, 105)
-			check.ZIndex = 8
-			checks[i] = check
-		end
-		refresh = function()
-			local snapshot = context.snapshot()
-			if not snapshot then
-				return
-			end
-			for i, b in rows do
-				local claimed = snapshot.gifts[i] == true
-				local remaining = math.max(0, Config.Gifts[i].time - snapshot.elapsed)
-				local ready = not claimed and remaining <= 0
-				local caption = Kit.captionOf(b)
-				if caption then
-					caption.Text = claimed and "Claimed" or ready and "Claim!" or Presentation.countdown(remaining)
-				end
-				checks[i].Visible = claimed
-				dimmers[i].Visible = claimed
-				Kit.paint(b, ready and C(84, 235, 24) or C(250, 53, 53))
-				b.Active = not claimed
-				b.Interactable = not claimed
-			end
-		end
+		local modal = shell("Challenges & Gifts", "Gifts", 700, 452)
+		refresh = ProgressionRewards.mount(modal, context)
 		assert(refresh)()
 	end
 
@@ -761,6 +678,26 @@ function Panels.mount(context: Context): Handle
 				openRebirth()
 			elseif name == "Inventory" then
 				openInventory(argument)
+			elseif name == "PetCraft" then
+				begin(name)
+				local modal = shell("Pet Workshop", "Pets", 900, 550, true)
+				refresh = PetWorkshop.mount(modal, {
+					snapshot = context.snapshot,
+					send = context.send,
+					feedback = function(success: boolean, outcome: string)
+						local gui = modal:FindFirstAncestorOfClass("ScreenGui")
+						local sound = Instance.new("Sound")
+						sound.Name = "PetCraftReveal"
+						sound.SoundId = if success then "rbxassetid://91735091370012" else "rbxasset://sounds/uuhhh.mp3"
+						local snapshot = context.snapshot()
+						sound.Volume = 0.3 * (if snapshot then snapshot.data.settings.sound / 100 else 1)
+						sound.Parent = gui
+						sound:Play()
+						game:GetService("Debris"):AddItem(sound, 5)
+						modal:SetAttribute("CraftOutcome", outcome)
+					end,
+				})
+				assert(refresh)()
 			elseif name == "Gifts" then
 				openGifts()
 			elseif name == "Daily" then

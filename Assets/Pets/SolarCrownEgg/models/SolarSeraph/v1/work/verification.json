@@ -1,0 +1,53 @@
+{
+  "triangles": 8342,
+  "largestPart": 1792,
+  "bounds": [
+    [
+      -2.2475051879882812,
+      -1.1471545696258545,
+      0.0
+    ],
+    [
+      2.2475051879882812,
+      1.0,
+      3.234999895095825
+    ]
+  ],
+  "parts": {
+    "Square body": 764,
+    "front left hoof": 448,
+    "rear left hoof": 448,
+    "front right hoof": 448,
+    "rear right hoof": 448,
+    "left glossy eye": 420,
+    "right glossy eye": 420,
+    "Raised circular halo": 1792,
+    "Golden forehead diamond": 126,
+    "left ivory feather 1": 384,
+    "left ivory feather 2": 384,
+    "left ivory feather 3": 384,
+    "right ivory feather 1": 384,
+    "right ivory feather 2": 384,
+    "right ivory feather 3": 384,
+    "left smile curl": 200,
+    "right smile curl": 200,
+    "Soft charcoal nose": 324
+  },
+  "imports": {
+    "blend": {
+      "triangles": 8342,
+      "boundsError": 0.0,
+      "packedImages": 5
+    },
+    "glb": {
+      "triangles": 8342,
+      "boundsError": 2.384185791015625e-07,
+      "packedImages": 5
+    },
+    "fbx": {
+      "triangles": 8342,
+      "boundsError": 2.384185791015625e-07,
+      "packedImages": 5
+    }
+  }
+}

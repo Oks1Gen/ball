@@ -12,6 +12,8 @@ local MotionConfig = require(game.ReplicatedStorage.Shared.UiMotionConfig)
 local Presentation = require(script.Parent.Modules.UiPresentation)
 local InventoryTabs = require(script.InventoryTabs)
 local InventoryWindow = require(script.InventoryWindow)
+local PetsWindow = require(script.PetsWindow)
+local PetControls = require(script.PetControls)
 local InventoryPages = require(script.InventoryPages)
 local HatchScreen = require(script.HatchScreen)
 local e = React.createElement
@@ -235,6 +237,7 @@ local function Navigation(p)
 end
 
 type Context = {
+	playSound: ((string, number?, number?) -> ())?,
 	send: (string, any?, any?) -> (),
 	close: (boolean?, (() -> ())?) -> (),
 	open: (string) -> (),
@@ -264,6 +267,13 @@ function UI.mount(context: Context)
 		ModalOpen = false,
 	}
 	local render
+	local lastPetSound = 0
+	local function petFeedback()
+		if context.playSound and os.clock() - lastPetSound >= 0.06 then
+			lastPetSound = os.clock()
+			context.playSound("rbxasset://sounds/volume_slider.ogg", 0.16, 1.35)
+		end
+	end
 	local function request(command: string, value: any?, extra: any?)
 		if handle.Pending then
 			return
@@ -419,28 +429,37 @@ function UI.mount(context: Context)
 				local phone = game:GetService("UserInputService").TouchEnabled and area.Y < 520
 				local designScale = phone and 1 or math.max(0.05, math.min(area.X / 1280, area.Y / 720))
 				local collection = view.Kind == "Collection"
-				local w = phone and math.min(collection and 900 or 680, area.X - (collection and 144 or 64))
+				local immersivePets = collection and view.Tab == "Pets"
+				if immersivePets then
+					designScale = math.max(0.05, math.min(area.X / 1200, area.Y / 620))
+				end
+				local windowMargin = immersivePets and 50 or WINDOW_MARGIN
+				local w = immersivePets and 1120
+					or phone and math.min(collection and 900 or 680, area.X - (collection and 144 or 64))
 					or (collection and 940 or WINDOW_WIDTH)
-				local h = phone and math.max(227, area.Y - (collection and 72 or 96)) or WINDOW_HEIGHT
-				local factor = phone and 1
+				local h = immersivePets and 520
+					or phone and math.max(227, area.Y - (collection and 72 or 96))
+					or WINDOW_HEIGHT
+				local factor = phone and not immersivePets and 1
 					or math.min(
 						1,
-						(area.X - 24) / ((w + WINDOW_MARGIN * 2 + (collection and 164 or 0)) * designScale),
-						(area.Y - 24) / ((h + WINDOW_MARGIN * 2) * designScale)
+						(area.X - 24)
+							/ ((w + windowMargin * 2 + (collection and not immersivePets and 164 or 0)) * designScale),
+						(area.Y - 24) / ((h + windowMargin * 2) * designScale)
 					)
 				local centerY = screenCenter.Y
 				-- The screen fills the plate. Only the collection grid asks for
 				-- more room than it gets: its rows have a height of their own.
-				local baseH = h - (collection and (phone and 50 or 76) or (phone and 40 or 80))
+				local baseH = h - (immersivePets and 88 or collection and (phone and 50 or 76) or (phone and 40 or 80))
 				local contentHeight = baseH
 				local short = baseH < 420
 				local props = {
 					Data = data,
 					PaidRandomRestricted = handle.Snapshot and handle.Snapshot.paidRandomRestricted ~= false,
 					PurchasePolicyReady = handle.Snapshot and handle.Snapshot.purchasePolicyReady == true,
-					Phone = phone,
+					Phone = phone and not immersivePets,
 					Inventory = inventory or { pets = {}, equipped = {} },
-					Width = w - 24 - (collection and (phone and 104 or 164) or 0),
+					Width = immersivePets and 728 or w - 24 - (collection and (phone and 104 or 164) or 0),
 					Height = contentHeight,
 					Request = request,
 					Busy = handle.Pending ~= nil,
@@ -448,6 +467,9 @@ function UI.mount(context: Context)
 					Short = short,
 					EggId = handle.EggId,
 					UnifiedInventory = collection,
+					ImmersivePets = immersivePets,
+					Visible = handle.Active ~= nil and handle.View == view,
+					Feedback = immersivePets and petFeedback or nil,
 					BallId = handle.BallId,
 					SelectedPet = handle.SelectedPet,
 					SelectBall = function(id)
@@ -486,6 +508,7 @@ function UI.mount(context: Context)
 						-- swallow every click on the content underneath it.
 						ZIndex = LAYER_BLOCKER,
 						Modal = true,
+						Active = not immersivePets,
 					})
 				end
 				local function settled()
@@ -511,59 +534,65 @@ function UI.mount(context: Context)
 					})
 					continue
 				end
-				children["Window" .. serial] = e(collection and InventoryWindow or Window, {
-					key = kind .. serial,
-					Kind = kind,
-					Tab = view.Tab,
-					SelectTab = function(route)
-						local nextTab = InventoryTabs.resolve(route)
-						if nextTab and nextTab.Id ~= view.Tab then
-							open(route)
-						end
-					end,
-					Phone = phone,
-					Title = title,
-					Width = w,
-					Height = h,
-					DesignScale = designScale * factor,
-					CenterX = screenCenter.X,
-					CenterY = centerY,
-					Visible = handle.Active ~= nil and handle.View == view,
-					Reduced = props.Reduced,
-					Close = context.close,
-					Settled = settled,
-					Children = {
-						Screen = contentHeight > baseH and e(U.Scroll, {
-							Name = "CompactScreenScroll",
-							Size = UDim2.fromOffset(w - 24, baseH),
-							Height = contentHeight + 6,
-							Children = { Screen = e(page, props) },
-						}) or e(page, props),
-					},
-				})
+				children["Window" .. serial] =
+					e(immersivePets and PetsWindow or collection and InventoryWindow or Window, {
+						key = kind .. serial,
+						Kind = kind,
+						Tab = view.Tab,
+						SelectTab = function(route)
+							local nextTab = InventoryTabs.resolve(route)
+							if nextTab and nextTab.Id ~= view.Tab then
+								open(route)
+							end
+						end,
+						Phone = phone,
+						Title = title,
+						Width = w,
+						MainWidth = 760,
+						Shards = data.petMaterial or 0,
+						Feedback = immersivePets and petFeedback or nil,
+						Height = h,
+						DesignScale = designScale * factor,
+						CenterX = screenCenter.X,
+						CenterY = centerY,
+						Visible = handle.Active ~= nil and handle.View == view,
+						Reduced = props.Reduced,
+						Close = context.close,
+						Settled = settled,
+						Children = {
+							Screen = contentHeight > baseH and e(U.Scroll, {
+								Name = "CompactScreenScroll",
+								Size = UDim2.fromOffset(w - 24, baseH),
+								Height = contentHeight + 6,
+								Children = { Screen = e(page, props) },
+							}) or e(page, props),
+						},
+					})
 			end
 		end
-		return e(U.MotionContext.Provider, { value = data and data.settings.effects == false }, {
-			Area = e("Frame", {
-				Name = "SafeArea",
-				Size = UDim2.fromScale(1, 1),
-				BackgroundTransparency = 1,
-				[React.Change.AbsoluteSize] = function(instance: Frame)
-					local viewport = workspace.CurrentCamera.ViewportSize
-					local safe = GuiInsets.area(viewport, instance)
-					setArea(safe.size)
-					setInset(safe.offset)
-					setScreenCenter(GuiInsets.screenCenter(viewport) - instance.AbsolutePosition - safe.offset)
-				end,
-			}, {
-				Inset = e("Frame", {
-					Name = "Inset",
-					Position = UDim2.fromOffset(inset.X, inset.Y),
-					Size = UDim2.fromOffset(math.max(1, area.X), math.max(1, area.Y)),
+		return e(PetControls.FeedbackContext.Provider, { value = petFeedback }, {
+			Content = e(U.MotionContext.Provider, { value = data and data.settings.effects == false }, {
+				Area = e("Frame", {
+					Name = "SafeArea",
+					Size = UDim2.fromScale(1, 1),
 					BackgroundTransparency = 1,
-					ZIndex = 1,
-				}, children),
-				Hatch = hatchScreen,
+					[React.Change.AbsoluteSize] = function(instance: Frame)
+						local viewport = workspace.CurrentCamera.ViewportSize
+						local safe = GuiInsets.area(viewport, instance)
+						setArea(safe.size)
+						setInset(safe.offset)
+						setScreenCenter(GuiInsets.screenCenter(viewport) - instance.AbsolutePosition - safe.offset)
+					end,
+				}, {
+					Inset = e("Frame", {
+						Name = "Inset",
+						Position = UDim2.fromOffset(inset.X, inset.Y),
+						Size = UDim2.fromOffset(math.max(1, area.X), math.max(1, area.Y)),
+						BackgroundTransparency = 1,
+						ZIndex = 1,
+					}, children),
+					Hatch = hatchScreen,
+				}),
 			}),
 		})
 	end
@@ -596,6 +625,9 @@ function UI.mount(context: Context)
 	end
 	function handle:open(kind, eggId)
 		local tab = InventoryTabs.resolve(kind)
+		if tab and tab.Id == "Pets" and (not self.View or self.Active == nil or self.View.Tab ~= "Pets") then
+			petFeedback()
+		end
 		if tab then
 			if tab.Id == "Eggs" and eggId then
 				self.EggId = eggId

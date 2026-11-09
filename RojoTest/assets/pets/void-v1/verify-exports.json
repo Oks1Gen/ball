@@ -1,0 +1,177 @@
+{
+  "DuskMoth": {
+    "triangles": 8352,
+    "bounds": [
+      [
+        -1.8592383861541748,
+        -1.1200000047683716,
+        0.0
+      ],
+      [
+        1.8592383861541748,
+        1.0,
+        2.9769999980926514
+      ]
+    ],
+    "imports": {
+      "blend": {
+        "triangles": 8352,
+        "boundsError": 0.0,
+        "packedImages": 3
+      },
+      "glb": {
+        "triangles": 8352,
+        "boundsError": 0.0,
+        "packedImages": 3
+      },
+      "fbx": {
+        "triangles": 8352,
+        "boundsError": 1.7638642191286635e-07,
+        "packedImages": 3
+      }
+    },
+    "closedParts": 18,
+    "minimumSignedVolume": 0.0001899095654111417,
+    "embeddedAtlas": true
+  },
+  "ShadowKitten": {
+    "triangles": 6664,
+    "bounds": [
+      [
+        -1.0,
+        -1.1200000047683716,
+        0.0
+      ],
+      [
+        1.275734782218933,
+        2.3248116970062256,
+        2.9957499504089355
+      ]
+    ],
+    "imports": {
+      "blend": {
+        "triangles": 6664,
+        "boundsError": 0.0,
+        "packedImages": 3
+      },
+      "glb": {
+        "triangles": 6664,
+        "boundsError": 0.0,
+        "packedImages": 3
+      },
+      "fbx": {
+        "triangles": 6664,
+        "boundsError": 4.76837158203125e-07,
+        "packedImages": 3
+      }
+    },
+    "closedParts": 13,
+    "minimumSignedVolume": 0.00010796907041234369,
+    "embeddedAtlas": true
+  },
+  "OrbitAxolotl": {
+    "triangles": 8248,
+    "bounds": [
+      [
+        -1.7599999904632568,
+        -1.1200000047683716,
+        0.0
+      ],
+      [
+        1.7599999904632568,
+        1.9902691841125488,
+        2.614074230194092
+      ]
+    ],
+    "imports": {
+      "blend": {
+        "triangles": 8248,
+        "boundsError": 0.0,
+        "packedImages": 4
+      },
+      "glb": {
+        "triangles": 8248,
+        "boundsError": 0.0,
+        "packedImages": 4
+      },
+      "fbx": {
+        "triangles": 8248,
+        "boundsError": 3.5762786865234375e-07,
+        "packedImages": 4
+      }
+    },
+    "closedParts": 17,
+    "minimumSignedVolume": 0.0001899095654111417,
+    "embeddedAtlas": true
+  },
+  "RiftWyrm": {
+    "triangles": 9716,
+    "bounds": [
+      [
+        -2.2300000190734863,
+        -1.1200000047683716,
+        0.0
+      ],
+      [
+        2.2300000190734863,
+        1.4542670249938965,
+        3.130000114440918
+      ]
+    ],
+    "imports": {
+      "blend": {
+        "triangles": 9716,
+        "boundsError": 0.0,
+        "packedImages": 4
+      },
+      "glb": {
+        "triangles": 9716,
+        "boundsError": 0.0,
+        "packedImages": 4
+      },
+      "fbx": {
+        "triangles": 9716,
+        "boundsError": 2.384185791015625e-07,
+        "packedImages": 4
+      }
+    },
+    "closedParts": 18,
+    "minimumSignedVolume": 0.0001899095654111417,
+    "embeddedAtlas": true
+  },
+  "Singularity": {
+    "triangles": 6612,
+    "bounds": [
+      [
+        -2.0561764240264893,
+        -1.7941535711288452,
+        0.0
+      ],
+      [
+        2.0561764240264893,
+        1.7941535711288452,
+        2.240000009536743
+      ]
+    ],
+    "imports": {
+      "blend": {
+        "triangles": 6612,
+        "boundsError": 0.0,
+        "packedImages": 3
+      },
+      "glb": {
+        "triangles": 6612,
+        "boundsError": 0.0,
+        "packedImages": 3
+      },
+      "fbx": {
+        "triangles": 6612,
+        "boundsError": 4.76837158203125e-07,
+        "packedImages": 3
+      }
+    },
+    "closedParts": 10,
+    "minimumSignedVolume": 0.00010796907041234369,
+    "embeddedAtlas": true
+  }
+}

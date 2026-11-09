@@ -1,0 +1,114 @@
+{
+  "date": "2026-11-09",
+  "scope": "Frost Egg portraits with the user-directed saturated palette",
+  "generation": "Built-in ImageGen edit of final Blender renders",
+  "reference": "../../../Pets/FrostEgg/reference.png",
+  "outlineReference": "sources/outline-reference.png",
+  "preview": "preview.png",
+  "sizeCheck": "sources/size-check.png",
+  "canvas": {
+    "width": 512,
+    "height": 512,
+    "format": "RGBA PNG"
+  },
+  "outline": {
+    "color": "#000000",
+    "pixels": 24,
+    "measurement": "Opaque artwork boundary to 50% alpha perimeter"
+  },
+  "camera": {
+    "projection": "orthographic",
+    "view": "front-left",
+    "mirroredForView": [
+      "SnowPup",
+      "AuroraLynx",
+      "GlacierDragon"
+    ]
+  },
+  "roblox": {
+    "universeId": 10770268214,
+    "creatorUserId": 11789507527
+  },
+  "portraits": [
+    {
+      "name": "Snow Pup",
+      "petId": "Cactus",
+      "file": "SnowPup.png",
+      "render": "sources/SnowPup-render.png",
+      "imageGenSource": "sources/SnowPup-imagegen.png",
+      "imageGenId": "exec-58e78711-3cb9-4dbe-aa5b-b5915d801c88",
+      "alphaBoundsXYWH": [
+        16,
+        57,
+        481,
+        398
+      ],
+      "robloxImage": "rbxassetid://75723867072532",
+      "prompt": "Use case: precise-object-edit. Make one Roblox simulator inventory sticker on fully transparent RGBA. Image 1 is the final vibrant Blender render and must be preserved, including its exact front-left camera, colors, pose, facial features and soft cube proportions. Image 2 is for black outer stroke style only. The subject is Snow Pup: warm cream cube, strong bright sky-blue floppy ears, glossy blue eyes, pink cheeks, tiny paws and one cream curl. Retain the strong saturated hues, dark contrasts and soft 3D shading from Image 1. Add a single extra thick, smooth and uniform solid pure black outer silhouette contour, about 48 px on a 1024 square. Keep the full subject centered with clear transparent margins. No ground shadow, matte, background, pale wash, recolor, internal line art, lettering, graphics, glow, props, cropped parts or extra subjects."
+    },
+    {
+      "name": "Snowy Penguin",
+      "petId": "Frog",
+      "file": "SnowyPenguin.png",
+      "render": "sources/SnowyPenguin-render.png",
+      "imageGenSource": "sources/SnowyPenguin-imagegen.png",
+      "imageGenId": "exec-e14b44d0-a190-43af-a2ae-f639001ec3aa",
+      "alphaBoundsXYWH": [
+        16,
+        17,
+        480,
+        478
+      ],
+      "robloxImage": "rbxassetid://126093246946268",
+      "prompt": "Use case: precise-object-edit. Make one Roblox simulator inventory sticker on fully transparent RGBA. Image 1 is the final vibrant Blender render and must be preserved, including its exact front-left camera, colors, pose, facial features and soft cube proportions. Image 2 is for black outer stroke style only. The subject is Snowy Penguin: deep saturated cobalt-blue cube, warm cream bib, amber eyes, bright orange beak and feet, two rounded flippers. Retain the strong saturated hues, dark contrasts and soft 3D shading from Image 1. Add a single extra thick, smooth and uniform solid pure black outer silhouette contour, about 48 px on a 1024 square. Keep the full subject centered with clear transparent margins. No ground shadow, matte, background, pale wash, recolor, internal line art, lettering, graphics, glow, props, cropped parts or extra subjects."
+    },
+    {
+      "name": "Glacier Walrus",
+      "petId": "Watermelon",
+      "file": "GlacierWalrus.png",
+      "render": "sources/GlacierWalrus-render.png",
+      "imageGenSource": "sources/GlacierWalrus-imagegen.png",
+      "imageGenId": "exec-44903e3d-62dd-4c42-8e29-b88e46a25f78",
+      "alphaBoundsXYWH": [
+        16,
+        35,
+        481,
+        442
+      ],
+      "robloxImage": "rbxassetid://120375371975993",
+      "prompt": "Use case: precise-object-edit. Make one Roblox simulator inventory sticker on fully transparent RGBA. Image 1 is the final vibrant Blender render and must be preserved, including its exact front-left camera, colors, pose, facial features and soft cube proportions. Image 2 is for black outer stroke style only. The subject is Glacier Walrus: rich turquoise cube and broad flippers, azure eyes, rose cheeks with two dark dots, two long ivory tusks. Retain the strong saturated hues, dark contrasts and soft 3D shading from Image 1. Add a single extra thick, smooth and uniform solid pure black outer silhouette contour, about 48 px on a 1024 square. Keep the full subject centered with clear transparent margins. No ground shadow, matte, background, pale wash, recolor, internal line art, lettering, graphics, glow, props, cropped parts or extra subjects."
+    },
+    {
+      "name": "Aurora Lynx",
+      "petId": "AuroraLynx",
+      "file": "AuroraLynx.png",
+      "render": "sources/AuroraLynx-render.png",
+      "imageGenSource": "sources/AuroraLynx-imagegen.png",
+      "imageGenId": "exec-68e2fc58-69ef-45a8-9468-aaf1dc7c084b",
+      "alphaBoundsXYWH": [
+        16,
+        17,
+        480,
+        478
+      ],
+      "robloxImage": "rbxassetid://78349984252832",
+      "prompt": "Use case: precise-object-edit. Make one Roblox simulator inventory sticker on fully transparent RGBA. Image 1 is the final vibrant Blender render and must be preserved, including its exact front-left camera, colors, pose, facial features and soft cube proportions. Image 2 is for black outer stroke style only. The subject is Aurora Lynx: saturated violet cube, rich aqua ear tufts and tail tip, three violet side spots, cream mask and teal eyes. Retain the strong saturated hues, dark contrasts and soft 3D shading from Image 1. Add a single extra thick, smooth and uniform solid pure black outer silhouette contour, about 48 px on a 1024 square. Keep the full subject centered with clear transparent margins. No ground shadow, matte, background, pale wash, recolor, internal line art, lettering, graphics, glow, props, cropped parts or extra subjects."
+    },
+    {
+      "name": "Glacier Dragon",
+      "petId": "GreenDragon",
+      "file": "GlacierDragon.png",
+      "render": "sources/GlacierDragon-render.png",
+      "imageGenSource": "sources/GlacierDragon-imagegen.png",
+      "imageGenId": "exec-bff6d64c-e8a0-401b-bf3a-dc7a9756ea2e",
+      "alphaBoundsXYWH": [
+        15,
+        58,
+        481,
+        396
+      ],
+      "robloxImage": "rbxassetid://124608994969151",
+      "prompt": "Use case: precise-object-edit. Make one Roblox simulator inventory sticker on fully transparent RGBA. Image 1 is the final vibrant Blender render and must be preserved, including its exact front-left camera, colors, pose, facial features and soft cube proportions. Image 2 is for black outer stroke style only. The subject is Glacier Dragon: strong glacier-blue cube, vivid cyan swept horns and wing rims, broad blue scalloped wings, violet eyes, a cyan face patch and an ice-spade tail. Retain the strong saturated hues, dark contrasts and soft 3D shading from Image 1. Add a single extra thick, smooth and uniform solid pure black outer silhouette contour, about 48 px on a 1024 square. Keep the full subject centered with clear transparent margins. No ground shadow, matte, background, pale wash, recolor, internal line art, lettering, graphics, glow, props, cropped parts or extra subjects."
+    }
+  ]
+}

@@ -30,6 +30,80 @@ UpdateLog.Authors = {
 
 UpdateLog.Releases = {
 	{
+		id = "2026-11-09-v0.8.0",
+		date = "2026-11-09",
+		version = "0.8.0",
+		title = "A new pet collection",
+		published = false,
+		changes = {
+			{
+				id = "forest-egg-pets",
+				category = "New",
+				summary = "Twenty-five new pets across five eggs",
+				details = "Dakemo555 chose the pet designs and bold portraits. Solar Crown Egg hatches Honey Bee, Dawn Chick, Sun Lion, Sky Pegasus and Solar Seraph for 300K Wins. Find Glitched Dragon in the Shop. Pets from earlier eggs get their new looks automatically.",
+				credits = { { author = "dakemo", role = "Pet art direction and Solar Crown reward selection" } },
+			},
+			{
+				id = "egg-preview-discoveries",
+				category = "Improved",
+				summary = "Egg previews with mystery pet silhouettes",
+				details = "Dakemo555 chose a preview that follows the egg in 3D and scales to stay in view. Press E on the egg or click Hatch 1 or Hatch 3 beside it. The catalogue shows chances and black silhouettes for pets you have never obtained. Discoveries stay visible after recycling.",
+				credits = { { author = "dakemo", role = "UI direction and discovery concept" } },
+			},
+			{
+				id = "immersive-pet-collection",
+				category = "Improved",
+				summary = "A new pet collection with an interactive 3D card",
+				details = "Dakemo555 chose a closer, angled pet card with larger portraits, rarity-based colours and clearer action buttons. The translucent collection keeps Equip Best, sorting, recycling and crafting together. Upgraded forms show their new pet models. Turn Effects off to keep the card still.",
+				credits = { { author = "dakemo", role = "UI direction and concept selection" } },
+			},
+		},
+	},
+	{
+		id = "2026-11-08-v0.7.0",
+		date = "2026-11-08",
+		version = "0.7.0",
+		title = "Pet Workshop & progression",
+		published = false,
+		changes = {
+			{
+				id = "steadier-training-and-kicks",
+				category = "Improved",
+				summary = "Additive ball training and steadier kicks",
+				details = "Dakemo555 chose additive training bonuses for every ball. Balls no longer directly extend flight distance; accurate kicks give a controlled power bonus. Strong training bubbles appear half as often. Rebirth requirements and bonuses stay the same.",
+				credits = { { author = "dakemo", role = "Balance direction" } },
+			},
+			{
+				id = "pet-shards-and-secret",
+				category = "New",
+				summary = "Craft pet forms and spin five mutations",
+				details = "Dakemo555 designed duplicate fusion into Golden, Diamond and Rainbow with rare form jumps, plus five replacing mutations for Shards. Previous upgrade costs are refunded. Dakemo555 also reported the missing pet list: owned pets now appear, equipped pets can be unequipped here, and station prompts hide while the window is open.",
+				credits = { { author = "dakemo", role = "Forms, mutations and bug report" } },
+			},
+			{
+				id = "secret-eclipse-cat",
+				category = "New",
+				summary = "Discover a Secret pet",
+				details = "Dakemo555 proposed an elusive pet as an optional collection goal. The fourth egg can reveal a Secret at 0.05%, alongside gentler ordinary pet boosts.",
+				credits = { { author = "dakemo", role = "Rare pet direction" } },
+			},
+			{
+				id = "zone-challenge-rewards",
+				category = "New",
+				summary = "Earn rewards through zone challenges",
+				details = "Dakemo555 approved permanent challenges for reaching zones and landing accurate kicks in each world. Claim Wins and Pet Shards in Challenges & Gifts; smaller playtime gifts complement active progress.",
+				credits = { { author = "dakemo", role = "Progression design" } },
+			},
+			{
+				id = "original-gameplay-restored",
+				category = "Fixed",
+				summary = "Return to the original game",
+				details = "Dakemo555 requested the return to the original gameplay. The experimental downhill course and controls are removed; the original worlds, interface and progression are active again.",
+				credits = { { author = "dakemo", role = "Gameplay decision" } },
+			},
+		},
+	},
+	{
 		id = "2026-11-06-v0.5.0",
 		date = "2026-11-06",
 		version = "0.5.0",

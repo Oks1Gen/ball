@@ -1,0 +1,92 @@
+[
+  {
+    "visual": "HoneyBee",
+    "type": "Model",
+    "displayName": "Ball Solar Honey Bee",
+    "file": "RojoTest/assets/pets/solar-crown-v1/HoneyBee.glb",
+    "path": "operations/4d26f9fd-8b3a-44c5-8850-f783bcfb9d5e",
+    "operationId": "4d26f9fd-8b3a-44c5-8850-f783bcfb9d5e",
+    "done": false
+  },
+  {
+    "visual": "HoneyBee",
+    "type": "Image",
+    "displayName": "Ball Solar Honey Bee UI",
+    "file": "Assets/UI/Pets/solar-crown-egg-v1/HoneyBee.png",
+    "path": "operations/5b9d4e60-a0d4-4fe1-b09b-ae0b410856e5",
+    "operationId": "5b9d4e60-a0d4-4fe1-b09b-ae0b410856e5",
+    "done": false
+  },
+  {
+    "visual": "DawnChick",
+    "type": "Model",
+    "displayName": "Ball Solar Dawn Chick",
+    "file": "RojoTest/assets/pets/solar-crown-v1/DawnChick.glb",
+    "path": "operations/b0a94449-c90b-49c3-8f72-9c55766980ad",
+    "operationId": "b0a94449-c90b-49c3-8f72-9c55766980ad",
+    "done": false
+  },
+  {
+    "visual": "DawnChick",
+    "type": "Image",
+    "displayName": "Ball Solar Dawn Chick UI",
+    "file": "Assets/UI/Pets/solar-crown-egg-v1/DawnChick.png",
+    "path": "operations/7aea1dbb-4583-4f59-ba66-c77e0643784d",
+    "operationId": "7aea1dbb-4583-4f59-ba66-c77e0643784d",
+    "done": false
+  },
+  {
+    "visual": "SunLion",
+    "type": "Model",
+    "displayName": "Ball Solar Sun Lion",
+    "file": "RojoTest/assets/pets/solar-crown-v1/SunLion.glb",
+    "path": "operations/e5a4c775-644d-4e42-8fcc-288a5eb3dfa2",
+    "operationId": "e5a4c775-644d-4e42-8fcc-288a5eb3dfa2",
+    "done": false
+  },
+  {
+    "visual": "SunLion",
+    "type": "Image",
+    "displayName": "Ball Solar Sun Lion UI",
+    "file": "Assets/UI/Pets/solar-crown-egg-v1/SunLion.png",
+    "path": "operations/1fbfd86b-5fcc-4541-86ab-93aa7fee26b5",
+    "operationId": "1fbfd86b-5fcc-4541-86ab-93aa7fee26b5",
+    "done": false
+  },
+  {
+    "visual": "SkyPegasus",
+    "type": "Model",
+    "displayName": "Ball Solar Sky Pegasus",
+    "file": "RojoTest/assets/pets/solar-crown-v1/SkyPegasus.glb",
+    "path": "operations/883406c9-11a3-4389-b403-2d7d2b49e4ce",
+    "operationId": "883406c9-11a3-4389-b403-2d7d2b49e4ce",
+    "done": false
+  },
+  {
+    "visual": "SkyPegasus",
+    "type": "Image",
+    "displayName": "Ball Solar Sky Pegasus UI",
+    "file": "Assets/UI/Pets/solar-crown-egg-v1/SkyPegasus.png",
+    "path": "operations/aab59677-c6b9-4bab-9463-4748d6c38922",
+    "operationId": "aab59677-c6b9-4bab-9463-4748d6c38922",
+    "done": false
+  },
+  {
+    "visual": "SolarSeraph",
+    "type": "Model",
+    "displayName": "Ball Solar Solar Seraph",
+    "file": "RojoTest/assets/pets/solar-crown-v1/SolarSeraph.glb",
+    "path": "operations/d3b870c4-7b96-4d9e-baa6-6747684c2ccb",
+    "operationId": "d3b870c4-7b96-4d9e-baa6-6747684c2ccb",
+    "done": false
+  },
+  {
+    "visual": "SolarSeraph",
+    "type": "Image",
+    "displayName": "Ball Solar Solar Seraph UI",
+    "file": "Assets/UI/Pets/solar-crown-egg-v1/SolarSeraph.png",
+    "path": "operations/c4b50de0-8d12-4fff-b03a-5f6f6ebc4d9d",
+    "operationId": "c4b50de0-8d12-4fff-b03a-5f6f6ebc4d9d",
+    "done": false
+  }
+]

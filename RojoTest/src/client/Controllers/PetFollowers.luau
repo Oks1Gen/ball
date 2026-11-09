@@ -111,7 +111,12 @@ function Followers.mount(context: Context): Handle
 			end
 			for _, id in equipped do
 				local pet = inventory[id]
-				table.insert(parts, id .. ":" .. (pet and pet.id or "missing"))
+				table.insert(
+					parts,
+					id
+						.. ":"
+						.. (pet and (pet.id .. ":" .. tostring(pet.form) .. ":" .. tostring(pet.mutation)) or "missing")
+				)
 			end
 			local key = table.concat(parts, ",")
 			if key == signature then
@@ -127,11 +132,17 @@ function Followers.mount(context: Context): Handle
 				if def and not models[id] then
 					local retained = previous[id]
 					local model: Model
-					if retained and retained:GetAttribute("PetId") == def.id then
+					if
+						retained
+						and retained:GetAttribute("PetId") == def.id
+						and retained:GetAttribute("VariantKey")
+							== tostring(pet.form) .. ":" .. tostring(pet.mutation)
+					then
 						model = retained
 						previous[id] = nil
 					else
 						model = petModel(def)
+						PetVisuals.applyVariant(model, pet)
 						model:SetAttribute("PetId", def.id)
 						fresh[model] = true
 					end

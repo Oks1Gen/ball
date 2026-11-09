@@ -1,0 +1,114 @@
+{
+  "date": "2026-11-09",
+  "generation": "Built-in ImageGen edit of actual headless Blender renders",
+  "canvas": {
+    "width": 512,
+    "height": 512,
+    "format": "RGBA PNG"
+  },
+  "outline": {
+    "color": "#000000",
+    "pixels": 24,
+    "measurement": "Distance from opaque artwork to the 50% alpha boundary"
+  },
+  "camera": {
+    "view": "orthographic front-left three-quarter",
+    "mirroredForView": [
+      "SunLion",
+      "SkyPegasus"
+    ]
+  },
+  "styleReference": "sources/outline-reference.png",
+  "preview": "preview.png",
+  "portraits": [
+    {
+      "visual": "HoneyBee",
+      "name": "Honey Bee",
+      "petId": "HoneyBee",
+      "file": "HoneyBee.png",
+      "render": "sources/HoneyBee-render.png",
+      "imageGenSource": "sources/HoneyBee-imagegen.png",
+      "imageGenId": "exec-8330a59b-48be-46ce-a892-73aa71e8fb52",
+      "alphaBoundsXYWH": [
+        73,
+        16,
+        366,
+        480
+      ],
+      "prompt": "Use case: precise-object-edit. A single transparent Roblox simulator inventory icon. Edit Image 1, an actual Blender render of Honey Bee. Lock its front-left three-quarter view, soft rounded-square body, exact features, proportions, and warm saturated plastic shading. Bright golden-yellow cube bee with two dark caramel bands across the body, two golden round-tipped dark antennae, exactly two pale ivory wings angled upward behind them, glossy amber eyes and tiny dark caramel paws. Image 2 is only the outline thickness reference. Add a single smooth and very thick, uniform pure-black exterior outline like that reference, about 48 pixels on a 1024 square. Center the complete character with even transparent padding and preserve negative spaces. Actual transparent RGBA outside the black contour, no text, no floor or shadow, no bloom outside the silhouette, no backdrop and no extra decorations.",
+      "portraitId": "104500212086314"
+    },
+    {
+      "visual": "DawnChick",
+      "name": "Dawn Chick",
+      "petId": "DawnChick",
+      "file": "DawnChick.png",
+      "render": "sources/DawnChick-render.png",
+      "imageGenSource": "sources/DawnChick-imagegen.png",
+      "imageGenId": "exec-ca53bf0e-5592-46a3-a5ca-cc3c8002dd50",
+      "alphaBoundsXYWH": [
+        52,
+        16,
+        407,
+        480
+      ],
+      "prompt": "Use case: precise-object-edit. A single transparent Roblox simulator inventory icon. Edit Image 1, an actual Blender render of Dawn Chick. Lock its front-left three-quarter view, soft rounded-square body, exact features, proportions, and warm saturated plastic shading. Orange-gold cube chick with a single swept two-lobed orange feather forelock, tiny golden beak, deep glossy blue eyes, two orange two-lobed flipper wings and tiny orange feet. Image 2 is only the outline thickness reference. Add a single smooth and very thick, uniform pure-black exterior outline like that reference, about 48 pixels on a 1024 square. Center the complete character with even transparent padding and preserve negative spaces. Actual transparent RGBA outside the black contour, no text, no floor or shadow, no bloom outside the silhouette, no backdrop and no extra decorations.",
+      "portraitId": "118337928180503"
+    },
+    {
+      "visual": "SunLion",
+      "name": "Sun Lion",
+      "petId": "SunLion",
+      "file": "SunLion.png",
+      "render": "sources/SunLion-render.png",
+      "imageGenSource": "sources/SunLion-imagegen.png",
+      "imageGenId": "exec-2b21a712-a836-477b-8b0d-736b6e70e6fa",
+      "alphaBoundsXYWH": [
+        16,
+        66,
+        481,
+        380
+      ],
+      "prompt": "Use case: precise-object-edit. A single transparent Roblox simulator inventory icon. Edit Image 1, an actual Blender render of Sun Lion. Lock its front-left three-quarter view, soft rounded-square body, exact features, proportions, and warm saturated plastic shading. Golden orange cube lion with a full ring of smooth rounded golden mane petals framing its square face, glossy green eyes, cream paws and one curved gold tail with an orange tuft. Image 2 is only the outline thickness reference. Add a single smooth and very thick, uniform pure-black exterior outline like that reference, about 48 pixels on a 1024 square. Center the complete character with even transparent padding and preserve negative spaces. Actual transparent RGBA outside the black contour, no text, no floor or shadow, no bloom outside the silhouette, no backdrop and no extra decorations.",
+      "portraitId": "98235141340146"
+    },
+    {
+      "visual": "SkyPegasus",
+      "name": "Sky Pegasus",
+      "petId": "SkyPegasus",
+      "file": "SkyPegasus.png",
+      "render": "sources/SkyPegasus-render.png",
+      "imageGenSource": "sources/SkyPegasus-imagegen.png",
+      "imageGenId": "exec-b749cbde-8106-4c1e-aef4-2751a329855c",
+      "alphaBoundsXYWH": [
+        15,
+        60,
+        481,
+        392
+      ],
+      "prompt": "Use case: precise-object-edit. A single transparent Roblox simulator inventory icon. Edit Image 1, an actual Blender render of Sky Pegasus. Lock its front-left three-quarter view, soft rounded-square body, exact features, proportions, and warm saturated plastic shading. Vanilla cream cube pegasus, exactly two cream upright ears with salmon pink insets, a swept golden forelock, a single broad curled golden tail, two ivory feathered wings with golden upper primaries, glossy blue eyes, and gold-toed cream hooves. Image 2 is only the outline thickness reference. Add a single smooth and very thick, uniform pure-black exterior outline like that reference, about 48 pixels on a 1024 square. Center the complete character with even transparent padding and preserve negative spaces. Actual transparent RGBA outside the black contour, no text, no floor or shadow, no bloom outside the silhouette, no backdrop and no extra decorations.",
+      "portraitId": "116087970002123"
+    },
+    {
+      "visual": "SolarSeraph",
+      "name": "Solar Seraph",
+      "petId": "SolarSeraph",
+      "file": "SolarSeraph.png",
+      "render": "sources/SolarSeraph-render.png",
+      "imageGenSource": "sources/SolarSeraph-imagegen.png",
+      "imageGenId": "exec-4065eb98-4e05-492a-b76d-d83e5ecb7a09",
+      "alphaBoundsXYWH": [
+        16,
+        40,
+        480,
+        432
+      ],
+      "prompt": "Use case: precise-object-edit. A single transparent Roblox simulator inventory icon. Edit Image 1, an actual Blender render of Solar Seraph. Lock its front-left three-quarter view, soft rounded-square body, exact features, proportions, and warm saturated plastic shading. Cream cube seraph with exactly two wide ivory three-feather wings, one polished round golden halo rising behind the cube, a small faceted gold forehead diamond, glossy amber eyes and tiny gold-toed cream hooves. Preserve the opening of the raised halo. Image 2 is only the outline thickness reference. Add a single smooth and very thick, uniform pure-black exterior outline like that reference, about 48 pixels on a 1024 square. Center the complete character with even transparent padding and preserve negative spaces. Actual transparent RGBA outside the black contour, no text, no floor or shadow, no bloom outside the silhouette, no backdrop and no extra decorations.",
+      "portraitId": "138388696956168"
+    }
+  ],
+  "roblox": {
+    "universeId": 10770268214,
+    "creatorUserId": 11789507527
+  }
+}

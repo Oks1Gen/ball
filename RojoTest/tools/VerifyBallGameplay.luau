@@ -10,7 +10,10 @@ end
 check(#Config.Stones == 10, "10 tiers")
 for i, item in Config.Stones do
 	if i > 1 then
-		check(item.power > Config.Stones[i - 1].power and item.cost > Config.Stones[i - 1].cost, "Increasing tiers")
+		check(
+			item.trainingBonus > Config.Stones[i - 1].trainingBonus and item.cost > Config.Stones[i - 1].cost,
+			"Increasing tiers"
+		)
 	end
 	local m = Visuals.create(item.id, 1.6)
 	local _, size = m:GetBoundingBox()
@@ -25,20 +28,23 @@ for i, item in Config.Stones do
 	end
 	m:Destroy()
 end
-local d = { wins = 249, stone = "Pebble", stones = { Pebble = true } }
+local d = { wins = Config.Stones[2].cost - 1, stone = "Pebble", stones = { Pebble = true } }
 check(
-	not Buy.buyOrEquip(d, "Smooth") and d.wins == 249 and d.stone == "Pebble" and not d.stones.Smooth,
+	not Buy.buyOrEquip(d, "Smooth")
+		and d.wins == Config.Stones[2].cost - 1
+		and d.stone == "Pebble"
+		and not d.stones.Smooth,
 	"Insufficient crowns no change"
 )
-d.wins = 250
+d.wins = Config.Stones[2].cost
 check(Buy.buyOrEquip(d, "Smooth") and d.wins == 0 and d.stone == "Smooth" and d.stones.Smooth, "Buy and equip")
 check(Buy.buyOrEquip(d, "Pebble") and Buy.buyOrEquip(d, "Smooth") and d.wins == 0, "Owned re-equip free")
 check(not Buy.buyOrEquip(d, "InjectedId") and d.wins == 0 and d.stone == "Smooth", "Reject unknown")
-check(Buy.power(d) == 1.15, "Selected power")
+check(Buy.trainingBonus(d) == 2, "Selected additive training bonus")
 d.stone = "WorldCreator"
-check(Buy.power(d) == 1, "Reject unowned bonus")
-d.wins = 75000000
-check(Buy.buyOrEquip(d, "WorldCreator") and d.wins == 0 and Buy.power(d) == 10, "Final tier")
+check(Buy.trainingBonus(d) == 0, "Reject unowned bonus")
+d.wins = Config.Stones[10].cost
+check(Buy.buyOrEquip(d, "WorldCreator") and d.wins == 0 and Buy.trainingBonus(d) == 100, "Final tier")
 for _, map in { workspace.Map.World1 } do
 	local found = 0
 	for _, p in require(game.ReplicatedStorage.Shared.WorldRefs).balls(map):GetDescendants() do

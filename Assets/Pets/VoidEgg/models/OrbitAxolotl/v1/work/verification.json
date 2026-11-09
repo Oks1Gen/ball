@@ -1,0 +1,52 @@
+{
+  "triangles": 8248,
+  "largestPart": 864,
+  "bounds": [
+    [
+      -1.7599999904632568,
+      -1.1200000047683716,
+      0.0
+    ],
+    [
+      1.7599999904632568,
+      1.9902691841125488,
+      2.614074230194092
+    ]
+  ],
+  "parts": {
+    "Square body": 764,
+    "front left paw": 448,
+    "rear left paw": 448,
+    "front right paw": 448,
+    "rear right paw": 448,
+    "left glossy eye": 420,
+    "right glossy eye": 420,
+    "left pillowy gill 1": 544,
+    "left pillowy gill 2": 544,
+    "left pillowy gill 3": 544,
+    "right pillowy gill 1": 544,
+    "right pillowy gill 2": 544,
+    "right pillowy gill 3": 544,
+    "Broad swept axolotl tail": 864,
+    "left smile curl": 200,
+    "right smile curl": 200,
+    "Little pink nose": 324
+  },
+  "imports": {
+    "blend": {
+      "triangles": 8248,
+      "boundsError": 0.0,
+      "packedImages": 4
+    },
+    "glb": {
+      "triangles": 8248,
+      "boundsError": 0.0,
+      "packedImages": 4
+    },
+    "fbx": {
+      "triangles": 8248,
+      "boundsError": 3.5762786865234375e-07,
+      "packedImages": 4
+    }
+  }
+}

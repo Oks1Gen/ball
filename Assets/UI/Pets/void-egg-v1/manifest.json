@@ -1,0 +1,116 @@
+{
+  "date": "2026-11-09",
+  "generation": "Built-in ImageGen edit of actual Blender renders",
+  "canvas": {
+    "width": 512,
+    "height": 512,
+    "format": "RGBA PNG"
+  },
+  "outline": {
+    "color": "#000000",
+    "pixels": 24,
+    "measurement": "Distance from opaque artwork to the 50% alpha boundary"
+  },
+  "camera": {
+    "view": "orthographic front-left three-quarter",
+    "mirroredForView": [
+      "ShadowKitten",
+      "OrbitAxolotl",
+      "RiftWyrm",
+      "Singularity"
+    ]
+  },
+  "styleReference": "sources/outline-reference.png",
+  "preview": "preview.png",
+  "portraits": [
+    {
+      "visual": "DuskMoth",
+      "name": "Dusk Moth",
+      "petId": "Butterfly",
+      "file": "DuskMoth.png",
+      "render": "sources/DuskMoth-render.png",
+      "imageGenSource": "sources/DuskMoth-imagegen.png",
+      "imageGenId": "exec-d03c4242-b4fc-436c-a059-6f6766e55110",
+      "alphaBoundsXYWH": [
+        15,
+        29,
+        480,
+        454
+      ],
+      "prompt": "Use case: precise-object-edit. Make one transparent Roblox simulator pet UI portrait. Image 1 is the actual Blender render and the artwork to preserve. Keep its front-left three-quarter camera, cube body, shape, pose, exact appendage counts, soft 3D shading, and saturated colors. Subject: bright orchid-violet cube moth, two smooth round-tipped antennae, two rounded pairs of violet wings with a single large lilac oval on each upper wing, cream pink mask, violet glossy eyes and four tiny violet paws. Image 2 is only the existing UI sticker outline reference. Add one thick uniform solid pure black outer outline at the same thickness as image 2, about 48px on a 1024px square. Follow the entire silhouette with smooth edges. Keep the complete object centered with even transparent margins. Retain actual transparent RGBA outside the silhouette and in any large open gaps. No interior black strokes, drop shadow, glow spilling into transparency, panels, lettering, new features, or background.",
+      "portraitId": "130654387175615"
+    },
+    {
+      "visual": "ShadowKitten",
+      "name": "Shadow Kitten",
+      "petId": "MoonCat",
+      "file": "ShadowKitten.png",
+      "render": "sources/ShadowKitten-render.png",
+      "imageGenSource": "sources/ShadowKitten-imagegen.png",
+      "imageGenId": "exec-0d780688-fb28-4748-930e-74329c2e46de",
+      "alphaBoundsXYWH": [
+        33,
+        16,
+        445,
+        480
+      ],
+      "prompt": "Use case: precise-object-edit. Make one transparent Roblox simulator pet UI portrait. Image 1 is the actual Blender render and the artwork to preserve. Keep its front-left three-quarter camera, cube body, shape, pose, exact appendage counts, soft 3D shading, and saturated colors. Subject: deep indigo cube kitten, tall triangular ears with purple inner markings, amber eyes, two pale whisker marks per cheek, hooked dark tail behind the left and tiny paws. Image 2 is only the existing UI sticker outline reference. Add one thick uniform solid pure black outer outline at the same thickness as image 2, about 48px on a 1024px square. Follow the entire silhouette with smooth edges. Keep the complete object centered with even transparent margins. Retain actual transparent RGBA outside the silhouette and in any large open gaps. No interior black strokes, drop shadow, glow spilling into transparency, panels, lettering, new features, or background.",
+      "portraitId": "131420614917369"
+    },
+    {
+      "visual": "OrbitAxolotl",
+      "name": "Orbit Axolotl",
+      "petId": "GalaxyCat",
+      "file": "OrbitAxolotl.png",
+      "render": "sources/OrbitAxolotl-render.png",
+      "imageGenSource": "sources/OrbitAxolotl-imagegen.png",
+      "imageGenId": "exec-a94f03ae-4db4-4805-afb0-4f7b0ef29b90",
+      "alphaBoundsXYWH": [
+        17,
+        33,
+        480,
+        446
+      ],
+      "prompt": "Use case: precise-object-edit. Make one transparent Roblox simulator pet UI portrait. Image 1 is the actual Blender render and the artwork to preserve. Keep its front-left three-quarter camera, cube body, shape, pose, exact appendage counts, soft 3D shading, and saturated colors. Subject: blue-violet cube axolotl with exactly three smooth bright aqua gills per side, pale pink face, teal eyes and a broad dark indigo tail with aqua edge behind the left. Image 2 is only the existing UI sticker outline reference. Add one thick uniform solid pure black outer outline at the same thickness as image 2, about 48px on a 1024px square. Follow the entire silhouette with smooth edges. Keep the complete object centered with even transparent margins. Retain actual transparent RGBA outside the silhouette and in any large open gaps. No interior black strokes, drop shadow, glow spilling into transparency, panels, lettering, new features, or background.",
+      "portraitId": "105488122352898"
+    },
+    {
+      "visual": "RiftWyrm",
+      "name": "Rift Wyrm",
+      "petId": "CrystalCat",
+      "file": "RiftWyrm.png",
+      "render": "sources/RiftWyrm-render.png",
+      "imageGenSource": "sources/RiftWyrm-imagegen.png",
+      "imageGenId": "exec-56e92992-48cd-4e00-bcc5-de43b1b2fa69",
+      "alphaBoundsXYWH": [
+        16,
+        47,
+        480,
+        417
+      ],
+      "prompt": "Use case: precise-object-edit. Make one transparent Roblox simulator pet UI portrait. Image 1 is the actual Blender render and the artwork to preserve. Keep its front-left three-quarter camera, cube body, shape, pose, exact appendage counts, soft 3D shading, and saturated colors. Subject: saturated purple cube dragon, exactly two swept dark purple horns with magenta tips, two scalloped dark violet wings with aqua lower rim, teal eyes, and one purple tail with magenta spade tip. Image 2 is only the existing UI sticker outline reference. Add one thick uniform solid pure black outer outline at the same thickness as image 2, about 48px on a 1024px square. Follow the entire silhouette with smooth edges. Keep the complete object centered with even transparent margins. Retain actual transparent RGBA outside the silhouette and in any large open gaps. No interior black strokes, drop shadow, glow spilling into transparency, panels, lettering, new features, or background.",
+      "portraitId": "120521616667730"
+    },
+    {
+      "visual": "Singularity",
+      "name": "Singularity",
+      "petId": "EclipseCat",
+      "file": "Singularity.png",
+      "render": "sources/Singularity-render.png",
+      "imageGenSource": "sources/Singularity-imagegen.png",
+      "imageGenId": "exec-dcbe73fe-4696-4532-9809-3082c1f33659",
+      "alphaBoundsXYWH": [
+        15,
+        75,
+        481,
+        362
+      ],
+      "prompt": "Use case: precise-object-edit. Make one transparent Roblox simulator pet UI portrait. Image 1 is the actual Blender render and the artwork to preserve. Keep its front-left three-quarter camera, cube body, shape, pose, exact appendage counts, soft 3D shading, and saturated colors. Subject: dark navy-violet cube, clean bright cyan edge strips, two glossy purple eyes and a tiny pale smile, four small dark paws and exactly one broad continuous tilted violet-to-pink orbit ring passing in front of the lower face and behind the cube. Keep both eyes and the smile legible and retain the clear transparent gaps between ring and cube. Image 2 is only the existing UI sticker outline reference. Add one thick uniform solid pure black outer outline at the same thickness as image 2, about 48px on a 1024px square. Follow the entire silhouette with smooth edges. Keep the complete object centered with even transparent margins. Retain actual transparent RGBA outside the silhouette and in any large open gaps. No interior black strokes, drop shadow, glow spilling into transparency, panels, lettering, new features, or background.",
+      "portraitId": "83286800944557"
+    }
+  ],
+  "roblox": {
+    "universeId": 10770268214,
+    "creatorUserId": 11789507527
+  }
+}

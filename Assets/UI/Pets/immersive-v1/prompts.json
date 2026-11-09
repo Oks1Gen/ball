@@ -1,0 +1,31 @@
+{
+  "date": "2026-11-08",
+  "mode": "built-in image_gen",
+  "reference": "../immersive-concepts/2026-11-08/concept-01d-rounded-contained-footer.png",
+  "icons": [
+    {
+      "key": "Recycle",
+      "file": "recycle.png",
+      "prompt": "Use case: ui-mockup. Asset: ONE individual Roblox simulator UI icon, square image, genuinely transparent alpha background. Use attached UI ONLY as style reference: bold black/dark petrol outline, saturated color, clean friendly cartoon forms, slight 3D drawn shading and restrained glossy highlight. Centered isolated object filling about80% of square, generous transparent padding, no text, no label, no background, no scene, no panel, no other icons, no cast shadow outside silhouette. Readable at40px. Draw a bright RED TRASH BIN matching the little recycle/trash action icon in the reference footer. Rounded red plastic wastebasket, slightly tapered body, three darker vertical ribs, red lid with short handle, dark ink outline. Single object.",
+      "source": "C:\\Users\\dakem\\.codex\\generated_images\\01a1bcd1-901a-7e03-97cb-ee99df5175db\\exec-48456c3e-22bf-491f-a679-0a424a572fd1.png"
+    },
+    {
+      "key": "PetCraft",
+      "file": "craft.png",
+      "prompt": "Use case: ui-mockup. Asset: ONE individual Roblox simulator UI icon, square image, genuinely transparent alpha background. Use attached UI ONLY as style reference: bold black/dark petrol outline, saturated color, clean friendly cartoon forms, slight 3D drawn shading and restrained glossy highlight. Centered isolated object filling about80% of square, generous transparent padding, no text, no label, no background, no scene, no panel, no other icons, no cast shadow outside silhouette. Readable at40px. Draw a bright CYAN-BLUE FACETED CUBE matching the crafting action icon in the reference footer. One translucent-looking gem cube viewed in simple three-quarter isometric perspective, pale blue top, saturated blue side, angular triangular facets, strong dark petrol outer contour. No sparkles outside it.",
+      "source": "C:\\Users\\dakem\\.codex\\generated_images\\01a1bcd1-901a-7e03-97cb-ee99df5175db\\exec-d412cfba-f3fe-4907-84ab-76aba0d5c9cc.png"
+    },
+    {
+      "key": "PetTeam",
+      "file": "team.png",
+      "prompt": "Use case: ui-mockup. Asset: ONE individual Roblox simulator UI icon, square image, genuinely transparent alpha background. Use attached UI ONLY as style reference: bold black/dark petrol outline, saturated color, clean friendly cartoon forms, slight 3D drawn shading and restrained glossy highlight. Centered isolated object filling about80% of square, generous transparent padding, no text, no label, no background, no scene, no panel, no other icons, no cast shadow outside silhouette. Readable at40px. Draw a rich warm BROWN PAW PRINT matching the team capacity icon in the reference footer. One large rounded central pad with FOUR smaller rounded toe pads above, gold-brown highlights, dark brown shadows and thick dark petrol cartoon outline. Compact single paw glyph, no limb or animal.",
+      "source": "C:\\Users\\dakem\\.codex\\generated_images\\01a1bcd1-901a-7e03-97cb-ee99df5175db\\exec-fa6a964f-a166-4a8b-b708-fa6799da43c2.png"
+    },
+    {
+      "key": "PetStorage",
+      "file": "storage.png",
+      "prompt": "Use case: ui-mockup. Asset: ONE individual Roblox simulator UI icon, square image, genuinely transparent alpha background. Use attached UI ONLY as style reference: bold black/dark petrol outline, saturated color, clean friendly cartoon forms, slight 3D drawn shading and restrained glossy highlight. Centered isolated object filling about80% of square, generous transparent padding, no text, no label, no background, no scene, no panel, no other icons, no cast shadow outside silhouette. Readable at40px. Draw an ORANGE CARDBOARD STORAGE BOX matching the inventory capacity icon in the reference footer. One closed cube-shaped package viewed in three-quarter isometric perspective, golden top with packing tape, orange sides, a small darker orange upward arrow printed on the left face, strong dark petrol outer contour. Single object.",
+      "source": "C:\\Users\\dakem\\.codex\\generated_images\\01a1bcd1-901a-7e03-97cb-ee99df5175db\\exec-e5683963-af84-4e0a-9402-955807e7ef4d.png"
+    }
+  ]
+}

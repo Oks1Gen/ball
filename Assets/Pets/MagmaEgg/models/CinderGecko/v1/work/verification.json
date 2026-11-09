@@ -1,0 +1,50 @@
+{
+  "triangles": 6912,
+  "largestPart": 1496,
+  "bounds": [
+    [
+      -1.0,
+      -1.1309999227523804,
+      0.0
+    ],
+    [
+      1.0,
+      2.093461513519287,
+      3.0246901512145996
+    ]
+  ],
+  "parts": {
+    "Square body": 764,
+    "front left paw": 448,
+    "rear left paw": 448,
+    "front right paw": 448,
+    "rear right paw": 448,
+    "left glossy eye": 420,
+    "right glossy eye": 420,
+    "left low rounded bump": 324,
+    "left golden bump front": 324,
+    "right low rounded bump": 324,
+    "right golden bump front": 324,
+    "Thick curled cinder tail": 1496,
+    "left smile curl": 200,
+    "right smile curl": 200,
+    "Tiny rounded nose": 324
+  },
+  "imports": {
+    "blend": {
+      "triangles": 6912,
+      "boundsError": 0.0,
+      "packedImages": 3
+    },
+    "glb": {
+      "triangles": 6912,
+      "boundsError": 0.0,
+      "packedImages": 3
+    },
+    "fbx": {
+      "triangles": 6912,
+      "boundsError": 2.384185791015625e-07,
+      "packedImages": 3
+    }
+  }
+}

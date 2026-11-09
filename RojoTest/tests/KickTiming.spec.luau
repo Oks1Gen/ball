@@ -20,16 +20,16 @@ return {
 			assert(math.abs(Timing.accuracyHeight(t + 0.0001) - h) < 0.001)
 		end
 	end,
-	["two stage power multiplies including weak shots and maximum six"] = function()
+	["two stages normalize into bounded shot power"] = function()
 		near(Timing.accuracyMultiplier(0), 0.5)
 		near(Timing.accuracyMultiplier(1), 3)
 		near(Timing.accuracyMultiplier(-1), 0.5)
 		near(Timing.accuracyMultiplier(2), 3)
-		near(Timing.combined(1.85, 3), 5.55)
+		near(Timing.combined(1.85, 3), 1.325)
 		near(Timing.combined(0.5, 0.5), Timing.MinCombined)
 		near(Timing.combined(2, 3), Timing.MaxCombined)
-		near(Timing.combined(100, 100), 6)
-		near(Timing.combined(-1, -1), 0.25)
+		near(Timing.combined(100, 100), Timing.MaxCombined)
+		near(Timing.combined(-1, -1), Timing.MinCombined)
 	end,
 	["kick scale has exact endpoints and neutral midpoint"] = function()
 		near(Timing.multiplier(0), 0.5)

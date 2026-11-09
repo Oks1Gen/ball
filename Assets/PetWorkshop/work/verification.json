@@ -1,0 +1,17 @@
+{
+  "blend": {
+    "meshes": 39,
+    "triangles": 916,
+    "materials": 7
+  },
+  "glb": {
+    "meshes": 39,
+    "triangles": 916,
+    "materials": 6
+  },
+  "fbx": {
+    "meshes": 39,
+    "triangles": 916,
+    "materials": 6
+  }
+}

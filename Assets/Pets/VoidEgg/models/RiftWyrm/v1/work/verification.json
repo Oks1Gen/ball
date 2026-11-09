@@ -1,0 +1,53 @@
+{
+  "triangles": 9716,
+  "largestPart": 864,
+  "bounds": [
+    [
+      -2.2300000190734863,
+      -1.1200000047683716,
+      0.0
+    ],
+    [
+      2.2300000190734863,
+      1.4542670249938965,
+      3.130000114440918
+    ]
+  ],
+  "parts": {
+    "Square body": 764,
+    "front left paw": 448,
+    "rear left paw": 448,
+    "front right paw": 448,
+    "rear right paw": 448,
+    "left glossy eye": 420,
+    "right glossy eye": 420,
+    "left smooth swept horn": 864,
+    "right smooth swept horn": 864,
+    "left scalloped rift wing": 784,
+    "left wing rim": 456,
+    "right scalloped rift wing": 784,
+    "right wing rim": 456,
+    "Sweeping rift tail": 828,
+    "Orchid spade tail tip": 560,
+    "left smile curl": 200,
+    "right smile curl": 200,
+    "Little pink nose": 324
+  },
+  "imports": {
+    "blend": {
+      "triangles": 9716,
+      "boundsError": 0.0,
+      "packedImages": 4
+    },
+    "glb": {
+      "triangles": 9716,
+      "boundsError": 0.0,
+      "packedImages": 4
+    },
+    "fbx": {
+      "triangles": 9716,
+      "boundsError": 2.384185791015625e-07,
+      "packedImages": 4
+    }
+  }
+}

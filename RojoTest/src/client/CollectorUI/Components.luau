@@ -6,6 +6,7 @@ local Run = game:GetService("RunService")
 local Theme = require(script.Parent.Theme)
 local Motion = require(game.ReplicatedStorage.Shared.UiMotion)
 local Art = require(script.Parent.Art)
+local PetCardArt = require(script.Parent.Parent.Modules.PetCardArt)
 local Config = require(game.ReplicatedStorage.Shared.GameConfig)
 local Visuals = require(game.ReplicatedStorage.Shared.PetVisuals)
 local PetViewCamera = require(script.Parent.PetViewCamera)
@@ -123,7 +124,7 @@ function U.Surface(p)
 				ColorSequenceKeypoint.new(0.5, C(70, 213, 255)),
 				ColorSequenceKeypoint.new(0.75, C(216, 250, 90)),
 				ColorSequenceKeypoint.new(1, C(255, 193, 81)),
-			}) or ColorSequence.new(color:Lerp(WHITE, 0.22), color),
+			}) or ColorSequence.new(p.TopColor or color:Lerp(WHITE, 0.22), p.BottomColor or color),
 		})
 	end
 	if p.Studs ~= false and not p.Quiet then
@@ -161,6 +162,32 @@ function U.Surface(p)
 			}),
 		})
 	end
+	if p.Gloss then
+		decoration.TopHighlight = e("Frame", {
+			Name = "TopHighlight",
+			Position = UDim2.fromOffset(18, 4),
+			Size = UDim2.new(1, -36, 0, 3),
+			BackgroundColor3 = WHITE,
+			BackgroundTransparency = 0.15,
+			BorderSizePixel = 0,
+			ZIndex = z + 3,
+		}, {
+			Corner = U.corner(3),
+			Fade = e("UIGradient", {
+				Transparency = NumberSequence.new(0, 1),
+			}),
+		})
+		decoration.CornerHighlight = e("Frame", {
+			Name = "CornerHighlight",
+			Position = UDim2.fromOffset(8, 8),
+			Size = UDim2.fromOffset(4, 12),
+			Rotation = 38,
+			BackgroundColor3 = WHITE,
+			BackgroundTransparency = 0.05,
+			BorderSizePixel = 0,
+			ZIndex = z + 3,
+		}, { Corner = U.corner(3) })
+	end
 	-- The content lives inside the moving plate: when the button lifts or dips,
 	-- its caption and its icon travel with it. A content frame outside the
 	-- plate would stand still while the brick under it moves.
@@ -180,9 +207,9 @@ function U.Surface(p)
 	}, {
 		Shadow = not p.NoShadow and e("Frame", {
 			Size = UDim2.fromScale(1, 1),
-			Position = UDim2.fromOffset(0, 5),
-			BackgroundColor3 = Theme.Outline,
-			BackgroundTransparency = 0.3,
+			Position = UDim2.fromOffset(0, p.ShadowOffset or 5),
+			BackgroundColor3 = p.ShadowColor or Theme.Outline,
+			BackgroundTransparency = p.ShadowTransparency or 0.3,
 			BorderSizePixel = 0,
 			ZIndex = z,
 		}, { Corner = U.corner(radius) }),
@@ -282,8 +309,15 @@ function U.Button(p)
 				else (p.Color or Theme.Colors.Green),
 			Transparency = p.Transparency,
 			NoShadow = p.NoShadow,
+			ShadowOffset = p.ShadowOffset,
+			ShadowColor = p.ShadowColor,
+			ShadowTransparency = p.ShadowTransparency,
 			Radius = p.Radius or Theme.Radius,
+			Outline = p.Outline,
 			Shine = p.Shine,
+			Gloss = p.Gloss,
+			TopColor = p.TopColor,
+			BottomColor = p.BottomColor,
 			Ref = visualRef,
 			Children = children,
 			Studs = p.Studs,
@@ -436,54 +470,61 @@ local function fallbackPet(def)
 end
 function U.PetView(p)
 	local ref = React.useRef(nil :: ViewportFrame?)
-	React.useEffect(
-		function()
-			local viewport = assert(ref.current, "Pet viewport must be mounted")
-			local model = Visuals.create(p.Def.visual or p.Def.id, 2.8) or fallbackPet(p.Def)
-			local world = Instance.new("WorldModel")
-			world.Parent = viewport
-			model.Parent = world
-			local cf, size = model:GetBoundingBox()
-			model.WorldPivot = cf
-			model:PivotTo(CFrame.identity)
-			local camera = Instance.new("Camera")
-			camera.FieldOfView = 34
-			local radius = math.max(size.X, size.Y, size.Z) * 0.54
-			camera.CFrame =
-				CFrame.lookAt(Vector3.new(0.7, 0.4, -1).Unit * radius / math.tan(math.rad(17)) * 1.3, Vector3.zero)
-			camera.Parent = viewport
-			viewport.CurrentCamera = camera
-			local framingConnection
-			if p.FitToView then
-				local function fit()
-					PetViewCamera.fit(camera, size, viewport.AbsoluteSize)
-				end
-				fit()
-				framingConnection = viewport:GetPropertyChangedSignal("AbsoluteSize"):Connect(fit)
+	React.useEffect(function()
+		local viewport = assert(ref.current, "Pet viewport must be mounted")
+		local model = Visuals.create(p.Def.visual or p.Def.id, 2.8) or fallbackPet(p.Def)
+		Visuals.applyVariant(model, p.Pet)
+		local world = Instance.new("WorldModel")
+		world.Parent = viewport
+		model.Parent = world
+		local cf, size = model:GetBoundingBox()
+		model.WorldPivot = cf
+		model:PivotTo(CFrame.identity)
+		local camera = Instance.new("Camera")
+		camera.FieldOfView = 34
+		local radius = math.max(size.X, size.Y, size.Z) * 0.54
+		camera.CFrame =
+			CFrame.lookAt(Vector3.new(0.7, 0.4, -1).Unit * radius / math.tan(math.rad(17)) * 1.3, Vector3.zero)
+		camera.Parent = viewport
+		viewport.CurrentCamera = camera
+		local framingConnection
+		if p.FitToView then
+			local function fit()
+				PetViewCamera.fit(camera, size, viewport.AbsoluteSize)
 			end
-			local connection
-			if p.Animated and not p.ReducedMotion then
-				local start = os.clock()
-				connection = Run.RenderStepped:Connect(function()
-					local t = os.clock() - start
-					model:PivotTo(
-						CFrame.new(0, math.sin(t * 1.7) * 0.07, 0) * CFrame.Angles(0, math.sin(t * 0.65) * 0.16, 0)
-					)
-				end)
+			fit()
+			framingConnection = viewport:GetPropertyChangedSignal("AbsoluteSize"):Connect(fit)
+		end
+		local connection
+		if p.Animated and not p.ReducedMotion then
+			local start = os.clock()
+			connection = Run.RenderStepped:Connect(function()
+				local t = os.clock() - start
+				model:PivotTo(
+					CFrame.new(0, math.sin(t * 1.7) * 0.07, 0) * CFrame.Angles(0, math.sin(t * 0.65) * 0.16, 0)
+				)
+			end)
+		end
+		return function()
+			if framingConnection then
+				framingConnection:Disconnect()
 			end
-			return function()
-				if framingConnection then
-					framingConnection:Disconnect()
-				end
-				if connection then
-					connection:Disconnect()
-				end
-				world:Destroy()
-				camera:Destroy()
+			if connection then
+				connection:Disconnect()
 			end
-		end,
-		{ p.Def.id, p.Def.visual or "", p.Key or "", p.Animated == true, p.ReducedMotion == true, p.FitToView == true }
-	)
+			world:Destroy()
+			camera:Destroy()
+		end
+	end, {
+		p.Def.id,
+		p.Def.visual or "",
+		p.Key or "",
+		p.Pet and p.Pet.form or "Normal",
+		p.Pet and p.Pet.mutation or "",
+		p.Animated == true,
+		p.ReducedMotion == true,
+		p.FitToView == true,
+	})
 	return e("ViewportFrame", {
 		ref = ref,
 		Name = "PetPreview",
@@ -498,6 +539,27 @@ function U.PetView(p)
 		Ambient = C(210, 216, 235),
 		LightColor = C(255, 245, 225),
 		LightDirection = Vector3.new(-1, -1, -1),
+		Active = false,
+	})
+end
+
+function U.PetPortrait(p)
+	local image = PetCardArt.outlinedImage(p.Def.id)
+	local pet = p.Pet
+	if not image or (pet and ((pet.form and pet.form ~= "Normal") or pet.mutation)) then
+		return e(U.PetView, p)
+	end
+	return e("ImageLabel", {
+		Name = "PetCardArt",
+		Image = image,
+		BackgroundTransparency = 1,
+		Size = p.Size or UDim2.fromScale(1, 1),
+		Position = p.Position,
+		AnchorPoint = p.AnchorPoint,
+		Visible = p.Visible,
+		ImageColor3 = p.ImageColor3,
+		ScaleType = Enum.ScaleType.Fit,
+		ZIndex = p.ZIndex or 15,
 		Active = false,
 	})
 end

@@ -62,7 +62,7 @@ service:dispatch(owner, "Begin")
 for world = 1, 2 do
 	state.data.world = world
 	state.data.pets = {}
-	for _, egg in Config.Eggs do
+	for _, egg in Config.eggsForWorld(world) do
 		local pool = Config.eggPets(egg.id)
 		local first = #state.data.pets
 		service:dispatch(owner, "GiveEggPets", egg.id)

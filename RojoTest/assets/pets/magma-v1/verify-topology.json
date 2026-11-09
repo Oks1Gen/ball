@@ -1,0 +1,470 @@
+[
+  {
+    "pet": "CoalMole",
+    "part": "Square body",
+    "nonManifoldEdges": 0,
+    "signedVolume": 7.758035950838509
+  },
+  {
+    "pet": "CoalMole",
+    "part": "front left paw",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.032586472580627614
+  },
+  {
+    "pet": "CoalMole",
+    "part": "rear left paw",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.032586473484764115
+  },
+  {
+    "pet": "CoalMole",
+    "part": "front right paw",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.03258647211813584
+  },
+  {
+    "pet": "CoalMole",
+    "part": "rear right paw",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.03258647302227246
+  },
+  {
+    "pet": "CoalMole",
+    "part": "left glossy eye",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.012342130800247604
+  },
+  {
+    "pet": "CoalMole",
+    "part": "right glossy eye",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.012342130800247535
+  },
+  {
+    "pet": "CoalMole",
+    "part": "left rounded mole ear",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.04186163931536811
+  },
+  {
+    "pet": "CoalMole",
+    "part": "left pink ear inset",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.003744365206055361
+  },
+  {
+    "pet": "CoalMole",
+    "part": "right rounded mole ear",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.04186163931404311
+  },
+  {
+    "pet": "CoalMole",
+    "part": "right pink ear inset",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.003744365207213035
+  },
+  {
+    "pet": "CoalMole",
+    "part": "left smile curl",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.00018990958470860753
+  },
+  {
+    "pet": "CoalMole",
+    "part": "right smile curl",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.00019049851882685327
+  },
+  {
+    "pet": "CoalMole",
+    "part": "Tiny rounded nose",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.0025537806509232596
+  },
+  {
+    "pet": "CinderGecko",
+    "part": "Square body",
+    "nonManifoldEdges": 0,
+    "signedVolume": 7.758035950838509
+  },
+  {
+    "pet": "CinderGecko",
+    "part": "front left paw",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.032586472580627614
+  },
+  {
+    "pet": "CinderGecko",
+    "part": "rear left paw",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.032586473484764115
+  },
+  {
+    "pet": "CinderGecko",
+    "part": "front right paw",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.03258647211813584
+  },
+  {
+    "pet": "CinderGecko",
+    "part": "rear right paw",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.03258647302227246
+  },
+  {
+    "pet": "CinderGecko",
+    "part": "left glossy eye",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.012298679316748745
+  },
+  {
+    "pet": "CinderGecko",
+    "part": "right glossy eye",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.012298679316748762
+  },
+  {
+    "pet": "CinderGecko",
+    "part": "left low rounded bump",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.07460476235435473
+  },
+  {
+    "pet": "CinderGecko",
+    "part": "left golden bump front",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.014606634253986256
+  },
+  {
+    "pet": "CinderGecko",
+    "part": "right low rounded bump",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.07460476235435473
+  },
+  {
+    "pet": "CinderGecko",
+    "part": "right golden bump front",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.01460663425398626
+  },
+  {
+    "pet": "CinderGecko",
+    "part": "Thick curled cinder tail",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.8126759676347264
+  },
+  {
+    "pet": "CinderGecko",
+    "part": "left smile curl",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.0001899095443534307
+  },
+  {
+    "pet": "CinderGecko",
+    "part": "right smile curl",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.00019049847820854746
+  },
+  {
+    "pet": "CinderGecko",
+    "part": "Tiny rounded nose",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.001621158510416683
+  },
+  {
+    "pet": "EmberRam",
+    "part": "Square body",
+    "nonManifoldEdges": 0,
+    "signedVolume": 7.758035950838509
+  },
+  {
+    "pet": "EmberRam",
+    "part": "front left paw",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.032586472580627614
+  },
+  {
+    "pet": "EmberRam",
+    "part": "rear left paw",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.032586473484764115
+  },
+  {
+    "pet": "EmberRam",
+    "part": "front right paw",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.03258647211813584
+  },
+  {
+    "pet": "EmberRam",
+    "part": "rear right paw",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.03258647302227246
+  },
+  {
+    "pet": "EmberRam",
+    "part": "left glossy eye",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.012210516648425308
+  },
+  {
+    "pet": "EmberRam",
+    "part": "right glossy eye",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.012210516648425082
+  },
+  {
+    "pet": "EmberRam",
+    "part": "left thick curled ram horn",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.4746026445053937
+  },
+  {
+    "pet": "EmberRam",
+    "part": "left rounded inner horn end",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.004177824611350353
+  },
+  {
+    "pet": "EmberRam",
+    "part": "right thick curled ram horn",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.4766081793385752
+  },
+  {
+    "pet": "EmberRam",
+    "part": "right rounded inner horn end",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.004177824611350353
+  },
+  {
+    "pet": "EmberRam",
+    "part": "Little lifted ram tail",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.029550043563863485
+  },
+  {
+    "pet": "EmberRam",
+    "part": "left smile curl",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.00018990954435342856
+  },
+  {
+    "pet": "EmberRam",
+    "part": "right smile curl",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.00019049847820854862
+  },
+  {
+    "pet": "EmberRam",
+    "part": "Tiny rounded nose",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.0012484475005084014
+  },
+  {
+    "pet": "BlazeBat",
+    "part": "Square body",
+    "nonManifoldEdges": 0,
+    "signedVolume": 7.758035950838509
+  },
+  {
+    "pet": "BlazeBat",
+    "part": "front left paw",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.032586472580627614
+  },
+  {
+    "pet": "BlazeBat",
+    "part": "rear left paw",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.032586473484764115
+  },
+  {
+    "pet": "BlazeBat",
+    "part": "front right paw",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.03258647211813584
+  },
+  {
+    "pet": "BlazeBat",
+    "part": "rear right paw",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.03258647302227246
+  },
+  {
+    "pet": "BlazeBat",
+    "part": "left glossy eye",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.011990110754528778
+  },
+  {
+    "pet": "BlazeBat",
+    "part": "right glossy eye",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.011990110754528908
+  },
+  {
+    "pet": "BlazeBat",
+    "part": "left tall soft bat ear",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.09959890370707435
+  },
+  {
+    "pet": "BlazeBat",
+    "part": "right tall soft bat ear",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.09959890370707433
+  },
+  {
+    "pet": "BlazeBat",
+    "part": "left scalloped flame wing",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.10893335617112641
+  },
+  {
+    "pet": "BlazeBat",
+    "part": "left rounded wing rim",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.016838164509539875
+  },
+  {
+    "pet": "BlazeBat",
+    "part": "right scalloped flame wing",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.1089333561711265
+  },
+  {
+    "pet": "BlazeBat",
+    "part": "right rounded wing rim",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.016781316413115473
+  },
+  {
+    "pet": "BlazeBat",
+    "part": "Tiny bat tail",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.01772088838159658
+  },
+  {
+    "pet": "BlazeBat",
+    "part": "Little smiling mouth",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.0008013351599767899
+  },
+  {
+    "pet": "BlazeBat",
+    "part": "left small fang",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.00011168906743108655
+  },
+  {
+    "pet": "BlazeBat",
+    "part": "right small fang",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.00011182332507731658
+  },
+  {
+    "pet": "InfernoPhoenix",
+    "part": "Square body",
+    "nonManifoldEdges": 0,
+    "signedVolume": 7.758035950838509
+  },
+  {
+    "pet": "InfernoPhoenix",
+    "part": "front left paw",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.032586472580627614
+  },
+  {
+    "pet": "InfernoPhoenix",
+    "part": "rear left paw",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.032586473484764115
+  },
+  {
+    "pet": "InfernoPhoenix",
+    "part": "front right paw",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.03258647211813584
+  },
+  {
+    "pet": "InfernoPhoenix",
+    "part": "rear right paw",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.03258647302227246
+  },
+  {
+    "pet": "InfernoPhoenix",
+    "part": "left glossy eye",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.01156063205162571
+  },
+  {
+    "pet": "InfernoPhoenix",
+    "part": "right glossy eye",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.011560632051625719
+  },
+  {
+    "pet": "InfernoPhoenix",
+    "part": "left golden wing feather 1",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.07221924083873323
+  },
+  {
+    "pet": "InfernoPhoenix",
+    "part": "left golden wing feather 2",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.1327615934762698
+  },
+  {
+    "pet": "InfernoPhoenix",
+    "part": "left golden wing feather 3",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.15325496627397345
+  },
+  {
+    "pet": "InfernoPhoenix",
+    "part": "right golden wing feather 1",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.07216570477025237
+  },
+  {
+    "pet": "InfernoPhoenix",
+    "part": "right golden wing feather 2",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.1327640863372815
+  },
+  {
+    "pet": "InfernoPhoenix",
+    "part": "right golden wing feather 3",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.15328593992532863
+  },
+  {
+    "pet": "InfernoPhoenix",
+    "part": "Single flowing flame crest",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.1854404984344847
+  },
+  {
+    "pet": "InfernoPhoenix",
+    "part": "Sweeping tail feather 1",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.3150593041925994
+  },
+  {
+    "pet": "InfernoPhoenix",
+    "part": "Sweeping tail feather 2",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.3577621057911905
+  },
+  {
+    "pet": "InfernoPhoenix",
+    "part": "Tiny golden beak",
+    "nonManifoldEdges": 0,
+    "signedVolume": 0.005291602940248118
+  }
+]

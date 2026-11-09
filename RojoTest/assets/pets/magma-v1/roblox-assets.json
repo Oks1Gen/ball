@@ -1,0 +1,133 @@
+{
+  "date": "2026-11-09",
+  "universeId": 10770268214,
+  "creatorUserId": 11789507527,
+  "bodyWidth": 1.8,
+  "assets": [
+    {
+      "visual": "CoalMole",
+      "name": "Coal Mole",
+      "id": "Shark",
+      "coat": "303546",
+      "triangles": 5464,
+      "petId": "Shark",
+      "meshId": "rbxassetid://96097005781220",
+      "textureId": "rbxassetid://117572189408249",
+      "meshSize": [
+        2.000000238418579,
+        2.5850000381469727,
+        2.13100004196167
+      ],
+      "modelId": "71236885360913",
+      "modelOperation": "4d561d9f-d2a6-4388-a96c-29181243e590",
+      "portraitId": "84998984605018",
+      "portraitOperation": "d32841bc-b3b6-4be2-8806-3ebec3989d0b",
+      "moderation": "Approved",
+      "outlineBottom": 496
+    },
+    {
+      "visual": "CinderGecko",
+      "name": "Cinder Gecko",
+      "id": "CloudBird",
+      "coat": "FF5912",
+      "triangles": 6912,
+      "petId": "CloudBird",
+      "meshId": "rbxassetid://105972378757188",
+      "textureId": "rbxassetid://84159315785308",
+      "meshSize": [
+        2.000000238418579,
+        3.0246901512145996,
+        3.224461555480957
+      ],
+      "modelId": "133805463587668",
+      "modelOperation": "c994678c-0851-4cfb-8fff-101fe6fefbba",
+      "portraitId": "140219385075272",
+      "portraitOperation": "670b00a8-a1f7-4418-9f55-52f982a88453",
+      "moderation": "Approved",
+      "outlineBottom": 496
+    },
+    {
+      "visual": "EmberRam",
+      "name": "Ember Ram",
+      "id": "AngelCat",
+      "coat": "F94D0B",
+      "triangles": 8208,
+      "petId": "AngelCat",
+      "meshId": "rbxassetid://106913706738216",
+      "textureId": "rbxassetid://70729247926152",
+      "meshSize": [
+        3.5901663303375244,
+        3.0484189987182617,
+        2.534731388092041
+      ],
+      "modelId": "108594614036182",
+      "modelOperation": "b5218f0b-ca83-4e2a-9848-afad5143340d",
+      "portraitId": "133635334101448",
+      "portraitOperation": "5ea95f9c-aadd-4397-b49b-4f4b6377095b",
+      "moderation": "Approved",
+      "outlineBottom": 496
+    },
+    {
+      "visual": "BlazeBat",
+      "name": "Blaze Bat",
+      "id": "BlazeBat",
+      "coat": "54218D",
+      "triangles": 7748,
+      "petId": "BlazeBat",
+      "meshId": "rbxassetid://81337410791773",
+      "textureId": "rbxassetid://70943904545087",
+      "meshSize": [
+        4.039999961853027,
+        3.0796210765838623,
+        2.4183831214904785
+      ],
+      "modelId": "74655860074258",
+      "modelOperation": "acfd352b-195a-413f-bb84-13cb2e6d840c",
+      "portraitId": "110245325486876",
+      "portraitOperation": "06ed5579-e9d0-453c-850b-9356f2d5219a",
+      "moderation": "Approved",
+      "outlineBottom": 479
+    },
+    {
+      "visual": "InfernoPhoenix",
+      "name": "Inferno Phoenix",
+      "id": "IceCat",
+      "coat": "FF3012",
+      "triangles": 9852,
+      "petId": "IceCat",
+      "meshId": "rbxassetid://113826510081858",
+      "textureId": "rbxassetid://107644848592315",
+      "meshSize": [
+        4.024832248687744,
+        3.2200000286102295,
+        3.2457435131073
+      ],
+      "modelId": "85808407511873",
+      "modelOperation": "d886ad9b-0cb7-4e70-be42-377ca7d6aa1c",
+      "portraitId": "121150376848083",
+      "portraitOperation": "8a05ae1e-d2ef-4852-bb16-7f1976c116cd",
+      "moderation": "Approved",
+      "outlineBottom": 452
+    }
+  ],
+  "permissions": {
+    "models": {
+      "content": [
+        {
+          "type": "text",
+          "text": "PATCH https://apis.roblox.com/asset-permissions-api/v1/assets/permissions -> 200 OK\n\n{\"successAssetIds\":[71236885360913,133805463587668,108594614036182,74655860074258,85808407511873],\"errors\":[]}"
+        }
+      ],
+      "isError": false
+    },
+    "portraits": {
+      "content": [
+        {
+          "type": "text",
+          "text": "PATCH https://apis.roblox.com/asset-permissions-api/v1/assets/permissions -> 200 OK\n\n{\"successAssetIds\":[84998984605018,140219385075272,133635334101448,110245325486876,121150376848083],\"errors\":[]}"
+        }
+      ],
+      "isError": false
+    }
+  }
+}

@@ -1,5 +1,15 @@
 # Документация Ball
 
+- [egg-preview.md](egg-preview.md): окно рядом с яйцом, карточки шансов, силуэты неизвестных питомцев и сохранение открытий.
+
+- [pet-modeling-references.md](pet-modeling-references.md): эскизы 50 петов для 10 яиц обоих миров, актуальные версии, имена и требования для будущих 3D-моделей.
+
+- [pets-inventory.md](pets-inventory.md): Pets по эскизу 01D, плоская интерактивная 3D-карточка, нижние действия, ассеты и проверки ПК.
+
+- [pet-workshop.md](pet-workshop.md): крафт форм, пять мутаций за Shards, шансы, сохранение и станция в лобби.
+
+- [balance.md](balance.md): текущие коэффициенты, мячи +X, тайминг, яйца, Secret, осколки и задания; расположение настроек.
+
 - [monetization.md](monetization.md): 4 Game Pass, 8 Developer Products, ID и цены, выдача, полный Dev Reset и порядок включения продаж.
 
 - [ocean-eggs.md](ocean-eggs.md): морские яйца, порядок редкости, импорт Blender, подписи, левитация, обводка и VFX.

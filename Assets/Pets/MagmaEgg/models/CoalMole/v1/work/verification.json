@@ -1,0 +1,49 @@
+{
+  "triangles": 5464,
+  "largestPart": 764,
+  "bounds": [
+    [
+      -1.0,
+      -1.1309999227523804,
+      0.0
+    ],
+    [
+      1.0,
+      1.0,
+      2.5850000381469727
+    ]
+  ],
+  "parts": {
+    "Square body": 764,
+    "front left paw": 448,
+    "rear left paw": 448,
+    "front right paw": 448,
+    "rear right paw": 448,
+    "left glossy eye": 420,
+    "right glossy eye": 420,
+    "left rounded mole ear": 336,
+    "left pink ear inset": 336,
+    "right rounded mole ear": 336,
+    "right pink ear inset": 336,
+    "left smile curl": 200,
+    "right smile curl": 200,
+    "Tiny rounded nose": 324
+  },
+  "imports": {
+    "blend": {
+      "triangles": 5464,
+      "boundsError": 0.0,
+      "packedImages": 2
+    },
+    "glb": {
+      "triangles": 5464,
+      "boundsError": 0.0,
+      "packedImages": 2
+    },
+    "fbx": {
+      "triangles": 5464,
+      "boundsError": 1.7678678432275774e-07,
+      "packedImages": 2
+    }
+  }
+}

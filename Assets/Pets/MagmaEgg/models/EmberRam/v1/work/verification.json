@@ -1,0 +1,50 @@
+{
+  "triangles": 8208,
+  "largestPart": 1496,
+  "bounds": [
+    [
+      -1.7950831651687622,
+      -1.1309999227523804,
+      0.0
+    ],
+    [
+      1.7950831651687622,
+      1.4037314653396606,
+      3.0484189987182617
+    ]
+  ],
+  "parts": {
+    "Square body": 764,
+    "front left paw": 448,
+    "rear left paw": 448,
+    "front right paw": 448,
+    "rear right paw": 448,
+    "left glossy eye": 420,
+    "right glossy eye": 420,
+    "left thick curled ram horn": 1496,
+    "left rounded inner horn end": 324,
+    "right thick curled ram horn": 1496,
+    "right rounded inner horn end": 324,
+    "Little lifted ram tail": 448,
+    "left smile curl": 200,
+    "right smile curl": 200,
+    "Tiny rounded nose": 324
+  },
+  "imports": {
+    "blend": {
+      "triangles": 8208,
+      "boundsError": 0.0,
+      "packedImages": 3
+    },
+    "glb": {
+      "triangles": 8208,
+      "boundsError": 0.0,
+      "packedImages": 3
+    },
+    "fbx": {
+      "triangles": 8208,
+      "boundsError": 2.384185791015625e-07,
+      "packedImages": 3
+    }
+  }
+}

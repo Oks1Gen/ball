@@ -70,6 +70,28 @@ function Refs.volcanic(world: any): any
 	return eggs and (eggs:FindFirstChild("VolcanicEgg") or eggs)
 end
 
+function Refs.eggStation(world: Instance?, id: string): (Instance?, BasePart?, Model?)
+	if not world then
+		return nil, nil, nil
+	end
+	local scenery = Refs.eggs(world)
+	local fifth = id == "SolarCrown" or id == "AdminEgg"
+	if fifth and id ~= (if world.Name == "World2" then "AdminEgg" else "SolarCrown") then
+		return nil, nil, nil
+	end
+	local stand: Instance? = if fifth then Refs.volcanic(world) else scenery and scenery:FindFirstChild("Egg_" .. id)
+	if not stand then
+		return nil, nil, nil
+	end
+	local part = if fifth
+		then stand:FindFirstChild("InteractionAnchor") or stand:FindFirstChild("HackedAdminEgg")
+		else stand:FindFirstChild("EggShell")
+	local visual = stand:FindFirstChild(if fifth then "Visual" else "ImportedVisual")
+	return stand,
+		if part and part:IsA("BasePart") then part else nil,
+		if visual and visual:IsA("Model") then visual else nil
+end
+
 function Refs.balls(world: any): any
 	local lobby = world and world:FindFirstChild("Lobby")
 	return (lobby and lobby:FindFirstChild("BallShop")) or (world and world:FindFirstChild("EmptyItemStand"))
@@ -97,4 +119,9 @@ function Refs.rankings(world: any): any
 	return (lobby and lobby:FindFirstChild("Leaderboards")) or (world and world:FindFirstChild("LobbyRankings"))
 end
 
+function Refs.workshop(world: Instance): Model?
+	local lobby = world:FindFirstChild("Lobby")
+	local model = lobby and lobby:FindFirstChild("PetWorkshop")
+	return if model and model:IsA("Model") then model else nil
+end
 return Refs

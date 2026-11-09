@@ -1,0 +1,14 @@
+{
+  "fixturesRemoved": true,
+  "log": {
+    "descriptionFits": true,
+    "authorAvatarLoaded": true,
+    "expanded": true,
+    "collapsed": true,
+    "scrolling": true
+  },
+  "windowOpenMinimum": 0.05000000074505806,
+  "windowOpenMaximum": 1.059999942779541,
+  "eggReturned": true,
+  "openingSound": 2
+}

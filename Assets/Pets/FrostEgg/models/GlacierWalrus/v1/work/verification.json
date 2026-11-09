@@ -1,0 +1,49 @@
+{
+  "triangles": 7240,
+  "largestPart": 920,
+  "bounds": [
+    [
+      -1.680124044418335,
+      -1.194840669631958,
+      0.0
+    ],
+    [
+      1.680124044418335,
+      1.0,
+      2.240000009536743
+    ]
+  ],
+  "parts": {
+    "Square body": 764,
+    "front left paw": 448,
+    "rear left paw": 448,
+    "front right paw": 448,
+    "rear right paw": 448,
+    "left glossy eye": 420,
+    "right glossy eye": 420,
+    "left flipper": 640,
+    "right flipper": 640,
+    "left tapered tusk": 920,
+    "right tapered tusk": 920,
+    "left smile curl": 200,
+    "right smile curl": 200,
+    "Soft charcoal nose": 324
+  },
+  "imports": {
+    "blend": {
+      "triangles": 7240,
+      "boundsError": 0.0,
+      "packedImages": 2
+    },
+    "glb": {
+      "triangles": 7240,
+      "boundsError": 0.0,
+      "packedImages": 2
+    },
+    "fbx": {
+      "triangles": 7240,
+      "boundsError": 2.384185791015625e-07,
+      "packedImages": 2
+    }
+  }
+}

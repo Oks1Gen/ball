@@ -1,0 +1,52 @@
+{
+  "triangles": 7748,
+  "largestPart": 840,
+  "bounds": [
+    [
+      -2.0199999809265137,
+      -1.0974668264389038,
+      0.0
+    ],
+    [
+      2.0199999809265137,
+      1.3209162950515747,
+      3.0796210765838623
+    ]
+  ],
+  "parts": {
+    "Square body": 764,
+    "front left paw": 448,
+    "rear left paw": 448,
+    "front right paw": 448,
+    "rear right paw": 448,
+    "left glossy eye": 420,
+    "right glossy eye": 420,
+    "left tall soft bat ear": 448,
+    "right tall soft bat ear": 448,
+    "left scalloped flame wing": 840,
+    "left rounded wing rim": 432,
+    "right scalloped flame wing": 840,
+    "right rounded wing rim": 432,
+    "Tiny bat tail": 336,
+    "Little smiling mouth": 256,
+    "left small fang": 160,
+    "right small fang": 160
+  },
+  "imports": {
+    "blend": {
+      "triangles": 7748,
+      "boundsError": 0.0,
+      "packedImages": 4
+    },
+    "glb": {
+      "triangles": 7748,
+      "boundsError": 0.0,
+      "packedImages": 4
+    },
+    "fbx": {
+      "triangles": 7748,
+      "boundsError": 2.384185791015625e-07,
+      "packedImages": 4
+    }
+  }
+}

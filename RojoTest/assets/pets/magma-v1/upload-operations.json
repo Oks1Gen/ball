@@ -1,0 +1,72 @@
+[
+  {
+    "visual": "CoalMole",
+    "type": "Model",
+    "path": "operations/4d561d9f-d2a6-4388-a96c-29181243e590",
+    "operationId": "4d561d9f-d2a6-4388-a96c-29181243e590",
+    "done": false
+  },
+  {
+    "visual": "CinderGecko",
+    "type": "Model",
+    "path": "operations/c994678c-0851-4cfb-8fff-101fe6fefbba",
+    "operationId": "c994678c-0851-4cfb-8fff-101fe6fefbba",
+    "done": false
+  },
+  {
+    "visual": "EmberRam",
+    "type": "Model",
+    "path": "operations/b5218f0b-ca83-4e2a-9848-afad5143340d",
+    "operationId": "b5218f0b-ca83-4e2a-9848-afad5143340d",
+    "done": false
+  },
+  {
+    "visual": "BlazeBat",
+    "type": "Model",
+    "path": "operations/acfd352b-195a-413f-bb84-13cb2e6d840c",
+    "operationId": "acfd352b-195a-413f-bb84-13cb2e6d840c",
+    "done": false
+  },
+  {
+    "visual": "InfernoPhoenix",
+    "type": "Model",
+    "path": "operations/d886ad9b-0cb7-4e70-be42-377ca7d6aa1c",
+    "operationId": "d886ad9b-0cb7-4e70-be42-377ca7d6aa1c",
+    "done": false
+  },
+  {
+    "visual": "CoalMole",
+    "type": "Image",
+    "path": "operations/d32841bc-b3b6-4be2-8806-3ebec3989d0b",
+    "operationId": "d32841bc-b3b6-4be2-8806-3ebec3989d0b",
+    "done": false
+  },
+  {
+    "visual": "CinderGecko",
+    "type": "Image",
+    "path": "operations/670b00a8-a1f7-4418-9f55-52f982a88453",
+    "operationId": "670b00a8-a1f7-4418-9f55-52f982a88453",
+    "done": false
+  },
+  {
+    "visual": "EmberRam",
+    "type": "Image",
+    "path": "operations/5ea95f9c-aadd-4397-b49b-4f4b6377095b",
+    "operationId": "5ea95f9c-aadd-4397-b49b-4f4b6377095b",
+    "done": false
+  },
+  {
+    "visual": "BlazeBat",
+    "type": "Image",
+    "path": "operations/06ed5579-e9d0-453c-850b-9356f2d5219a",
+    "operationId": "06ed5579-e9d0-453c-850b-9356f2d5219a",
+    "done": false
+  },
+  {
+    "visual": "InfernoPhoenix",
+    "type": "Image",
+    "path": "operations/8a05ae1e-d2ef-4852-bb16-7f1976c116cd",
+    "operationId": "8a05ae1e-d2ef-4852-bb16-7f1976c116cd",
+    "done": false
+  }
+]

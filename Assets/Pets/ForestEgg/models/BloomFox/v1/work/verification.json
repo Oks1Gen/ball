@@ -1,0 +1,57 @@
+{
+  "triangles": 7872,
+  "max_part_triangles": 1276,
+  "bounds": [
+    [
+      -1.0285184383392334,
+      -1.0770000219345093,
+      0.0
+    ],
+    [
+      1.6118420362472534,
+      2.721494674682617,
+      3.01796293258667
+    ]
+  ],
+  "parts": {
+    "Square body": 588,
+    "Paw L front": 188,
+    "Paw L rear": 188,
+    "Toe L -1": 120,
+    "Toe L 1": 120,
+    "Paw R front": 188,
+    "Paw R rear": 188,
+    "Toe R -1": 120,
+    "Toe R 1": 120,
+    "Eye L": 448,
+    "Eye R": 448,
+    "Little nose": 324,
+    "Smile": 344,
+    "Pointed ear L": 576,
+    "Ear tuft L 1": 196,
+    "Ear tuft L 2": 196,
+    "Pointed ear R": 576,
+    "Ear tuft R 1": 196,
+    "Ear tuft R 2": 196,
+    "High cream-tipped tail": 1276,
+    "Low cream-tipped tail": 1276
+  },
+  "front": "-Y",
+  "imports": {
+    "blend": {
+      "triangles": 7872,
+      "bounds_error": 0.0,
+      "packed_images": 4
+    },
+    "glb": {
+      "triangles": 7872,
+      "bounds_error": 0.0,
+      "packed_images": 4
+    },
+    "fbx": {
+      "triangles": 7872,
+      "bounds_error": 4.76837158203125e-07,
+      "packed_images": 4
+    }
+  }
+}

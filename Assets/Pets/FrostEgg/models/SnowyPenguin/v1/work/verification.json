@@ -1,0 +1,45 @@
+{
+  "triangles": 5156,
+  "largestPart": 764,
+  "bounds": [
+    [
+      -1.5287569761276245,
+      -1.2019999027252197,
+      0.0
+    ],
+    [
+      1.5287569761276245,
+      1.0,
+      2.240000009536743
+    ]
+  ],
+  "parts": {
+    "Square body": 764,
+    "front left paw": 448,
+    "rear left paw": 448,
+    "front right paw": 448,
+    "rear right paw": 448,
+    "left glossy eye": 420,
+    "right glossy eye": 420,
+    "left flipper": 640,
+    "right flipper": 640,
+    "Soft triangular beak": 480
+  },
+  "imports": {
+    "blend": {
+      "triangles": 5156,
+      "boundsError": 0.0,
+      "packedImages": 2
+    },
+    "glb": {
+      "triangles": 5156,
+      "boundsError": 0.0,
+      "packedImages": 2
+    },
+    "fbx": {
+      "triangles": 5156,
+      "boundsError": 2.384185791015625e-07,
+      "packedImages": 2
+    }
+  }
+}

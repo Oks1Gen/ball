@@ -151,7 +151,7 @@ function S.Pets(p)
 			local row = math.floor((i - 1) / cols)
 			if row >= firstRow - 1 and row <= firstRow + visibleRows then
 				content.Preview = def
-						and e(U.PetView, {
+						and e(U.PetPortrait, {
 							Def = def,
 							Key = item.uid,
 							FitToView = true,
@@ -169,7 +169,8 @@ function S.Pets(p)
 				Small = true,
 				Wrap = true,
 			})
-			content.Power = label("×" .. item.boost .. " Skill", 5, cardH - 26, cardW - 10, 22, 18, T.Gold)
+			content.Power =
+				label("×" .. Config.formatBoost(item.boost) .. " Skill", 5, cardH - 26, cardW - 10, 22, 18, T.Gold)
 			if isEquipped then
 				content.Check = e(U.Surface, {
 					Color = T.Colors.Green,
@@ -240,7 +241,7 @@ function S.Pets(p)
 			local full = not isEquipped and #equipped >= 3
 			detail.Name = label(pet.name, 8, 8, pw - 16, 34, 24)
 			detail.Rarity = label(pet.rarity, 8, 44, pw - 16, 26, 20, rarity(pet.rarity))
-			detail.Preview = e(U.PetView, {
+			detail.Preview = e(U.PetPortrait, {
 				Def = def,
 				Key = pet.uid,
 				Position = UDim2.fromOffset(12, 65),
@@ -249,7 +250,8 @@ function S.Pets(p)
 				ReducedMotion = p.Reduced,
 				FitToView = true,
 			})
-			detail.Power = label("×" .. pet.boost .. " Skill", 8, gridH - 159, pw - 16, 30, 25, T.Gold)
+			detail.Power =
+				label("×" .. Config.formatBoost(pet.boost) .. " Skill", 8, gridH - 159, pw - 16, 30, 25, T.Gold)
 			detail.Equip = button(
 				"EquipSelected",
 				p.Busy and "Please wait…" or (isEquipped and "Unequip" or full and "Team full (3 / 3)" or "Equip"),
@@ -382,21 +384,22 @@ function S.Eggs(p)
 	local request: (string, string?, number?) -> () = p.Request
 	local w: number, h: number = p.Width, p.Height
 	local compact = w < 730
-	local egg = Config.find(Config.Eggs, p.EggId) or Config.Eggs[1]
+	local world = p.Data.world
+	local eggs = Config.eggsForWorld(world)
+	local egg = Config.find(eggs, p.EggId) or eggs[1]
 	local pool = Config.eggPets(egg.id)
 	if p.PaidRandomRestricted then
 		pool = { pool[1] }
 	end
-	local world = p.Data.world
 	local cost = Config.eggCost(egg, world)
 	local ocean = OceanCatalog.find(egg.id, world)
 	local tabs = {}
-	local tabW, tabGap = Spacing.row(w - 32, 4, 44)
-	for i, item in Config.Eggs do
+	local tabW, tabGap = Spacing.row(w - 32, #eggs, 44)
+	for i, item in eggs do
 		local itemOcean = OceanCatalog.find(item.id, world)
 		tabs[item.id] = button(
 			"EggTab" .. item.id,
-			if itemOcean then itemOcean.rarity else item.id,
+			if itemOcean then itemOcean.rarity elseif item.id == "SolarCrown" then "Solar Crown" else item.id,
 			16 + (i - 1) * (tabW + tabGap),
 			0,
 			tabW,
@@ -453,7 +456,7 @@ function S.Eggs(p)
 			),
 			Size = UDim2.fromOffset(itemW, itemH),
 			Children = {
-				Pet = e(U.PetView, {
+				Pet = e(U.PetPortrait, {
 					Def = item,
 					Key = item.id,
 					Position = UDim2.fromOffset(layout.Pet[1], layout.Pet[2]),
@@ -467,7 +470,7 @@ function S.Eggs(p)
 					T.Gold
 				),
 				Name = cardLabel(item.name, layout.Name, 16),
-				Boost = cardLabel("×" .. boost, layout.Boost, p.Phone and 15 or 17, T.Gold),
+				Boost = cardLabel("×" .. Config.formatBoost(boost), layout.Boost, p.Phone and 15 or 17, T.Gold),
 			},
 		})
 	end

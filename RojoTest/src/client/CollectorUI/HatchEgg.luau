@@ -206,11 +206,9 @@ local function EggView(p: { World: number, Id: string, Color: Color3, Drive: () 
 	React.useEffect(function()
 		local viewport = assert(ref.current, "Egg viewport must be mounted")
 		local refs = require(game.ReplicatedStorage.Shared.WorldRefs)
-		local scenery = refs.eggs(refs.world(p.World))
-		local stand = scenery and scenery:FindFirstChild("Egg_" .. p.Id)
-		local source = stand and stand:FindFirstChild("ImportedVisual")
+		local _, _, source = refs.eggStation(refs.world(p.World), p.Id)
 		local model
-		if source and source:IsA("Model") then
+		if source then
 			model = source:Clone()
 		else
 			model = Instance.new("Model")

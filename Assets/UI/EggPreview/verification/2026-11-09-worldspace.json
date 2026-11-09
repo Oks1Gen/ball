@@ -1,0 +1,68 @@
+{
+  "interaction": {
+    "expectedRatio": 0.8857808709144592,
+    "silhouette": true,
+    "centerRatio": 0.8857808541861801,
+    "near": {
+      "y": 379.3242492675781,
+      "x": 858.1629638671875,
+      "button": 100.49417114257812,
+      "width": 634
+    },
+    "leave": true,
+    "anchorError": 0.0000275081729341764,
+    "calls": {
+      "1": {
+        "1": "Common",
+        "2": 1
+      },
+      "2": {
+        "1": "Common",
+        "2": 1
+      },
+      "3": {
+        "1": "Common",
+        "2": 3
+      }
+    },
+    "far": {
+      "y": 380.2305603027344,
+      "x": 854.64599609375,
+      "button": 58.093238830566406,
+      "width": 366.5
+    },
+    "known": true,
+    "switch": true,
+    "bob": 0.36152076721191406
+  },
+  "final": {
+    "modalClosedAndEggReturned": true,
+    "player": "Dakemo555",
+    "tutorial": {
+      "projected": true,
+      "behindCamera": true,
+      "handError": 0.2681905925273895,
+      "handVisible": true,
+      "effectsOff": true
+    },
+    "signRestored": true,
+    "keys": {
+      "1": {
+        "1": "Common",
+        "2": 1
+      },
+      "2": {
+        "1": "Common",
+        "2": 3
+      }
+    },
+    "actualBillboard": true,
+    "productionSettingsRestored": true
+  },
+  "fixturesRemoved": true,
+  "capture": {
+    "file": "2026-11-09-worldspace.jpg",
+    "mode": "Studio diagnostic, depth offset with size compensation",
+    "productionRestored": true
+  }
+}

@@ -42,7 +42,10 @@ function Controller:Start()
 		require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("VolcanicEggVisual")).start()
 	end)
 	task.spawn(function()
-		game:GetService("ContentProvider"):PreloadAsync({ ReplicatedStorage.Shared:WaitForChild("PetTemplates") })
+		local art = require(clientRoot.Modules:WaitForChild("PetCardArt"))
+		local content: { any } = art.outlinedImageIds()
+		table.insert(content, ReplicatedStorage.Shared:WaitForChild("PetTemplates"))
+		game:GetService("ContentProvider"):PreloadAsync(content)
 	end)
 	local player = Players.LocalPlayer
 	local remotes = require(ReplicatedStorage.Shared:WaitForChild("Net")).client()
@@ -65,15 +68,20 @@ function Controller:Start()
 	local flight: any = nil
 	local trainingShot: any = nil
 	local hatchBusy = false
-	local hatchPromptState: boolean? = nil
+	local modalPromptState: boolean? = nil
 	local activeEgg = "Common"
 	local collectorUI: any = nil
 	local adminUI: any = nil
 	local panels: any = nil
 	local kickTiming: any = nil
+	local petUiSound: ((string, number?, number?) -> ())? = nil
 	local openPanel: (string) -> () = function() end
 
 	local function send(command: string, value: any?, extra: any?)
+		if command == "PetCraft" then
+			openPanel("PetCraft")
+			return
+		end
 		if command == "Throw" and kickTiming then
 			kickTiming.request()
 			return
@@ -136,6 +144,15 @@ function Controller:Start()
 	local notifications: any = nil
 	local function syncPresentation()
 		local modal = currentPanel ~= nil
+		if modal then
+			if modalPromptState == nil then
+				modalPromptState = ProximityPrompts.Enabled
+			end
+			ProximityPrompts.Enabled = false
+		elseif modalPromptState ~= nil then
+			ProximityPrompts.Enabled = modalPromptState
+			modalPromptState = nil
+		end
 		local reduced = latest ~= nil and latest.data.settings.effects == false
 		if notifications then
 			notifications.setReduced(reduced)
@@ -184,10 +201,7 @@ function Controller:Start()
 		if currentPanel == "Offline" and not switching and latest and not latest.welcome.claimed then
 			return
 		end
-		if hatchPromptState ~= nil then
-			ProximityPrompts.Enabled = hatchPromptState
-			hatchPromptState = nil
-		end
+
 		if collectorUI then
 			collectorUI:close()
 			collectorUI:setHidden(false)
@@ -343,8 +357,17 @@ function Controller:Start()
 		collectorUI:open(kind, eggId)
 	end
 
+	local function availableEggs()
+		return Config.eggsForWorld(if latest then latest.data.world else 1)
+	end
+
+	local function selectedEgg()
+		local eggs = availableEggs()
+		return Config.find(eggs, activeEgg) or eggs[1]
+	end
+
 	local function openEgg(id: string)
-		local egg = Config.find(Config.Eggs, id)
+		local egg = Config.find(availableEggs(), id)
 		if not egg then
 			return
 		end
@@ -353,10 +376,15 @@ function Controller:Start()
 	end
 
 	collectorUI = require(clientRoot.CollectorUI).mount({
+		playSound = function(id, volume, speed)
+			if petUiSound then
+				petUiSound(id, volume, speed)
+			end
+		end,
 		send = send,
 		close = closePanel,
 		open = function(name: string)
-			if name == "Eggs" and currentPanel == Config.find(Config.Eggs, activeEgg).name then
+			if name == "Eggs" and currentPanel == selectedEgg().name then
 				closePanel()
 			else
 				openPanel(name)
@@ -374,7 +402,7 @@ function Controller:Start()
 			return
 		end
 		if name == "Eggs" then
-			openEgg(activeEgg)
+			openEgg(selectedEgg().id)
 			return
 		end
 		if name == "Trails" then
@@ -393,6 +421,8 @@ function Controller:Start()
 			openCollector("Inventory", "Inventory")
 		elseif name == "Pets" then
 			openCollector("Pets", "Pets")
+		elseif name == "PetCraft" then
+			panels.open("PetCraft")
 		elseif name == "Gifts" then
 			panels.open("Gifts")
 		elseif name == "Daily" then
@@ -446,6 +476,7 @@ function Controller:Start()
 			return currentPanel ~= nil
 		end,
 	})
+	petUiSound = effects.playSound
 	local levelUp = LevelUpEffects.mount({
 		player = player,
 		effectsFolder = effectsFolder,
@@ -547,8 +578,30 @@ function Controller:Start()
 			action:FireServer(command, value, extra)
 		end,
 	})
+	local eggPlayerGui = player:WaitForChild("PlayerGui")
+	local eggNavShop: GuiObject? = nil
+	local eggRightOffer = hud:FindFirstChild("DoubleSkill", true)
 	local eggPreview = require(clientRoot.Controllers.EggPreview).mount({
-		parent = player:WaitForChild("PlayerGui"),
+		parent = eggPlayerGui,
+		hudBounds = function(): (Vector2, Vector2)
+			if not eggNavShop or not eggNavShop.Parent then
+				local navigation = eggPlayerGui:FindFirstChild("CollectorUI")
+				local shop = navigation and navigation:FindFirstChild("NavShop", true)
+				eggNavShop = if shop and shop:IsA("GuiObject") then shop else nil
+			end
+			local expansion = (MotionConfig.Button.MaximumScale - 1) / 2
+			local left = if eggNavShop
+				then eggNavShop.AbsolutePosition.X + eggNavShop.AbsoluteSize.X * (1 + expansion)
+				else -math.huge
+			local right = if eggRightOffer
+					and eggRightOffer:IsA("GuiObject")
+					and eggRightOffer.Visible
+				then eggRightOffer.AbsolutePosition.X - eggRightOffer.AbsoluteSize.X * expansion
+				else math.huge
+			local top = hudRefs.auto.AbsolutePosition.Y + hudRefs.auto.AbsoluteSize.Y * (1 + expansion)
+			return Vector2.new(left, top), Vector2.new(right, hudRefs.skillText.AbsolutePosition.Y)
+		end,
+		playSound = effects.playSound,
 		snapshot = function()
 			return latest
 		end,
@@ -580,7 +633,7 @@ function Controller:Start()
 			return latest
 		end,
 		activeEgg = function()
-			return activeEgg
+			return selectedEgg().id
 		end,
 		eggName = function(id: string)
 			local egg = Config.find(Config.Eggs, id)
@@ -607,7 +660,7 @@ function Controller:Start()
 		end,
 		throwButton = hudRefs.throwButton,
 		autoButton = hudRefs.auto,
-		previewEgg = eggPreview.egg,
+		eggTutorialPoint = eggPreview.tutorialPoint,
 	})
 
 	local function beginThrow(info: any)
@@ -662,8 +715,6 @@ function Controller:Start()
 		end
 		closePanel(true)
 		hatchBusy = true
-		hatchPromptState = ProximityPrompts.Enabled
-		ProximityPrompts.Enabled = false
 		currentPanel = "Hatch"
 		syncPresentation()
 		collectorUI:setHidden(false)
@@ -713,6 +764,15 @@ function Controller:Start()
 			openPanel(info)
 		elseif kind == "BallUnlocked" and type(info) == "string" then
 			reveal.show(info)
+		elseif kind == "PetCraftRejected" then
+			require(clientRoot.Controllers.PetWorkshop).reject()
+		elseif kind == "PetCraftResult" then
+			require(clientRoot.Controllers.PetWorkshop).present(info)
+			if currentPanel ~= "PetCraft" then
+				openPanel("PetCraft")
+			end
+		elseif kind == "ProgressionReward" then
+			notice(info.message, if info.success then "Success" else "Error")
 		elseif kind == "Rebirth" then
 			closePanel()
 			levelUp.rebirth()
@@ -886,6 +946,8 @@ function Controller:Start()
 			panels.open("Worlds")
 		end
 		eggPreview.frame()
+		-- The last-kick caption occupies the same space as the egg's Buy Egg label.
+		hudRefs.powerText.Visible = flight == nil and eggPreview.egg() == nil
 		local hand = player.Character
 			and (player.Character:FindFirstChild("RightHand") or player.Character:FindFirstChild("Right Arm"))
 		if hand and latest then
@@ -990,6 +1052,10 @@ function Controller:Start()
 	end)
 
 	clientRoot.Destroying:Connect(function()
+		if modalPromptState ~= nil then
+			ProximityPrompts.Enabled = modalPromptState
+			modalPromptState = nil
+		end
 		upgradeNotices.destroy()
 		tutorial.destroy()
 		kickTiming.destroy()

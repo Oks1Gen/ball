@@ -3,7 +3,9 @@ local C = Color3.fromRGB
 -- The pure economy lives in Core/Economy so it can be tested without the engine.
 local Economy = require("./Core/Economy")
 local WorldRefs = require("./WorldRefs")
+local Balance = require("./Core/Balance")
 local Config = {}
+Config.Balance = Balance
 Config.DataVersion = 1
 Config.MaxLevel = Economy.MaxLevel
 Config.CharacterWalkSpeed = 24
@@ -141,16 +143,16 @@ Config.Trails = {
 }
 Config.Stones = {
 	-- Ids stay for saved inventories; names and colours follow the Low Poly V2 meshes.
-	{ id = "Pebble", name = "Rubber Ball", power = 1, cost = 0, color = C(235, 52, 72), displaySlot = 5 },
-	{ id = "Smooth", name = "Classic Ball", power = 1.15, cost = 250, color = C(223, 232, 243), displaySlot = 4 },
-	{ id = "Golden", name = "Beach Ball", power = 1.35, cost = 2500, color = C(78, 209, 255), displaySlot = 3 },
-	{ id = "Ruby", name = "Basketball", power = 1.6, cost = 15000, color = C(255, 128, 36), displaySlot = 2 },
-	{ id = "Emerald", name = "Leather Ball", power = 1.9, cost = 75000, color = C(214, 120, 62), displaySlot = 1 },
-	{ id = "Galaxy", name = "Steel Ball", power = 2.5, cost = 350000, color = C(160, 170, 240), displaySlot = 10 },
-	{ id = "Rainbow", name = "Gold Ball", power = 3.5, cost = 2000000, color = C(255, 214, 46), displaySlot = 9 },
-	{ id = "DragonSun", name = "Storm Ball", power = 5, cost = 8000000, color = C(120, 108, 245), displaySlot = 8 },
-	{ id = "BlackHole", name = "Volcano Ball", power = 7.5, cost = 25000000, color = C(255, 110, 36), displaySlot = 7 },
-	{ id = "WorldCreator", name = "Sun Ball", power = 10, cost = 75000000, color = C(255, 196, 52), displaySlot = 6 },
+	{ id = "Pebble", name = "Rubber Ball", color = C(235, 52, 72), displaySlot = 5 },
+	{ id = "Smooth", name = "Classic Ball", color = C(223, 232, 243), displaySlot = 4 },
+	{ id = "Golden", name = "Beach Ball", color = C(78, 209, 255), displaySlot = 3 },
+	{ id = "Ruby", name = "Basketball", color = C(255, 128, 36), displaySlot = 2 },
+	{ id = "Emerald", name = "Leather Ball", color = C(214, 120, 62), displaySlot = 1 },
+	{ id = "Galaxy", name = "Steel Ball", color = C(160, 170, 240), displaySlot = 10 },
+	{ id = "Rainbow", name = "Gold Ball", color = C(255, 214, 46), displaySlot = 9 },
+	{ id = "DragonSun", name = "Storm Ball", color = C(120, 108, 245), displaySlot = 8 },
+	{ id = "BlackHole", name = "Volcano Ball", color = C(255, 110, 36), displaySlot = 7 },
+	{ id = "WorldCreator", name = "Sun Ball", color = C(255, 196, 52), displaySlot = 6 },
 }
 -- Keep retired red-egg IDs valid for existing saved inventories.
 Config.LegacyPets = {
@@ -163,166 +165,253 @@ Config.LegacyPets = {
 Config.Pets = {
 	{
 		id = "ScarletMushroom",
-		name = "Scarlet Mushroom",
-		boost = 1.2,
-		color = C(238, 53, 68),
+		boost = Balance.PetBoosts[1],
+		weight = Balance.PetWeights[1],
+		name = "Clover Bunny",
+		color = C(245, 221, 187),
 		rarity = "Common",
-		weight = 45,
-		visual = "ScarletMushroom",
+		visual = "CloverBunny",
 		eggBoost = 1,
 	},
 	{
 		id = "StrawberryCake",
-		name = "Strawberry Cake",
-		boost = 1.5,
-		color = C(255, 112, 164),
+		boost = Balance.PetBoosts[2],
+		weight = Balance.PetWeights[2],
+		name = "Acorn Squirrel",
+		color = C(199, 125, 67),
 		rarity = "Uncommon",
-		weight = 30,
-		visual = "StrawberryCake",
+		visual = "AcornSquirrel",
 		eggBoost = 1,
 	},
 	{
+		-- Keep the saved ID and discovery history for the renamed species.
 		id = "AutumnCat",
-		name = "Autumn Cat",
-		boost = 2.5,
-		color = C(255, 111, 43),
+		boost = Balance.PetBoosts[3],
+		weight = Balance.PetWeights[3] - Balance.EpicPetWeight,
+		name = "Bloom Fox",
+		color = C(242, 121, 81),
 		rarity = "Rare",
-		weight = 20,
-		visual = "AutumnCat",
+		visual = "BloomFox",
+		eggBoost = 1,
+	},
+	{
+		id = "MoonOwl",
+		boost = Balance.PetBoosts[3],
+		weight = Balance.EpicPetWeight,
+		name = "Moon Owl",
+		color = C(196, 150, 202),
+		rarity = "Epic",
+		visual = "MoonOwl",
 		eggBoost = 1,
 	},
 	{
 		id = "FlameCat",
-		name = "Flame Cat",
-		boost = 8,
-		color = C(255, 65, 34),
+		boost = Balance.PetBoosts[4],
+		weight = Balance.PetWeights[4],
+		name = "Grove Guardian",
+		color = C(193, 190, 135),
 		rarity = "Legendary",
-		weight = 5,
-		visual = "FlameCat",
+		visual = "GroveGuardian",
 		eggBoost = 1,
 	},
 }
--- Dedicated green-egg pool. Legacy pet IDs remain valid for saved inventories.
+-- Frost Egg keeps the four saved species IDs and adds Aurora Lynx.
 Config.UncommonPets = {
 	{
 		id = "Cactus",
-		name = "Cactus",
-		boost = 1.2,
-		color = C(180, 236, 146),
+		boost = Balance.PetBoosts[1],
+		weight = Balance.PetWeights[1],
+		name = "Snow Pup",
+		color = C(245, 222, 186),
 		rarity = "Common",
-		weight = 45,
-		visual = "Cactus",
+		visual = "SnowPup",
 	},
 	{
 		id = "Frog",
-		name = "Frog",
-		boost = 1.5,
-		color = C(133, 221, 99),
+		boost = Balance.PetBoosts[2],
+		weight = Balance.PetWeights[2],
+		name = "Snowy Penguin",
+		color = C(38, 67, 163),
 		rarity = "Uncommon",
-		weight = 30,
-		visual = "Frog",
+		visual = "SnowyPenguin",
 	},
 	{
 		id = "Watermelon",
-		name = "Watermelon",
-		boost = 2.5,
-		color = C(255, 177, 50),
+		boost = Balance.PetBoosts[3],
+		weight = Balance.PetWeights[3] - Balance.EpicPetWeight,
+		name = "Glacier Walrus",
+		color = C(22, 173, 185),
 		rarity = "Rare",
-		weight = 20,
-		visual = "Watermelon",
+		visual = "GlacierWalrus",
+	},
+	{
+		id = "AuroraLynx",
+		boost = Balance.PetBoosts[3],
+		weight = Balance.EpicPetWeight,
+		name = "Aurora Lynx",
+		color = C(128, 90, 219),
+		rarity = "Epic",
+		visual = "AuroraLynx",
 	},
 	{
 		id = "GreenDragon",
-		name = "Green Dragon",
-		boost = 8,
-		color = C(171, 99, 249),
+		boost = Balance.PetBoosts[4],
+		weight = Balance.PetWeights[4],
+		name = "Glacier Dragon",
+		color = C(43, 158, 220),
 		rarity = "Legendary",
-		weight = 5,
-		visual = "GreenDragon",
+		visual = "GlacierDragon",
 	},
 }
 Config.RarePets = {
 	{
 		id = "Shark",
-		name = "Shark",
-		boost = 1.2,
-		color = C(58, 174, 237),
+		boost = Balance.PetBoosts[1],
+		weight = Balance.PetWeights[1],
+		name = "Coal Mole",
+		color = C(48, 53, 70),
 		rarity = "Common",
-		weight = 45,
-		visual = "Shark",
+		visual = "CoalMole",
 		eggBoost = 5,
 	},
 	{
 		id = "CloudBird",
-		name = "Cloud Bird",
-		boost = 1.5,
-		color = C(81, 205, 241),
+		boost = Balance.PetBoosts[2],
+		weight = Balance.PetWeights[2],
+		name = "Cinder Gecko",
+		color = C(255, 89, 18),
 		rarity = "Uncommon",
-		weight = 30,
-		visual = "CloudBird",
+		visual = "CinderGecko",
 		eggBoost = 5,
 	},
 	{
 		id = "AngelCat",
-		name = "Angel Cat",
-		boost = 2.5,
-		color = C(184, 217, 246),
+		boost = Balance.PetBoosts[3],
+		weight = Balance.PetWeights[3] - Balance.EpicPetWeight,
+		name = "Ember Ram",
+		color = C(249, 77, 11),
 		rarity = "Rare",
-		weight = 20,
-		visual = "AngelCat",
+		visual = "EmberRam",
+		eggBoost = 5,
+	},
+	{
+		id = "BlazeBat",
+		boost = Balance.PetBoosts[3],
+		weight = Balance.EpicPetWeight,
+		name = "Blaze Bat",
+		color = C(84, 33, 141),
+		rarity = "Epic",
+		visual = "BlazeBat",
 		eggBoost = 5,
 	},
 	{
 		id = "IceCat",
-		name = "Ice Cat",
-		boost = 8,
-		color = C(62, 193, 241),
+		boost = Balance.PetBoosts[4],
+		weight = Balance.PetWeights[4],
+		name = "Inferno Phoenix",
+		color = C(255, 48, 18),
 		rarity = "Legendary",
-		weight = 5,
-		visual = "IceCat",
+		visual = "InfernoPhoenix",
 		eggBoost = 5,
 	},
 }
 Config.RainbowPets = {
 	{
 		id = "Butterfly",
-		name = "Butterfly",
-		boost = 1.2,
-		color = C(193, 83, 245),
+		boost = Balance.PetBoosts[1],
+		weight = Balance.PetWeights[1],
+		name = "Dusk Moth",
+		color = C(176, 90, 231),
 		rarity = "Common",
-		weight = 45,
-		visual = "Butterfly",
+		visual = "DuskMoth",
 		eggBoost = 15,
 	},
 	{
 		id = "MoonCat",
-		name = "Moon Cat",
-		boost = 1.5,
-		color = C(126, 83, 219),
+		boost = Balance.PetBoosts[2],
+		weight = Balance.PetWeights[2],
+		name = "Shadow Kitten",
+		color = C(53, 37, 132),
 		rarity = "Uncommon",
-		weight = 30,
-		visual = "MoonCat",
+		visual = "ShadowKitten",
 		eggBoost = 15,
 	},
 	{
 		id = "GalaxyCat",
-		name = "Galaxy Cat",
-		boost = 2.5,
-		color = C(185, 74, 244),
+		boost = Balance.PetBoosts[3],
+		weight = Balance.PetWeights[3] - Balance.Secret.Weight,
+		name = "Orbit Axolotl",
+		color = C(72, 84, 199),
 		rarity = "Rare",
-		weight = 20,
-		visual = "GalaxyCat",
+		visual = "OrbitAxolotl",
 		eggBoost = 15,
 	},
 	{
 		id = "CrystalCat",
-		name = "Crystal Cat",
-		boost = 8,
-		color = C(159, 94, 228),
+		boost = Balance.PetBoosts[4],
+		weight = Balance.PetWeights[4],
+		name = "Rift Wyrm",
+		color = C(135, 43, 198),
 		rarity = "Legendary",
-		weight = 5,
-		visual = "CrystalCat",
+		visual = "RiftWyrm",
 		eggBoost = 15,
+	},
+	{
+		id = "EclipseCat",
+		name = "Singularity",
+		rarity = "Secret",
+		boost = Balance.Secret.BaseBoost,
+		weight = Balance.Secret.Weight,
+		color = C(165, 60, 246),
+		visual = "Singularity",
+		eggBoost = Balance.EggTiers.Rainbow,
+	},
+}
+Config.SolarPets = {
+	{
+		id = "HoneyBee",
+		name = "Honey Bee",
+		rarity = "Common",
+		color = C(255, 189, 16),
+		visual = "HoneyBee",
+		boost = Balance.PetBoosts[1],
+		weight = Balance.PetWeights[1],
+	},
+	{
+		id = "DawnChick",
+		name = "Dawn Chick",
+		rarity = "Uncommon",
+		color = C(255, 178, 50),
+		visual = "DawnChick",
+		boost = Balance.PetBoosts[2],
+		weight = Balance.PetWeights[2],
+	},
+	{
+		id = "SunLion",
+		name = "Sun Lion",
+		rarity = "Rare",
+		color = C(255, 154, 44),
+		visual = "SunLion",
+		boost = Balance.PetBoosts[3],
+		weight = Balance.PetWeights[3] - Balance.EpicPetWeight,
+	},
+	{
+		id = "SkyPegasus",
+		name = "Sky Pegasus",
+		rarity = "Epic",
+		color = C(255, 225, 172),
+		visual = "SkyPegasus",
+		boost = Balance.SolarEpicBoost,
+		weight = Balance.EpicPetWeight,
+	},
+	{
+		id = "SolarSeraph",
+		name = "Solar Seraph",
+		rarity = "Legendary",
+		color = C(255, 199, 26),
+		visual = "SolarSeraph",
+		boost = Balance.PetBoosts[4],
+		weight = Balance.PetWeights[4],
 	},
 }
 -- Descriptor pools without colour or visuals: the egg roll stays engine free.
@@ -331,6 +420,7 @@ local PetPools: { [string]: { Economy.PetDescriptor } } = {
 	Uncommon = Economy.petDescriptors(Config.UncommonPets :: any),
 	Rare = Economy.petDescriptors(Config.RarePets :: any),
 	Rainbow = Economy.petDescriptors(Config.RainbowPets :: any),
+	SolarCrown = Economy.petDescriptors(Config.SolarPets :: any),
 }
 function Config.eggPets(eggId)
 	if eggId == "Uncommon" then
@@ -341,6 +431,9 @@ function Config.eggPets(eggId)
 	end
 	if eggId == "Rainbow" then
 		return Config.RainbowPets
+	end
+	if eggId == "SolarCrown" then
+		return Config.SolarPets
 	end
 	return Config.Pets
 end
@@ -356,29 +449,77 @@ function Config.rollEggPet(eggId, roll)
 end
 Config.AdminPet =
 	{ id = "AdminDragon", name = "Glitched Dragon", boost = 25, color = C(111, 255, 20), rarity = "Mythic" }
-Config.Eggs = {
-	{ id = "Common", name = "Common Egg", cost = 50, boost = 1, color = C(255, 55, 55), x = -130, z = 123 },
-	{ id = "Uncommon", name = "Uncommon Egg", cost = 500, boost = 2, color = C(75, 245, 98), x = -155, z = 123 },
-	{ id = "Rare", name = "Rare Egg", cost = 5000, boost = 5, color = C(81, 195, 255), x = -130, z = 160 },
-	{ id = "Rainbow", name = "Rainbow Egg", cost = 40000, boost = 15, color = C(255, 130, 231), x = -155, z = 160 },
+-- These four stands are generated in both worlds. Solar Crown uses the
+-- existing fifth stand in Football City.
+type Egg = { id: string, name: string, cost: number, color: Color3, x: number, z: number, boost: number }
+Config.BaseEggs = {
+	{
+		id = "Common",
+		name = "Common Egg",
+		cost = 50,
+		color = C(255, 55, 55),
+		x = -130,
+		z = 123,
+		boost = Balance.EggTiers.Common,
+	},
+	{
+		id = "Uncommon",
+		name = "Frost Egg",
+		cost = 500,
+		color = C(75, 245, 98),
+		x = -155,
+		z = 123,
+		boost = Balance.EggTiers.Uncommon,
+	},
+	{
+		id = "Rare",
+		name = "Magma Egg",
+		cost = 5000,
+		color = C(81, 195, 255),
+		x = -130,
+		z = 160,
+		boost = Balance.EggTiers.Rare,
+	},
+	{
+		id = "Rainbow",
+		name = "Void Egg",
+		cost = 40000,
+		color = C(255, 130, 231),
+		x = -155,
+		z = 160,
+		boost = Balance.EggTiers.Rainbow,
+	},
+} :: { Egg }
+Config.SolarEgg = {
+	id = "SolarCrown",
+	name = "Solar Crown Egg",
+	cost = 300000,
+	color = C(255, 208, 69),
+	x = -90,
+	z = 39,
+	boost = Balance.EggTiers.SolarCrown,
 }
+Config.Eggs = table.clone(Config.BaseEggs)
+table.insert(Config.Eggs, Config.SolarEgg)
+
+for index, ball in Config.Stones do
+	ball.power = nil
+	ball.trainingBonus = Balance.Balls[index].bonus
+	ball.cost = Balance.Balls[index].cost
+end
+function Config.eggsForWorld(world: number): { Egg }
+	return if world == 2 then Config.BaseEggs else Config.Eggs
+end
 
 function Config.eggCost(egg: { cost: number }, world: number): number
-	return egg.cost * (if world == 2 then 10 else 1)
+	return egg.cost * (if world == 2 then Balance.OceanEggCost else 1)
 end
 
 function Config.eggPetBoost(egg: { boost: number }, petBoost: number, world: number): number
-	return petBoost * egg.boost * (if world == 2 then 3 else 1)
+	return 1 + (petBoost - 1) * egg.boost * (if world == 2 then Balance.OceanPetBonus else 1)
 end
 
-Config.Gifts = {
-	{ time = 60, wins = 100, skill = 50 },
-	{ time = 180, wins = 500, skill = 150 },
-	{ time = 300, wins = 1000, skill = 500 },
-	{ time = 600, wins = 2500, skill = 1500 },
-	{ time = 900, wins = 10000, skill = 5000 },
-	{ time = 1800, wins = 50000, skill = 25000 },
-}
+Config.Gifts = Balance.Gifts
 Config.Products = require("./CommerceCatalog")
 
 function Config.find(list, id)
@@ -393,6 +534,7 @@ function Config.pet(id)
 	return id == Config.AdminPet.id and Config.AdminPet
 		or Config.find(Config.RarePets, id)
 		or Config.find(Config.RainbowPets, id)
+		or Config.find(Config.SolarPets, id)
 		or Config.find(Config.UncommonPets, id)
 		or Config.find(Config.Pets, id)
 		or Config.find(Config.LegacyPets, id)
@@ -405,5 +547,8 @@ function Config.threshold(level, rebirths)
 end
 function Config.format(value)
 	return Economy.format(value)
+end
+function Config.formatBoost(value: number): string
+	return string.format("%.3f", value):gsub("0+$", ""):gsub("%.$", "")
 end
 return Config

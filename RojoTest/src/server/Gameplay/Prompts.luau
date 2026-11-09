@@ -102,20 +102,14 @@ function Prompts.install(context: Context, map: any, world2: Instance?)
 		installBalls(world2)
 	end
 	local function eggAnchor(arena: any, id: string): BasePart?
-		if id == "AdminEgg" then
-			local volcanic = WorldRefs.volcanic(arena)
-			return volcanic
-				and (volcanic:FindFirstChild("InteractionAnchor") or volcanic:FindFirstChild("HackedAdminEgg"))
-		end
-		local scenery = WorldRefs.eggs(arena)
-		local model = scenery and scenery:FindFirstChild("Egg_" .. id)
-		return model and model:FindFirstChild("EggShell")
+		local _, anchor = WorldRefs.eggStation(arena, id)
+		return anchor
 	end
 	local function installEgg(arena: any, id: string)
 		local anchor = eggAnchor(arena, id)
 		local prompt = anchor and anchor:FindFirstChildWhichIsA("ProximityPrompt", true)
 		if anchor and not prompt and arena ~= map then
-			local source = eggAnchor(map, id)
+			local source = eggAnchor(map, if id == "AdminEgg" then "SolarCrown" else id)
 			local template = source and source:FindFirstChildWhichIsA("ProximityPrompt", true)
 			if template then
 				local clone = template:Clone()
@@ -155,10 +149,13 @@ function Prompts.install(context: Context, map: any, world2: Instance?)
 			warn("[Ball] " .. arena.Name .. " has no EggShop")
 			continue
 		end
-		for _, egg in context.Config.Eggs do
+		local ocean = arena == world2
+		for _, egg in context.Config.eggsForWorld(if ocean then 2 else 1) do
 			installEgg(arena, egg.id)
 		end
-		installEgg(arena, "AdminEgg")
+		if ocean then
+			installEgg(arena, "AdminEgg")
+		end
 	end
 end
 

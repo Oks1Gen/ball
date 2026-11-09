@@ -1,0 +1,504 @@
+{
+  "date": "2026-11-09",
+  "placeId": 106456161057435,
+  "universeId": 10770268214,
+  "scope": "Football City fifth stand and Solar Crown pet set",
+  "captionEdit": {
+    "before": {
+      "title": "Volcanic Inferno Egg",
+      "price": "175"
+    },
+    "title": "Solar Crown Egg",
+    "eggId": "SolarCrown",
+    "stagingRemoved": true,
+    "captionCount": 1,
+    "partsPreserved": 29,
+    "rarity": "Legendary"
+  },
+  "templates": {
+    "SunLion": {
+      "size": "3.106882095336914, 2.5425539016723633, 2.0719141960144043",
+      "mesh": "rbxassetid://83010481485919",
+      "texture": "rbxassetid://106687877633338"
+    },
+    "SkyPegasus": {
+      "size": "3.995450258255005, 2.728800058364868, 2.626084327697754",
+      "mesh": "rbxassetid://93552267855768",
+      "texture": "rbxassetid://131962392910247"
+    },
+    "SolarSeraph": {
+      "size": "4.045509338378906, 2.9114999771118164, 1.9324393272399902",
+      "mesh": "rbxassetid://110290964626483",
+      "texture": "rbxassetid://130662814649393"
+    },
+    "HoneyBee": {
+      "size": "1.8000001907348633, 2.7456068992614746, 1.8918001651763916",
+      "mesh": "rbxassetid://114927410874643",
+      "texture": "rbxassetid://102196381877328"
+    },
+    "DawnChick": {
+      "size": "2.4958322048187256, 2.763000011444092, 1.9305000305175781",
+      "mesh": "rbxassetid://78813836892096",
+      "texture": "rbxassetid://85184806854584"
+    }
+  },
+  "play": {
+    "author": "Dakemo555",
+    "authorId": 11789507527,
+    "server": {
+      "restricted": "HoneyBee",
+      "blockedInsufficientFunds": true,
+      "eggVisual": "Workspace.Map.World1.Lobby.EggShop.VolcanicEgg.Visual",
+      "stand": "Workspace.Map.World1.Lobby.EggShop.VolcanicEgg",
+      "weights": {
+        "SunLion": 1000,
+        "SkyPegasus": 400,
+        "SolarSeraph": 100,
+        "HoneyBee": 5500,
+        "DawnChick": 3000
+      },
+      "blockedWrongWorld": true,
+      "paidReward": "AdminDragon",
+      "adminPrice": 175,
+      "normalized": [
+        {
+          "balanceVersion": 3,
+          "rarity": "Common",
+          "eggId": "SolarCrown",
+          "id": "HoneyBee",
+          "boost": 2.0499999999999994,
+          "variantVersion": 1,
+          "craftRevision": 0,
+          "uid": "solar-1",
+          "name": "Honey Bee",
+          "baseBoost": 2.0499999999999994,
+          "form": "Normal",
+          "sourceWorld": 1,
+          "upgradeLevel": 0
+        },
+        {
+          "balanceVersion": 3,
+          "rarity": "Uncommon",
+          "eggId": "SolarCrown",
+          "id": "DawnChick",
+          "boost": 3.1000000000000005,
+          "variantVersion": 1,
+          "craftRevision": 0,
+          "uid": "solar-2",
+          "name": "Dawn Chick",
+          "baseBoost": 3.1000000000000005,
+          "form": "Normal",
+          "sourceWorld": 1,
+          "upgradeLevel": 0
+        },
+        {
+          "balanceVersion": 3,
+          "rarity": "Rare",
+          "eggId": "SolarCrown",
+          "id": "SunLion",
+          "boost": 5.200000000000001,
+          "variantVersion": 1,
+          "craftRevision": 0,
+          "uid": "solar-3",
+          "name": "Sun Lion",
+          "baseBoost": 5.200000000000001,
+          "form": "Normal",
+          "sourceWorld": 1,
+          "upgradeLevel": 0
+        },
+        {
+          "balanceVersion": 3,
+          "rarity": "Epic",
+          "eggId": "SolarCrown",
+          "id": "SkyPegasus",
+          "boost": 13.599999999999998,
+          "variantVersion": 1,
+          "craftRevision": 0,
+          "uid": "solar-4",
+          "name": "Sky Pegasus",
+          "baseBoost": 7.299999999999999,
+          "form": "Golden",
+          "sourceWorld": 1,
+          "upgradeLevel": 0
+        },
+        {
+          "balanceVersion": 3,
+          "rarity": "Legendary",
+          "eggId": "SolarCrown",
+          "id": "SolarSeraph",
+          "boost": 17.800000000000004,
+          "variantVersion": 1,
+          "craftRevision": 0,
+          "uid": "solar-5",
+          "name": "Solar Seraph",
+          "baseBoost": 9.400000000000002,
+          "form": "Normal",
+          "mutation": "Cosmic",
+          "sourceWorld": 1,
+          "upgradeLevel": 0
+        },
+        {
+          "rarity": "Mythic",
+          "id": "AdminDragon",
+          "boost": 25,
+          "uid": "original-dragon",
+          "name": "Glitched Dragon",
+          "upgradeLevel": 0
+        }
+      ],
+      "triple": [
+        {
+          "id": "HoneyBee",
+          "boost": 2.0499999999999994,
+          "eggId": "SolarCrown",
+          "sourceWorld": 1
+        },
+        {
+          "id": "DawnChick",
+          "boost": 3.1000000000000005,
+          "eggId": "SolarCrown",
+          "sourceWorld": 1
+        },
+        {
+          "id": "HoneyBee",
+          "boost": 2.0499999999999994,
+          "eggId": "SolarCrown",
+          "sourceWorld": 1
+        }
+      ],
+      "blockedCapacity": true,
+      "caption": "Solar Crown Egg",
+      "destination": "47.928932189941406, 24.70374870300293, 235.34841918945312",
+      "oceanStand": "Workspace.Map.World2.Lobby.EggShop.VolcanicEgg.InteractionAnchor",
+      "blockedPolicy": true,
+      "costsWins": {
+        "single": 300000,
+        "triple": 900000
+      }
+    },
+    "proximity": {
+      "prices": {
+        "single": 300000,
+        "triple": 900000
+      },
+      "title": "Solar Crown Egg",
+      "buttons": {
+        "EggPreviewCenter": [
+          430.0466003417969,
+          143.75
+        ],
+        "EggPreviewHatch": [
+          326.1860656738281,
+          143.75
+        ],
+        "EggPreviewHatch3": [
+          430.0466003417969,
+          219.9520263671875
+        ]
+      },
+      "adornee": "Workspace.Map.World1.Lobby.EggShop.VolcanicEgg.Visual.Celestial_Plate_20.EggPreviewCenter",
+      "author": "Dakemo555",
+      "pictures": {
+        "SunLion": {
+          "loaded": true,
+          "tint": "portrait"
+        },
+        "SkyPegasus": {
+          "loaded": true,
+          "tint": "portrait"
+        },
+        "SolarSeraph": {
+          "loaded": true,
+          "tint": "silhouette"
+        },
+        "HoneyBee": {
+          "loaded": true,
+          "tint": "portrait"
+        },
+        "DawnChick": {
+          "loaded": true,
+          "tint": "silhouette"
+        }
+      },
+      "labels": {
+        "10%": true,
+        "R": true,
+        "E": true,
+        "Hatch 3": true,
+        "Hatch 1": true,
+        "Buy Egg!": true,
+        "Solar Crown Egg": true,
+        "55%": true,
+        "4%": true,
+        "3 / 5 Found": true,
+        "30%": true,
+        "1%": true,
+        "900K": true,
+        "300K": true
+      }
+    },
+    "catalogue": {
+      "allFit": true,
+      "coords": {
+        "Hatch3": [
+          876.0055541992188,
+          486.49444580078125
+        ],
+        "Hatch": [
+          489.00970458984375,
+          486.49444580078125
+        ]
+      },
+      "pictures": {
+        "SunLion": {
+          "loaded": true,
+          "tint": "portrait"
+        },
+        "SkyPegasus": {
+          "loaded": true,
+          "tint": "portrait"
+        },
+        "SolarSeraph": {
+          "loaded": true,
+          "tint": "portrait"
+        },
+        "HoneyBee": {
+          "loaded": true,
+          "tint": "portrait"
+        },
+        "DawnChick": {
+          "loaded": true,
+          "tint": "portrait"
+        }
+      },
+      "tabs": 5
+    },
+    "catalogueClicks": [
+      [
+        "Hatch",
+        "SolarCrown",
+        1
+      ],
+      [
+        "Hatch",
+        "SolarCrown",
+        3
+      ]
+    ],
+    "ui": {
+      "inventory": {
+        "SunLion": {
+          "loaded": true,
+          "tint": "portrait"
+        },
+        "SkyPegasus": {
+          "loaded": true,
+          "tint": "portrait"
+        },
+        "SolarSeraph": {
+          "loaded": true,
+          "tint": "portrait"
+        },
+        "DawnChick": {
+          "loaded": true,
+          "tint": "portrait"
+        },
+        "HoneyBee": {
+          "loaded": true,
+          "tint": "portrait"
+        }
+      },
+      "shop": {
+        "×25 SKILL": true,
+        "...": true,
+        "Admin Egg": true,
+        "Glitched Dragon": true
+      },
+      "workshop": {
+        "SunLion": {
+          "loaded": true,
+          "tint": "portrait"
+        },
+        "SkyPegasus": {
+          "loaded": true,
+          "tint": "portrait"
+        },
+        "SolarSeraph": {
+          "loaded": true,
+          "tint": "portrait"
+        },
+        "DawnChick": {
+          "loaded": true,
+          "tint": "portrait"
+        },
+        "HoneyBee": {
+          "loaded": true,
+          "tint": "portrait"
+        }
+      },
+      "followers": {
+        "SunLion": {
+          "size": "4.065079689025879, 3.3267061710357666, 2.7109158039093018",
+          "mesh": "rbxassetid://83010481485919",
+          "texture": "rbxassetid://106687877633338"
+        },
+        "SkyPegasus": {
+          "size": "5.227692127227783, 3.570392608642578, 3.4359982013702393",
+          "mesh": "rbxassetid://93552267855768",
+          "texture": "rbxassetid://131962392910247"
+        },
+        "SolarSeraph": {
+          "size": "5.293190002441406, 3.809439182281494, 2.528425455093384",
+          "mesh": "rbxassetid://110290964626483",
+          "texture": "rbxassetid://130662814649393"
+        },
+        "HoneyBee": {
+          "size": "2.355140447616577, 3.5923829078674316, 2.475252628326416",
+          "mesh": "rbxassetid://114927410874643",
+          "texture": "rbxassetid://102196381877328"
+        },
+        "DawnChick": {
+          "size": "3.2655749320983887, 3.615140199661255, 2.525887966156006",
+          "mesh": "rbxassetid://78813836892096",
+          "texture": "rbxassetid://85184806854584"
+        }
+      },
+      "admin": {
+        "SunLion": {
+          "loaded": true,
+          "tint": "portrait"
+        },
+        "SkyPegasus": {
+          "loaded": true,
+          "tint": "portrait"
+        },
+        "SolarSeraph": {
+          "loaded": true,
+          "tint": "portrait"
+        },
+        "HoneyBee": {
+          "loaded": true,
+          "tint": "portrait"
+        },
+        "DawnChick": {
+          "loaded": true,
+          "tint": "portrait"
+        }
+      }
+    },
+    "policyAndShop": {
+      "restricted": "HoneyBee 100%",
+      "world2Tabs": 4,
+      "updateLog": {
+        "y": 304,
+        "x": 642,
+        "author": "Dakemo555"
+      },
+      "shop": {
+        "display": "Off Sale",
+        "title": "Glitched Dragon",
+        "sale": false
+      }
+    },
+    "review": {
+      "portraits": {
+        "SunLion": {
+          "loaded": true,
+          "tint": "portrait"
+        },
+        "SkyPegasus": {
+          "loaded": true,
+          "tint": "portrait"
+        },
+        "SolarSeraph": {
+          "loaded": true,
+          "tint": "portrait"
+        },
+        "HoneyBee": {
+          "loaded": true,
+          "tint": "portrait"
+        },
+        "DawnChick": {
+          "loaded": true,
+          "tint": "portrait"
+        }
+      },
+      "meshes": {
+        "SunLion": "rbxassetid://106687877633338",
+        "SkyPegasus": "rbxassetid://131962392910247",
+        "SolarSeraph": "rbxassetid://130662814649393",
+        "HoneyBee": "rbxassetid://102196381877328",
+        "DawnChick": "rbxassetid://85184806854584"
+      }
+    },
+    "hatchResults": {
+      "SunLion": {
+        "seen": true,
+        "boost": 5.200000000000001,
+        "name": "Sun Lion",
+        "rarity": "Rare"
+      },
+      "SkyPegasus": {
+        "seen": true,
+        "boost": 7.299999999999999,
+        "name": "Sky Pegasus",
+        "rarity": "Epic"
+      },
+      "SolarSeraph": {
+        "seen": true,
+        "boost": 9.400000000000002,
+        "name": "Solar Seraph",
+        "rarity": "Legendary"
+      },
+      "HoneyBee": {
+        "seen": true,
+        "boost": 2.0499999999999994,
+        "name": "Honey Bee",
+        "rarity": "Common"
+      },
+      "DawnChick": {
+        "seen": true,
+        "boost": 3.1000000000000005,
+        "name": "Dawn Chick",
+        "rarity": "Uncommon"
+      }
+    },
+    "usesCelestialShell": true,
+    "updateLog": {
+      "text": "Dakemo555 chose the pet designs and bold portraits. Solar Crown Egg hatches Honey Bee, Dawn Chick, Sun Lion, Sky Pegasus and Solar Seraph for 300K Wins. Find Glitched Dragon in the Shop. Pets from earlier eggs get their new looks automatically.",
+      "opened": true,
+      "avatar": "rbxthumb://type=AvatarHeadShot&id=11789507527&w=48&h=48",
+      "author": "Dakemo555  ·  Pet art direction and Solar Crown reward selection",
+      "expanded": true,
+      "scrolled": 100,
+      "fixturesRemoved": true,
+      "collapsed": true,
+      "closed": true
+    }
+  },
+  "studioAfterPlay": {
+    "allTemplateCount": 25,
+    "templates": [
+      "HoneyBee",
+      "DawnChick",
+      "SunLion",
+      "SkyPegasus",
+      "SolarSeraph"
+    ],
+    "stand": "Solar Crown Egg",
+    "mode": "Edit",
+    "stagingRemoved": true,
+    "oceanSign": "Jelly Egg"
+  },
+  "captures": [
+    "studio-pets-and-ui.jpg",
+    "studio-catalogue.jpg",
+    "studio-hatch.jpg"
+  ],
+  "method": "Production components and actual stand in Studio Play. The server hatch function ran on isolated in-memory state. No purchase or profile mutation from the fixtures.",
+  "projectGate": {
+    "lune": 151,
+    "gateTests": 5,
+    "typeErrors": 0
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "triangles": 9678,
+  "max_part_triangles": 2728,
+  "parts": {
+    "Square caramel body": 588,
+    "Paw L front": 188,
+    "Paw L back": 188,
+    "Paw R front": 188,
+    "Paw R back": 188,
+    "Ear -1": 360,
+    "Ear cream -1": 360,
+    "Ear 1": 360,
+    "Ear cream 1": 360,
+    "Eye white L": 616,
+    "Illustrated amber iris L": 288,
+    "Eye glint L": 168,
+    "Eye glint small L": 120,
+    "Eye white R": 616,
+    "Illustrated amber iris R": 288,
+    "Eye glint R": 168,
+    "Eye glint small R": 120,
+    "Chocolate nose": 288,
+    "Smile": 460,
+    "Curled acorn tail": 2728,
+    "Scalloped cocoa acorn cap": 1038
+  },
+  "bounds": [
+    [
+      -1.0,
+      -1.1030000448226929,
+      0.0
+    ],
+    [
+      1.3111557960510254,
+      2.389554500579834,
+      3.005000114440918
+    ]
+  ],
+  "imports": {
+    "blend": {
+      "bounds_error": 0.0,
+      "embedded_images": 3,
+      "meshes": 20
+    },
+    "glb": {
+      "bounds_error": 0.0,
+      "embedded_images": 3,
+      "meshes": 21
+    },
+    "fbx": {
+      "bounds_error": 4.76837158203125e-07,
+      "embedded_images": 3,
+      "meshes": 21
+    }
+  },
+  "front": "-Y"
+}

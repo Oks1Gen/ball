@@ -1,0 +1,56 @@
+{
+  "date": "2026-11-09",
+  "placeId": 106456161057435,
+  "universeId": 10770268214,
+  "scope": "Complete Forest Egg replacements",
+  "replacementCount": 2,
+  "outlinedPortraits": 5,
+  "outlinePixels": 24,
+  "preload": "All five portraits and textures AssetFetchStatus.Success in Play",
+  "models": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"1\":{\"texture\":\"rbxassetid://91792082628868\",\"mesh\":\"rbxassetid://81229903014028\",\"name\":\"Pet_GroveGuardian\",\"size\":\"2.799999952316284, 2.769545078277588, 2.4436213970184326\"},\"3\":{\"texture\":\"rbxassetid://132120042458138\",\"mesh\":\"rbxassetid://140375509863434\",\"name\":\"Pet_BloomFox\",\"size\":\"1.9463218450546265, 2.224702835083008, 2.799999952316284\"},\"2\":{\"texture\":\"rbxassetid://127114762409651\",\"mesh\":\"rbxassetid://139567267379477\",\"name\":\"Pet_AcornSquirrel\",\"size\":\"1.852956771850586, 2.409242868423462, 2.799999952316284\"},\"5\":{\"texture\":\"rbxassetid://96588122539690\",\"mesh\":\"rbxassetid://122692988857757\",\"name\":\"Pet_CloverBunny\",\"size\":\"2.084390640258789, 2.799999952316284, 1.8936591148376465\"},\"4\":{\"texture\":\"rbxassetid://94563611208325\",\"mesh\":\"rbxassetid://135373105755580\",\"name\":\"Pet_MoonOwl\",\"size\":\"2.6606953144073486, 2.7873895168304443, 2.799999713897705\"}}"
+      }
+    ],
+    "isError": false
+  },
+  "migration": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"discoveries\":{\"ScarletMushroom\":true,\"StrawberryCake\":true},\"equipped\":{\"1\":\"old-bunny\"},\"migrated\":{\"1\":{\"balanceVersion\":3,\"rarity\":\"Common\",\"eggId\":\"Common\",\"id\":\"ScarletMushroom\",\"boost\":1.15,\"variantVersion\":1,\"uid\":\"old-bunny\",\"name\":\"Clover Bunny\",\"craftRevision\":0,\"sourceWorld\":1,\"baseBoost\":1.15,\"form\":\"Normal\",\"upgradeLevel\":0},\"2\":{\"balanceVersion\":3,\"rarity\":\"Uncommon\",\"eggId\":\"Common\",\"id\":\"StrawberryCake\",\"boost\":1.6,\"variantVersion\":1,\"uid\":\"old-squirrel\",\"name\":\"Acorn Squirrel\",\"craftRevision\":0,\"sourceWorld\":1,\"baseBoost\":1.3,\"form\":\"Golden\",\"upgradeLevel\":0}}}"
+      }
+    ],
+    "isError": false
+  },
+  "inventoryGolden": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"models\":{\"1\":{\"color\":\"1, 0.847059, 0.364706\",\"mesh\":\"rbxassetid://122692988857757\",\"name\":\"Pet_CloverBunny\",\"texture\":\"rbxassetid://96588122539690\"},\"3\":{\"color\":\"1, 0.847059, 0.364706\",\"mesh\":\"rbxassetid://122692988857757\",\"name\":\"Pet_CloverBunny\",\"texture\":\"rbxassetid://96588122539690\"},\"2\":{\"color\":\"1, 0.847059, 0.364706\",\"mesh\":\"rbxassetid://139567267379477\",\"name\":\"Pet_AcornSquirrel\",\"texture\":\"rbxassetid://127114762409651\"}},\"images\":{\"1\":{\"loaded\":true,\"image\":\"rbxassetid://115200199975380\"},\"3\":{\"loaded\":true,\"image\":\"rbxassetid://124490712371263\"},\"2\":{\"loaded\":true,\"image\":\"rbxassetid://92661951811505\"},\"5\":{\"loaded\":true,\"image\":\"rbxassetid://93803273203661\"},\"4\":{\"loaded\":true,\"image\":\"rbxassetid://117525307875285\"}}}"
+      }
+    ],
+    "isError": false
+  },
+  "followers": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"1\":{\"texture\":\"rbxassetid://96588122539690\",\"mesh\":\"rbxassetid://122692988857757\",\"name\":\"Pet_CloverBunny\",\"size\":\"3.193814992904663, 4.290259838104248, 2.9015326499938965\"},\"2\":{\"texture\":\"rbxassetid://127114762409651\",\"mesh\":\"rbxassetid://139567267379477\",\"name\":\"Pet_AcornSquirrel\",\"size\":\"2.721548080444336, 3.5385985374450684, 4.112727642059326\"}}"
+      }
+    ],
+    "isError": false
+  },
+  "screenshots": [
+    "studio-complete.jpg",
+    "studio-golden-inventory.jpg"
+  ],
+  "checks": {
+    "project": "151 Lune tests, 5 verification gate tests, type check 0 new/known/stale, Rojo build and Selene/StyLua passed",
+    "savedIds": "Retained ScarletMushroom / StrawberryCake; new names and visuals resolve on load",
+    "legacyRuntimeArt": "No old names or obsolete portrait URLs remain in src",
+    "scene": "No map building or layout calls"
+  }
+}

@@ -149,12 +149,7 @@ function Service.status(self: Admin, player: Player): Status?
 		flight = player:GetAttribute("AdminFlight") == true,
 		pets = #d.pets,
 		equipped = #d.equipped,
-		shot = Config.shotDistance(
-			d.skill,
-			require(game.ReplicatedStorage.Shared.BallPurchases).power(d),
-			d.world,
-			self.context.arenaFor(player)
-		),
+		shot = Config.shotDistance(d.skill, 1, d.world, self.context.arenaFor(player)),
 		studio = game:GetService("RunService"):IsStudio(),
 		errors = errors,
 	}
@@ -298,11 +293,11 @@ function Service.dispatch(self: Admin, player: Player, command: string, value: a
 		end
 		c.equipBest(s)
 	elseif command == "Egg" then
-		assert(Config.find(Config.Eggs, value), "Неизвестное яйцо")
+		assert(Config.find(Config.eggsForWorld(d.world), value), "Неизвестное яйцо")
 		c.effect:FireClient(player, "Egg", value)
 	elseif command == "Hatch" then
 		local count = type(value) == "table" and value.count or value
-		local egg = Config.find(Config.Eggs, type(value) == "table" and value.egg or "Uncommon")
+		local egg = Config.find(Config.eggsForWorld(d.world), type(value) == "table" and value.egg or "Uncommon")
 		assert(egg, "Неизвестное яйцо")
 		assert(count == 1 or count == 3, "Выбери 1 или 3 яйца")
 		assert(#d.pets + count <= 60, "Инвентарь петов заполнен")

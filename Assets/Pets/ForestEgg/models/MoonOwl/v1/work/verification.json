@@ -1,0 +1,56 @@
+{
+  "triangles": 7652,
+  "max_part_triangles": 1108,
+  "bounds": [
+    [
+      -1.3042763471603394,
+      -1.1759999990463257,
+      0.0
+    ],
+    [
+      1.3042763471603394,
+      1.5690275430679321,
+      2.732731342315674
+    ]
+  ],
+  "parts": {
+    "Square body": 588,
+    "Paw L front": 188,
+    "Paw L rear": 188,
+    "Toe L -1": 120,
+    "Toe L 1": 120,
+    "Paw R front": 188,
+    "Paw R rear": 188,
+    "Toe R -1": 120,
+    "Toe R 1": 120,
+    "Eye L": 448,
+    "Eye R": 448,
+    "Left plumage tuft": 576,
+    "Right plumage tuft": 576,
+    "Scalloped wing R": 672,
+    "Scalloped wing L": 672,
+    "Rounded tail feather 1": 252,
+    "Rounded tail feather 2": 252,
+    "Rounded tail feather 3": 252,
+    "Forehead crescent": 1108,
+    "Little golden beak": 576
+  },
+  "front": "-Y",
+  "imports": {
+    "blend": {
+      "triangles": 7652,
+      "bounds_error": 0.0,
+      "packed_images": 3
+    },
+    "glb": {
+      "triangles": 7652,
+      "bounds_error": 0.0,
+      "packed_images": 3
+    },
+    "fbx": {
+      "triangles": 7652,
+      "bounds_error": 1.7141933028597123e-07,
+      "packed_images": 3
+    }
+  }
+}

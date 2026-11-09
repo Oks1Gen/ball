@@ -1,0 +1,177 @@
+{
+  "HoneyBee": {
+    "triangles": 6752,
+    "bounds": [
+      [
+        -1.0,
+        -1.1019999980926514,
+        0.0
+      ],
+      [
+        1.0,
+        1.0,
+        3.0506744384765625
+      ]
+    ],
+    "imports": {
+      "blend": {
+        "triangles": 6752,
+        "boundsError": 0.0,
+        "packedImages": 3
+      },
+      "glb": {
+        "triangles": 6752,
+        "boundsError": 0.0,
+        "packedImages": 3
+      },
+      "fbx": {
+        "triangles": 6752,
+        "boundsError": 2.384185791015625e-07,
+        "packedImages": 3
+      }
+    },
+    "closedParts": 16,
+    "minimumSignedVolume": 0.0001899095443534322,
+    "embeddedAtlas": true
+  },
+  "DawnChick": {
+    "triangles": 6452,
+    "bounds": [
+      [
+        -1.3865734338760376,
+        -1.1449999809265137,
+        0.0
+      ],
+      [
+        1.3865734338760376,
+        1.0,
+        3.069999933242798
+      ]
+    ],
+    "imports": {
+      "blend": {
+        "triangles": 6452,
+        "boundsError": 0.0,
+        "packedImages": 4
+      },
+      "glb": {
+        "triangles": 6452,
+        "boundsError": 0.0,
+        "packedImages": 4
+      },
+      "fbx": {
+        "triangles": 6452,
+        "boundsError": 1.7678672747933888e-07,
+        "packedImages": 4
+      }
+    },
+    "closedParts": 12,
+    "minimumSignedVolume": 0.004354132335838772,
+    "embeddedAtlas": true
+  },
+  "SunLion": {
+    "triangles": 9572,
+    "bounds": [
+      [
+        -1.4690001010894775,
+        -1.1019999980926514,
+        0.0
+      ],
+      [
+        1.9830913543701172,
+        1.2001268863677979,
+        2.8250598907470703
+      ]
+    ],
+    "imports": {
+      "blend": {
+        "triangles": 9572,
+        "boundsError": 0.0,
+        "packedImages": 4
+      },
+      "glb": {
+        "triangles": 9572,
+        "boundsError": 0.0,
+        "packedImages": 4
+      },
+      "fbx": {
+        "triangles": 9572,
+        "boundsError": 2.384185791015625e-07,
+        "packedImages": 4
+      }
+    },
+    "closedParts": 21,
+    "minimumSignedVolume": 0.00018990960678988097,
+    "embeddedAtlas": true
+  },
+  "SkyPegasus": {
+    "triangles": 9624,
+    "bounds": [
+      [
+        -2.2196946144104004,
+        -1.1019999980926514,
+        0.0
+      ],
+      [
+        2.2196946144104004,
+        1.815871238708496,
+        3.0320000648498535
+      ]
+    ],
+    "imports": {
+      "blend": {
+        "triangles": 9624,
+        "boundsError": 0.0,
+        "packedImages": 7
+      },
+      "glb": {
+        "triangles": 9624,
+        "boundsError": 0.0,
+        "packedImages": 7
+      },
+      "fbx": {
+        "triangles": 9624,
+        "boundsError": 2.384185791015625e-07,
+        "packedImages": 7
+      }
+    },
+    "closedParts": 22,
+    "minimumSignedVolume": 0.00018990958470860753,
+    "embeddedAtlas": true
+  },
+  "SolarSeraph": {
+    "triangles": 8342,
+    "bounds": [
+      [
+        -2.2475051879882812,
+        -1.1471545696258545,
+        0.0
+      ],
+      [
+        2.2475051879882812,
+        1.0,
+        3.234999895095825
+      ]
+    ],
+    "imports": {
+      "blend": {
+        "triangles": 8342,
+        "boundsError": 0.0,
+        "packedImages": 5
+      },
+      "glb": {
+        "triangles": 8342,
+        "boundsError": 2.384185791015625e-07,
+        "packedImages": 5
+      },
+      "fbx": {
+        "triangles": 8342,
+        "boundsError": 2.384185791015625e-07,
+        "packedImages": 5
+      }
+    },
+    "closedParts": 18,
+    "minimumSignedVolume": 0.00018990958470860943,
+    "embeddedAtlas": true
+  }
+}

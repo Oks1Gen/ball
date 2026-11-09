@@ -1,0 +1,107 @@
+[
+  {
+    "pet": "CoalMole",
+    "triangles": 5464,
+    "imports": {
+      "blend": {
+        "triangles": 5464,
+        "boundsError": 0.0,
+        "packedImages": 2
+      },
+      "glb": {
+        "triangles": 5464,
+        "boundsError": 0.0,
+        "packedImages": 2
+      },
+      "fbx": {
+        "triangles": 5464,
+        "boundsError": 1.7678678432275774e-07,
+        "packedImages": 2
+      }
+    }
+  },
+  {
+    "pet": "CinderGecko",
+    "triangles": 6912,
+    "imports": {
+      "blend": {
+        "triangles": 6912,
+        "boundsError": 0.0,
+        "packedImages": 3
+      },
+      "glb": {
+        "triangles": 6912,
+        "boundsError": 0.0,
+        "packedImages": 3
+      },
+      "fbx": {
+        "triangles": 6912,
+        "boundsError": 2.384185791015625e-07,
+        "packedImages": 3
+      }
+    }
+  },
+  {
+    "pet": "EmberRam",
+    "triangles": 8208,
+    "imports": {
+      "blend": {
+        "triangles": 8208,
+        "boundsError": 0.0,
+        "packedImages": 3
+      },
+      "glb": {
+        "triangles": 8208,
+        "boundsError": 0.0,
+        "packedImages": 3
+      },
+      "fbx": {
+        "triangles": 8208,
+        "boundsError": 2.384185791015625e-07,
+        "packedImages": 3
+      }
+    }
+  },
+  {
+    "pet": "BlazeBat",
+    "triangles": 7748,
+    "imports": {
+      "blend": {
+        "triangles": 7748,
+        "boundsError": 0.0,
+        "packedImages": 4
+      },
+      "glb": {
+        "triangles": 7748,
+        "boundsError": 0.0,
+        "packedImages": 4
+      },
+      "fbx": {
+        "triangles": 7748,
+        "boundsError": 2.384185791015625e-07,
+        "packedImages": 4
+      }
+    }
+  },
+  {
+    "pet": "InfernoPhoenix",
+    "triangles": 9852,
+    "imports": {
+      "blend": {
+        "triangles": 9852,
+        "boundsError": 0.0,
+        "packedImages": 5
+      },
+      "glb": {
+        "triangles": 9852,
+        "boundsError": 0.0,
+        "packedImages": 5
+      },
+      "fbx": {
+        "triangles": 9852,
+        "boundsError": 2.384185791015625e-07,
+        "packedImages": 5
+      }
+    }
+  }
+]

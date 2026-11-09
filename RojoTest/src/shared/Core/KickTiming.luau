@@ -1,12 +1,13 @@
 --!strict
 -- Shared clock curve: rendering and server validation use exactly the same phase.
+local Balance = require("./Balance")
 local Timing = {}
 Timing.Cycle = 1.6
 Timing.PerfectHeight = 0.95
 Timing.AccuracyCycle = 2
 Timing.AccuracyLead = 0.18
-Timing.MinCombined = 0.25
-Timing.MaxCombined = 6
+Timing.MinCombined = Balance.Timing.Minimum
+Timing.MaxCombined = Balance.Timing.Minimum + Balance.Timing.PowerBonus + Balance.Timing.AccuracyBonus
 
 function Timing.height(elapsed: number): number
 	local phase = math.max(0, elapsed) / (Timing.Cycle / 2) % 2
@@ -26,7 +27,8 @@ function Timing.height(elapsed: number): number
 end
 
 function Timing.multiplier(height: number): number
-	return 2 ^ (2 * math.clamp(height, 0, 1) - 1)
+	return Balance.Timing.PowerMinimum
+		* (Balance.Timing.PowerMaximum / Balance.Timing.PowerMinimum) ^ math.clamp(height, 0, 1)
 end
 
 -- A contracting/expanding ring, with a short readable perfect window at contact.
@@ -36,11 +38,21 @@ function Timing.accuracyHeight(elapsed: number): number
 end
 
 function Timing.accuracyMultiplier(height: number): number
-	return 0.5 + 2.5 * math.clamp(height, 0, 1)
+	return Balance.Timing.AccuracyMinimum
+		+ (Balance.Timing.AccuracyMaximum - Balance.Timing.AccuracyMinimum) * math.clamp(height, 0, 1)
 end
 
 function Timing.combined(power: number, accuracy: number): number
-	return math.clamp(power, 0.5, 2) * math.clamp(accuracy, 0.5, 3)
+	local powerQuality = (
+		math.clamp(power, Balance.Timing.PowerMinimum, Balance.Timing.PowerMaximum) - Balance.Timing.PowerMinimum
+	) / (Balance.Timing.PowerMaximum - Balance.Timing.PowerMinimum)
+	local accuracyQuality = (
+		math.clamp(accuracy, Balance.Timing.AccuracyMinimum, Balance.Timing.AccuracyMaximum)
+		- Balance.Timing.AccuracyMinimum
+	) / (Balance.Timing.AccuracyMaximum - Balance.Timing.AccuracyMinimum)
+	return Timing.MinCombined
+		+ powerQuality * Balance.Timing.PowerBonus
+		+ accuracyQuality * Balance.Timing.AccuracyBonus
 end
 
 function Timing.quality(multiplier: number): number

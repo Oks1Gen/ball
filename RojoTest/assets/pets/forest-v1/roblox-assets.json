@@ -1,0 +1,105 @@
+{
+  "universeId": 10770268214,
+  "creatorUserId": 11789507527,
+  "bodyWidth": 1.8,
+  "permission": {
+    "successAssetIds": [
+      129604663299720,
+      107535913428978,
+      101512976797536,
+      95640491504404,
+      90971125132037,
+      84520763736094,
+      115200199975380,
+      92661951811505,
+      124490712371263,
+      93803273203661,
+      117525307875285,
+      119893286859389,
+      77308883273505
+    ],
+    "errors": []
+  },
+  "assets": [
+    {
+      "visual": "CloverBunny",
+      "petId": "ScarletMushroom",
+      "modelId": "119893286859389",
+      "meshId": "rbxassetid://122692988857757",
+      "textureId": "rbxassetid://96588122539690",
+      "meshSize": [
+        2.712207794189453,
+        3.6433160305023193,
+        2.4639999866485596
+      ],
+      "modelOperation": "8a5545fe-f8e2-4fe2-9871-2304b0fb6633",
+      "moderation": "Approved",
+      "portraitId": "115200199975380",
+      "portraitOperation": "54192516-0373-4ccc-92e8-5f33c0400502"
+    },
+    {
+      "visual": "AcornSquirrel",
+      "petId": "StrawberryCake",
+      "modelId": "77308883273505",
+      "meshId": "rbxassetid://139567267379477",
+      "textureId": "rbxassetid://127114762409651",
+      "meshSize": [
+        2.3111557960510254,
+        3.005000114440918,
+        3.4925546646118164
+      ],
+      "modelOperation": "9990a9c0-9cb2-4de2-b6d7-2f2a58187224",
+      "moderation": "Approved",
+      "portraitId": "92661951811505",
+      "portraitOperation": "56285246-264e-4bbd-9a94-ae84cc9df23b"
+    },
+    {
+      "visual": "BloomFox",
+      "petId": "AutumnCat",
+      "meshId": "rbxassetid://140375509863434",
+      "textureId": "rbxassetid://132120042458138",
+      "meshSize": [
+        2.6403603553771973,
+        3.01796293258667,
+        3.798494815826416
+      ],
+      "modelId": "129604663299720",
+      "modelOperation": "9c99b383-cd2e-4772-949c-c7f8bd3aa865",
+      "portraitId": "124490712371263",
+      "portraitOperation": "b52d91fe-a644-4445-b296-871638ba4883",
+      "moderation": "Approved"
+    },
+    {
+      "visual": "MoonOwl",
+      "petId": "MoonOwl",
+      "meshId": "rbxassetid://135373105755580",
+      "textureId": "rbxassetid://94563611208325",
+      "meshSize": [
+        2.6085526943206787,
+        2.732731342315674,
+        2.745027542114258
+      ],
+      "modelId": "101512976797536",
+      "modelOperation": "44fe4a1f-8d04-4618-8469-b1b6ffcec791",
+      "portraitId": "93803273203661",
+      "portraitOperation": "6830e9af-d71b-442e-8923-0d8f6bd46014",
+      "moderation": "Approved"
+    },
+    {
+      "visual": "GroveGuardian",
+      "petId": "FlameCat",
+      "meshId": "rbxassetid://81229903014028",
+      "textureId": "rbxassetid://91792082628868",
+      "meshSize": [
+        3.4140520095825195,
+        3.376918315887451,
+        2.979526996612549
+      ],
+      "modelId": "90971125132037",
+      "modelOperation": "f13428ee-20a9-4e82-b9ae-b88bffc7315b",
+      "portraitId": "117525307875285",
+      "portraitOperation": "f4e9426e-e08b-4b36-9fb6-dc0766e9ce15",
+      "moderation": "Approved"
+    }
+  ]
+}

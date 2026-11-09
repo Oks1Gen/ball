@@ -1,0 +1,48 @@
+{
+  "triangles": 6664,
+  "largestPart": 1520,
+  "bounds": [
+    [
+      -1.0,
+      -1.1200000047683716,
+      0.0
+    ],
+    [
+      1.275734782218933,
+      2.3248116970062256,
+      2.9957499504089355
+    ]
+  ],
+  "parts": {
+    "Square body": 764,
+    "front left paw": 448,
+    "rear left paw": 448,
+    "front right paw": 448,
+    "rear right paw": 448,
+    "left glossy eye": 420,
+    "right glossy eye": 420,
+    "left triangular kitten ear": 512,
+    "right triangular kitten ear": 512,
+    "Hooked kitten tail": 1520,
+    "left light smile curl": 200,
+    "right light smile curl": 200,
+    "Little pink nose": 324
+  },
+  "imports": {
+    "blend": {
+      "triangles": 6664,
+      "boundsError": 0.0,
+      "packedImages": 3
+    },
+    "glb": {
+      "triangles": 6664,
+      "boundsError": 0.0,
+      "packedImages": 3
+    },
+    "fbx": {
+      "triangles": 6664,
+      "boundsError": 4.76837158203125e-07,
+      "packedImages": 3
+    }
+  }
+}

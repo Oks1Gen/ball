@@ -77,7 +77,7 @@ local Scenery = require(Client.HatchScenery)
 local buildsBefore = Scenery.builds
 local ok, result = pcall(function()
 	for world = 1, 2 do
-		for _, egg in Config.Eggs do
+		for _, egg in Config.eggsForWorld(world) do
 			render(0.2, 1, false, egg.id, world)
 			check(#named("HatchingEgg") == 1, "Egg viewport: " .. egg.id)
 			check(named("HatchEggStage")[1].GroupTransparency < 0.05, "Egg visible before the clicks")

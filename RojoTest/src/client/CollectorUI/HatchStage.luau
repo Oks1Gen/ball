@@ -190,9 +190,12 @@ local function againOf(p: Props, eggs: { EggEntry }): { egg: string, count: numb
 			return nil
 		end
 	end
-	local egg = eggId and Config.find(Config.Eggs, eggId)
 	local data = p.Data
-	if not egg or not data or data.wins == nil then
+	if not data or data.wins == nil then
+		return nil
+	end
+	local egg = eggId and Config.find(Config.eggsForWorld(data.world), eggId)
+	if not egg then
 		return nil
 	end
 	local cost = Config.eggCost(egg, data.world) * count

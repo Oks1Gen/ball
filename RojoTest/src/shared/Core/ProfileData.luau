@@ -1,5 +1,7 @@
 --!strict
 -- Save data contains only JSON values. This module has no engine dependencies.
+local Migration = require("./PetMigration")
+local Balance = require("./Balance")
 local Data = {}
 -- Largest whole number represented exactly by a Luau number. Accrual and
 -- loading share this cap, so a rejoin cannot change valid live counters.
@@ -19,6 +21,9 @@ local MAX_PETS = 60
 
 function Data.fresh(): any
 	return {
+		petMaterial = 0,
+		challengeProgress = {},
+		challengeClaims = {},
 		skill = 0,
 		wins = 0,
 		rebirths = 0,
@@ -32,6 +37,7 @@ function Data.fresh(): any
 		trail = "None",
 		trails = { None = true },
 		pets = {},
+		discoveredPets = {}, -- Kinds obtained at least once, independent of stored copies.
 		equipped = {},
 		world = 1,
 		oceanUnlocked = false,
@@ -48,6 +54,13 @@ function Data.fresh(): any
 		offlineRate = 0,
 		offlinePending = 0,
 	}
+end
+
+function Data.rememberPets(data: any)
+	data.discoveredPets = data.discoveredPets or {}
+	for _, pet in data.pets do
+		data.discoveredPets[pet.id] = true
+	end
 end
 
 function Data.resetProgress(input: any): any
@@ -87,8 +100,23 @@ function Data.normalize(input: any, catalog: any): any
 	if type(input) ~= "table" then
 		return data
 	end
-	for _, key in { "skill", "wins", "rebirths", "best", "donated", "daily", "lastSeen", "offlinePending" } do
+	for _, key in
+		{ "petMaterial", "skill", "wins", "rebirths", "best", "donated", "daily", "lastSeen", "offlinePending" }
+	do
 		data[key] = bounded(input[key], 0, Data.MaxProgress)
+	end
+	for _, world in { 1, 2 } do
+		for _, goal in Balance.Challenges do
+			local key = tostring(world) .. ":" .. goal.id
+			data.challengeProgress[key] = bounded(
+				if type(input.challengeProgress) == "table" then input.challengeProgress[key] else nil,
+				0,
+				goal.hits
+			)
+			if type(input.challengeClaims) == "table" and input.challengeClaims[key] == true then
+				data.challengeClaims[key] = true
+			end
+		end
 	end
 	data.dailyCount = bounded(input.dailyCount, if data.daily > 0 then 1 else 0, 7)
 	data.tutorialStage = bounded(input.tutorialStage, 0, 5)
@@ -104,6 +132,11 @@ function Data.normalize(input: any, catalog: any): any
 		data.trail = input.trail
 	end
 	data.perks, data.receipts = flags(input.perks), flags(input.receipts)
+	for id in flags(input.discoveredPets) do
+		if catalog.pets[id] then
+			data.discoveredPets[id] = true
+		end
+	end
 	data.passGrants = flags(input.passGrants)
 	if data.perks.StarterPack then
 		data.passGrants.StarterPack = true
@@ -134,16 +167,35 @@ function Data.normalize(input: any, catalog: any): any
 			then
 				local definition = catalog.pets[pet.id]
 				seen[pet.uid] = true
+				local safe = table.clone(pet)
+				safe.boost = if Data.finite(pet.boost) then math.clamp(pet.boost, 1, 1e9) else 1
+				safe.upgradeLevel = bounded(pet.upgradeLevel, 0, Migration.LegacyMaxLevel)
+				safe.baseBoost = if Data.finite(pet.baseBoost) then math.clamp(pet.baseBoost, 1, 1e9) else nil
+				local migrated = Migration.fields(safe, definition)
+				if pet.variantVersion ~= 1 and safe.upgradeLevel > 0 then
+					Data.add(data, "petMaterial", Migration.refund(safe.upgradeLevel))
+				end
 				table.insert(data.pets, {
 					uid = pet.uid,
 					id = pet.id,
 					name = definition.name,
 					rarity = definition.rarity,
-					boost = if Data.finite(pet.boost) then math.clamp(pet.boost, 1, 1e9) else 1,
+					boost = migrated.boost,
+					eggId = migrated.eggId,
+					sourceWorld = migrated.sourceWorld,
+					balanceVersion = migrated.balanceVersion,
+					upgradeLevel = migrated.upgradeLevel,
+					baseBoost = migrated.baseBoost,
+					form = migrated.form,
+					mutation = migrated.mutation,
+					craftRevision = migrated.craftRevision,
+					variantVersion = migrated.variantVersion,
 				})
 			end
 		end
 	end
+	-- Older saves have no discovery history: migrate the valid pets they hold.
+	Data.rememberPets(data)
 	if type(input.equipped) == "table" then
 		local equipped = {}
 		for _, uid in ipairs(input.equipped) do

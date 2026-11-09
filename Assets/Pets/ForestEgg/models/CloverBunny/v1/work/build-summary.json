@@ -1,0 +1,19 @@
+{
+  "scene": "CloverBunny",
+  "asset_collection": "CloverBunny_Asset",
+  "parts": 32,
+  "meshes": 27,
+  "palette_srgb": {
+    "Cream": "F5DDBB",
+    "Pink": "F18DA2",
+    "Nose": "EF8D9D",
+    "Mouth": "754D35",
+    "Clover": "72B62E",
+    "CloverStem": "4E922A",
+    "EyeWhite": "FFFCED",
+    "Glint": "FFFFFF"
+  },
+  "reference": "Assets/Pets/ForestEgg/concepts-v4/forest-egg-five-pets-v4.png",
+  "original_scene": "Scene",
+  "original_objects_preserved": true
+}

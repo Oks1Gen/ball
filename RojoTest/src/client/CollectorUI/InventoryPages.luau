@@ -7,6 +7,9 @@ local U = require(script.Parent.Components)
 local T = require(script.Parent.Theme)
 local Art = require(script.Parent.Art)
 local PetCardArt = require(script.Parent.Parent.Modules.PetCardArt)
+local Variants = require(game.ReplicatedStorage.Shared.Core.PetVariants)
+local Controls = require(script.Parent.PetControls)
+local PetDetailPlane = require(script.Parent.PetDetailPlane)
 local e = React.createElement
 local C = Color3.fromRGB
 local Pages = {}
@@ -63,13 +66,21 @@ local function recess(name: string, x: number, y: number, w: number, h: number, 
 		Children = children,
 	})
 end
-local function power(value: number, w: number, y: number, size: number): any
+local function power(value: number, w: number, y: number, size: number, additive: boolean?): any
 	return frame("Power", {
 		Icon = e(
 			U.Icon,
 			{ Kind = "Skill", Position = UDim2.fromOffset(4, y), Size = UDim2.fromOffset(size + 6, size + 6) }
 		),
-		Value = label("×" .. tostring(value), size + 6, y, w - size - 10, size + 6, size, GREEN),
+		Value = label(
+			(if additive then "+" else "×") .. Config.formatBoost(value),
+			size + 6,
+			y,
+			w - size - 10,
+			size + 6,
+			size,
+			GREEN
+		),
 	}, w, y + size + 6)
 end
 local function checkMark(w: number): any
@@ -137,7 +148,7 @@ function Pages.Balls(p: any): any
 					BallView,
 					{ Id = item.id, Position = UDim2.fromOffset(5, 2), Size = UDim2.fromOffset(cardW - 10, cardH - 24) }
 				),
-				Power = power(item.power, cardW, cardH - 29, p.Phone and 17 or 22),
+				Power = power(item.trainingBonus, cardW, cardH - 29, p.Phone and 17 or 22, true),
 				Check = p.Data.stone == item.id and checkMark(cardW) or nil,
 				Lock = not has and e(
 					U.Icon,
@@ -157,7 +168,7 @@ function Pages.Balls(p: any): any
 			Position = UDim2.fromOffset(8, p.Phone and 35 or 58),
 			Size = UDim2.fromOffset(detailW - 16, math.max(32, panelH - (p.Phone and 135 or 175))),
 		}),
-		Power = power(selected.power, detailW, panelH - 98, p.Phone and 21 or 29),
+		Power = power(selected.trainingBonus, detailW, panelH - 98, p.Phone and 21 or 29, true),
 		Owned = label(
 			has and (equipped and "Equipped" or "Owned") or Config.format(selected.cost) .. " Wins",
 			4,
@@ -230,16 +241,22 @@ function Pages.Balls(p: any): any
 end
 
 local function PetCardImage(p: any): any
-	local image = PetCardArt.image(p.Id)
+	local image = if p.Pet and ((p.Pet.form and p.Pet.form ~= "Normal") or p.Pet.mutation)
+		then nil
+		else PetCardArt.outlinedImage(p.Id)
 	local ref: any = React.useRef(nil)
 	React.useEffect(function()
 		if ref.current then
 			Art.bind(ref.current)
 		end
-	end, { p.Id })
-	if not image then
-		return e(U.PetView, p)
+	end, { p.Id, image })
+	local modelProps = table.clone(p)
+	if p.Pet then
+		modelProps.Def = table.clone(p.Def)
+		modelProps.Def.name = Variants.name(p.Pet)
 	end
+	modelProps.Position = UDim2.fromOffset(0, p.PortraitOnly and 0 or 14)
+	modelProps.Size = p.PortraitOnly and UDim2.fromScale(1, 1) or UDim2.new(1, 0, 1, p.MultilineName and -50 or -30)
 	return e("Frame", {
 		Name = "PetIllustration",
 		BackgroundTransparency = 1,
@@ -247,34 +264,35 @@ local function PetCardImage(p: any): any
 		Size = p.Size,
 		ZIndex = 15,
 	}, {
-		Image = e("ImageLabel", {
+		Image = image and e("ImageLabel", {
 			ref = ref,
 			Name = "PetCardArt",
 			Image = image,
 			BackgroundTransparency = 1,
-			Position = UDim2.fromOffset(0, 14),
-			Size = UDim2.new(1, 0, 1, -30),
+			Position = modelProps.Position,
+			Size = modelProps.Size,
 			ScaleType = Enum.ScaleType.Fit,
 			ZIndex = 15,
 			Active = false,
-		}),
-		Rarity = e(U.Label, {
+		}) or e(U.PetView, modelProps),
+		Rarity = not p.PortraitOnly and e(U.Label, {
 			Text = p.Def.rarity,
 			Position = UDim2.fromOffset(0, 0),
 			Size = UDim2.new(1, 0, 0, 14),
-			TextSize = 14,
+			TextSize = p.MultilineName and 16 or 14,
 			Scaled = true,
 			MinTextSize = 9,
 			Color = T.Rarity[p.Def.rarity],
 			ZIndex = 16,
 		}),
-		Name = e(U.Label, {
-			Text = p.Def.name,
-			Position = UDim2.new(0, 0, 1, -16),
-			Size = UDim2.new(1, 0, 0, 16),
-			TextSize = 14,
+		Name = not p.PortraitOnly and e(U.Label, {
+			Text = if p.Pet then Variants.name(p.Pet) else p.Def.name,
+			Position = UDim2.new(0, 0, 1, p.MultilineName and -36 or -16),
+			Size = UDim2.new(1, 0, 0, p.MultilineName and 36 or 16),
+			TextSize = p.MultilineName and 18 or 14,
+			Wrap = p.MultilineName,
 			Scaled = true,
-			MinTextSize = 8,
+			MinTextSize = p.MultilineName and 12 or 8,
 			ZIndex = 16,
 		}),
 	})
@@ -307,7 +325,7 @@ function Pages.Pets(p: any): any
 		end
 	end
 	local w, h = p.Width, p.Height
-	local header = p.Phone and 26 or 34
+	local header = p.ImmersivePets and 12 or p.Phone and 26 or 34
 	if not pet then
 		return frame("PetsInventory", {
 			Empty = recess("EmptyPetInventory", 0, header, w, h - header, {
@@ -349,14 +367,17 @@ function Pages.Pets(p: any): any
 			Count = label("0 / 60 Pets", 4, 0, w - 8, header - 4, 20),
 		}, w, h)
 	end
-	local detailW = p.Phone and 132 or 184
-	local gridX, gridW = detailW + 16, w - detailW - 16
-	local gridH = h - header - 70
-	local detailH = h - header
+	local detailW = p.ImmersivePets and 300 or p.Phone and 132 or 184
+	local gridX = p.ImmersivePets and 0 or detailW + 16
+	local gridW = p.ImmersivePets and w or w - detailW - 16
+	local gridH = h - header - (p.ImmersivePets and 100 or 70)
+	local detailH = p.ImmersivePets and h + 88 or h - header
 	local cols = p.Phone and (gridW >= 300 and 3 or 2) or 4
 	local cardW, gap = Spacing.row(gridW - 32, cols, 92)
 	local paddingY = p.Phone and 8 or 16
-	local cardH = if p.Phone then math.min(cardW + 28, math.max(72, gridH - paddingY * 2)) else cardW + 28
+	local cardH = if p.Phone
+		then math.min(cardW + 28, math.max(72, gridH - paddingY * 2))
+		else cardW + (p.ImmersivePets and 68 or 28)
 	local artworkSize = math.min(cardW - 6, cardH - 30)
 	local visibleRows = math.ceil(gridH / (cardH + gap))
 	local cards: any = {}
@@ -369,34 +390,40 @@ function Pages.Pets(p: any): any
 			Name = "Pet_" .. item.uid,
 			Position = UDim2.fromOffset(16 + (i - 1) % cols * (cardW + gap), paddingY + row * (cardH + gap)),
 			Size = UDim2.fromOffset(cardW, cardH),
-			Color = color:Lerp(T.Outline, 0.2),
+			Color = color:Lerp(T.Outline, p.ImmersivePets and 0.08 or 0.2),
 			BorderColor = color:Lerp(Color3.new(1, 1, 1), 0.5),
 			SelectionColor = CYAN,
 			Selected = item.uid == pet.uid,
 			Quiet = true,
 			Studs = false,
 			OnActivated = function()
+				if p.Feedback then
+					p.Feedback()
+				end
 				p.SelectPet(item.uid)
 				setConfirm(false)
 			end,
 			Children = {
 				Preview = def and row >= firstRow - 1 and row <= firstRow + visibleRows and e(PetCardImage, {
 					Id = item.id,
+					Pet = item,
 					Def = def,
 					Key = item.uid,
 					FitToView = true,
 					ReducedMotion = true,
+					MultilineName = p.ImmersivePets,
 					Position = UDim2.fromOffset((cardW - artworkSize) / 2, 3),
-					Size = UDim2.fromOffset(artworkSize, artworkSize),
+					Size = UDim2.fromOffset(artworkSize, p.ImmersivePets and cardH - 30 or artworkSize),
 				}) or nil,
-				Power = power(item.boost, cardW, cardH - 29, p.Phone and 17 or 22),
+				Power = power(item.boost, cardW, cardH - 29, p.ImmersivePets and 25 or p.Phone and 17 or 22),
 				Check = isEquipped and checkMark(cardW) or nil,
 			},
 		})
 	end
 	local isEquipped = table.find(equipped, pet.uid) ~= nil
 	local full = not isEquipped and #equipped >= 3
-	local illustrated = PetCardArt.image(pet.id) ~= nil
+	-- Both imported models and raster portraits carry their own name/rarity.
+	local illustrated = true
 	local previewY = if illustrated then 4 else p.Phone and 28 or 48
 	local details: any = {
 
@@ -404,6 +431,7 @@ function Pages.Pets(p: any): any
 			or nil,
 		Preview = e(PetCardImage, {
 			Id = pet.id,
+			Pet = pet,
 			Def = Config.pet(pet.id),
 			Key = pet.uid,
 			Position = UDim2.fromOffset(5, previewY),
@@ -442,10 +470,17 @@ function Pages.Pets(p: any): any
 			p.Busy or full
 		),
 	}
-	local footerW, footerGap = Spacing.row(gridW - 16, 3, 44)
+	local footerW, footerGap = Spacing.row(gridW - 16, 4, 44)
 	local result: any = {
 		Count = label(tostring(#pets) .. " / 60", 0, 0, detailW, header - 4, p.Phone and 18 or 25),
-		Equipped = label("Equipped: " .. #equipped .. " / 3", gridX, 0, gridW, header - 4, p.Phone and 18 or 27),
+		Equipped = label(
+			"Team " .. #equipped .. "/3 • " .. (p.Data.petMaterial or 0) .. " Shards",
+			gridX,
+			0,
+			gridW,
+			header - 4,
+			p.Phone and 18 or 27
+		),
 		Details = e(U.Surface, {
 			Name = "PetDetails",
 			Position = UDim2.fromOffset(0, header),
@@ -469,20 +504,34 @@ function Pages.Pets(p: any): any
 				Children = cards,
 			}),
 		}),
-		Delete = button("DeleteSelected", "Delete", gridX + 8, h - 44, footerW, 44, function()
-			setConfirm(true)
-		end, T.Colors.Red, p.Busy),
-		Best = button(
-			"EquipBest",
-			p.Phone and "Best" or "Equip Best",
-			gridX + 8 + footerW + footerGap,
+		Delete = button(
+			"RecycleSelected",
+			"Recycle",
+			gridX + 8,
 			h - 44,
 			footerW,
 			44,
 			function()
-				p.Request("EquipBest")
+				setConfirm(true)
 			end,
-			T.Colors.Green,
+			T.Colors.Red,
+			p.Busy or isEquipped or not Config.Balance.Crafting.Yield[pet.rarity] or pet.id == "AdminDragon"
+		),
+		Best = button("EquipBest", "Best", gridX + 8 + footerW + footerGap, h - 44, footerW, 44, function()
+			p.Request("EquipBest")
+		end, T.Colors.Green, p.Busy),
+		CraftHint = label(Variants.name(pet), gridX, h - 68, gridW, 20, 14, T.Gold),
+		Upgrade = button(
+			"OpenPetWorkshop",
+			"Craft",
+			gridX + 8 + 3 * (footerW + footerGap),
+			h - 44,
+			footerW,
+			44,
+			function()
+				p.Request("PetCraft")
+			end,
+			T.Colors.Blue,
 			p.Busy
 		),
 		Sort = button(
@@ -498,6 +547,197 @@ function Pages.Pets(p: any): any
 			T.Gold
 		),
 	}
+	if p.ImmersivePets then
+		local rarityColor = T.Rarity[pet.rarity] or T.Slot
+		local common = pet.rarity == "Common"
+		local detailBorder = if common then T.Outline else rarityColor:Lerp(Color3.new(1, 1, 1), 0.4)
+		local available = w - 24
+		local bestW, utilityW, countW =
+			math.floor(available * 0.32), math.floor(available * 0.32), math.floor(available * 0.26)
+		local groupGap = (available - bestW - utilityW - countW) / 2
+		local footerY = h - 78
+		local utilityX = 12 + bestW + groupGap
+		local countX = utilityX + utilityW + groupGap
+		local actionW, actionGap = Spacing.row(utilityW - 20, 3, 50)
+		result.Count = nil
+		result.Equipped = nil
+		result.Delete = nil
+		result.Sort = nil
+		result.Upgrade = nil
+		result.CraftHint = nil
+		result.Best = e(Controls.Button, {
+			Name = "EquipBest",
+			Text = "Equip Best",
+			Position = UDim2.fromOffset(12, footerY),
+			Size = UDim2.fromOffset(bestW, 70),
+			TextSize = 38,
+			Color = C(155, 255, 0),
+			TopColor = C(245, 255, 0),
+			BottomColor = C(113, 255, 0),
+			Disabled = p.Busy,
+			OnActivated = function()
+				p.Request("EquipBest")
+			end,
+		})
+		result.Utility = e(Controls.Plate, {
+			Name = "PetUtilityBar",
+			Position = UDim2.fromOffset(utilityX, footerY),
+			Size = UDim2.fromOffset(utilityW, 70),
+			Children = {
+				Recycle = e(Controls.Action, {
+					Name = "RecycleSelected",
+					Text = "Recycle",
+					Icon = "Recycle",
+					Position = UDim2.fromOffset(10, 7),
+					Size = UDim2.fromOffset(actionW, 50),
+					Disabled = p.Busy
+						or isEquipped
+						or not Config.Balance.Crafting.Yield[pet.rarity]
+						or pet.id == "AdminDragon",
+					OnActivated = function()
+						setConfirm(true)
+					end,
+				}),
+				Sort = e(Controls.Action, {
+					Name = "SortPets",
+					Text = byName and "Name" or "Power",
+					Icon = "Skill",
+					Position = UDim2.fromOffset(10 + actionW + actionGap, 7),
+					Size = UDim2.fromOffset(actionW, 50),
+					OnActivated = function()
+						setByName(not byName)
+					end,
+				}),
+				Craft = e(Controls.Action, {
+					Name = "OpenPetWorkshop",
+					Text = "Craft",
+					Icon = "PetCraft",
+					Position = UDim2.fromOffset(10 + 2 * (actionW + actionGap), 7),
+					Size = UDim2.fromOffset(actionW, 50),
+					Disabled = p.Busy,
+					OnActivated = function()
+						p.Request("PetCraft")
+					end,
+				}),
+			},
+		})
+		result.Capacity = e(Controls.Plate, {
+			Name = "PetCapacity",
+			Position = UDim2.fromOffset(countX, footerY + 11),
+			Size = UDim2.fromOffset(countW, 48),
+			Children = {
+				Paw = e(
+					U.Icon,
+					{ Kind = "PetTeam", Position = UDim2.fromScale(0.02, 0.12), Size = UDim2.fromScale(0.21, 0.76) }
+				),
+				Team = e(U.Label, {
+					Name = "TeamCount",
+					Text = #equipped .. "/3",
+					Position = UDim2.fromScale(0.23, 0),
+					Size = UDim2.fromScale(0.23, 1),
+					TextSize = 20,
+					Scaled = true,
+				}),
+				Box = e(
+					U.Icon,
+					{ Kind = "PetStorage", Position = UDim2.fromScale(0.49, 0.12), Size = UDim2.fromScale(0.21, 0.76) }
+				),
+				Count = e(U.Label, {
+					Name = "StorageCount",
+					Text = #pets .. "/60",
+					Position = UDim2.fromScale(0.70, 0),
+					Size = UDim2.fromScale(0.28, 1),
+					TextSize = 19,
+					Scaled = true,
+				}),
+			},
+		})
+		result.Details = e(PetDetailPlane, {
+			Color = rarityColor,
+			BorderColor = detailBorder,
+			GlowColor = if common then T.Outline:Lerp(T.Text, 0.12) else rarityColor,
+			X = w + 45,
+			Y = -70,
+			Width = detailW,
+			Height = detailH,
+			AnchorWidth = 250,
+			AnchorHeight = 506,
+			Visible = p.Visible,
+			Interactive = not confirm,
+			Reduced = p.Reduced,
+			Children = {
+				Name = e(U.Label, {
+					Name = "SelectedPetName",
+					Text = Variants.name(pet),
+					Position = UDim2.fromOffset(14, 14),
+					Size = UDim2.fromOffset(detailW - 28, 44),
+					TextSize = 38,
+					MaxTextSize = 76,
+					Scaled = true,
+					MinTextSize = 16,
+					Wrap = true,
+				}),
+				Rarity = e(U.Surface, {
+					Name = "RarityPill",
+					Position = UDim2.fromOffset(72, 65),
+					Size = UDim2.fromOffset(detailW - 144, 32),
+					Quiet = true,
+					Color = rarityColor:Lerp(T.Outline, 0.65),
+					BorderColor = detailBorder,
+					Outline = 2,
+					Radius = 16,
+					NoShadow = true,
+					Children = {
+						Text = e(U.Label, {
+							Text = pet.rarity,
+							TextSize = 21,
+							Color = if common then T.Text else detailBorder,
+						}),
+					},
+				}),
+				Preview = e(PetCardImage, {
+					Id = pet.id,
+					Pet = pet,
+					Def = Config.pet(pet.id),
+					Key = pet.uid,
+					PortraitOnly = true,
+					FitToView = true,
+					ReducedMotion = true,
+					Position = UDim2.fromOffset(10, 102),
+					Size = UDim2.fromOffset(detailW - 20, detailH - 238),
+				}),
+				Power = e("Frame", {
+					Name = "SelectedPower",
+					Position = UDim2.fromOffset(38, detailH - 160),
+					Size = UDim2.fromOffset(detailW - 76, 60),
+					BackgroundTransparency = 1,
+				}, {
+					Icon = e(U.Icon, { Kind = "Skill", Size = UDim2.fromOffset(52, 60) }),
+					Value = e(U.Label, {
+						Text = "×" .. Config.formatBoost(pet.boost),
+						Position = UDim2.fromOffset(59, 0),
+						Size = UDim2.new(1, -59, 1, 0),
+						TextSize = 52,
+						MaxTextSize = 104,
+						Scaled = true,
+						Color = GREEN,
+					}),
+				}),
+				Equip = e(Controls.Button, {
+					Name = "EquipSelected",
+					Text = isEquipped and "Unequip" or full and "Team Full" or "Equip",
+					Position = UDim2.fromOffset(22, detailH - 91),
+					Size = UDim2.fromOffset(detailW - 44, 58),
+					Color = isEquipped and C(255, 34, 89) or T.Colors.Green,
+					TextSize = 42,
+					Disabled = p.Busy or full,
+					OnActivated = function()
+						p.Request("Pet", pet.uid)
+					end,
+				}),
+			},
+		})
+	end
 	if confirm then
 		result.Confirm = e("TextButton", {
 			Name = "DeleteConfirmation",
@@ -516,7 +756,11 @@ function Pages.Pets(p: any): any
 				ZIndex = 75,
 				Children = {
 					Title = e(U.Label, {
-						Text = "Delete " .. pet.name .. " permanently?",
+						Text = "Recycle "
+							.. pet.name
+							.. " for "
+							.. (Config.Balance.Crafting.Yield[pet.rarity] or 0)
+							.. " Shards permanently?",
 						Position = UDim2.fromOffset(12, 8),
 						Size = UDim2.new(1, -24, 0, 82),
 						TextSize = 23,
@@ -535,13 +779,13 @@ function Pages.Pets(p: any): any
 					}),
 					Delete = e(U.Button, {
 						Name = "ConfirmDeletePet",
-						Text = "Delete",
+						Text = "Recycle",
 						Position = UDim2.new(0.5, 16, 1, -62),
 						Size = UDim2.new(0.5, -32, 0, 44),
 						Color = T.Colors.Red,
 						ZIndex = 90,
 						OnActivated = function()
-							p.Request("DeletePet", pet.uid)
+							p.Request("RecyclePet", pet.uid)
 							setConfirm(false)
 						end,
 					}),

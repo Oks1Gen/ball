@@ -3,6 +3,7 @@
 -- the granted pet, which then fills with colour. The labels follow the fill.
 local React = require(game.ReplicatedStorage.Packages.React)
 local Config = require(game.ReplicatedStorage.Shared.GameConfig)
+local PetCardArt = require(script.Parent.Parent.Modules.PetCardArt)
 local Sequence = require(game.ReplicatedStorage.Shared.Core.HatchSequence)
 local U = require(script.Parent.Components)
 local T = require(script.Parent.Theme)
@@ -93,11 +94,13 @@ function Roulette.View(p: Props)
 	}
 	for index, def in p.Pool do
 		local final = index == p.Final
-		children["Silhouette" .. index] = e(U.PetView, {
+		local footOffset = PetCardArt.hatchFootOffset(def.id)
+		local portraitY = if footOffset then p.Foot.Y - artSize * footOffset else centerY
+		children["Silhouette" .. index] = e(U.PetPortrait, {
 			Def = def,
 			Key = if final then p.Pet.uid else "silhouette-" .. def.id,
 			AnchorPoint = Vector2.new(0.5, 0.5),
-			Position = UDim2.fromOffset(centerX, centerY),
+			Position = UDim2.fromOffset(centerX, portraitY),
 			Size = at(function(t)
 				local reveal = Roulette.revealed(track, t)
 				local s = if reveal then Egg.pop(reveal / 0.35) else 1 + 0.08 * (1 - Egg.clamp(switchAge(t) / 0.1))
@@ -168,7 +171,7 @@ function Roulette.View(p: Props)
 			ZIndex = 21,
 		}),
 		Boost = e(U.Label, {
-			Text = "×" .. p.Pet.boost .. " Skill",
+			Text = "×" .. Config.formatBoost(p.Pet.boost) .. " Skill",
 			Position = UDim2.fromOffset(0, nameHeight + lineHeight),
 			Size = UDim2.fromOffset(width, lineHeight),
 			TextSize = if p.Single then 26 else 20,

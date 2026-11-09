@@ -5,7 +5,6 @@
 local Config = require(game.ReplicatedStorage.Shared.GameConfig)
 local Worlds = require(game.ReplicatedStorage.Shared.Worlds)
 local Refs = require(game.ReplicatedStorage.Shared.WorldRefs)
-local BallPurchases = require(game.ReplicatedStorage.Shared.BallPurchases)
 local ShotFeedback = require(game.ReplicatedStorage.Shared.ShotFeedback)
 local ShotMotion = require(game.ReplicatedStorage.Shared.ShotMotion)
 local Data = require(game.ReplicatedStorage.Shared.Core.ProfileData)
@@ -13,6 +12,7 @@ local Zones = require(game.ReplicatedStorage.Shared.Core.ZoneProgression)
 local ShotZones = require(script.Parent.ShotZones)
 local Timing = require(game.ReplicatedStorage.Shared.Core.KickTiming)
 local Perfect = require(game.ReplicatedStorage.Shared.Core.PerfectKick)
+local Challenges = require(game.ReplicatedStorage.Shared.Core.Challenges)
 local Tutorial = require(game.ReplicatedStorage.Shared.Core.Tutorial)
 
 local Access = require(script.Parent.Parent.AdminAccess)
@@ -55,7 +55,7 @@ function Throw.build(context: Context): (Player, number?, number?, number?) -> (
 		s.kickTiming = nil
 		local perfect = if adminDistance then 0 else math.clamp(perfectCount or 0, 0, 2)
 		local windup = Perfect.windup(perfect)
-		local feedback = ShotFeedback.profile(d.skill, BallPurchases.power(d), d.world, timing, perfect)
+		local feedback = ShotFeedback.profile(d.skill, 1, d.world, timing, perfect)
 		context.stopTraining(player)
 		local root, hum = context.rootFor(player)
 		if not root or not hum then
@@ -71,11 +71,7 @@ function Throw.build(context: Context): (Player, number?, number?, number?) -> (
 		local arena = context.arenaFor(player)
 		local limit = Config.shotLimit(d.world, arena, startPosition)
 		local referenceStart = if d.world == 2 then startPosition else nil
-		local distance = adminDistance
-			or Config.shotDistance(d.skill, BallPurchases.power(d), d.world, arena, referenceStart)
-		if timingMultiplier and not adminDistance then
-			distance = math.clamp(math.floor(distance * timing), 1, Config.shotLimit(d.world, arena, referenceStart))
-		end
+		local distance = adminDistance or Config.shotDistance(d.skill, timing, d.world, arena, referenceStart)
 		distance = math.min(distance, limit)
 		local duration = Config.shotDuration(distance, d.world, feedback.intensity)
 		context.lockPose(s, root, hum, stance)
@@ -94,7 +90,7 @@ function Throw.build(context: Context): (Player, number?, number?, number?) -> (
 				context.releasePose(s)
 			end
 		end)
-		local award = math.max(1, math.floor(distance / 8))
+		local award = math.max(1, math.floor(distance / Config.Balance.WinsPerDistance))
 		award = math.floor(
 			award * trail.boost * (d.perks.DoubleWins and 2 or 1) * (1 + s.friends * 0.1) * Worlds[d.world].reward
 		)
@@ -116,7 +112,7 @@ function Throw.build(context: Context): (Player, number?, number?, number?) -> (
 		}
 		local character = player.Character
 		info.zoneCrossings = ShotZones.crossings(arena, info)
-		local skillMultiplier = context.multiplier(s)
+		local skillMultiplier = Config.Balance.trainingMultiplier(d, 0, s.friends, Worlds[d.world].reward)
 		context.FlightStreaming.start(player, info, function()
 			return context.states[player] == s
 				and s.data == d
@@ -158,6 +154,15 @@ function Throw.build(context: Context): (Player, number?, number?, number?) -> (
 					end
 					Data.add(d, "wins", finalAward)
 					Tutorial.shot(d, timingMultiplier ~= nil and adminDistance == nil)
+					local ready =
+						Challenges.shot(d, info.world, zone, timing, timingMultiplier ~= nil and adminDistance == nil)
+					if ready then
+						context.effect:FireClient(
+							player,
+							"ProgressionReward",
+							{ message = "Challenge ready! " .. ready, success = true }
+						)
+					end
 					d.best = Data.bound(math.max(d.best, distance))
 					context.effect:FireClient(player, "Result", {
 						wins = finalAward,

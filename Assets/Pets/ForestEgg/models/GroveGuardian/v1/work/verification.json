@@ -1,0 +1,61 @@
+{
+  "triangles": 9392,
+  "max_part_triangles": 1160,
+  "bounds": [
+    [
+      -1.7066510915756226,
+      -1.0770000219345093,
+      0.0
+    ],
+    [
+      1.7074010372161865,
+      1.9025269746780396,
+      3.376918315887451
+    ]
+  ],
+  "parts": {
+    "Square body": 588,
+    "Paw L front": 188,
+    "Paw L rear": 188,
+    "Toe L -1": 120,
+    "Toe L 1": 120,
+    "Paw R front": 188,
+    "Paw R rear": 188,
+    "Toe R -1": 120,
+    "Toe R 1": 120,
+    "Eye L": 448,
+    "Eye R": 448,
+    "Little nose": 324,
+    "Smile": 344,
+    "Cream ear R": 576,
+    "Cream ear L": 576,
+    "Branched antler R": 1160,
+    "Amber tip R": 288,
+    "Golden inset R": 224,
+    "Branched antler L": 1160,
+    "Amber tip L": 288,
+    "Golden inset L": 224,
+    "Crown forehead petal": 288,
+    "Left forehead petal": 288,
+    "Right forehead petal": 288,
+    "Upturned cream-tipped tail": 648
+  },
+  "front": "-Y",
+  "imports": {
+    "blend": {
+      "triangles": 9392,
+      "bounds_error": 0.0,
+      "packed_images": 5
+    },
+    "glb": {
+      "triangles": 9392,
+      "bounds_error": 0.0,
+      "packed_images": 5
+    },
+    "fbx": {
+      "triangles": 9392,
+      "bounds_error": 2.384185791015625e-07,
+      "packed_images": 5
+    }
+  }
+}

@@ -1,0 +1,136 @@
+{
+  "date": "2026-11-09",
+  "scope": "Desktop implementation of user-approved 01D",
+  "studio": {
+    "placeId": 106456161057435,
+    "universeId": 10770268214,
+    "player": "Dakemo555",
+    "userId": 11789507527,
+    "viewport": [
+      1366,
+      767
+    ],
+    "stateAtEnd": "Edit"
+  },
+  "gate": {
+    "command": "node RojoTest/tools/check.mjs",
+    "result": "pass",
+    "luneTests": 149,
+    "gateTests": 5,
+    "typeDiagnostics": 0,
+    "profileStore": "pinned hash/server-only routing pass",
+    "log": "../../../../../RojoTest/.tools/pets-ui-check-console.log"
+  },
+  "assets": {
+    "count": 4,
+    "size": [
+      1254,
+      1254
+    ],
+    "cornerAlpha": 0,
+    "loadedInPlay": true,
+    "permissions": "Universe 10770268214 Use; dependencies included",
+    "manifest": "../roblox-assets.json"
+  },
+  "interaction": {
+    "nativeProjectedSurfaceButton": true,
+    "hoverScale": 1.08,
+    "disabledPressScale": 0.96,
+    "disabledActionRejected": true,
+    "equipAndUnequip": "isolated canonical UI fixture; actual callbacks; no gameplay remote",
+    "recycle": "cancel preserved4; confirm4 to3 in fixture; detail blocked during confirmation",
+    "bestCraftSort": "fixture callbacks; real Craft opens Window_PetCraft and removes plane",
+    "scroll": "60-pet canonical fixture; native wheel Y793.145; bottom row art mounted",
+    "empty": "Find Eggs dispatched; plane absent",
+    "rapidCycles": 5,
+    "afterCycles": {
+      "planes": 1,
+      "surfaces": 1
+    },
+    "afterClose": {
+      "planes": 0,
+      "surfaces": 0
+    }
+  },
+  "layout": {
+    "mainFill": [
+      67,
+      84,
+      91
+    ],
+    "mainTransparency": 0.3,
+    "mainDesign": [
+      760,
+      520
+    ],
+    "overallDesignWidth": 1180,
+    "card": {
+      "canvas": [
+        324,
+        544
+      ],
+      "cornerRadius": 24,
+      "supportThickness": 0.01,
+      "renderedThickness": 0,
+      "maxDistance": 20,
+      "distance": 8
+    },
+    "footer": "all three groups inside shell including Equip Best maximum scale1.14",
+    "minimumCardCloseGapOverTiltSweep": 29.879,
+    "minimumScreenRightMarginOverTiltSweep": 21.48
+  },
+  "motion": {
+    "cameraTrackingErrorPixels": 0.000372,
+    "effectsOffAngle": 0,
+    "effectsOffButtonScale": 1,
+    "effectsOnAngleRadians": 0.14959,
+    "cleanup": true
+  },
+  "sound": {
+    "id": "rbxasset://sounds/volume_slider.ogg",
+    "reusedProjectAudio": true,
+    "group": "SkippingSounds",
+    "volume": 0.16,
+    "speed": 1.35,
+    "isLoaded": true,
+    "playing": true,
+    "length": 0.845417,
+    "rateLimitSeconds": 0.06
+  },
+  "updateLog": {
+    "version": "0.8.0",
+    "date": "2026-11-09",
+    "published": false,
+    "pcOpenClose": true,
+    "expandCollapse": true,
+    "scrollY": 189.588,
+    "avatarLoaded": true,
+    "author": "Dakemo555",
+    "role": "UI direction and concept selection"
+  },
+  "captures": {
+    "2026-11-09-pc-normal-capture.png": {
+      "normalSettings": true,
+      "limitation": "Roblox capture omits AlwaysOnTop SurfaceGui; not evidence of absent runtime card"
+    },
+    "2026-11-09-pc-plane-proof.png": {
+      "normalSettings": false,
+      "captureOnlyChanges": "AlwaysOnTop=false; Brightness=2; blur disabled; local character/follower transparency suppressed. All changes restored immediately afterward.",
+      "use": "inspect rounded plane/content/layout; not an exact normal-runtime colors/blur capture"
+    },
+    "2026-11-09-pc-layout.png": {
+      "normalSettings": false,
+      "use": "earlier diagnostic; superseded by pc-plane-proof"
+    }
+  },
+  "limitations": [
+    "No mobile test per AGENTS.md",
+    "Normal AlwaysOnTop output cannot be visually captured by this engine path; independent plain native SurfaceGui reproduced omission",
+    "No sound character/listening approval claimed; loading and Playing measured",
+    "No game publication, commit, or permanent standard write"
+  ],
+  "captureBugSources": [
+    "https://devforum.roblox.com/t/photobooth-plugin/3401720/349",
+    "https://devforum.roblox.com/t/capturesscreenshot-makes-surfaceguis-disappear/3601137"
+  ]
+}

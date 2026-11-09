@@ -90,4 +90,48 @@ function Visuals.preview(parent, id, x, y, width, height): ViewportFrame?
 	return viewport
 end
 
+-- Native material/color variants retain eyes and texture detail. No mesh duplication.
+function Visuals.applyVariant(model: Model, pet: any)
+	if not pet then
+		return
+	end
+	local colors = {
+		Golden = Color3.fromRGB(255, 204, 40),
+		Diamond = Color3.fromRGB(100, 225, 255),
+		Rainbow = Color3.fromRGB(227, 126, 255),
+	}
+	local color = colors[pet.form]
+	if color then
+		for _, part in model:GetDescendants() do
+			if part:IsA("BasePart") and not string.find(string.lower(part.Name), "eye") then
+				part.Color = part.Color:Lerp(color, 0.75)
+				part.Material = if pet.form == "Diamond" then Enum.Material.Glass else Enum.Material.Metal
+				part.Reflectance = 0.15
+			elseif part:IsA("SurfaceAppearance") then
+				part.Color = color
+			end
+		end
+	end
+	local mutationColors = {
+		Wind = Color3.fromRGB(140, 255, 220),
+		Frost = Color3.fromRGB(150, 240, 255),
+		Flame = Color3.fromRGB(255, 130, 40),
+		Storm = Color3.fromRGB(175, 120, 255),
+		Cosmic = Color3.fromRGB(255, 220, 90),
+	}
+	if mutationColors[pet.mutation] then
+		local highlight = Instance.new("Highlight")
+		highlight.Name = "MutationOutline"
+		highlight.FillTransparency = 0.92
+		highlight.OutlineTransparency = 0.15
+		highlight.FillColor = mutationColors[pet.mutation]
+		highlight.OutlineColor = mutationColors[pet.mutation]
+		highlight.DepthMode = Enum.HighlightDepthMode.Occluded
+		highlight.Parent = model
+	end
+	if color and game:GetService("RunService"):IsClient() then
+		require(script.Parent.PetVariantMeshes).apply(model, pet.form)
+	end
+	model:SetAttribute("VariantKey", tostring(pet.form) .. ":" .. tostring(pet.mutation))
+end
 return Visuals

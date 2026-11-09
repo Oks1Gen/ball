@@ -1,23 +1,17 @@
 --!strict
--- The panel of the nearest egg: its pets with their chances and the hatch
--- buttons (E for one egg, R for three). Only one egg shows at a time; the
--- panel takes the place of that egg's sign and pops like the other windows.
--- The egg prompts are switched off on this client: the panel replaces them.
+-- The nearby egg's interactive billboard follows the visible shell in 3D.
 local React = require(game.ReplicatedStorage.Packages.React)
 local ReactRoblox = require(game.ReplicatedStorage.Packages.ReactRoblox)
 local Config = require(game.ReplicatedStorage.Shared.GameConfig)
-local MarketplaceCatalog = require(script.Parent.Parent.Modules.MarketplaceCatalog)
 local Motion = require(game.ReplicatedStorage.Shared.UiMotion)
+local MotionConfig = require(game.ReplicatedStorage.Shared.UiMotionConfig)
 local WorldRefs = require(game.ReplicatedStorage.Shared.WorldRefs)
 local U = require(script.Parent.Parent.CollectorUI.Components)
-local T = require(script.Parent.Parent.CollectorUI.Theme)
-local Art = require(script.Parent.Parent.CollectorUI.Art)
-local PetCardArt = require(script.Parent.Parent.Modules.PetCardArt)
-local Insets = require(script.Parent.Parent.Modules.GuiInsets)
+local EggPanel = require(script.Parent.Parent.CollectorUI.EggStandPanel)
+local GuiInsets = require(script.Parent.Parent.Modules.GuiInsets)
 local Presentation = require(script.Parent.Parent.Modules.UiPresentation)
 local Input = game:GetService("UserInputService")
-local e, C = React.createElement, Color3.fromRGB
-local OceanCatalog = require(game.ReplicatedStorage.Shared.OceanEggCatalog)
+local e = React.createElement
 local Preview = {}
 
 export type Context = {
@@ -28,19 +22,23 @@ export type Context = {
 	blocked: () -> boolean,
 	hatch: (string, number) -> (),
 	buyAdmin: () -> (),
+	playSound: ((string, number?, number?) -> ())?,
+	hudBounds: (() -> (Vector2, Vector2))?,
 }
 
 export type Handle = {
 	frame: () -> (),
 	refresh: () -> (),
-	-- The egg in the open panel ("AdminEgg" for the Volcanic egg), nil when closed.
+	-- The egg in the open panel, nil when closed.
 	egg: () -> string?,
+	tutorialPoint: (string) -> Vector2?,
 	destroy: () -> (),
 }
 
 type Station = {
 	id: string,
-	position: Vector3,
+	part: BasePart,
+	visual: Model?,
 	sign: BillboardGui?,
 }
 
@@ -50,330 +48,49 @@ local ADMIN = "AdminEgg"
 local ENTER, LEAVE = 14, 17
 -- A neighbour takes the panel over only when it is clearly closer.
 local SWITCH = 1.5
-local PANEL_WIDTH_STUDS = 8
-local SIGN_HALF = 2.1 -- half the height of an egg sign
-local CARD, GAP, PAD, TOP, COLUMNS = 108, 10, 14, 38, 3
-local BUTTON_H, PRICE_H = 84, 42
-local LAVA = C(255, 112, 38)
-local MARGIN = 48 -- room around the content for the title and the button motion
-local PLATE_W = COLUMNS * CARD + (COLUMNS - 1) * GAP + PAD * 2
-local function plateHeight(id: string): number
-	local rows = if id == ADMIN then 1 else math.ceil(#Config.eggPets(id) / COLUMNS)
-	return TOP + rows * CARD + (rows - 1) * GAP + PAD
-end
--- The whole content: the plate, the buttons and the price line.
-local function size(id: string): Vector2
-	return Vector2.new(PLATE_W, plateHeight(id) + 10 + BUTTON_H + 4 + PRICE_H)
-end
+local UNITS_PER_STUD = 34
+local CANVAS = EggPanel.Canvas
+local CENTER = EggPanel.Center / CANVAS
+local WINDOW_PEAK = MotionConfig.Window.OvershootScale + 0.015
+local BEFORE_CENTER = EggPanel.Center * WINDOW_PEAK
+local AFTER_CENTER = (CANVAS - EggPanel.Center) * WINDOW_PEAK
+local SCREEN_GAP = Vector2.new(10, 10)
+local MIN_READABLE_SCALE = 0.46
 
-local function outlined(props: { [string]: any }, thickness: number)
-	props.BackgroundTransparency = 1
-	props.Font = Enum.Font.GothamBlack
-	props.TextStrokeTransparency = 1
-	return e("TextLabel", props, {
-		Stroke = e("UIStroke", {
-			Color = T.Outline,
-			Thickness = thickness,
-			ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual,
-		}),
-	})
-end
-
--- A rarity tile: the rarity colour, rays behind the pet picture and the chance
--- written over the lower edge.
-local function PetTile(p)
-	local item = p.Item
-	local image = PetCardArt.image(item.id)
-	local ref: any = React.useRef(nil)
-	-- A picture the experience cannot use never loads: the 3D pet stands in.
-	local failed, setFailed = React.useState(false)
-	React.useEffect(function()
-		local label = ref.current
-		if not label then
-			return function() end
-		end
-		Art.bind(label)
-		local alive = true
-		task.delay(4, function()
-			if alive and label.Parent and not label.IsLoaded and label.ImageContent.Object == nil then
-				setFailed(true)
-			end
-		end)
-		return function()
-			alive = false
-		end
-	end, { image or "" })
-	if failed then
-		image = nil
+local function availableArea(viewport: Vector2, hudBounds: (() -> (Vector2, Vector2))?): (Vector2, Vector2)
+	local rect = GuiInsets.granted()
+	local lo = Vector2.new(rect.x, rect.y)
+	local hi = lo + Vector2.new(rect.width, rect.height)
+	if rect.width <= 0 or rect.height <= 0 then
+		lo = GuiInsets.screenCenter(viewport) - viewport / 2
+		hi = lo + viewport
 	end
-	local color = T.Rarity[item.rarity] or T.Slot
-	return e(U.Surface, {
-		Name = "EggPreviewPet" .. item.id,
-		Color = color,
-		Radius = 14,
-		Outline = 3,
-		NoShadow = true,
-		Studs = false,
-		Position = p.Position,
-		Size = UDim2.fromOffset(CARD, CARD),
-		ZIndex = 12,
-		Children = {
-			Rays = e("ImageLabel", {
-				Name = "Rays",
-				BackgroundTransparency = 1,
-				Size = UDim2.fromScale(1, 1),
-				Image = Art.Sunburst,
-				ImageColor3 = Color3.new(1, 1, 1),
-				ImageTransparency = 0.55,
-				ScaleType = Enum.ScaleType.Crop,
-				ZIndex = 13,
-				Active = false,
-			}, { Corner = U.corner(14) }),
-			Pet = if image
-				then e("ImageLabel", {
-					ref = ref,
-					Name = "PetCardArt",
-					BackgroundTransparency = 1,
-					Position = UDim2.fromOffset(8, 4),
-					Size = UDim2.fromOffset(CARD - 16, CARD - 24),
-					Image = image,
-					ScaleType = Enum.ScaleType.Fit,
-					ZIndex = 15,
-					Active = false,
-				})
-				else e(U.PetView, {
-					Def = item,
-					Key = item.id,
-					Position = UDim2.fromOffset(8, 4),
-					Size = UDim2.fromOffset(CARD - 16, CARD - 24),
-					FitToView = true,
-					Animated = true,
-					ReducedMotion = p.Reduced,
-					ZIndex = 15,
-				}),
-			Chance = outlined({
-				Name = "Chance",
-				Text = p.Chance,
-				Position = UDim2.fromOffset(-6, CARD - 34),
-				Size = UDim2.fromOffset(CARD + 12, 34),
-				TextSize = 26,
-				TextColor3 = T.Text,
-				ZIndex = 20,
-			}, 3),
-		},
-	})
+	if hudBounds then
+		local hudLo, hudHi = hudBounds()
+		local innerLo = Vector2.new(math.max(lo.X, hudLo.X), math.max(lo.Y, hudLo.Y))
+		local innerHi = Vector2.new(math.min(hi.X, hudHi.X), math.min(hi.Y, hudHi.Y))
+		if innerHi.X > innerLo.X + 2 * SCREEN_GAP.X and innerHi.Y > innerLo.Y + 2 * SCREEN_GAP.Y then
+			lo, hi = innerLo, innerHi
+		end
+	end
+	return lo + SCREEN_GAP, hi - SCREEN_GAP
 end
 
--- A big key button: the key letter over the action. Without a keyboard or a
--- gamepad the action alone fills the button.
-local function KeyButton(p)
-	local children: { [string]: any } = {}
-	if p.Key then
-		children.Letter = outlined({
-			Name = "Letter",
-			Text = p.Key,
-			Position = UDim2.fromOffset(0, 4),
-			Size = UDim2.new(1, 0, 0, 46),
-			TextSize = 46,
-			TextColor3 = T.Text,
-			ZIndex = 30,
-		}, 3.5)
+local function attach(station: Station): Attachment
+	local part, center = station.part, station.part.Position
+	local visual = station.visual
+	if visual then
+		local visualPart = visual.PrimaryPart or visual:FindFirstChildWhichIsA("BasePart", true)
+		if visualPart then
+			part = visualPart
+			center = visual:GetBoundingBox().Position
+		end
 	end
-	children.Caption = outlined({
-		Name = "Caption",
-		Text = p.Text,
-		Position = if p.Key then UDim2.fromOffset(0, 48) else UDim2.fromOffset(0, 0),
-		Size = if p.Key then UDim2.new(1, 0, 0, 28) else UDim2.fromScale(1, 1),
-		TextSize = if p.Key then 25 else 30,
-		TextColor3 = T.Text,
-		ZIndex = 30,
-	}, 2.5)
-	return e(U.Button, {
-		Name = p.Name,
-		Color = p.Color,
-		Position = p.Position,
-		Size = p.Size,
-		Disabled = p.Disabled,
-		Radius = 16,
-		Studs = false,
-		ZIndex = 20,
-		OnActivated = p.OnActivated,
-		Children = children,
-	})
-end
-
-type PanelProps = {
-	PaidRandomRestricted: boolean?,
-	PurchasePolicyReady: boolean?,
-	Egg: string,
-	World: number,
-	Wins: number,
-	Pets: number,
-	Input: string,
-	Reduced: boolean,
-	Hatch: (string, number) -> (),
-	BuyAdmin: () -> (),
-}
-
-local function Panel(p: PanelProps)
-	local id = p.Egg
-	local admin = id == ADMIN
-	local plateH = plateHeight(id)
-	local buttonY = plateH + 10
-	local ocean = OceanCatalog.find(id, p.World)
-	local buttonW = math.floor((PLATE_W - GAP) / 2)
-	local keyboard = p.Input == "Keyboard"
-	local gamepad = p.Input == "Gamepad"
-	local tiles: { [string]: any } = {}
-	local title: string, titleColor: Color3
-	local currency: string, price: string, affordable: boolean
-	local buttons: { [string]: any } = {}
-	if admin then
-		local pet = Config.AdminPet
-		title, titleColor = if ocean then ocean.theme else "Volcanic Inferno", if ocean then ocean.color else LAVA
-		currency, price, affordable =
-			"Robux", MarketplaceCatalog.label("AdminEgg"), MarketplaceCatalog.available("AdminEgg")
-		tiles.Card = e(PetTile, {
-			Item = pet,
-			Chance = "100%",
-			Position = UDim2.fromOffset(PAD, TOP),
-			Reduced = p.Reduced,
-		})
-		local infoX = PAD + CARD + 16
-		local function info(name: string, text: string, y: number, textSize: number, color: Color3)
-			tiles[name] = outlined({
-				Name = name,
-				Text = text,
-				Position = UDim2.fromOffset(infoX, y),
-				Size = UDim2.fromOffset(PLATE_W - infoX - PAD, textSize + 8),
-				TextSize = textSize,
-				TextColor3 = color,
-				TextXAlignment = Enum.TextXAlignment.Left,
-				ZIndex = 20,
-			}, if textSize >= 24 then 2.5 else 2)
-		end
-		info("PetName", pet.name, TOP + 6, 25, T.Text)
-		info("Rarity", "MYTHIC", TOP + 40, 21, T.Rarity.Mythic)
-		info("Boost", "×" .. pet.boost .. " Skill", TOP + 70, 25, T.Gold)
-		buttons.Hatch = e(KeyButton, {
-			Name = "EggPreviewHatch",
-			Text = "Hatch",
-			Key = if keyboard then "E" elseif gamepad then "Y" else nil,
-			Color = T.Colors.Green,
-			Position = UDim2.fromOffset(math.floor((PLATE_W - buttonW) / 2), buttonY),
-			Size = UDim2.fromOffset(buttonW, BUTTON_H),
-			OnActivated = p.BuyAdmin,
-			Disabled = not MarketplaceCatalog.available("AdminEgg"),
-		})
-	else
-		local egg = assert(Config.find(Config.Eggs, id), "Unknown egg " .. id)
-		title, titleColor =
-			if ocean then ocean.theme else string.gsub(egg.name, " Egg$", ""), if ocean then ocean.color else egg.color
-		local cost = Config.eggCost(egg, p.World)
-		currency, price, affordable = "Wins", Config.format(cost), p.Wins >= cost
-		local pool = Config.eggPets(id)
-		if p.PaidRandomRestricted then
-			pool = { pool[1] }
-		end
-		local total = 0
-		for _, item in pool do
-			total += item.weight
-		end
-		for i, item in pool do
-			local column, row = (i - 1) % COLUMNS, math.floor((i - 1) / COLUMNS)
-			tiles[item.id] = e(PetTile, {
-				Item = item,
-				Chance = string.format("%g%%", math.floor(item.weight / total * 10000 + 0.5) / 100),
-				Position = UDim2.fromOffset(PAD + column * (CARD + GAP), TOP + row * (CARD + GAP)),
-				Reduced = p.Reduced,
-			})
-		end
-		buttons.Hatch = e(KeyButton, {
-			Name = "EggPreviewHatch",
-			Text = if p.PaidRandomRestricted then "Get Pet" else "Hatch",
-			Key = if keyboard then "E" elseif gamepad then "Y" else nil,
-			Color = T.Colors.Green,
-			Position = UDim2.fromOffset(0, buttonY),
-			Size = UDim2.fromOffset(buttonW, BUTTON_H),
-			Disabled = not p.PurchasePolicyReady or p.Pets + 1 > 60,
-			OnActivated = function()
-				p.Hatch(id, 1)
-			end,
-		})
-		buttons.Multi = e(KeyButton, {
-			Name = "EggPreviewHatch3",
-			Text = "Multi ×3",
-			Key = if keyboard then "R" elseif gamepad then "X" else nil,
-			Color = T.Colors.Gold,
-			Position = UDim2.fromOffset(PLATE_W - buttonW, buttonY),
-			Size = UDim2.fromOffset(buttonW, BUTTON_H),
-			Disabled = not p.PurchasePolicyReady or p.Pets + 3 > 60,
-			OnActivated = function()
-				p.Hatch(id, 3)
-			end,
-		})
-	end
-	return e("Frame", {
-		Name = "EggPreviewContent",
-		BackgroundTransparency = 1,
-		Position = UDim2.fromOffset(MARGIN, MARGIN),
-		Size = UDim2.fromOffset(PLATE_W, size(id).Y),
-		ZIndex = 2,
-	}, {
-		Plate = e(U.Surface, {
-			Name = "EggPreviewPlate",
-			Color = T.Body,
-			Radius = T.PanelRadius,
-			Outline = T.WindowStroke,
-			Size = UDim2.fromOffset(PLATE_W, plateH),
-			ZIndex = 2,
-			Children = {
-				Title = outlined({
-					Name = "Title",
-					Text = title,
-					Position = UDim2.fromOffset(0, -32),
-					Size = UDim2.fromOffset(PLATE_W, 60),
-					TextSize = 42,
-					TextColor3 = titleColor,
-					ZIndex = 40,
-				}, 4),
-				Tiles = e("Frame", {
-					Name = "Tiles",
-					BackgroundTransparency = 1,
-					Size = UDim2.fromScale(1, 1),
-					ZIndex = 10,
-				}, tiles),
-			},
-		}),
-		Hatch = buttons.Hatch,
-		Multi = buttons.Multi,
-		Price = e("Frame", {
-			Name = "Price",
-			BackgroundTransparency = 1,
-			Position = UDim2.fromOffset(0, buttonY + BUTTON_H + 4),
-			Size = UDim2.fromOffset(PLATE_W, PRICE_H),
-			ZIndex = 20,
-		}, {
-			Layout = e("UIListLayout", {
-				FillDirection = Enum.FillDirection.Horizontal,
-				HorizontalAlignment = Enum.HorizontalAlignment.Center,
-				VerticalAlignment = Enum.VerticalAlignment.Center,
-				SortOrder = Enum.SortOrder.LayoutOrder,
-				Padding = UDim.new(0, 6),
-			}),
-			Icon = e(U.Icon, { Kind = currency, Size = UDim2.fromOffset(40, 40), ZIndex = 21 }),
-			Amount = outlined({
-				Name = "Amount",
-				LayoutOrder = 2,
-				AutomaticSize = Enum.AutomaticSize.X,
-				Size = UDim2.fromOffset(0, PRICE_H),
-				Text = price,
-				TextSize = 38,
-				TextColor3 = if affordable then T.Colors.Green else T.Colors.Red,
-				ZIndex = 21,
-			}, 3),
-		}),
-	})
+	local anchor = Instance.new("Attachment")
+	anchor.Name = "EggPreviewCenter"
+	anchor.Position = part.CFrame:PointToObjectSpace(center)
+	anchor.Parent = part
+	return anchor
 end
 
 local function inputKind(): string
@@ -386,31 +103,33 @@ local function inputKind(): string
 end
 
 function Preview.mount(context: Context): Handle
-	local gui = Instance.new("ScreenGui")
+	local gui = Instance.new("BillboardGui")
 	gui.Name = "EggPreview"
-	Insets.prepare(gui)
-	-- Positions come from WorldToViewportPoint: the layer covers the whole viewport.
-	gui.ScreenInsets = Enum.ScreenInsets.None
-	-- Above the HUD (20), below the collector windows (30).
-	gui.DisplayOrder = 25
+	gui.Enabled = false
+	gui.Active = true -- Billboard input is handled by PlayerGui.
+	gui.AlwaysOnTop = true
+	gui.LightInfluence = 0
+	gui.MaxDistance = 80
+	gui.Size = UDim2.fromScale(CANVAS.X / UNITS_PER_STUD, CANVAS.Y / UNITS_PER_STUD)
+	-- Offset the canvas so the action, rather than the canvas midpoint,
+	-- occupies the projected centre of the egg.
+	gui.SizeOffset = Vector2.new(0.5, 0.5) - CENTER
 	gui.ResetOnSpawn = false
 	gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 	gui.Parent = context.parent
-	local probe = Instance.new("Frame")
-	probe.Name = "PreviewArea"
-	probe.BackgroundTransparency = 1
-	probe.Size = UDim2.fromScale(1, 1)
-	probe.Parent = gui
 	local group = Instance.new("CanvasGroup")
 	group.Name = "EggPreviewWindow"
-	group.AnchorPoint = Vector2.new(0.5, 1)
+	group.AnchorPoint = CENTER
+	group.Position = UDim2.fromScale(CENTER.X, CENTER.Y)
+	group.Size = UDim2.fromScale(1, 1)
 	group.BackgroundTransparency = 1
 	group.BorderSizePixel = 0
-	group.Parent = probe
+	group.Parent = gui
 	local design = Instance.new("Frame")
 	design.Name = "Design"
-	design.AnchorPoint = Vector2.new(0.5, 0.5)
-	design.Position = UDim2.fromScale(0.5, 0.5)
+	design.AnchorPoint = CENTER
+	design.Position = UDim2.fromScale(CENTER.X, CENTER.Y)
+	design.Size = UDim2.fromOffset(CANVAS.X, CANVAS.Y)
 	design.BackgroundTransparency = 1
 	design.Parent = group
 	local fit = Instance.new("UIScale")
@@ -431,26 +150,18 @@ function Preview.mount(context: Context): Handle
 	local stations: { Station } = {}
 	local stationArena: Instance? = nil
 	local scanAt = 0
-	local wanted: string? = nil
-	local shown: string? = nil
+	local wanted: Station? = nil
+	local shown: Station? = nil
+	local anchor: Attachment? = nil
+	local signWasEnabled = false
 	local open = false
 
 	local function scan(arena: Instance)
-		if stationArena ~= arena then
-			for _, station in stations do
-				if station.sign then
-					station.sign.Enabled = true
-				end
-			end
-		end
 		stations = {}
 		stationArena = arena
-		local scenery = WorldRefs.eggs(arena)
-		if not scenery then
-			return
-		end
-		local function add(id: string, part: Instance?, anchorParent: Instance?)
-			if not part or not part:IsA("BasePart") then
+		local function add(id: string)
+			local stand, part, visual = WorldRefs.eggStation(arena, id)
+			if not part then
 				return
 			end
 			for _, prompt in part:GetDescendants() do
@@ -458,24 +169,22 @@ function Preview.mount(context: Context): Handle
 					prompt.Enabled = false
 				end
 			end
-			local anchor = anchorParent and anchorParent:FindFirstChild("EggSignAnchor")
-			local sign = anchor and anchor:FindFirstChild("EggSign")
+			local signAnchor = stand and stand:FindFirstChild("EggSignAnchor", true)
+			local sign = signAnchor and signAnchor:FindFirstChild("EggSign")
 			table.insert(stations, {
 				id = id,
-				position = part.Position,
+				part = part,
+				visual = visual,
 				sign = if sign and sign:IsA("BillboardGui") then sign else nil,
 			})
 		end
-		for _, egg in Config.Eggs do
-			local model = scenery:FindFirstChild("Egg_" .. egg.id)
-			add(egg.id, model and model:FindFirstChild("EggShell"), model)
+		local ocean = arena.Name == "World2"
+		for _, egg in Config.eggsForWorld(if ocean then 2 else 1) do
+			add(egg.id)
 		end
-		local volcanic = WorldRefs.volcanic(arena)
-		add(
-			ADMIN,
-			volcanic and (volcanic:FindFirstChild("InteractionAnchor") or volcanic:FindFirstChild("HackedAdminEgg")),
-			volcanic and (volcanic:FindFirstChild("Sign") or volcanic:FindFirstChild("AdminEggCaption"))
-		)
+		if ocean then
+			add(ADMIN)
+		end
 	end
 
 	local function render()
@@ -484,20 +193,38 @@ function Preview.mount(context: Context): Handle
 			return
 		end
 		local snapshot = context.snapshot()
-		local content = size(shown)
-		design.Size = UDim2.fromOffset(content.X + MARGIN * 2, content.Y + MARGIN * 2)
+		gui:SetAttribute("ReducedMotion", reduced())
+		local pets = context.pets()
+		local discovered = table.clone(snapshot and snapshot.data.discoveredPets or {})
+		for _, pet in pets do
+			discovered[pet.id] = true
+		end
+		local heading = shown.sign and shown.sign:FindFirstChild("Title")
+		local title = if heading and heading:IsA("TextLabel") then heading else nil
 		root:render(e(U.MotionContext.Provider, { value = reduced() }, {
-			Panel = e(Panel, {
-				Egg = shown,
+			Panel = e(EggPanel.View, {
+				Egg = shown.id,
+				Title = title and title.Text,
+				TitleColor = title and title.TextColor3,
+				Discovered = discovered,
 				World = snapshot and snapshot.data.world or 1,
-				Wins = snapshot and snapshot.data.wins or 0,
 				PaidRandomRestricted = snapshot and snapshot.paidRandomRestricted ~= false,
 				PurchasePolicyReady = snapshot and snapshot.purchasePolicyReady == true,
-				Pets = #context.pets(),
+				Pets = #pets,
 				Input = inputKind(),
 				Reduced = reduced(),
-				Hatch = context.hatch,
-				BuyAdmin = context.buyAdmin,
+				Hatch = function(id: string, count: number)
+					if context.playSound then
+						context.playSound("rbxasset://sounds/volume_slider.ogg", 0.16, 1.35)
+					end
+					context.hatch(id, count)
+				end,
+				BuyAdmin = function()
+					if context.playSound then
+						context.playSound("rbxasset://sounds/volume_slider.ogg", 0.16, 1.35)
+					end
+					context.buyAdmin()
+				end,
 			}),
 		}))
 	end
@@ -505,29 +232,56 @@ function Preview.mount(context: Context): Handle
 	-- The key caps follow the device the player is using.
 	local inputChanged = Input:GetPropertyChangedSignal("PreferredInput"):Connect(render)
 
-	local function show(id: string)
-		shown = id
+	local function clear()
+		gui.Enabled = false
+		gui.Adornee = nil :: any -- Roblox accepts nil to detach the billboard.
+		if shown and shown.sign then
+			shown.sign.Enabled = signWasEnabled
+		end
+		if anchor then
+			anchor:Destroy()
+			anchor = nil
+		end
+		shown = nil
+	end
+
+	local function show(station: Station)
+		shown = station
+		local attachment = attach(station)
+		anchor = attachment
+		gui.Adornee = attachment
+		gui.Enabled = true
+		signWasEnabled = station.sign ~= nil and station.sign.Enabled
+		if station.sign then
+			station.sign.Enabled = false
+		end
 		open = true
 		render()
 		animation.setOpen(true)
+		if context.playSound then
+			context.playSound("rbxasset://sounds/volume_slider.ogg", 0.12, 1.15)
+		end
 	end
-	local function target(id: string?)
-		if id == wanted then
+	local function target(station: Station?)
+		if station and wanted and station.part == wanted.part and station.visual == wanted.visual then
 			return
 		end
-		wanted = id
+		if not station and not wanted then
+			return
+		end
+		wanted = station
 		if open then
 			open = false
 			animation.setOpen(false, function()
-				shown = nil
+				clear()
 				if wanted then
 					show(wanted)
 				else
 					render()
 				end
 			end)
-		elseif id then
-			show(id)
+		elseif station and not shown then
+			show(station)
 		end
 	end
 
@@ -553,11 +307,12 @@ function Preview.mount(context: Context): Handle
 		local best: Station?, bestDistance = nil, math.huge
 		local current: Station?, currentDistance = nil, math.huge
 		for _, station in stations do
-			local distance = (Vector3.new(station.position.X, 0, station.position.Z) - here).Magnitude
+			local position = station.part.Position
+			local distance = (Vector3.new(position.X, 0, position.Z) - here).Magnitude
 			if distance < bestDistance then
 				best, bestDistance = station, distance
 			end
-			if station.id == wanted then
+			if wanted and station.part == wanted.part then
 				current, currentDistance = station, distance
 			end
 		end
@@ -567,53 +322,91 @@ function Preview.mount(context: Context): Handle
 		return if best and bestDistance <= ENTER then best else nil
 	end
 
-	local function place(station: Station)
+	local function screenPoint(): Vector2?
 		local camera = workspace.CurrentCamera
-		local adornee = station.sign and station.sign.Adornee
-		local anchor = if adornee and adornee:IsA("BasePart")
-			then adornee.Position - Vector3.new(0, SIGN_HALF, 0)
-			else station.position + Vector3.new(0, 8, 0)
-		local point = camera:WorldToViewportPoint(anchor)
-		group.Visible = point.Z > 0.5
+		if not open or not gui.Enabled or not group.Visible or not camera or not anchor then
+			return nil
+		end
+		local position = anchor.WorldPosition
+		if (camera.CFrame.Position - position).Magnitude > gui.MaxDistance then
+			return nil
+		end
+		local _, visible = camera:WorldToScreenPoint(position)
+		if not visible then
+			return nil
+		end
+		local point = camera:WorldToScreenPoint(position + camera.CFrame:VectorToWorldSpace(gui.StudsOffset))
+		return Vector2.new(point.X, point.Y)
+	end
+
+	local function fitToView()
+		local camera = workspace.CurrentCamera
+		if not camera or not anchor then
+			return
+		end
+		local worldPosition = anchor.WorldPosition
+		local point, visible = camera:WorldToScreenPoint(worldPosition)
+		local lo, hi = availableArea(camera.ViewportSize, context.hudBounds)
+		group.Visible = visible and hi.X > lo.X and hi.Y > lo.Y
 		if not group.Visible then
 			return
 		end
-
-		-- Project a fixed width at the egg's depth. Keep the controls in
-		-- PlayerGui so their clicks and existing button motion work as usual.
-		local edge = camera:WorldToViewportPoint(anchor + camera.CFrame.RightVector * PANEL_WIDTH_STUDS)
-		local scale = (edge.X - point.X) / PLATE_W
+		local right = camera:WorldToScreenPoint(worldPosition + camera.CFrame.RightVector)
+		local pixelsPerStud = right.X - point.X
+		if pixelsPerStud <= 0 then
+			return
+		end
+		local naturalScale = pixelsPerStud / UNITS_PER_STUD
+		local anchoredScale = math.min(
+			(point.X - lo.X) / BEFORE_CENTER.X,
+			(point.Y - lo.Y) / BEFORE_CENTER.Y,
+			(hi.X - point.X) / AFTER_CENTER.X,
+			(hi.Y - point.Y) / AFTER_CENTER.Y
+		)
+		local span = hi - lo
+		-- Leave space for the Ripple overshoot. If the anchor is on the edge,
+		-- keep a readable size where possible and clamp only the excess offset.
+		local scale = math.min(
+			naturalScale,
+			math.max(MIN_READABLE_SCALE, anchoredScale),
+			span.X / (CANVAS.X * WINDOW_PEAK + 1),
+			span.Y / (CANVAS.Y * WINDOW_PEAK + 1)
+		)
+		local x = math.clamp(point.X, lo.X + BEFORE_CENTER.X * scale, hi.X - AFTER_CENTER.X * scale)
+		local y = math.clamp(point.Y, lo.Y + BEFORE_CENTER.Y * scale, hi.Y - AFTER_CENTER.Y * scale)
+		local studScale = scale / pixelsPerStud
+		gui.Size = UDim2.fromScale(CANVAS.X * studScale, CANVAS.Y * studScale)
+		gui.StudsOffset = Vector3.new((x - point.X) / pixelsPerStud, (point.Y - y) / pixelsPerStud, 0)
 		fit.Scale = scale
-		local content = size(station.id)
-		group.Size = UDim2.fromOffset((content.X + MARGIN * 2) * scale, (content.Y + MARGIN * 2) * scale)
-		group.Position = UDim2.fromOffset(point.X, point.Y + MARGIN * scale)
 	end
 
 	return {
 		frame = function()
-			local station = if context.blocked() then nil else nearest()
-			target(station and station.id)
-			local placed: Station? = nil
-			for _, item in stations do
-				if item.id == shown then
-					placed = item
-				end
-				if item.sign then
-					-- The open panel stands in for the sign of its egg.
-					item.sign.Enabled = item.id ~= shown
-				end
-			end
-			if placed then
-				place(placed)
+			target(if context.blocked() then nil else nearest())
+			if shown then
+				fitToView()
 			end
 		end,
 		refresh = render,
 		egg = function()
-			return if open then shown else nil
+			return if shown and screenPoint() then shown.id else nil
+		end,
+		tutorialPoint = function(id: string)
+			if not shown or shown.id ~= id then
+				return nil
+			end
+			local point = screenPoint()
+			local button = point and holder:FindFirstChild("EggPreviewCenter", true)
+			return if point
+					and button
+					and button:IsA("GuiButton")
+				then point + button.AbsoluteSize * Vector2.new(0.15, 0.5)
+				else nil
 		end,
 		destroy = function()
 			inputChanged:Disconnect()
 			animation.destroy()
+			clear()
 			root:unmount()
 			gui:Destroy()
 		end,

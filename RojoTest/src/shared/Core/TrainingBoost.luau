@@ -1,7 +1,8 @@
 --!strict
 -- Offers and values are reproducible; clients never submit a multiplier.
+local Balance = require("./Balance")
 local Boost = {}
-Boost.Interval = 7
+Boost.Interval = Balance.BubbleInterval
 Boost.Delay = 0.6
 Boost.TravelTime = 0.85
 Boost.HoldTime = 3
@@ -38,7 +39,10 @@ function Boost.offer(seed: number, index: number): any
 		return { multiplier = multiplier, product = "TrainingBoost" .. multiplier, color = 6 }
 	end
 	return {
-		multiplier = (50 + math.floor(Boost.sample(seed, index, 7) * 101)) / 10,
+		multiplier = Balance.FreeBubble.Minimum + math.floor(
+			Boost.sample(seed, index, 7)
+				* (math.round((Balance.FreeBubble.Maximum - Balance.FreeBubble.Minimum) / Balance.FreeBubble.Step) + 1)
+		) * Balance.FreeBubble.Step,
 		color = 1 + math.floor(Boost.sample(seed, index, 11) * 5),
 	}
 end

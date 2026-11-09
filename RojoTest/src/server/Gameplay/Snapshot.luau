@@ -6,7 +6,6 @@
 -- This module reads the state it is given and never mutates it: the caller
 -- owns the inventory versions.
 local Config = require(game.ReplicatedStorage.Shared.GameConfig)
-local BallPurchases = require(game.ReplicatedStorage.Shared.BallPurchases)
 local AdminAccess = require(script.Parent.Parent.AdminAccess)
 local ReturnRewards = require(game.ReplicatedStorage.Shared.Core.ReturnRewards)
 
@@ -43,7 +42,7 @@ function Snapshot.build(context: Context, player: Player, notice: string?, force
 		trainingStarted = s.trainingStarted,
 		trainingSeed = s.trainingSeed,
 		trainingLevelsGained = s.trainingLevelsGained or 0,
-		shotDistance = Config.shotDistance(d.skill, BallPurchases.power(d), d.world, context.arenaFor(player)),
+		shotDistance = Config.shotDistance(d.skill, 1, d.world, context.arenaFor(player)),
 		auto = s.auto,
 		friendBoost = s.friends * 10,
 		elapsed = math.floor(os.clock() - s.joined),

@@ -1,0 +1,14 @@
+{
+  "date": "2026-11-09",
+  "method": "Built-in ImageGen",
+  "useCase": "precise-object-edit",
+  "source": "references/magma-user-reference.png",
+  "output": "magma-egg-five-pets-v2.png",
+  "status": "generated-for-user-review",
+  "imageGenId": "exec-fc7d33af-ca0a-412d-9be0-1dab8e2f21d0",
+  "visualChecks": [
+    "Exactly five original species and rarity labels",
+    "Cube bases and all appendage silhouettes preserved",
+    "Vibrant local colors, charcoal mole, orange gecko and ram, violet bat, red and gold phoenix"
+  ]
+}

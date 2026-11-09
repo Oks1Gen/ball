@@ -1,0 +1,14 @@
+{
+  "name": "Pet Workshop",
+  "source": "work/build.py",
+  "authoring": "Blender bpy",
+  "reference": "User-provided Golden Crafting station screenshots, adapted to Ball",
+  "models": ["model/pet-workshop.blend", "model/pet-workshop.glb", "model/pet-workshop.fbx"],
+  "runtime": "../../RojoTest/src/shared/PetWorkshopTemplate.model.json",
+  "transport": "Equivalent native Roblox primitives generated from the Blender specification through Rojo",
+  "nativeStudDimensions": [16, 10.45, 12],
+  "nativeParts": 39,
+  "triangles": 916,
+  "newRobloxAssetIds": [],
+  "verification": "work/verification.json"
+}

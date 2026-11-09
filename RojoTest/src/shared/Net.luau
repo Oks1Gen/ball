@@ -7,9 +7,15 @@
 -- Throw.zoneCrossings: ordered {alpha, zone, name, multiplier}; cosmetic timing only.
 -- Throw begins manual timing. KickRelease(token, serverClockPressTime) locks each stage.
 -- KickReady starts power; KickAccuracyReady carries a fresh token/clock and locked power.
--- The second release consumes the token and multiplies power by accuracy. KickCancel has no payload.
+-- The second release consumes the token and normalizes both stages into shot power. KickCancel has no payload.
 -- Result.zone/zoneMultiplier: server-selected furthest zone and Wins factor; no client reward inputs.
 -- TrainingBoost(seed, offer): claim a scheduled UI bubble; server owns its value/window.
+-- RecyclePet(uid): server-owned shard yield and protection checks.
+-- FusePets(expectedPrimaryRevision, {primaryUid, materialUid...}): 1-5 unique matching pets.
+-- MutatePet(uid, expectedRevision): one authoritative shard spin; even worse outcomes replace.
+-- PetCraftResult: committed result for cosmetic roulette. Revision makes retries idempotent.
+-- ClaimChallenge(id): one lifetime claim per world; progress from server-confirmed kicks only.
+-- ProgressionReward(message, success): confirmed result, sound and toast feedback.
 -- Product(key): request native checkout for a configured offer; never grants anything.
 -- PurchasePrompt(key): server -> owner via Effect; client opens GamePass/Product checkout.
 -- paidRandomRestricted/purchasePolicyReady: server policy results for random Wins eggs.
@@ -38,7 +44,16 @@ local simple = {
 	UnlockAuto = true,
 	TutorialRestart = true,
 }
-local identifiers = { Stone = true, Trail = true, Pet = true, DeletePet = true, Product = true }
+local identifiers = {
+	Stone = true,
+	Trail = true,
+	Pet = true,
+	DeletePet = true,
+	Product = true,
+	RecyclePet = true,
+
+	ClaimChallenge = true,
+}
 
 function Net.validAction(command: any, value: any, extra: any): boolean
 	if typeof(command) ~= "string" or #command > 32 then
@@ -49,6 +64,45 @@ function Net.validAction(command: any, value: any, extra: any): boolean
 	end
 	if identifiers[command] then
 		return typeof(value) == "string" and #value <= 100 and extra == nil
+	end
+	if command == "MutatePet" then
+		return typeof(value) == "string"
+			and #value > 0
+			and #value <= 100
+			and typeof(extra) == "number"
+			and extra == extra
+			and extra >= 0
+			and extra <= 1e9
+			and extra % 1 == 0
+	end
+	if command == "FusePets" then
+		if
+			typeof(value) ~= "number"
+			or value ~= value
+			or value < 0
+			or value > 1e9
+			or value % 1 ~= 0
+			or typeof(extra) ~= "table"
+		then
+			return false
+		end
+		local count = 0
+		for key, uid in extra do
+			count += 1
+			if
+				count > 5
+				or typeof(key) ~= "number"
+				or key % 1 ~= 0
+				or key < 1
+				or key > 5
+				or typeof(uid) ~= "string"
+				or #uid == 0
+				or #uid > 100
+			then
+				return false
+			end
+		end
+		return count >= 1 and count == #extra
 	end
 	if command == "TravelWorld" then
 		return (value == 1 or value == 2) and extra == nil

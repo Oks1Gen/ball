@@ -1,0 +1,284 @@
+{
+  "rows": [
+    {
+      "part": "CB_Body",
+      "triangles": 588,
+      "degenerate": 0,
+      "boundary_edges": 0,
+      "signed_volume": 7.7868394768308375
+    },
+    {
+      "part": "CB_Foot_L_Front",
+      "triangles": 300,
+      "degenerate": 0,
+      "boundary_edges": 0,
+      "signed_volume": 0.06455067644373298
+    },
+    {
+      "part": "CB_Foot_L_Rear",
+      "triangles": 300,
+      "degenerate": 0,
+      "boundary_edges": 0,
+      "signed_volume": 0.06455067644373298
+    },
+    {
+      "part": "CB_Foot_R_Front",
+      "triangles": 300,
+      "degenerate": 0,
+      "boundary_edges": 0,
+      "signed_volume": 0.06455067644373298
+    },
+    {
+      "part": "CB_Foot_R_Rear",
+      "triangles": 300,
+      "degenerate": 0,
+      "boundary_edges": 0,
+      "signed_volume": 0.06455067644373298
+    },
+    {
+      "part": "CB_Tail",
+      "triangles": 360,
+      "degenerate": 0,
+      "boundary_edges": 0,
+      "signed_volume": 0.10128887661302576
+    },
+    {
+      "part": "CB_Tail_Lobe_L",
+      "triangles": 120,
+      "degenerate": 0,
+      "boundary_edges": 0,
+      "signed_volume": 0.019145420466001532
+    },
+    {
+      "part": "CB_Tail_Lobe_R",
+      "triangles": 120,
+      "degenerate": 0,
+      "boundary_edges": 0,
+      "signed_volume": 0.01934695157876557
+    },
+    {
+      "part": "CB_Ear_Upright",
+      "triangles": 1330,
+      "degenerate": 0,
+      "boundary_edges": 0,
+      "signed_volume": 0.15230457729103353
+    },
+    {
+      "part": "CB_Ear_Upright_Pink",
+      "triangles": 674,
+      "degenerate": 0,
+      "boundary_edges": 0,
+      "signed_volume": 0.0014060062810721504
+    },
+    {
+      "part": "CB_Ear_Folded",
+      "triangles": 1330,
+      "degenerate": 0,
+      "boundary_edges": 0,
+      "signed_volume": 0.19648370729562847
+    },
+    {
+      "part": "CB_Ear_Folded_Pink",
+      "triangles": 674,
+      "degenerate": 0,
+      "boundary_edges": 0,
+      "signed_volume": 0.0013514353681716288
+    },
+    {
+      "part": "CB_EyeWhite_L",
+      "triangles": 528,
+      "degenerate": 0,
+      "boundary_edges": 0,
+      "signed_volume": 0.024384518643944888
+    },
+    {
+      "part": "CB_Iris_L",
+      "triangles": 360,
+      "degenerate": 0,
+      "boundary_edges": 40,
+      "signed_volume": 0.08899724246050655
+    },
+    {
+      "part": "CB_Catchlight_Main_L",
+      "triangles": 120,
+      "degenerate": 0,
+      "boundary_edges": 0,
+      "signed_volume": 0.0003603668245397434
+    },
+    {
+      "part": "CB_Catchlight_Small_L",
+      "triangles": 100,
+      "degenerate": 0,
+      "boundary_edges": 0,
+      "signed_volume": 3.6034268996397125e-05
+    },
+    {
+      "part": "CB_EyeWhite_R",
+      "triangles": 528,
+      "degenerate": 0,
+      "boundary_edges": 0,
+      "signed_volume": 0.024384518643944888
+    },
+    {
+      "part": "CB_Iris_R",
+      "triangles": 360,
+      "degenerate": 0,
+      "boundary_edges": 40,
+      "signed_volume": 0.08899724309521553
+    },
+    {
+      "part": "CB_Catchlight_Main_R",
+      "triangles": 120,
+      "degenerate": 0,
+      "boundary_edges": 0,
+      "signed_volume": 0.0003603668245397434
+    },
+    {
+      "part": "CB_Catchlight_Small_R",
+      "triangles": 100,
+      "degenerate": 0,
+      "boundary_edges": 0,
+      "signed_volume": 3.603426899639712e-05
+    },
+    {
+      "part": "CB_Blush_L",
+      "triangles": 160,
+      "degenerate": 0,
+      "boundary_edges": 32,
+      "signed_volume": 0.023172531714277834
+    },
+    {
+      "part": "CB_Blush_R",
+      "triangles": 160,
+      "degenerate": 0,
+      "boundary_edges": 32,
+      "signed_volume": 0.02317253171427784
+    },
+    {
+      "part": "CB_Nose",
+      "triangles": 224,
+      "degenerate": 0,
+      "boundary_edges": 0,
+      "signed_volume": 0.0011211058814147427
+    },
+    {
+      "part": "CB_Mouth_Center",
+      "triangles": 92,
+      "degenerate": 0,
+      "boundary_edges": 32,
+      "signed_volume": 2.5507096941501398e-05
+    },
+    {
+      "part": "CB_Smile_Left",
+      "triangles": 252,
+      "degenerate": 0,
+      "boundary_edges": 32,
+      "signed_volume": 0.00011232785894535641
+    },
+    {
+      "part": "CB_Smile_Right",
+      "triangles": 252,
+      "degenerate": 0,
+      "boundary_edges": 32,
+      "signed_volume": 0.00011232785066858498
+    },
+    {
+      "part": "CB_Clover_Stem",
+      "triangles": 92,
+      "degenerate": 0,
+      "boundary_edges": 32,
+      "signed_volume": 0.00012313785856106856
+    },
+    {
+      "part": "CB_Clover_Top",
+      "triangles": 120,
+      "degenerate": 0,
+      "boundary_edges": 0,
+      "signed_volume": 0.0012762119343643443
+    },
+    {
+      "part": "CB_Clover_Left",
+      "triangles": 120,
+      "degenerate": 0,
+      "boundary_edges": 0,
+      "signed_volume": 0.0011986115376148025
+    },
+    {
+      "part": "CB_Clover_Right",
+      "triangles": 120,
+      "degenerate": 0,
+      "boundary_edges": 0,
+      "signed_volume": 0.0011986115376148023
+    },
+    {
+      "part": "CB_Clover_Bottom",
+      "triangles": 120,
+      "degenerate": 0,
+      "boundary_edges": 0,
+      "signed_volume": 0.0009877020647808513
+    }
+  ],
+  "summary": {
+    "triangles": 10324,
+    "degenerate": 0,
+    "negative_volume": [],
+    "open_surfaces": [
+      {
+        "part": "CB_Iris_L",
+        "triangles": 360,
+        "degenerate": 0,
+        "boundary_edges": 40,
+        "signed_volume": 0.08899724246050655
+      },
+      {
+        "part": "CB_Iris_R",
+        "triangles": 360,
+        "degenerate": 0,
+        "boundary_edges": 40,
+        "signed_volume": 0.08899724309521553
+      },
+      {
+        "part": "CB_Blush_L",
+        "triangles": 160,
+        "degenerate": 0,
+        "boundary_edges": 32,
+        "signed_volume": 0.023172531714277834
+      },
+      {
+        "part": "CB_Blush_R",
+        "triangles": 160,
+        "degenerate": 0,
+        "boundary_edges": 32,
+        "signed_volume": 0.02317253171427784
+      },
+      {
+        "part": "CB_Mouth_Center",
+        "triangles": 92,
+        "degenerate": 0,
+        "boundary_edges": 32,
+        "signed_volume": 2.5507096941501398e-05
+      },
+      {
+        "part": "CB_Smile_Left",
+        "triangles": 252,
+        "degenerate": 0,
+        "boundary_edges": 32,
+        "signed_volume": 0.00011232785894535641
+      },
+      {
+        "part": "CB_Smile_Right",
+        "triangles": 252,
+        "degenerate": 0,
+        "boundary_edges": 32,
+        "signed_volume": 0.00011232785066858498
+      },
+      {
+        "part": "CB_Clover_Stem",
+        "triangles": 92,
+        "degenerate": 0,
+        "boundary_edges": 32,
+        "signed_volume": 0.00012313785856106856
+      }
+    ]
+  }
+}

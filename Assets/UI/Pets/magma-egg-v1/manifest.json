@@ -1,0 +1,124 @@
+{
+  "date": "2026-11-09",
+  "generation": "Built-in ImageGen, precise-object-edit of actual Blender renders",
+  "canvas": {
+    "width": 512,
+    "height": 512,
+    "format": "RGBA PNG"
+  },
+  "outline": {
+    "color": "#000000",
+    "pixels": 24,
+    "measurement": "Opaque artwork to 50% alpha outer boundary; identical packaging to Forest and Frost"
+  },
+  "camera": {
+    "view": "front-left orthographic",
+    "mirroredForView": [
+      "CinderGecko",
+      "EmberRam",
+      "InfernoPhoenix"
+    ]
+  },
+  "preview": "preview.png",
+  "portraits": [
+    {
+      "visual": "CoalMole",
+      "name": "Coal Mole",
+      "id": "Shark",
+      "coat": "303546",
+      "triangles": 5464,
+      "file": "CoalMole.png",
+      "render": "sources/CoalMole-render.png",
+      "imageGenSource": "sources/CoalMole-imagegen.png",
+      "imageGenId": "exec-bc9d13ab-dda5-4fc6-a76a-b6f66a1c6824",
+      "prompt": "Use case: precise-object-edit. Asset: one transparent Roblox simulator pet UI portrait. Image 1 is the actual Blender render to edit; preserve its precise silhouette, cute cube body/head, pose, front-left camera angle, proportions, saturated colors and all facial features. Subject: charcoal cube mole, two round pink-inset ears, pink nose, amber glossy eyes, hot pink blush, orange paws and one orange oval flank marking. Keep the soft 3D shading and glossy toy material. Image 2 is ONLY the existing pet UI outline style reference. Add one very thick smooth uniform pure black OUTER sticker contour, 48 pixels on a 1024-square canvas, exactly matching image 2's relative thickness. No black outlines on internal parts. Center the complete character and outline on an actual transparent RGBA canvas with even generous margins. Preserve every ear, wing, tail and paw. Do not add new decorations, extra limbs, sparkle effects or props. No ground, shadow, background, white stroke, panel, checkerboard, text or watermark.",
+      "alphaBoundsXYWH": [
+        43,
+        16,
+        425,
+        480
+      ],
+      "portraitId": "84998984605018"
+    },
+    {
+      "visual": "CinderGecko",
+      "name": "Cinder Gecko",
+      "id": "CloudBird",
+      "coat": "FF5912",
+      "triangles": 6912,
+      "file": "CinderGecko.png",
+      "render": "sources/CinderGecko-render.png",
+      "imageGenSource": "sources/CinderGecko-imagegen.png",
+      "imageGenId": "exec-46becdb7-ab0b-4430-90fd-0bed40d6a057",
+      "prompt": "Use case: precise-object-edit. Asset: one transparent Roblox simulator pet UI portrait. Image 1 is the actual Blender render to edit; preserve its precise silhouette, cute cube body/head, pose, front-left camera angle, proportions, saturated colors and all facial features. Subject: saturated tangerine cube gecko, green glossy eyes, two gold rounded bumps on top, pale orange muzzle, three pale side spots, short cream paws and one large golden curled tail behind the LEFT side. Keep the soft 3D shading and glossy toy material. Image 2 is ONLY the existing pet UI outline style reference. Add one very thick smooth uniform pure black OUTER sticker contour, 48 pixels on a 1024-square canvas, exactly matching image 2's relative thickness. No black outlines on internal parts. Center the complete character and outline on an actual transparent RGBA canvas with even generous margins. Preserve every ear, wing, tail and paw. Do not add new decorations, extra limbs, sparkle effects or props. No ground, shadow, background, white stroke, panel, checkerboard, text or watermark.",
+      "alphaBoundsXYWH": [
+        52,
+        16,
+        408,
+        480
+      ],
+      "portraitId": "140219385075272"
+    },
+    {
+      "visual": "EmberRam",
+      "name": "Ember Ram",
+      "id": "AngelCat",
+      "coat": "F94D0B",
+      "triangles": 8208,
+      "file": "EmberRam.png",
+      "render": "sources/EmberRam-render.png",
+      "imageGenSource": "sources/EmberRam-imagegen.png",
+      "imageGenId": "exec-0fc9c141-c255-4b18-b151-077c9adea91b",
+      "prompt": "Use case: precise-object-edit. Asset: one transparent Roblox simulator pet UI portrait. Image 1 is the actual Blender render to edit; preserve its precise silhouette, cube body/head, cute proportions, pose, front-left camera angle, saturated colors, facial features and appendage counts. Subject: vivid red-orange cube ram, cream heart-shaped face mask, amber glossy eyes, pink tiny nose, two dark charcoal curled horns with golden upper arcs and rounded inner ends, tiny dark paws and a short orange tail. Keep soft 3D shading and glossy toy material. Image 2 is ONLY the existing pet UI outline style reference. Add one very thick smooth uniform pure black OUTER sticker contour, 48 pixels on a 1024-square canvas, matching image 2's relative thickness. No black lines on internal parts. Center the complete pet with generous even transparent margins. Actual transparent RGBA background. No ground, shadows, background color, white stroke, checkerboard, text, decorations, particles or watermark. Do not redesign any model parts or introduce glowing effects.",
+      "alphaBoundsXYWH": [
+        17,
+        16,
+        479,
+        480
+      ],
+      "portraitId": "133635334101448"
+    },
+    {
+      "visual": "BlazeBat",
+      "name": "Blaze Bat",
+      "id": "BlazeBat",
+      "coat": "54218D",
+      "triangles": 7748,
+      "file": "BlazeBat.png",
+      "render": "sources/BlazeBat-render.png",
+      "imageGenSource": "sources/BlazeBat-imagegen.png",
+      "imageGenId": "exec-af899058-26f9-46a6-9329-0918ac362438",
+      "prompt": "Use case: precise-object-edit. Asset: one transparent Roblox simulator pet UI portrait. Image 1 is the actual Blender render to edit; preserve its precise silhouette, cute cube body/head, pose, front-left camera angle, proportions, saturated colors and all facial features. Subject: saturated purple cube bat, two large orange-inset ears, orange membrane wings with purple rims, amber glossy eyes, two tiny white fangs and orange paws. Keep the soft 3D shading and glossy toy material. Image 2 is ONLY the existing pet UI outline style reference. Add one very thick smooth uniform pure black OUTER sticker contour, 48 pixels on a 1024-square canvas, exactly matching image 2's relative thickness. No black outlines on internal parts. Center the complete character and outline on an actual transparent RGBA canvas with even generous margins. Preserve every ear, wing, tail and paw. Do not add new decorations, extra limbs, sparkle effects or props. No ground, shadow, background, white stroke, panel, checkerboard, text or watermark.",
+      "alphaBoundsXYWH": [
+        16,
+        33,
+        480,
+        446
+      ],
+      "portraitId": "110245325486876"
+    },
+    {
+      "visual": "InfernoPhoenix",
+      "name": "Inferno Phoenix",
+      "id": "IceCat",
+      "coat": "FF3012",
+      "triangles": 9852,
+      "file": "InfernoPhoenix.png",
+      "render": "sources/InfernoPhoenix-render.png",
+      "imageGenSource": "sources/InfernoPhoenix-imagegen.png",
+      "imageGenId": "exec-02a42286-fdee-4147-94d8-6cac4ee82078",
+      "prompt": "Use case: precise-object-edit. Asset: one transparent Roblox simulator pet UI portrait. Image 1 is the actual Blender render to edit; preserve its precise silhouette, cube body/head, cute proportions, pose, front-left camera angle, saturated colors, facial features and appendage counts. Subject: vivid fire-red cube phoenix, cream heart-shaped face mask, amber glossy eyes and little gold beak, one swept golden flame crest, exactly THREE broad golden feathers on EACH wing, exactly TWO broad sweeping flame tail feathers visible behind the LEFT side, and tiny gold paws. Keep soft 3D shading and glossy toy material. Image 2 is ONLY the existing pet UI outline style reference. Add one very thick smooth uniform pure black OUTER sticker contour, 48 pixels on a 1024-square canvas, matching image 2's relative thickness. No black lines on internal parts. Center the complete pet with generous even transparent margins. Actual transparent RGBA background. No ground, shadows, background color, white stroke, checkerboard, text, decorations, particles or watermark. Do not redesign any model parts or introduce glowing effects.",
+      "alphaBoundsXYWH": [
+        15,
+        61,
+        481,
+        391
+      ],
+      "portraitId": "121150376848083"
+    }
+  ],
+  "roblox": {
+    "universeId": 10770268214,
+    "creatorUserId": 11789507527
+  }
+}

@@ -66,8 +66,8 @@ function Diagnostics.run(map: Construction.World)
 				assert(not counts[p.id], "Повтор пета")
 				counts[p.id] = 0
 			end
-			assert(total == 100, "Шансы не равны 100%")
-			for roll = 1, 100 do
+			assert(total == 10000, "Шансы не равны 100%")
+			for roll = 1, total do
 				local id = Config.rollEggPet(egg.id, roll).id
 				assert(counts[id] ~= nil, "Unknown egg outcome")
 				counts[id] += 1

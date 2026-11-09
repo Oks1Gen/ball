@@ -10,6 +10,8 @@ local TrainingBoost = require(script.Parent.TrainingBoost)
 
 local Tutorial = require(game.ReplicatedStorage.Shared.Core.Tutorial)
 
+local Craft = require(game.ReplicatedStorage.Shared.Core.PetCrafting)
+local Challenges = require(game.ReplicatedStorage.Shared.Core.Challenges)
 local Commands = {}
 
 export type Context = {
@@ -94,6 +96,52 @@ function Commands.install(context: Context)
 				end
 				context.publish(player, message)
 			end
+		elseif command == "FusePets" or command == "MutatePet" then
+			if now < s.busyUntil or now < (s.petCraftUntil or 0) then
+				context.effect:FireClient(player, "PetCraftRejected")
+				context.publish(player, "Wait for the machine to finish")
+				return
+			end
+			if s.purchasePolicyReady ~= true or s.paidRandomRestricted ~= false then
+				context.effect:FireClient(player, "PetCraftRejected")
+				context.publish(player, "Random pet crafting is unavailable for this account")
+				return
+			end
+			local ok, message, result
+			if command == "FusePets" then
+				ok, message, result = Craft.fuse(s.data, extra, value, math.random())
+			else
+				ok, message, result = Craft.mutate(s.data, value, extra, math.random())
+			end
+			if ok then
+				s.petCraftUntil = now + Config.Balance.CraftCooldown
+				s.inventoryVersion += 1
+				context.claimPending(player)
+				context.publish(player)
+				context.effect:FireClient(player, "PetCraftResult", result)
+			else
+				context.effect:FireClient(player, "PetCraftRejected")
+				context.effect:FireClient(player, "ProgressionReward", { message = message, success = false })
+				context.publish(player)
+			end
+		elseif command == "RecyclePet" or command == "ClaimChallenge" then
+			if now < s.busyUntil then
+				return
+			end
+			local ok, message
+			if command == "ClaimChallenge" then
+				ok, message = Challenges.claim(s.data, value)
+			elseif command == "RecyclePet" then
+				ok, message = Craft.salvage(s.data, value)
+			end
+			if ok then
+				s.inventoryVersion += 1
+				if command == "RecyclePet" then
+					context.claimPending(player)
+				end
+			end
+			context.effect:FireClient(player, "ProgressionReward", { message = message, success = ok })
+			context.publish(player)
 		elseif command == "Trail" and type(value) == "string" then
 			context.purchaseItem(player, Config.Trails, "trails", "trail", value)
 		elseif command == "Hatch" and type(value) == "string" then

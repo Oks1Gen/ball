@@ -80,6 +80,7 @@ function Service:Start()
 	require(root.TransparentCleanup).apply(hierarchy.container())
 	require(root.EggStandStyle).apply(map)
 	require(root.ElementalEggStyle).apply(map)
+	require(root.EggSigns).applySolar(map)
 	local hdStuds = require(root.WorldHDStuds)
 	for _, world in hierarchy.container():GetChildren() do
 		if world.Name:match("^World%d+$") and world:FindFirstChild("Lobby") then

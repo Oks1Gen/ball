@@ -1,0 +1,445 @@
+{
+  "date": "2026-11-09",
+  "placeId": 106456161057435,
+  "universeId": 10770268214,
+  "scope": "World1 Void Egg (Rainbow saved egg ID)",
+  "rojoTemplates": {
+    "ShadowKitten": {
+      "texture": "rbxassetid://101919976579365",
+      "mesh": "rbxassetid://111199215232474",
+      "size": "2.048161268234253, 2.6961748600006104, 3.1003305912017822"
+    },
+    "DuskMoth": {
+      "texture": "rbxassetid://106039042370018",
+      "mesh": "rbxassetid://130850722408714",
+      "size": "3.3466291427612305, 2.67930006980896, 1.908000111579895"
+    },
+    "OrbitAxolotl": {
+      "texture": "rbxassetid://99694092481181",
+      "mesh": "rbxassetid://128335579239626",
+      "size": "3.1679999828338623, 2.3526668548583984, 2.7992424964904785"
+    },
+    "Singularity": {
+      "texture": "rbxassetid://110089865710519",
+      "mesh": "rbxassetid://123498806010240",
+      "size": "3.701117515563965, 2.0160000324249268, 3.2294764518737793"
+    },
+    "RiftWyrm": {
+      "texture": "rbxassetid://108292008652042",
+      "mesh": "rbxassetid://94674077622689",
+      "size": "4.013999938964844, 2.817000150680542, 2.316840410232544"
+    }
+  },
+  "play": {
+    "models": {
+      "CrystalCat": {
+        "visual": "RiftWyrm",
+        "portrait": "rbxassetid://120521616667730",
+        "texture": "rbxassetid://108292008652042",
+        "boost": 6.4,
+        "mesh": "rbxassetid://94674077622689",
+        "size": "4.013999938964844, 2.817000150680542, 2.316840410232544"
+      },
+      "GalaxyCat": {
+        "visual": "OrbitAxolotl",
+        "portrait": "rbxassetid://105488122352898",
+        "texture": "rbxassetid://99694092481181",
+        "boost": 3.7,
+        "mesh": "rbxassetid://128335579239626",
+        "size": "3.1679999828338623, 2.3526668548583984, 2.7992424964904785"
+      },
+      "EclipseCat": {
+        "visual": "Singularity",
+        "portrait": "rbxassetid://83286800944557",
+        "texture": "rbxassetid://110089865710519",
+        "boost": 10,
+        "mesh": "rbxassetid://123498806010240",
+        "size": "3.701117515563965, 2.0160000324249268, 3.2294764518737793"
+      },
+      "Butterfly": {
+        "visual": "DuskMoth",
+        "portrait": "rbxassetid://130654387175615",
+        "texture": "rbxassetid://106039042370018",
+        "boost": 1.6749999999999996,
+        "mesh": "rbxassetid://130850722408714",
+        "size": "3.3466291427612305, 2.67930006980896, 1.908000111579895"
+      },
+      "MoonCat": {
+        "visual": "ShadowKitten",
+        "portrait": "rbxassetid://131420614917369",
+        "texture": "rbxassetid://101919976579365",
+        "boost": 2.35,
+        "mesh": "rbxassetid://111199215232474",
+        "size": "2.048161268234253, 2.6961748600006104, 3.1003305912017822"
+      }
+    },
+    "authorId": 11789507527,
+    "weights": {
+      "CrystalCat": 100,
+      "GalaxyCat": 1395,
+      "EclipseCat": 5,
+      "Butterfly": 5500,
+      "MoonCat": 3000
+    },
+    "eggCost": 40000,
+    "author": "Dakemo555",
+    "placeId": 106456161057435,
+    "profiles": {
+      "pets": {
+        "1": {
+          "balanceVersion": 3,
+          "rarity": "Common",
+          "eggId": "Rainbow",
+          "id": "Butterfly",
+          "boost": 1.6749999999999996,
+          "variantVersion": 1,
+          "uid": "void-1",
+          "name": "Dusk Moth",
+          "craftRevision": 0,
+          "sourceWorld": 1,
+          "baseBoost": 1.6749999999999996,
+          "form": "Normal",
+          "upgradeLevel": 0
+        },
+        "2": {
+          "balanceVersion": 3,
+          "rarity": "Uncommon",
+          "eggId": "Rainbow",
+          "id": "MoonCat",
+          "boost": 2.35,
+          "variantVersion": 1,
+          "uid": "void-2",
+          "name": "Shadow Kitten",
+          "craftRevision": 0,
+          "sourceWorld": 1,
+          "baseBoost": 2.35,
+          "form": "Normal",
+          "upgradeLevel": 0
+        },
+        "3": {
+          "balanceVersion": 3,
+          "rarity": "Rare",
+          "eggId": "Rainbow",
+          "id": "GalaxyCat",
+          "boost": 3.7,
+          "variantVersion": 1,
+          "uid": "void-3",
+          "name": "Orbit Axolotl",
+          "craftRevision": 0,
+          "sourceWorld": 1,
+          "baseBoost": 3.7,
+          "form": "Normal",
+          "upgradeLevel": 0
+        },
+        "4": {
+          "balanceVersion": 3,
+          "rarity": "Legendary",
+          "eggId": "Rainbow",
+          "id": "CrystalCat",
+          "boost": 11.8,
+          "variantVersion": 1,
+          "uid": "void-4",
+          "name": "Rift Wyrm",
+          "craftRevision": 0,
+          "sourceWorld": 1,
+          "baseBoost": 6.4,
+          "form": "Golden",
+          "upgradeLevel": 0
+        },
+        "5": {
+          "balanceVersion": 3,
+          "rarity": "Secret",
+          "eggId": "Rainbow",
+          "id": "EclipseCat",
+          "boost": 19,
+          "sourceWorld": 1,
+          "craftRevision": 0,
+          "uid": "void-5",
+          "name": "Singularity",
+          "form": "Normal",
+          "baseBoost": 10,
+          "mutation": "Cosmic",
+          "variantVersion": 1,
+          "upgradeLevel": 0
+        }
+      },
+      "discovered": {
+        "CrystalCat": true,
+        "GalaxyCat": true,
+        "EclipseCat": true,
+        "Butterfly": true,
+        "MoonCat": true
+      },
+      "equipped": {
+        "1": "void-1",
+        "2": "void-5"
+      }
+    }
+  },
+  "reviewBoard": {
+    "pictures": {
+      "Shadow Kitten": {
+        "tint": "1, 1, 1",
+        "image": "rbxassetid://131420614917369"
+      },
+      "Dusk Moth": {
+        "tint": "1, 1, 1",
+        "image": "rbxassetid://130654387175615"
+      },
+      "Singularity": {
+        "tint": "1, 1, 1",
+        "image": "rbxassetid://83286800944557"
+      },
+      "Rift Wyrm": {
+        "tint": "1, 1, 1",
+        "image": "rbxassetid://120521616667730"
+      },
+      "Orbit Axolotl": {
+        "tint": "1, 1, 1",
+        "image": "rbxassetid://105488122352898"
+      }
+    },
+    "models": {
+      "Pet_RiftWyrm": {
+        "mesh": "rbxassetid://94674077622689",
+        "texture": "rbxassetid://108292008652042"
+      },
+      "Pet_ShadowKitten": {
+        "mesh": "rbxassetid://111199215232474",
+        "texture": "rbxassetid://101919976579365"
+      },
+      "Pet_Singularity": {
+        "mesh": "rbxassetid://123498806010240",
+        "texture": "rbxassetid://110089865710519"
+      },
+      "Pet_OrbitAxolotl": {
+        "mesh": "rbxassetid://128335579239626",
+        "texture": "rbxassetid://99694092481181"
+      },
+      "Pet_DuskMoth": {
+        "mesh": "rbxassetid://130850722408714",
+        "texture": "rbxassetid://106039042370018"
+      }
+    }
+  },
+  "checks": {
+    "inventory": {
+      "variants": {
+        "Pet_RiftWyrm": {
+          "color": "1, 0.847059, 0.364706",
+          "mesh": "rbxassetid://94674077622689",
+          "texture": "rbxassetid://108292008652042"
+        }
+      },
+      "images": {
+        "Shadow Kitten": {
+          "tint": "1, 1, 1",
+          "image": "rbxassetid://131420614917369"
+        },
+        "Dusk Moth": {
+          "tint": "1, 1, 1",
+          "image": "rbxassetid://130654387175615"
+        },
+        "Singularity": {
+          "tint": "1, 1, 1",
+          "image": "rbxassetid://83286800944557"
+        },
+        "Rift Wyrm": {
+          "tint": "1, 1, 1",
+          "image": "rbxassetid://120521616667730"
+        },
+        "Orbit Axolotl": {
+          "tint": "1, 1, 1",
+          "image": "rbxassetid://105488122352898"
+        }
+      }
+    },
+    "catalogue": {
+      "scrolled": "0, 0",
+      "labels": {
+        "55%": true,
+        "13.95%": true,
+        "0.05%": true,
+        "1%": true,
+        "Void Egg": true,
+        "30%": true
+      },
+      "images": {
+        "Shadow Kitten": {
+          "tint": "1, 1, 1",
+          "image": "rbxassetid://131420614917369"
+        },
+        "Dusk Moth": {
+          "tint": "1, 1, 1",
+          "image": "rbxassetid://130654387175615"
+        },
+        "Singularity": {
+          "tint": "1, 1, 1",
+          "image": "rbxassetid://83286800944557"
+        },
+        "Rift Wyrm": {
+          "tint": "1, 1, 1",
+          "image": "rbxassetid://120521616667730"
+        },
+        "Orbit Axolotl": {
+          "tint": "1, 1, 1",
+          "image": "rbxassetid://105488122352898"
+        }
+      }
+    },
+    "workshop": {
+      "Shadow Kitten": {
+        "tint": "1, 1, 1",
+        "image": "rbxassetid://131420614917369"
+      },
+      "Dusk Moth": {
+        "tint": "1, 1, 1",
+        "image": "rbxassetid://130654387175615"
+      },
+      "Singularity": {
+        "tint": "1, 1, 1",
+        "image": "rbxassetid://83286800944557"
+      },
+      "Rift Wyrm": {
+        "tint": "1, 1, 1",
+        "image": "rbxassetid://120521616667730"
+      },
+      "Orbit Axolotl": {
+        "tint": "1, 1, 1",
+        "image": "rbxassetid://105488122352898"
+      }
+    },
+    "hatch": {
+      "last": {
+        "Singularity": {
+          "tint": "1, 1, 1",
+          "image": "rbxassetid://83286800944557"
+        },
+        "Rift Wyrm": {
+          "tint": "1, 1, 1",
+          "image": "rbxassetid://120521616667730"
+        }
+      },
+      "first": {
+        "Shadow Kitten": {
+          "tint": "1, 1, 1",
+          "image": "rbxassetid://131420614917369"
+        },
+        "Dusk Moth": {
+          "tint": "1, 1, 1",
+          "image": "rbxassetid://130654387175615"
+        },
+        "Orbit Axolotl": {
+          "tint": "1, 1, 1",
+          "image": "rbxassetid://105488122352898"
+        }
+      },
+      "labels": {
+        "Singularity": true,
+        "×6.4 Skill": true,
+        "Rift Wyrm": true,
+        "×10 Skill": true,
+        "Secret": true
+      }
+    },
+    "proximity": {
+      "anchor": "Workspace.Map.World1.Lobby.EggShop.Egg_Rainbow.ImportedVisual.Void_Plate_03.EggPreviewCenter",
+      "egg": "Rainbow",
+      "title": "Void Egg",
+      "images": {
+        "Shadow Kitten": {
+          "tint": "1, 1, 1",
+          "image": "rbxassetid://131420614917369"
+        },
+        "Dusk Moth": {
+          "tint": "1, 1, 1",
+          "image": "rbxassetid://130654387175615"
+        },
+        "Singularity": {
+          "tint": "0, 0, 0",
+          "image": "rbxassetid://83286800944557"
+        },
+        "Rift Wyrm": {
+          "tint": "0, 0, 0",
+          "image": "rbxassetid://120521616667730"
+        },
+        "Orbit Axolotl": {
+          "tint": "1, 1, 1",
+          "image": "rbxassetid://105488122352898"
+        }
+      }
+    },
+    "followers": {
+      "admin": {
+        "Shadow Kitten": {
+          "tint": "1, 1, 1",
+          "image": "rbxassetid://131420614917369"
+        },
+        "Dusk Moth": {
+          "tint": "1, 1, 1",
+          "image": "rbxassetid://130654387175615"
+        },
+        "Singularity": {
+          "tint": "1, 1, 1",
+          "image": "rbxassetid://83286800944557"
+        },
+        "Rift Wyrm": {
+          "tint": "1, 1, 1",
+          "image": "rbxassetid://120521616667730"
+        },
+        "Orbit Axolotl": {
+          "tint": "1, 1, 1",
+          "image": "rbxassetid://105488122352898"
+        }
+      },
+      "followers": {
+        "Shadow Kitten": {
+          "size": "2.679837226867676, 3.527705430984497, 4.056507587432861",
+          "mesh": "rbxassetid://111199215232474",
+          "texture": "rbxassetid://101919976579365"
+        },
+        "Dusk Moth": {
+          "size": "4.378767013549805, 3.5056264400482178, 2.4964487552642822",
+          "mesh": "rbxassetid://130850722408714",
+          "texture": "rbxassetid://106039042370018"
+        },
+        "Singularity": {
+          "size": "4.842583656311035, 2.6377570629119873, 4.225483417510986",
+          "mesh": "rbxassetid://123498806010240",
+          "texture": "rbxassetid://110089865710519"
+        },
+        "Rift Wyrm": {
+          "size": "5.251962661743164, 3.6857945919036865, 3.0313799381256104",
+          "mesh": "rbxassetid://94674077622689",
+          "texture": "rbxassetid://108292008652042"
+        },
+        "Orbit Axolotl": {
+          "size": "4.145046710968018, 3.0782556533813477, 3.66256046295166",
+          "mesh": "rbxassetid://128335579239626",
+          "texture": "rbxassetid://99694092481181"
+        }
+      }
+    },
+    "logExpanded": {
+      "scrolled": 100,
+      "author": "Dakemo555  ·  Pet and portrait art direction",
+      "description": "Dakemo555 chose the new pets and bold portraits for Forest, Frost, Magma and Void Eggs. Void Egg brings Dusk Moth, Shadow Kitten, Orbit Axolotl, Rift Wyrm and the Secret Singularity. Pets already in your collection get the new looks.",
+      "avatar": "rbxthumb://type=AvatarHeadShot&id=11789507527&w=48&h=48"
+    },
+    "logClosed": {
+      "fixturesRemoved": true,
+      "collapsed": true,
+      "closed": true
+    }
+  },
+  "snapshots": [
+    "studio-pets-and-ui.jpg",
+    "studio-hatch.jpg"
+  ],
+  "method": "Production components, isolated client fixtures and in-memory profiles. Proximity checked by readback at the actual Void stand. Test fixtures destroyed and Play stopped.",
+  "projectGate": {
+    "lune": 151,
+    "gateTests": 5,
+    "typeErrors": 0
+  }
+}

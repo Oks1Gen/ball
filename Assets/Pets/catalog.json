@@ -1,0 +1,760 @@
+{
+  "date": "2026-11-09",
+  "scope": "Pet concepts and model/import status; live probabilities remain in GameConfig",
+  "totalEggs": 10,
+  "totalPets": 50,
+  "sharedBrief": "README.md",
+  "latestWorld2Palette": "saturated v2; Treasure species replacement at concepts-v3; pastel v1 superseded",
+  "eggs": [
+    {
+      "world": 1,
+      "egg": "Forest Egg",
+      "key": "forest",
+      "status": "studio-integrated",
+      "sheet": "ForestEgg/concepts-v4/forest-egg-five-pets-v4.png",
+      "paletteRevision": "original",
+      "pets": [
+        {
+          "designKey": "world1-forest-clover-bunny",
+          "name": "Clover Bunny",
+          "russianName": "Клеверный зайка",
+          "rarity": "Common",
+          "position": 1,
+          "model": {
+            "revision": "v1",
+            "status": "studio-integrated",
+            "scene": "CloverBunny",
+            "blend": "ForestEgg/models/CloverBunny/v1/model/CloverBunny.blend",
+            "glb": "ForestEgg/models/CloverBunny/v1/model/CloverBunny.glb",
+            "fbx": "ForestEgg/models/CloverBunny/v1/model/CloverBunny.fbx",
+            "triangles": 9988,
+            "studioVerified": true,
+            "robloxModelId": "119893286859389",
+            "gamePetId": "ScarletMushroom"
+          }
+        },
+        {
+          "designKey": "world1-forest-acorn-squirrel",
+          "name": "Acorn Squirrel",
+          "russianName": "Белка-жёлудь",
+          "rarity": "Uncommon",
+          "position": 2,
+          "model": {
+            "revision": "v1",
+            "status": "studio-integrated",
+            "scene": "AcornSquirrel",
+            "blend": "ForestEgg/models/AcornSquirrel/v1/model/AcornSquirrel.blend",
+            "glb": "ForestEgg/models/AcornSquirrel/v1/model/AcornSquirrel.glb",
+            "fbx": "ForestEgg/models/AcornSquirrel/v1/model/AcornSquirrel.fbx",
+            "triangles": 9678,
+            "studioVerified": true,
+            "robloxModelId": "77308883273505",
+            "gamePetId": "StrawberryCake"
+          }
+        },
+        {
+          "designKey": "world1-forest-bloom-fox",
+          "name": "Bloom Fox",
+          "russianName": "Цветочная лиса",
+          "rarity": "Rare",
+          "position": 3,
+          "model": {
+            "revision": "v1",
+            "status": "studio-integrated",
+            "scene": "BloomFox",
+            "blend": "ForestEgg/models/BloomFox/v1/model/BloomFox.blend",
+            "glb": "ForestEgg/models/BloomFox/v1/model/BloomFox.glb",
+            "fbx": "ForestEgg/models/BloomFox/v1/model/BloomFox.fbx",
+            "triangles": 7872,
+            "studioVerified": true,
+            "robloxModelId": "129604663299720",
+            "gamePetId": "AutumnCat"
+          }
+        },
+        {
+          "designKey": "world1-forest-moon-owl",
+          "name": "Moon Owl",
+          "russianName": "Лунная сова",
+          "rarity": "Epic",
+          "position": 4,
+          "model": {
+            "revision": "v1",
+            "status": "studio-integrated",
+            "scene": "MoonOwl",
+            "blend": "ForestEgg/models/MoonOwl/v1/model/MoonOwl.blend",
+            "glb": "ForestEgg/models/MoonOwl/v1/model/MoonOwl.glb",
+            "fbx": "ForestEgg/models/MoonOwl/v1/model/MoonOwl.fbx",
+            "triangles": 7652,
+            "studioVerified": true,
+            "robloxModelId": "101512976797536",
+            "gamePetId": "MoonOwl"
+          }
+        },
+        {
+          "designKey": "world1-forest-grove-guardian",
+          "name": "Grove Guardian",
+          "russianName": "Хранитель рощи",
+          "rarity": "Legendary",
+          "position": 5,
+          "model": {
+            "revision": "v1",
+            "status": "studio-integrated",
+            "scene": "GroveGuardian",
+            "blend": "ForestEgg/models/GroveGuardian/v1/model/GroveGuardian.blend",
+            "glb": "ForestEgg/models/GroveGuardian/v1/model/GroveGuardian.glb",
+            "fbx": "ForestEgg/models/GroveGuardian/v1/model/GroveGuardian.fbx",
+            "triangles": 9392,
+            "studioVerified": true,
+            "robloxModelId": "90971125132037",
+            "gamePetId": "FlameCat"
+          }
+        }
+      ]
+    },
+    {
+      "world": 1,
+      "egg": "Frost Egg",
+      "key": "frost",
+      "status": "studio-integrated",
+      "sheet": "FrostEgg/reference.png",
+      "paletteRevision": "vibrant",
+      "pets": [
+        {
+          "designKey": "world1-frost-snow-pup",
+          "name": "Snow Pup",
+          "russianName": "Снежный щенок",
+          "rarity": "Common",
+          "position": 1,
+          "model": {
+            "revision": "v1",
+            "status": "studio-verified",
+            "scene": "SnowPup",
+            "blend": "FrostEgg/models/SnowPup/v1/model/SnowPup.blend",
+            "glb": "FrostEgg/models/SnowPup/v1/model/SnowPup.glb",
+            "fbx": "FrostEgg/models/SnowPup/v1/model/SnowPup.fbx",
+            "triangles": 7128,
+            "studioVerified": true,
+            "robloxModelId": "107211497144595",
+            "gamePetId": "Cactus"
+          }
+        },
+        {
+          "designKey": "world1-frost-snowy-penguin",
+          "name": "Snowy Penguin",
+          "russianName": "Снежный пингвин",
+          "rarity": "Uncommon",
+          "position": 2,
+          "model": {
+            "revision": "v1",
+            "status": "studio-verified",
+            "scene": "SnowyPenguin",
+            "blend": "FrostEgg/models/SnowyPenguin/v1/model/SnowyPenguin.blend",
+            "glb": "FrostEgg/models/SnowyPenguin/v1/model/SnowyPenguin.glb",
+            "fbx": "FrostEgg/models/SnowyPenguin/v1/model/SnowyPenguin.fbx",
+            "triangles": 5156,
+            "studioVerified": true,
+            "robloxModelId": "115598800937010",
+            "gamePetId": "Frog"
+          }
+        },
+        {
+          "designKey": "world1-frost-glacier-walrus",
+          "name": "Glacier Walrus",
+          "russianName": "Ледниковый морж",
+          "rarity": "Rare",
+          "position": 3,
+          "model": {
+            "revision": "v1",
+            "status": "studio-verified",
+            "scene": "GlacierWalrus",
+            "blend": "FrostEgg/models/GlacierWalrus/v1/model/GlacierWalrus.blend",
+            "glb": "FrostEgg/models/GlacierWalrus/v1/model/GlacierWalrus.glb",
+            "fbx": "FrostEgg/models/GlacierWalrus/v1/model/GlacierWalrus.fbx",
+            "triangles": 7240,
+            "studioVerified": true,
+            "robloxModelId": "72267539305518",
+            "gamePetId": "Watermelon"
+          }
+        },
+        {
+          "designKey": "world1-frost-aurora-lynx",
+          "name": "Aurora Lynx",
+          "russianName": "Полярная рысь",
+          "rarity": "Epic",
+          "position": 4,
+          "model": {
+            "revision": "v1",
+            "status": "studio-verified",
+            "scene": "AuroraLynx",
+            "blend": "FrostEgg/models/AuroraLynx/v1/model/AuroraLynx.blend",
+            "glb": "FrostEgg/models/AuroraLynx/v1/model/AuroraLynx.glb",
+            "fbx": "FrostEgg/models/AuroraLynx/v1/model/AuroraLynx.fbx",
+            "triangles": 7804,
+            "studioVerified": true,
+            "robloxModelId": "103746982548293",
+            "gamePetId": "AuroraLynx"
+          }
+        },
+        {
+          "designKey": "world1-frost-glacier-dragon",
+          "name": "Glacier Dragon",
+          "russianName": "Ледяной дракон",
+          "rarity": "Legendary",
+          "position": 5,
+          "model": {
+            "revision": "v1",
+            "status": "studio-verified",
+            "scene": "GlacierDragon",
+            "blend": "FrostEgg/models/GlacierDragon/v1/model/GlacierDragon.blend",
+            "glb": "FrostEgg/models/GlacierDragon/v1/model/GlacierDragon.glb",
+            "fbx": "FrostEgg/models/GlacierDragon/v1/model/GlacierDragon.fbx",
+            "triangles": 9732,
+            "studioVerified": true,
+            "robloxModelId": "93407469562216",
+            "gamePetId": "GreenDragon"
+          }
+        }
+      ]
+    },
+    {
+      "world": 1,
+      "egg": "Magma Egg",
+      "key": "magma",
+      "status": "studio-integrated",
+      "sheet": "MagmaEgg/reference.png",
+      "paletteRevision": "vibrant v2",
+      "pets": [
+        {
+          "designKey": "world1-magma-coal-mole",
+          "name": "Coal Mole",
+          "russianName": "Угольный крот",
+          "rarity": "Common",
+          "position": 1,
+          "model": {
+            "revision": "v1",
+            "status": "studio-integrated",
+            "scene": "CoalMole",
+            "blend": "MagmaEgg/models/CoalMole/v1/model/CoalMole.blend",
+            "glb": "MagmaEgg/models/CoalMole/v1/model/CoalMole.glb",
+            "fbx": "MagmaEgg/models/CoalMole/v1/model/CoalMole.fbx",
+            "triangles": 5464,
+            "studioVerified": true,
+            "robloxModelId": "71236885360913",
+            "gamePetId": "Shark"
+          }
+        },
+        {
+          "designKey": "world1-magma-cinder-gecko",
+          "name": "Cinder Gecko",
+          "russianName": "Тлеющий геккон",
+          "rarity": "Uncommon",
+          "position": 2,
+          "model": {
+            "revision": "v1",
+            "status": "studio-integrated",
+            "scene": "CinderGecko",
+            "blend": "MagmaEgg/models/CinderGecko/v1/model/CinderGecko.blend",
+            "glb": "MagmaEgg/models/CinderGecko/v1/model/CinderGecko.glb",
+            "fbx": "MagmaEgg/models/CinderGecko/v1/model/CinderGecko.fbx",
+            "triangles": 6912,
+            "studioVerified": true,
+            "robloxModelId": "133805463587668",
+            "gamePetId": "CloudBird"
+          }
+        },
+        {
+          "designKey": "world1-magma-ember-ram",
+          "name": "Ember Ram",
+          "russianName": "Огненный баран",
+          "rarity": "Rare",
+          "position": 3,
+          "model": {
+            "revision": "v1",
+            "status": "studio-integrated",
+            "scene": "EmberRam",
+            "blend": "MagmaEgg/models/EmberRam/v1/model/EmberRam.blend",
+            "glb": "MagmaEgg/models/EmberRam/v1/model/EmberRam.glb",
+            "fbx": "MagmaEgg/models/EmberRam/v1/model/EmberRam.fbx",
+            "triangles": 8208,
+            "studioVerified": true,
+            "robloxModelId": "108594614036182",
+            "gamePetId": "AngelCat"
+          }
+        },
+        {
+          "designKey": "world1-magma-blaze-bat",
+          "name": "Blaze Bat",
+          "russianName": "Огненная летучая мышь",
+          "rarity": "Epic",
+          "position": 4,
+          "model": {
+            "revision": "v1",
+            "status": "studio-integrated",
+            "scene": "BlazeBat",
+            "blend": "MagmaEgg/models/BlazeBat/v1/model/BlazeBat.blend",
+            "glb": "MagmaEgg/models/BlazeBat/v1/model/BlazeBat.glb",
+            "fbx": "MagmaEgg/models/BlazeBat/v1/model/BlazeBat.fbx",
+            "triangles": 7748,
+            "studioVerified": true,
+            "robloxModelId": "74655860074258",
+            "gamePetId": "BlazeBat"
+          }
+        },
+        {
+          "designKey": "world1-magma-inferno-phoenix",
+          "name": "Inferno Phoenix",
+          "russianName": "Огненный феникс",
+          "rarity": "Legendary",
+          "position": 5,
+          "model": {
+            "revision": "v1",
+            "status": "studio-integrated",
+            "scene": "InfernoPhoenix",
+            "blend": "MagmaEgg/models/InfernoPhoenix/v1/model/InfernoPhoenix.blend",
+            "glb": "MagmaEgg/models/InfernoPhoenix/v1/model/InfernoPhoenix.glb",
+            "fbx": "MagmaEgg/models/InfernoPhoenix/v1/model/InfernoPhoenix.fbx",
+            "triangles": 9852,
+            "studioVerified": true,
+            "robloxModelId": "85808407511873",
+            "gamePetId": "IceCat"
+          }
+        }
+      ]
+    },
+    {
+      "world": 1,
+      "egg": "Void Egg",
+      "key": "void",
+      "status": "studio-integrated",
+      "sheet": "VoidEgg/reference.png",
+      "paletteRevision": "vibrant",
+      "pets": [
+        {
+          "designKey": "world1-void-dusk-moth",
+          "name": "Dusk Moth",
+          "russianName": "Сумеречный мотылёк",
+          "rarity": "Common",
+          "position": 1,
+          "model": {
+            "revision": "v1",
+            "status": "studio-integrated",
+            "scene": "DuskMoth",
+            "blend": "VoidEgg/models/DuskMoth/v1/model/DuskMoth.blend",
+            "glb": "VoidEgg/models/DuskMoth/v1/model/DuskMoth.glb",
+            "fbx": "VoidEgg/models/DuskMoth/v1/model/DuskMoth.fbx",
+            "triangles": 8352,
+            "studioVerified": true,
+            "robloxModelId": "89294269142490",
+            "gamePetId": "Butterfly"
+          }
+        },
+        {
+          "designKey": "world1-void-shadow-kitten",
+          "name": "Shadow Kitten",
+          "russianName": "Теневой котёнок",
+          "rarity": "Uncommon",
+          "position": 2,
+          "model": {
+            "revision": "v1",
+            "status": "studio-integrated",
+            "scene": "ShadowKitten",
+            "blend": "VoidEgg/models/ShadowKitten/v1/model/ShadowKitten.blend",
+            "glb": "VoidEgg/models/ShadowKitten/v1/model/ShadowKitten.glb",
+            "fbx": "VoidEgg/models/ShadowKitten/v1/model/ShadowKitten.fbx",
+            "triangles": 6664,
+            "studioVerified": true,
+            "robloxModelId": "114595595417086",
+            "gamePetId": "MoonCat"
+          }
+        },
+        {
+          "designKey": "world1-void-orbit-axolotl",
+          "name": "Orbit Axolotl",
+          "russianName": "Орбитальный аксолотль",
+          "rarity": "Rare",
+          "position": 3,
+          "model": {
+            "revision": "v1",
+            "status": "studio-integrated",
+            "scene": "OrbitAxolotl",
+            "blend": "VoidEgg/models/OrbitAxolotl/v1/model/OrbitAxolotl.blend",
+            "glb": "VoidEgg/models/OrbitAxolotl/v1/model/OrbitAxolotl.glb",
+            "fbx": "VoidEgg/models/OrbitAxolotl/v1/model/OrbitAxolotl.fbx",
+            "triangles": 8248,
+            "studioVerified": true,
+            "robloxModelId": "115825619575762",
+            "gamePetId": "GalaxyCat"
+          }
+        },
+        {
+          "designKey": "world1-void-rift-wyrm",
+          "name": "Rift Wyrm",
+          "russianName": "Змей разлома",
+          "rarity": "Legendary",
+          "position": 4,
+          "model": {
+            "revision": "v1",
+            "status": "studio-integrated",
+            "scene": "RiftWyrm",
+            "blend": "VoidEgg/models/RiftWyrm/v1/model/RiftWyrm.blend",
+            "glb": "VoidEgg/models/RiftWyrm/v1/model/RiftWyrm.glb",
+            "fbx": "VoidEgg/models/RiftWyrm/v1/model/RiftWyrm.fbx",
+            "triangles": 9716,
+            "studioVerified": true,
+            "robloxModelId": "72029973207763",
+            "gamePetId": "CrystalCat"
+          }
+        },
+        {
+          "designKey": "world1-void-singularity",
+          "name": "Singularity",
+          "russianName": "Сингулярность",
+          "rarity": "Secret",
+          "position": 5,
+          "model": {
+            "revision": "v1",
+            "status": "studio-integrated",
+            "scene": "Singularity",
+            "blend": "VoidEgg/models/Singularity/v1/model/Singularity.blend",
+            "glb": "VoidEgg/models/Singularity/v1/model/Singularity.glb",
+            "fbx": "VoidEgg/models/Singularity/v1/model/Singularity.fbx",
+            "triangles": 6612,
+            "studioVerified": true,
+            "robloxModelId": "94659465647283",
+            "gamePetId": "EclipseCat"
+          }
+        }
+      ]
+    },
+    {
+      "world": 1,
+      "egg": "Solar Crown Egg",
+      "key": "solar-crown",
+      "status": "studio-integrated",
+      "sheet": "SolarCrownEgg/reference.png",
+      "paletteRevision": "v1-vibrant",
+      "pets": [
+        {
+          "designKey": "world1-solar-crown-honey-bee",
+          "name": "Honey Bee",
+          "russianName": "Медовая пчела",
+          "rarity": "Common",
+          "position": 1,
+          "model": {
+            "revision": "v1",
+            "status": "studio-integrated",
+            "scene": "HoneyBee",
+            "blend": "SolarCrownEgg/models/HoneyBee/v1/model/HoneyBee.blend",
+            "glb": "SolarCrownEgg/models/HoneyBee/v1/model/HoneyBee.glb",
+            "fbx": "SolarCrownEgg/models/HoneyBee/v1/model/HoneyBee.fbx",
+            "triangles": 6752,
+            "studioVerified": true,
+            "robloxModelId": "85823226775519",
+            "gamePetId": "HoneyBee"
+          }
+        },
+        {
+          "designKey": "world1-solar-crown-dawn-chick",
+          "name": "Dawn Chick",
+          "russianName": "Рассветный цыплёнок",
+          "rarity": "Uncommon",
+          "position": 2,
+          "model": {
+            "revision": "v1",
+            "status": "studio-integrated",
+            "scene": "DawnChick",
+            "blend": "SolarCrownEgg/models/DawnChick/v1/model/DawnChick.blend",
+            "glb": "SolarCrownEgg/models/DawnChick/v1/model/DawnChick.glb",
+            "fbx": "SolarCrownEgg/models/DawnChick/v1/model/DawnChick.fbx",
+            "triangles": 6452,
+            "studioVerified": true,
+            "robloxModelId": "139000453725248",
+            "gamePetId": "DawnChick"
+          }
+        },
+        {
+          "designKey": "world1-solar-crown-sun-lion",
+          "name": "Sun Lion",
+          "russianName": "Солнечный лев",
+          "rarity": "Rare",
+          "position": 3,
+          "model": {
+            "revision": "v1",
+            "status": "studio-integrated",
+            "scene": "SunLion",
+            "blend": "SolarCrownEgg/models/SunLion/v1/model/SunLion.blend",
+            "glb": "SolarCrownEgg/models/SunLion/v1/model/SunLion.glb",
+            "fbx": "SolarCrownEgg/models/SunLion/v1/model/SunLion.fbx",
+            "triangles": 9572,
+            "studioVerified": true,
+            "robloxModelId": "119998068502409",
+            "gamePetId": "SunLion"
+          }
+        },
+        {
+          "designKey": "world1-solar-crown-sky-pegasus",
+          "name": "Sky Pegasus",
+          "russianName": "Небесный пегас",
+          "rarity": "Epic",
+          "position": 4,
+          "model": {
+            "revision": "v1",
+            "status": "studio-integrated",
+            "scene": "SkyPegasus",
+            "blend": "SolarCrownEgg/models/SkyPegasus/v1/model/SkyPegasus.blend",
+            "glb": "SolarCrownEgg/models/SkyPegasus/v1/model/SkyPegasus.glb",
+            "fbx": "SolarCrownEgg/models/SkyPegasus/v1/model/SkyPegasus.fbx",
+            "triangles": 9624,
+            "studioVerified": true,
+            "robloxModelId": "136602497878832",
+            "gamePetId": "SkyPegasus"
+          }
+        },
+        {
+          "designKey": "world1-solar-crown-solar-seraph",
+          "name": "Solar Seraph",
+          "russianName": "Солнечный серафим",
+          "rarity": "Legendary",
+          "position": 5,
+          "model": {
+            "revision": "v1",
+            "status": "studio-integrated",
+            "scene": "SolarSeraph",
+            "blend": "SolarCrownEgg/models/SolarSeraph/v1/model/SolarSeraph.blend",
+            "glb": "SolarCrownEgg/models/SolarSeraph/v1/model/SolarSeraph.glb",
+            "fbx": "SolarCrownEgg/models/SolarSeraph/v1/model/SolarSeraph.fbx",
+            "triangles": 8342,
+            "studioVerified": true,
+            "robloxModelId": "95870250205859",
+            "gamePetId": "SolarSeraph"
+          }
+        }
+      ]
+    },
+    {
+      "world": 2,
+      "egg": "Kelp Egg",
+      "key": "kelp",
+      "status": "draft-for-review",
+      "sheet": "World2/concepts-v2/kelp-egg-five-pets-v2.png",
+      "paletteRevision": "v2-saturated",
+      "pets": [
+        {
+          "designKey": "world2-kelp-kelp-guppy",
+          "name": "Kelp Guppy",
+          "russianName": "Рыбка ламинарии",
+          "rarity": "Common",
+          "position": 1
+        },
+        {
+          "designKey": "world2-kelp-shell-snail",
+          "name": "Shell Snail",
+          "russianName": "Ракушечная улитка",
+          "rarity": "Uncommon",
+          "position": 2
+        },
+        {
+          "designKey": "world2-kelp-pebble-crab",
+          "name": "Pebble Crab",
+          "russianName": "Галечный краб",
+          "rarity": "Rare",
+          "position": 3
+        },
+        {
+          "designKey": "world2-kelp-ribbon-seahorse",
+          "name": "Ribbon Seahorse",
+          "russianName": "Ленточный морской конёк",
+          "rarity": "Epic",
+          "position": 4
+        },
+        {
+          "designKey": "world2-kelp-reef-turtle",
+          "name": "Reef Turtle",
+          "russianName": "Рифовая черепаха",
+          "rarity": "Legendary",
+          "position": 5
+        }
+      ]
+    },
+    {
+      "world": 2,
+      "egg": "Leviathan Egg",
+      "key": "leviathan",
+      "status": "draft-for-review",
+      "sheet": "World2/concepts-v2/leviathan-egg-five-pets-v2.png",
+      "paletteRevision": "v2-saturated",
+      "pets": [
+        {
+          "designKey": "world2-leviathan-tide-shark",
+          "name": "Tide Shark",
+          "russianName": "Приливная акула",
+          "rarity": "Common",
+          "position": 1
+        },
+        {
+          "designKey": "world2-leviathan-deep-manta",
+          "name": "Deep Manta",
+          "russianName": "Глубинная манта",
+          "rarity": "Uncommon",
+          "position": 2
+        },
+        {
+          "designKey": "world2-leviathan-pearl-narwhal",
+          "name": "Pearl Narwhal",
+          "russianName": "Жемчужный нарвал",
+          "rarity": "Rare",
+          "position": 3
+        },
+        {
+          "designKey": "world2-leviathan-royal-orca",
+          "name": "Royal Orca",
+          "russianName": "Королевская косатка",
+          "rarity": "Epic",
+          "position": 4
+        },
+        {
+          "designKey": "world2-leviathan-crown-leviathan",
+          "name": "Crown Leviathan",
+          "russianName": "Коронный левиафан",
+          "rarity": "Legendary",
+          "position": 5
+        }
+      ]
+    },
+    {
+      "world": 2,
+      "egg": "Treasure Egg",
+      "key": "treasure",
+      "status": "draft-for-review",
+      "sheet": "World2/concepts-v3/treasure-egg-five-pets-v3.png",
+      "paletteRevision": "v2-saturated",
+      "pets": [
+        {
+          "designKey": "world2-treasure-copper-puffer",
+          "name": "Copper Puffer",
+          "russianName": "Медный иглобрюх",
+          "rarity": "Common",
+          "position": 1
+        },
+        {
+          "designKey": "world2-treasure-pearl-clam",
+          "name": "Pearl Clam",
+          "russianName": "Жемчужная ракушка",
+          "rarity": "Uncommon",
+          "position": 2
+        },
+        {
+          "designKey": "world2-treasure-treasure-octopus",
+          "name": "Treasure Octopus",
+          "russianName": "Осьминог-сокровище",
+          "rarity": "Rare",
+          "position": 3
+        },
+        {
+          "designKey": "world2-treasure-gilded-hermit",
+          "name": "Gilded Hermit",
+          "russianName": "Золотой отшельник",
+          "rarity": "Epic",
+          "position": 4
+        },
+        {
+          "designKey": "world2-treasure-ruby-koi",
+          "name": "Ruby Koi",
+          "russianName": "Рубиновый карп",
+          "rarity": "Legendary",
+          "position": 5
+        }
+      ]
+    },
+    {
+      "world": 2,
+      "egg": "Abyss Egg",
+      "key": "abyss",
+      "status": "draft-for-review",
+      "sheet": "World2/concepts-v2/abyss-egg-five-pets-v2.png",
+      "paletteRevision": "v2-saturated",
+      "pets": [
+        {
+          "designKey": "world2-abyss-lantern-shrimp",
+          "name": "Lantern Shrimp",
+          "russianName": "Фонарная креветка",
+          "rarity": "Common",
+          "position": 1
+        },
+        {
+          "designKey": "world2-abyss-ink-squid",
+          "name": "Ink Squid",
+          "russianName": "Чернильный кальмар",
+          "rarity": "Uncommon",
+          "position": 2
+        },
+        {
+          "designKey": "world2-abyss-angler-cub",
+          "name": "Angler Cub",
+          "russianName": "Удильщик-малыш",
+          "rarity": "Rare",
+          "position": 3
+        },
+        {
+          "designKey": "world2-abyss-abyss-kraken",
+          "name": "Abyss Kraken",
+          "russianName": "Кракен бездны",
+          "rarity": "Legendary",
+          "position": 4
+        },
+        {
+          "designKey": "world2-abyss-abyss-nautilus",
+          "name": "Abyss Nautilus",
+          "russianName": "Наутилус бездны",
+          "rarity": "Secret",
+          "position": 5
+        }
+      ]
+    },
+    {
+      "world": 2,
+      "egg": "Jelly Egg",
+      "key": "jelly",
+      "status": "draft-for-review",
+      "sheet": "World2/concepts-v2/jelly-egg-five-pets-v2.png",
+      "paletteRevision": "v2-saturated",
+      "pets": [
+        {
+          "designKey": "world2-jelly-bubble-jelly",
+          "name": "Bubble Jelly",
+          "russianName": "Пузырьковая медуза",
+          "rarity": "Common",
+          "position": 1
+        },
+        {
+          "designKey": "world2-jelly-jelly-slug",
+          "name": "Jelly Slug",
+          "russianName": "Желейный слизень",
+          "rarity": "Uncommon",
+          "position": 2
+        },
+        {
+          "designKey": "world2-jelly-glass-seahorse",
+          "name": "Glass Seahorse",
+          "russianName": "Стеклянный конёк",
+          "rarity": "Rare",
+          "position": 3
+        },
+        {
+          "designKey": "world2-jelly-prism-manta",
+          "name": "Prism Manta",
+          "russianName": "Призматическая манта",
+          "rarity": "Epic",
+          "position": 4
+        },
+        {
+          "designKey": "world2-jelly-royal-medusa",
+          "name": "Royal Medusa",
+          "russianName": "Королевская медуза",
+          "rarity": "Legendary",
+          "position": 5
+        }
+      ]
+    }
+  ]
+}

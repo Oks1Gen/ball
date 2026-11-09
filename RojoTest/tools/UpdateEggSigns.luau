@@ -75,7 +75,7 @@ local ok, result = pcall(function()
 		end
 		signs.apply(map, config)
 		signs.apply(map, config)
-		for _, egg in config.Eggs do
+		for _, egg in config.BaseEggs do
 			local gui = world["Egg_" .. egg.id].EggSignAnchor.EggSign
 			local price = config.format(egg.cost * (if map.Name == "World2" then 10 else 1)) .. " Wins"
 			assert(gui.PriceRow.Amount.Text == price, "Caption price disagrees with gameplay")
